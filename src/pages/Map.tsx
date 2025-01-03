@@ -1,40 +1,65 @@
 import { useState } from "react";
-import { MapContainer, Marker, Polygon, Popup, TileLayer, useMapEvents } from "react-leaflet";
-function LocationMarker() {
-    const [position, setPosition] = useState(null);
-    const map = useMapEvents({
-        click() {
-            map.locate();
-        },
-        locationfound(e: any) {
-            setPosition(e.latlng);
-            map.flyTo(e.latlng, map.getZoom());
+import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import * as Icon from "lucide-react";
+
+const CustomZoomControl = () => {
+    const map = useMap();
+    const [zoomLevel, setZoomLevel] = useState(8);
+    useMapEvents({
+        zoomend: (e) => {
+            setZoomLevel(e.target.getZoom());
         },
     });
 
-    return position === null ? null : (
-        <Marker position={position}>
-            <Popup>You are here</Popup>
-        </Marker>
+    const zoomIn = () => {
+        map.setZoom(map.getZoom() + 1);
+    };
+
+    const zoomOut = () => {
+        map.setZoom(map.getZoom() - 1);
+    };
+
+    return (
+        <div className="absolute bottom-11 right-3 z-[800] flex w-8 flex-col content-center justify-center gap-4 text-black dark:text-white">
+            <div className="flex h-8 content-center justify-center rounded-lg bg-slate-400 p-2 text-sm font-bold dark:bg-slate-900">{zoomLevel}</div>
+            <div className="flex h-16 w-8 flex-col content-center justify-center rounded-lg bg-slate-400 dark:bg-slate-900">
+                <button
+                    className="flex content-center justify-center border-b border-black border-opacity-50 dark:border-white"
+                    onClick={zoomIn}
+                    disabled={zoomLevel === 18}
+                >
+                    <Icon.Plus size={24} />
+                </button>
+                <button
+                    className="flex content-center justify-center"
+                    onClick={zoomOut}
+                    disabled={zoomLevel === 5}
+                >
+                    <Icon.Minus size={24} />
+                </button>
+            </div>
+        </div>
     );
-}
+};
+
 const Map = () => {
     const position: [number, number] = [36.7783, -119.4179];
 
     return (
-        <div style={{ height: "100vh", width: "100%" }}>
+        <div className="relative flex h-screen w-full">
             <MapContainer
                 center={position}
                 zoom={8}
                 scrollWheelZoom={true}
-                zoomControl={false}
-                style={{ height: "100%", width: "100vw" }}
+                zoomControl={false} // Disable default zoom control
+                minZoom={5}
+                style={{ height: "100%", width: "auto", flexGrow: 1 }}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {/* <LocationMarker /> */}
+                <CustomZoomControl />
             </MapContainer>
         </div>
     );
