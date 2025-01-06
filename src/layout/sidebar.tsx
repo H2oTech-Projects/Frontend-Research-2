@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 
 // import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
 import * as Icon from "lucide-react";
-import logoLight from "../assets/logo-light.svg";
-import logoDark from "../assets//logo-dark.svg";
+import EarthLightLogo from "../assets/earth-light.svg";
+import EarthDarkLogo from "../assets/earth-dark.svg";
 
 import { cn } from "../utils/cn";
 const menuLinks = [
@@ -152,7 +152,6 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
     useEffect(() => {
         const activeLinkGroup = JSON.parse(localStorage.getItem("ActiveLinkGroup") || "{}");
         if (route.includes(activeLinkGroup?.path)) {
-            console.log("here");
             setActiveLinkGroup(activeLinkGroup?.linkGroup);
             setChildMenu({ parentName: activeLinkGroup?.linkGroup, showChildren: true });
         }
@@ -166,20 +165,20 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
                 collapsed ? "max-md:-left-full" : "max-md:left-0",
             )}
         >
-            <div className="flex gap-x-3 p-3">
+            <div className="flex items-center gap-x-3 p-3">
                 <img
-                    src={logoLight}
-                    alt="Logoipsum"
-                    className="dark:hidden"
+                    src={EarthLightLogo}
+                    alt="Flow"
+                    className="h-[32px] w-[32px] dark:hidden"
                 />
                 <img
-                    src={logoDark}
-                    alt="Logoipsum"
-                    className="hidden dark:block"
+                    src={EarthDarkLogo}
+                    alt="Flow"
+                    className="hidden h-[32px] w-[32px] dark:block"
                 />
                 {!collapsed && <p className="animate-slideIn text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">Flow</p>}
             </div>
-            <div className="flex w-full animate-slideIn flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-3 [scrollbar-width:_thin]">
+            <div className="flex w-full animate-slideIn flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-2 [scrollbar-width:_thin]">
                 {menuLinks.map((navbarLink) => (
                     <nav
                         key={navbarLink.title}
