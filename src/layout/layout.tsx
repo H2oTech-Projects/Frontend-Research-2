@@ -54,7 +54,7 @@ const Layout = () => {
                 <div className={cn("relative overflow-y-auto overflow-x-hidden", !showHeader ? "p-0" : "h-[calc(100vh-60px)] p-6")}>
                     <div className={cn("absolute left-0 top-1/2 z-[800] -translate-y-1/2 transform", showHeader ? "hidden" : "")}>
                         <button
-                            className="m-2 size-10"
+                            className="btn-map m-2 size-10"
                             onClick={() => setCollapsed(!collapsed)}
                         >
                             <ChevronsLeft
