@@ -24,14 +24,14 @@ const CustomZoomControl = () => {
             <div className="flex h-8 content-center justify-center rounded-lg bg-slate-400 p-2 text-sm font-bold dark:bg-slate-900">{zoomLevel}</div>
             <div className="flex h-16 w-8 flex-col content-center justify-center rounded-lg bg-slate-400 dark:bg-slate-900">
                 <button
-                    className="flex content-center justify-center border-b border-black border-opacity-50 dark:border-white"
+                    className="flex items-center justify-center border-b border-black border-opacity-50 pb-1 dark:border-white"
                     onClick={zoomIn}
                     disabled={zoomLevel === 18}
                 >
                     <Icon.Plus size={24} />
                 </button>
                 <button
-                    className="flex content-center justify-center"
+                    className="flex items-center justify-center pt-1"
                     onClick={zoomOut}
                     disabled={zoomLevel === 5}
                 >
@@ -53,7 +53,7 @@ const Map = () => {
                 scrollWheelZoom={true}
                 zoomControl={false} // Disable default zoom control
                 minZoom={5}
-                style={{ height: "100%", width: "auto", flexGrow: 1 }}
+                style={{ height: "100%", width: "100vw" }}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

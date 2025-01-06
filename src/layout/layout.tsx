@@ -63,7 +63,7 @@ const Layout = () => {
                             />
                         </button>
                     </div>
-                    <div className="max-w-screen max-h-screen">
+                    <div className="max-h-screen">
                         <Outlet />
                     </div>
                 </div>
