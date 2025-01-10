@@ -4,12 +4,13 @@ import { RouteList } from "./RouteList";
 import ProtectedRoute from "./ProtectedRoute";
 const Login = lazy(async () => await import("./../pages/auth/Login"));
 const ResetPassword = lazy(async () => await import("./../pages/auth/ResetPassword"));
+const ForgotPassword = lazy(async () => await import("./../pages/auth/ForgotPassword"));
 interface RoutesContainerProps {
     isLoadingData: boolean;
 }
 
 const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
-    const isAuthenticated = true;
+    const isAuthenticated = false;
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Routes>
@@ -17,6 +18,10 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
                     <Route
                         path="/auth/login"
                         element={isAuthenticated ? <Navigate to={"/map"} /> : <Login />}
+                    />
+                    <Route
+                        path="/auth/forgotPassword"
+                        element={<ForgotPassword />}
                     />
                     <Route
                         path="/auth/reset-password"

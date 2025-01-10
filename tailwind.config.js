@@ -56,6 +56,9 @@ export default {
             800: '#1e3a8a',
             950: '#172554',
           },
+          royalBlue:{
+            DEFAULT:'#16599A'
+          }
         },
       },
   },

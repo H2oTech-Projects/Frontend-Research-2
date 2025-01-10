@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import EarthLightLogo from "../../assets/earth-dark.svg";
 import H2OLogo from "../../assets/logo.png";
-import { Mail, Key } from "lucide-react";
-const Login = () => {
+import { Mail, ArrowLeft } from "lucide-react";
+const ForgotPassword = () => {
     return (
         <div className="flex min-h-screen content-center items-center justify-center bg-slateLight-100 transition-colors dark:bg-slateLight-950">
             <div className="relative flex h-[420px] w-[800px] overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-slateLight-800">
@@ -26,8 +26,8 @@ const Login = () => {
                 </div>
                 <div className="rightPart w-1/2 p-2">
                     <div className="flex flex-col items-center gap-4 p-11">
-                        <h1 className="text-royalBlue border-royalBlue border-b border-solid p-0.5 pt-0 text-2xl font-semibold">Login</h1>
-
+                        <h1 className="text-royalBlue border-royalBlue border-b border-solid p-0.5 pt-0 text-2xl font-semibold">Forgot Password?</h1>
+                        <p className="text-royalBlue">Enter your Email to recover account</p>
                         <form
                             action="login"
                             className="mt-6 flex w-full flex-col items-center gap-6"
@@ -37,40 +37,26 @@ const Login = () => {
                                 <input
                                     type="text"
                                     placeholder="Email"
-                                    className="flex-grow outline-none"
+                                    className="outline-none"
                                 />
                             </div>
-                            <div className="input text-royalBlue w-full rounded-2xl p-3">
-                                <Key size={20} />
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    className="flex-grow outline-none"
-                                />
-                            </div>
-                            <div className="checkbox text-royalBlue -mt-2 flex w-full items-center justify-start gap-2 pl-2">
-                                <input
-                                    id="rememberMe"
-                                    type="checkbox"
-                                />
-                                <label htmlFor="rememberMe">Remember Me</label>
-                            </div>
+
                             <button
                                 type="submit"
                                 className="bg-royalBlue h-10 w-56 rounded-2xl text-base font-semibold text-white hover:bg-blue-500"
                             >
-                                Login
+                                Continue
                             </button>
                             <Link
-                                to="/auth/forgotPassword"
-                                className="text-royalBlue border-royalBlue -mt-4 border-b border-solid p-0.5"
+                                to="/auth/login"
+                                className="text-royalBlue border-royalBlue -mt-4 flex items-center justify-center gap-1 border-b border-solid p-0.5"
                             >
-                                Forgot Password?
+                                <ArrowLeft size={15} /> Back
                             </Link>
                         </form>
                     </div>
                 </div>
-                <div className="icon absolute left-1/2 top-1/2 z-10 h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white p-1">
+                <div className="icon z-16 absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white p-1">
                     <div className="circle bg-royalBlue h-full w-full rounded-full">
                         <img
                             src={EarthLightLogo}
@@ -84,4 +70,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default ForgotPassword;
