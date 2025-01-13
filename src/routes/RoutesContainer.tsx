@@ -10,7 +10,7 @@ interface RoutesContainerProps {
 }
 
 const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
-    const isAuthenticated = false;
+    const isAuthenticated = true;
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Routes>
