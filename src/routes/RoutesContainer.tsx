@@ -1,7 +1,10 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { RouteList } from "./RouteList";
 import ProtectedRoute from "./ProtectedRoute";
+import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Login = lazy(async () => await import("./../pages/auth/Login"));
 const ResetPassword = lazy(async () => await import("./../pages/auth/ResetPassword"));
 const ForgotPassword = lazy(async () => await import("./../pages/auth/ForgotPassword"));
@@ -10,7 +13,8 @@ interface RoutesContainerProps {
 }
 
 const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
-    const isAuthenticated = true;
+    const isAuthenticated = useSelector((state: any) => state.auth.isLoggedIn);
+
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Routes>
@@ -61,6 +65,10 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
                     />
                 </Route>
             </Routes>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+            />
         </Suspense>
     );
 };

@@ -1,62 +1,102 @@
-import { Bell, ChevronsLeft, Moon, Search, Sun } from "lucide-react";
+import { Bell, ChevronsLeft, Moon, Search, Sun, LogOut } from "lucide-react";
 import profileImg from "../assets/profile-image.jpg";
-
+import { logout } from "../redux/slice/authSlice";
 import { useTheme } from "../hooks/useTheme";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 interface HeaderProps {
     collapsed: Boolean;
     setCollapsed: (collapsed: Boolean) => void;
 }
 export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
     const { theme, setTheme } = useTheme();
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const modalRef = useRef<HTMLDivElement>(null);
+    const dispatch = useDispatch();
+    // Close modal when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+                setIsModalOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
     return (
-        <header className="relative z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
-            <div className="flex items-center gap-x-3">
-                <button
-                    className="btn-ghost size-10"
-                    onClick={() => setCollapsed(!collapsed)}
-                >
-                    <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
-                </button>
-                <div className="input">
-                    <Search
-                        size={20}
-                        className="text-slate-300"
-                    />
-                    <input
-                        type="text"
-                        name="search"
-                        id="search"
-                        placeholder="Search..."
-                        className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                    />
+        <>
+            <header className="relative z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
+                <div className="flex items-center gap-x-3">
+                    <button
+                        className="btn-ghost size-10"
+                        onClick={() => setCollapsed(!collapsed)}
+                    >
+                        <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
+                    </button>
+                    <div className="input">
+                        <Search
+                            size={20}
+                            className="text-slate-300"
+                        />
+                        <input
+                            type="text"
+                            name="search"
+                            id="search"
+                            placeholder="Search..."
+                            className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                        />
+                    </div>
                 </div>
-            </div>
-            <div className="flex items-center gap-x-3">
-                <button
-                    className="btn-ghost size-10"
-                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                <div className="flex items-center gap-x-3">
+                    <button
+                        className="btn-ghost size-10"
+                        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                    >
+                        <Sun
+                            size={20}
+                            className="dark:hidden"
+                        />
+                        <Moon
+                            size={20}
+                            className="hidden dark:block"
+                        />
+                    </button>
+                    <button className="btn-ghost size-10">
+                        <Bell size={20} />
+                    </button>
+                    <button
+                        className="size-10 overflow-hidden rounded-full"
+                        onClick={() => setIsModalOpen(!isModalOpen)}
+                    >
+                        <img
+                            src={profileImg}
+                            alt="profile image"
+                            className="size-full object-cover"
+                        />
+                    </button>
+                </div>
+            </header>
+            {isModalOpen && (
+                <div
+                    ref={modalRef}
+                    className="absolute right-3 top-14 z-50 mt-2 flex w-52 flex-col gap-1 rounded-xl border-slate-900 bg-white p-1 shadow-lg dark:bg-slate-900 dark:text-slate-50"
                 >
-                    <Sun
-                        size={20}
-                        className="dark:hidden"
-                    />
-                    <Moon
-                        size={20}
-                        className="hidden dark:block"
-                    />
-                </button>
-                <button className="btn-ghost size-10">
-                    <Bell size={20} />
-                </button>
-                <button className="size-10 overflow-hidden rounded-full">
-                    <img
-                        src={profileImg}
-                        alt="profile image"
-                        className="size-full object-cover"
-                    />
-                </button>
-            </div>
-        </header>
+                    <button
+                        className="flex w-full items-center gap-2 rounded-xl px-4 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-950"
+                        onClick={() => {
+                            dispatch(logout());
+                            setIsModalOpen(false);
+                            toast.success("Logout successful");
+                        }}
+                    >
+                        <LogOut size={20} />
+                        Logout
+                    </button>
+                </div>
+            )}
+        </>
     );
 };
