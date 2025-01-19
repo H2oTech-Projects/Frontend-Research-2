@@ -1,7 +1,150 @@
+/// <reference types="vite-plugin-svgr/client" />
+import { useState, useEffect} from "react";
+import $ from 'jquery';
 import React from "react";
+import { Input } from "../../../../components/ui/input";
+import { PrimaryButton } from "../../../../components/ui/button";
+import  SearchIcon  from "../../../../assets/icons/search-icon.svg?react";
+import  FilterIcon  from "../../../../assets/icons/filter-icon.svg?react";
+import  ChevronLeftIcon  from "../../../../assets/icons/chevron-left.svg?react";
+import  ChevronRightIcon  from "../../../../assets/icons/chevron-right.svg?react";
 
+let mableState = 0;
 const Field = () => {
-    return <div className="text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">Field</div>;
+  const [searchValue, setSearchValue] = useState("");
+  useEffect(() => {
+    // $("#mapSection").hide()
+    // $("#tableSection").animate({ width: '100%' }, 'slow');
+    //$("#mapSection").animate({ width: '100%' }, 'slow');
+}, []);
+  const currentUlr = () => {
+    return (
+      <div className="flex">
+        <div className="w-25 leading-6 text-[#CEC5C5]">
+          <span>Management</span><span className="pl-3 float-right">/</span>
+        </div>
+        <div className="flex-initial w-20 ml-3 leading-6">
+          Field
+        </div>
+      </div>
+    )
+  }
+
+  const title = () => {
+    return (
+      <div className="mt-3 text-[#94A3B8]">Field</div>
+    )
+  }
+
+  const resizeMable = () => {
+    $("#mapSection").width('1%');
+    $("#mapSection").show()
+    $("#tableSection").animate({ width: '50%' }, 'slow');
+    $("#mapSection").animate({ width: '50%' }, 'slow');
+  }
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (value.trim() === "") {
+      setSearchValue("");
+    }
+    setSearchValue(value);
+  };
+
+  const searchAddController = () => {
+    return (
+      <div className="flex justify-between">
+        <div className="flex mt-2 space-x-[50px]">
+          <div className="flex-initial relative mb-2 flex w-full max-w-[300px]">
+            <Input
+              placeholder="Search by name"
+              value={searchValue}
+              onChange={handleInputChange}
+              startIcon={<SearchIcon fill="#015294" />}
+              //icon={(searchValue || searchQuery) && <CloseIcon />}
+              // onChangeIcon={() => {
+              //   setSearchValue("");
+              //   setShowSuggestions(false);
+              //   updateSearchQuery("");
+              // }}
+              //onKeyDown={inputSubmit}
+              //onFocus={() => setIsInputFocused(true)}
+              className="mt-0 w-[300px] rounded-lg border-neutral-unum-300 bg-white pl-10 text-neutral-unum-800 shadow-sm"
+            />
+          </div>
+          <div className="w-25 mt-3">
+            <FilterIcon/>
+          </div>
+        </div>
+        <div className="flex mt-2 ">
+          <PrimaryButton
+              text="Add Field"
+              type="button"
+              className="h-[42px] w-[118px] rounded-lg px-4 text-base font-semibold bg-[#94A3B8]"
+              onclick={resizeMable}
+            />
+          </div>
+      </div>
+    )
+  }
+
+  const showTable = () => {
+    if (mableState == 0){
+      $("#tableSection").animate({ width: '100%' }, 'slow');
+      $("#mapSection").animate({ width: '0%' }, 'slow').promise()
+      .then(function() {
+        $("#mapSection").hide()
+      });;
+      mableState = 1;
+    }
+    else if (mableState == 1 || mableState == 2) {
+      $("#tableSection").show()
+      $("#mapSection").animate({ width: '50%' }, 'slow');
+      $("#tableSection").animate({ width: '50%' }, 'slow');
+      mableState = 0;
+    }
+  }
+
+  const showMap = () => {
+    if (mableState == 0){
+      $("#mapSection").animate({ width: '100%' }, 'slow');
+      $("#tableSection").animate({ width: '0%' }, 'slow').promise()
+      .then(function() {
+        $("#tableSection").hide()
+      });;
+      mableState = 2;
+    }
+    else if (mableState == 2 || mableState == 1){
+      $("#mapSection").show()
+      $("#mapSection").animate({ width: '50%' }, 'slow');
+      $("#tableSection").animate({ width: '50%' }, 'slow');
+      mableState = 0;
+    }
+  }
+  const mable = () => {
+    return (
+      <div className="flex h-[652px] w-[1141]">
+        <div className="w-1/2 bg-[red] " id="tableSection">
+          <div>Table</div>
+          <div className="relative float-right top-[50%] bg-[white]" onClick={showMap}><ChevronLeftIcon/></div>
+
+        </div>
+
+        <div className="w-1/2 bg-[green] mrl-[20px]" id="mapSection">
+          <div>Map</div>
+          <div className="relative float-left top-[50%] bg-[white]" onClick={showTable}><ChevronRightIcon/></div>
+          </div>
+      </div>
+    )
+  }
+  return (
+    <>
+    {currentUlr()}
+    {title()}
+    {searchAddController()}
+    {mable()}
+    </>
+  )
 };
 
 export default Field;
