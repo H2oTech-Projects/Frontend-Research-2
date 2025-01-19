@@ -10,6 +10,9 @@ import  ChevronLeftIcon  from "../../../../assets/icons/chevron-left.svg?react";
 import  ChevronRightIcon  from "../../../../assets/icons/chevron-right.svg?react";
 
 let mableState = 0;
+// if mableState = 0 , map and table both occupy 50% width
+// if mableState = 1 , table occupies full width
+// if mableState = 2 , map occupies full width
 const Field = () => {
   const [searchValue, setSearchValue] = useState("");
   useEffect(() => {
