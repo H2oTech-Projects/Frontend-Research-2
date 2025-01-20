@@ -54,11 +54,10 @@ const Login = () => {
                                 type="text"
                                 name="email"
                                 placeholder="Email"
-                                className="flex-grow bg-white outline-none dark:bg-slateLight-800"
+                                className="flex-grow bg-slate-50 outline-none dark:bg-slateLight-800"
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                autoComplete="off"
                             />
                         </div>
                         {formik.touched.email && formik.errors.email && formik.values.email !== "" && (
@@ -79,7 +78,7 @@ const Login = () => {
                                 type="password"
                                 name="password"
                                 placeholder="Password"
-                                className="flex-grow bg-white outline-none dark:bg-slateLight-800"
+                                className="flex-grow bg-slate-50 outline-none dark:bg-slateLight-900"
                                 value={formik.values.password}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
