@@ -6,8 +6,8 @@ import { Input } from "../../../../components/ui/input";
 import { PrimaryButton } from "../../../../components/ui/button";
 import  SearchIcon  from "../../../../assets/icons/search-icon.svg?react";
 import  FilterIcon  from "../../../../assets/icons/filter-icon.svg?react";
-import  ChevronLeftIcon  from "../../../../assets/icons/chevron-left.svg?react";
-import  ChevronRightIcon  from "../../../../assets/icons/chevron-right.svg?react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import Map from "../../../../components/map";
 
 let mableState = 0;
 // if mableState = 0 , map and table both occupy 50% width
@@ -15,6 +15,7 @@ let mableState = 0;
 // if mableState = 2 , map occupies full width
 const Field = () => {
   const [searchValue, setSearchValue] = useState("");
+  const [resizeMap, setResizeMap] = useState(false);
   useEffect(() => {
     // $("#mapSection").hide()
     // $("#tableSection").animate({ width: '100%' }, 'slow');
@@ -96,15 +97,19 @@ const Field = () => {
       $("#tableSection").animate({ width: '100%' }, 'slow');
       $("#mapSection").animate({ width: '0%' }, 'slow').promise()
       .then(function() {
+        mableState = 1;
         $("#mapSection").hide()
+        //setResizeMap(!resizeMap)
       });;
-      mableState = 1;
+
     }
     else if (mableState == 1 || mableState == 2) {
       $("#tableSection").show()
       $("#mapSection").animate({ width: '50%' }, 'slow');
-      $("#tableSection").animate({ width: '50%' }, 'slow');
-      mableState = 0;
+      $("#tableSection").animate({ width: '50%' }, 'slow').promise().then(function () {
+        mableState = 0;
+        setResizeMap(!resizeMap)
+      });
     }
   }
 
@@ -114,28 +119,38 @@ const Field = () => {
       $("#tableSection").animate({ width: '0%' }, 'slow').promise()
       .then(function() {
         $("#tableSection").hide()
+        setResizeMap(!resizeMap)
       });;
       mableState = 2;
     }
     else if (mableState == 2 || mableState == 1){
       $("#mapSection").show()
       $("#mapSection").animate({ width: '50%' }, 'slow');
-      $("#tableSection").animate({ width: '50%' }, 'slow');
-      mableState = 0;
+      $("#tableSection").animate({ width: '50%' }, 'slow').promise()
+      .then(function() {
+        mableState = 0;
+        setResizeMap(!resizeMap)
+      });;;
+
     }
+
   }
   const mable = () => {
     return (
-      <div className="flex h-[652px] w-[1141]">
+      <div className="flex h-[652px] w-[1141] gap-4">
         <div className="w-1/2 bg-[red] " id="tableSection">
           <div>Table</div>
-          <div className="relative float-right top-[50%] bg-[white]" onClick={showMap}><ChevronLeftIcon/></div>
+          <button className="rounded-full relative float-right top-[49.79%] bg-[white]" onClick={showMap}>
+            <ChevronsLeft size={30} />
+          </button>
 
         </div>
 
         <div className="w-1/2 bg-[green] mrl-[20px]" id="mapSection">
-          <div>Map</div>
-          <div className="relative float-left top-[50%] bg-[white]" onClick={showTable}><ChevronRightIcon/></div>
+          <Map resize={resizeMap}/>
+          <button className="rounded-full relative float-left top-[-46.5%] bg-[white] z-[880]" onClick={showTable}>
+              <ChevronsRight size={30} />
+          </button>
           </div>
       </div>
     )
