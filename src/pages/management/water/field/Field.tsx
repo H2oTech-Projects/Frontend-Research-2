@@ -8,6 +8,7 @@ import  SearchIcon  from "../../../../assets/icons/search-icon.svg?react";
 import  FilterIcon  from "../../../../assets/icons/filter-icon.svg?react";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import Map from "../../../../components/map";
+import TanSackTable from "../../../../components/data-table";
 
 let mableState = 0;
 // if mableState = 0 , map and table both occupy 50% width
@@ -138,17 +139,18 @@ const Field = () => {
   const mable = () => {
     return (
       <div className="flex h-[652px] w-[1141] gap-4">
-        <div className="w-1/2 bg-[red] " id="tableSection">
-          <div>Table</div>
-          <button className="rounded-full relative float-right top-[49.79%] bg-[white]" onClick={showMap}>
+        <div className="w-1/2" id="tableSection">
+          <div className="h-[652px] overflow-y-auto">
+            <TanSackTable/>
+          </div>
+          <button className="rounded-full relative float-right bg-[#ffdf00] z-[880] top-[-302px]" onClick={showMap}>
             <ChevronsLeft size={30} />
           </button>
-
         </div>
 
         <div className="w-1/2 bg-[green] mrl-[20px]" id="mapSection">
           <Map resize={resizeMap}/>
-          <button className="rounded-full relative float-left top-[-46.5%] bg-[white] z-[880]" onClick={showTable}>
+          <button className="rounded-full relative float-left top-[-46.5%] bg-[#ffdf00] z-[880]" onClick={showTable}>
               <ChevronsRight size={30} />
           </button>
           </div>
