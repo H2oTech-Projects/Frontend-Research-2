@@ -2,7 +2,7 @@ import { ChevronsLeft } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, ColumnMeta } from "@tanstack/react-table";
 
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
@@ -14,17 +14,20 @@ type Person = {
     visits: number;
     status: string;
     progress: number;
+    center?: [number, number];
 };
 
 const Field = () => {
     const [collapse, setCollapse] = useState("default");
-    const position: [number, number] = [36.7783, -119.4179];
+    const [position, setPosition] = useState<[number, number]>([36.7783, -119.4179]);
+    const positions: [number, number] = [36.7783, -119.4179];
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
     const mapCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "map" : "default"));
     };
+
     const defaultData: Person[] = [
         {
             firstName: "tanner",
@@ -33,6 +36,7 @@ const Field = () => {
             visits: 100,
             status: "In Relationship",
             progress: 50,
+            center: [34.0522, -118.2437],
         },
         {
             firstName: "tandy",
@@ -41,6 +45,7 @@ const Field = () => {
             visits: 40,
             status: "Single",
             progress: 80,
+            center: [37.7749, -122.4194],
         },
         {
             firstName: "joe",
@@ -49,6 +54,34 @@ const Field = () => {
             visits: 20,
             status: "Complicated",
             progress: 10,
+            center: [32.7157, -117.1611],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tandy",
+            lastName: "miller",
+            age: 40,
+            visits: 40,
+            status: "Single",
+            progress: 80,
+            center: [37.7749, -122.4194],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
         },
     ];
 
@@ -84,6 +117,23 @@ const Field = () => {
             accessorKey: "progress",
             header: "Progress",
             cell: ({ row }) => <div className="capitalize">{row.getValue("progress")}</div>,
+        },
+        {
+            id: "actions",
+            header: "Action",
+            cell: ({ row }) => (
+                <div>
+                    <button
+                        className="hover:bg-slate-500"
+                        onClick={() => console.log(row.original)}
+                    >
+                        Action
+                    </button>
+                </div>
+            ),
+            meta: {
+                className: "sticky right-0 !bg-slateLight-100 dark:!bg-slateLight-950 ",
+            },
         },
     ];
 
@@ -145,6 +195,7 @@ const Field = () => {
                             <MapTable
                                 defaultData={defaultData}
                                 columns={columns}
+                                setPosition={setPosition as Function}
                             />
                             {/* <table></table> */}
                             <button

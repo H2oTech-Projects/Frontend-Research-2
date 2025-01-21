@@ -8,12 +8,13 @@ type LeafletMapTypes = {
 };
 
 const LeafletMap = ({ position, collapse }: LeafletMapTypes) => {
-    const ResizeHandler = () => {
+    const MapHandler = () => {
         const map = useMap();
 
         useEffect(() => {
             map.invalidateSize(); // Force the map to resize
-        }, [collapse]);
+            map.setView(position); // Force the map to recenter
+        }, [collapse, position]);
 
         return null;
     };
@@ -23,7 +24,7 @@ const LeafletMap = ({ position, collapse }: LeafletMapTypes) => {
             zoom={12}
             scrollWheelZoom={true}
             zoomControl={false} // Disable default zoom control
-            minZoom={5}
+            minZoom={8}
             style={{ height: "100%", width: "100%", overflow: "hidden" }}
         >
             <TileLayer
@@ -31,7 +32,7 @@ const LeafletMap = ({ position, collapse }: LeafletMapTypes) => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <CustomZoomControl />
-            <ResizeHandler />
+            <MapHandler />
         </MapContainer>
     );
 };
