@@ -112,7 +112,7 @@ function TanSackTable() {
             width: '100%'
           }}
         >
-          <thead className="sticky top-0 z-[1]">
+          <thead className="sticky top-0 z-[100]">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
