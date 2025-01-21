@@ -31,6 +31,17 @@ const menuLinks = [
         title: "Management",
         links: [
             {
+                label: "Water",
+                icon: Icon.Droplet,
+                path: null,
+                type: "group",
+                Children: [
+                    { label: "Measurement Point", path: "/measurementPoint" },
+                    { label: "Field", path: "/field" },
+                    { label: "District", path: "/district" },
+                ],
+            },
+            {
                 label: "Allocations",
                 icon: Icon.ChartColumnBig,
                 path: "/allocations",
@@ -57,17 +68,7 @@ const menuLinks = [
                 type: "link",
                 Children: [],
             },
-            {
-                label: "Water",
-                icon: Icon.Droplet,
-                path: null,
-                type: "group",
-                Children: [
-                    { label: "Measurement Point", path: "/measurementPoint" },
-                    { label: "Field", path: "/field" },
-                    { label: "District", path: "/district" },
-                ],
-            },
+
             // {
             //     label: "Fire",
             //     icon: Icon.Fan,
@@ -242,11 +243,11 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
                                                 link?.Children.map((child) => (
                                                     <NavLink
                                                         onClick={() => SetActiveLinkGroup(link.label, child.path)}
-                                                        key={child.label}
-                                                        to={child.path}
+                                                        key={child?.label}
+                                                        to={child?.path}
                                                         className={cn("sidebar-item", collapsed && "md:w-[45px]", "animate-fadeIn")}
                                                     >
-                                                        {child.label}
+                                                        {child?.label}
                                                     </NavLink>
                                                 ))}
                                         </div>

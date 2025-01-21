@@ -28,7 +28,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
     }, []);
     return (
         <>
-            <header className="relative z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
+            <header className="relative z-10 flex h-[40px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
                 <div className="flex items-center gap-x-3">
                     <button
                         className="btn-ghost size-10"
@@ -36,9 +36,9 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                     >
                         <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
                     </button>
-                    <div className="input">
+                    <div className="input !h-7">
                         <Search
-                            size={20}
+                            size={16}
                             className="text-slate-300"
                         />
                         <input
@@ -56,19 +56,19 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                         onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                     >
                         <Sun
-                            size={20}
+                            size={16}
                             className="dark:hidden"
                         />
                         <Moon
-                            size={20}
+                            size={16}
                             className="hidden dark:block"
                         />
                     </button>
                     <button className="btn-ghost size-10">
-                        <Bell size={20} />
+                        <Bell size={16} />
                     </button>
                     <button
-                        className="size-10 overflow-hidden rounded-full"
+                        className="size-8 overflow-hidden rounded-full"
                         onClick={() => setIsModalOpen(!isModalOpen)}
                     >
                         <img

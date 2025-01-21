@@ -189,102 +189,83 @@ const Field = () => {
                     <button>Add Field</button>
                 </div>
                 <div className="flex flex-grow">
-                    {collapse !== "table" && (
-                        <div
-                            className={cn(
-                                "w-1/2",
-
-                                collapse === "map" ? "flex-grow" : "pr-3",
-                            )}
-                        >
-                            <div className="relative h-[558px] w-full border">
-                                <Table>
-                                    <TableHeader>
-                                        {table.getHeaderGroups().map((headerGroup) => (
-                                            <TableRow key={headerGroup.id}>
-                                                {headerGroup.headers.map((header) => (
-                                                    <TableHead key={header.id}>
-                                                        {header.isPlaceholder
-                                                            ? null
-                                                            : flexRender(header.column.columnDef.header, header.getContext())}
-                                                    </TableHead>
+                    <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
+                        <div className="relative h-[558px] w-full border">
+                            <Table>
+                                <TableHeader>
+                                    {table.getHeaderGroups().map((headerGroup) => (
+                                        <TableRow key={headerGroup.id}>
+                                            {headerGroup.headers.map((header) => (
+                                                <TableHead key={header.id}>
+                                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                                </TableHead>
+                                            ))}
+                                        </TableRow>
+                                    ))}
+                                </TableHeader>
+                                <TableBody>
+                                    {table.getRowModel().rows?.length ? (
+                                        table.getRowModel().rows.map((row) => (
+                                            <TableRow
+                                                key={row.id}
+                                                data-state={row.getIsSelected() && "selected"}
+                                            >
+                                                {row.getVisibleCells().map((cell) => (
+                                                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                                                 ))}
                                             </TableRow>
-                                        ))}
-                                    </TableHeader>
-                                    <TableBody>
-                                        {table.getRowModel().rows?.length ? (
-                                            table.getRowModel().rows.map((row) => (
-                                                <TableRow
-                                                    key={row.id}
-                                                    data-state={row.getIsSelected() && "selected"}
-                                                >
-                                                    {row.getVisibleCells().map((cell) => (
-                                                        <TableCell key={cell.id}>
-                                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                        </TableCell>
-                                                    ))}
-                                                </TableRow>
-                                            ))
-                                        ) : (
-                                            <TableRow>
-                                                <TableCell
-                                                    colSpan={columns.length}
-                                                    className="h-24 text-center"
-                                                >
-                                                    No results.
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={columns.length}
+                                                className="h-24 text-center"
+                                            >
+                                                No results.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
 
-                                {/* <table></table> */}
-                                <button
-                                    className="absolute -right-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
-                                    onClick={tableCollapseBtn}
-                                >
-                                    <ChevronsLeft size={20} />
-                                </button>
-                            </div>
+                            {/* <table></table> */}
+                            <button
+                                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
+                                onClick={tableCollapseBtn}
+                            >
+                                <ChevronsLeft size={20} />
+                            </button>
                         </div>
-                    )}
-                    {collapse !== "map" && (
-                        <div
-                            className={cn(
-                                "w-1/2",
+                    </div>
 
-                                collapse === "table" ? "flex-grow" : "pl-3",
-                            )}
-                        >
-                            <div className="relative flex h-[558px] w-full bg-slate-500">
-                                <MapContainer
-                                    center={position}
-                                    zoom={12}
-                                    scrollWheelZoom={true}
-                                    zoomControl={false} // Disable default zoom control
-                                    minZoom={5}
-                                    style={{ height: "100%", width: "100%", overflow: "hidden" }}
-                                >
-                                    <TileLayer
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    />
-                                    <CustomZoomControl />
-                                    <ResizeHandler />
-                                </MapContainer>
-                                <button
-                                    className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
-                                    onClick={mapCollapseBtn}
-                                >
-                                    <ChevronsLeft
-                                        size={20}
-                                        className="rotate-180"
-                                    />
-                                </button>
-                            </div>
+                    <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
+                        <div className="relative flex h-[558px] w-full bg-slate-500">
+                            <MapContainer
+                                center={position}
+                                zoom={12}
+                                scrollWheelZoom={true}
+                                zoomControl={false} // Disable default zoom control
+                                minZoom={5}
+                                style={{ height: "100%", width: "100%", overflow: "hidden" }}
+                            >
+                                <TileLayer
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
+                                <CustomZoomControl />
+                                <ResizeHandler />
+                            </MapContainer>
+                            <button
+                                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
+                                onClick={mapCollapseBtn}
+                            >
+                                <ChevronsLeft
+                                    size={20}
+                                    className="rotate-180"
+                                />
+                            </button>
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>
