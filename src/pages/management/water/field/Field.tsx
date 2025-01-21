@@ -139,7 +139,7 @@ const Field = () => {
   const mable = () => {
     return (
       <div className="flex h-[652px] w-[1141] gap-4">
-        <div className="w-1/2" id="tableSection">
+        <div className="w-1/4" id="tableSection">
           <div className="h-[652px] overflow-y-auto">
             <TanSackTable/>
           </div>
