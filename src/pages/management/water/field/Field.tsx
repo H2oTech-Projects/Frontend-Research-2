@@ -138,7 +138,7 @@ const Field = () => {
   }
   const mable = () => {
     return (
-      <div className="flex h-[652px] w-[1141] gap-4">
+      <div className="flex h-[652px] w-[1141] gap-4 p-2">
         <div className="w-1/4" id="tableSection">
           <div className="h-[652px] overflow-y-auto">
             <TanSackTable/>
@@ -149,7 +149,9 @@ const Field = () => {
         </div>
 
         <div className="w-1/2 bg-[green] mrl-[20px]" id="mapSection">
-          <Map resize={resizeMap}/>
+          <div className="h-[652px] overflow-y-auto">
+            <Map resize={resizeMap}/>
+          </div>
           <button className="rounded-full relative float-left top-[-46.5%] bg-[#ffdf00] z-[880]" onClick={showTable}>
               <ChevronsRight size={30} />
           </button>
