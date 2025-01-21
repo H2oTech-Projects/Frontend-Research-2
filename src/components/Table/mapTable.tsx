@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, getPaginationRowModel } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MapTableTypes } from "@/types/tableTypes";
 import { useState } from "react";
@@ -8,8 +8,8 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
     const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
 
     return (
-        <Table>
-            <TableHeader>
+        <Table className="relative">
+            <TableHeader className="sticky top-0">
                 {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
@@ -18,7 +18,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                                 className={`${
                                     // @ts-ignore  this code helps to ignore types in certain line
                                     header.column.columnDef.meta?.className ?? ""
-                                } `}
+                                } !bg-royalBlue !text-white dark:!bg-black`}
                                 key={header.id}
                             >
                                 {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
@@ -27,6 +27,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                     </TableRow>
                 ))}
             </TableHeader>
+
             <TableBody>
                 {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) =>
@@ -34,7 +35,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                         setPosition !== null && row?.original?.center ? (
                             <TableRow
                                 key={row.id}
-                                className="cursor-pointer hover:bg-slate-500"
+                                className="cursor-pointer text-sm hover:bg-slate-500"
                             >
                                 {row.getVisibleCells().map((cell) =>
                                     // @ts-ignore  Below condition check is to determine where rows are from action column or not

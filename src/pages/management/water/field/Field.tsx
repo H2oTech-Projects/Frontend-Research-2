@@ -83,6 +83,87 @@ const Field = () => {
             progress: 50,
             center: [34.0522, -118.2437],
         },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
+        {
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
+            center: [34.0522, -118.2437],
+        },
     ];
 
     const columns: ColumnDef<Person>[] = [
@@ -108,11 +189,11 @@ const Field = () => {
             header: "visits",
             cell: ({ row }) => <div className="capitalize">{row.getValue("visits")}</div>,
         },
-        {
-            accessorKey: "status",
-            header: "status",
-            cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
-        },
+        // {
+        //     accessorKey: "status",
+        //     header: "status",
+        //     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
+        // },
         {
             accessorKey: "progress",
             header: "Progress",
@@ -122,17 +203,15 @@ const Field = () => {
             id: "actions",
             header: "Action",
             cell: ({ row }) => (
-                <div>
-                    <button
-                        className="hover:bg-slate-500"
-                        onClick={() => console.log(row.original)}
-                    >
-                        Action
-                    </button>
-                </div>
+                <button
+                    className="hover:bg-slate-500"
+                    onClick={() => console.log(row.original)}
+                >
+                    Action
+                </button>
             ),
             meta: {
-                className: "sticky right-0 !bg-slateLight-100 dark:!bg-slateLight-950 ",
+                className: "sticky right-0 !z-9 !bg-slateLight-100 dark:!bg-slateLight-950 ",
             },
         },
     ];
