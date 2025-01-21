@@ -1,11 +1,11 @@
 import { ChevronsLeft } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
-import CustomZoomControl from "../../../../components/MapController";
-import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ColumnDef } from "@tanstack/react-table";
+
+import MapTable from "@/components/Table/mapTable";
+import LeafletMap from "@/components/LeafletMap";
 
 type Person = {
     firstName: string;
@@ -16,54 +16,7 @@ type Person = {
     progress: number;
 };
 
-export type Payment = {
-    id: string;
-    amount: number;
-    status: "pending" | "processing" | "success" | "failed";
-    email: string;
-};
-// const columnHelper = createColumnHelper<Person>();
-
-// const columns = [
-//     columnHelper.accessor("firstName", {
-//         cell: (info) => info.getValue(),
-//         footer: (info) => info.column.id,
-//     }),
-//     columnHelper.accessor((row) => row.lastName, {
-//         id: "lastName",
-//         cell: (info) => <i>{info.getValue()}</i>,
-//         header: () => <span>Last Name</span>,
-//         footer: (info) => info.column.id,
-//     }),
-//     columnHelper.accessor("age", {
-//         header: () => "Age",
-//         cell: (info) => info.renderValue(),
-//         footer: (info) => info.column.id,
-//     }),
-//     columnHelper.accessor("visits", {
-//         header: () => <span>Visits</span>,
-//         footer: (info) => info.column.id,
-//     }),
-//     columnHelper.accessor("status", {
-//         header: "Status",
-//         footer: (info) => info.column.id,
-//     }),
-//     columnHelper.accessor("progress", {
-//         header: "Profile Progress",
-//         footer: (info) => info.column.id,
-//     }),
-// ];
-
 const Field = () => {
-    const ResizeHandler = () => {
-        const map = useMap();
-
-        useEffect(() => {
-            map.invalidateSize(); // Force the map to resize
-        }, [collapse]);
-
-        return null;
-    };
     const [collapse, setCollapse] = useState("default");
     const position: [number, number] = [36.7783, -119.4179];
     const tableCollapseBtn = () => {
@@ -72,110 +25,72 @@ const Field = () => {
     const mapCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "map" : "default"));
     };
-    // const defaultData: Person[] = [
-    //     {
-    //         firstName: "tanner",
-    //         lastName: "linsley",
-    //         age: 24,
-    //         visits: 100,
-    //         status: "In Relationship",
-    //         progress: 50,
-    //     },
-    //     {
-    //         firstName: "tandy",
-    //         lastName: "miller",
-    //         age: 40,
-    //         visits: 40,
-    //         status: "Single",
-    //         progress: 80,
-    //     },
-    //     {
-    //         firstName: "joe",
-    //         lastName: "dirte",
-    //         age: 45,
-    //         visits: 20,
-    //         status: "Complicated",
-    //         progress: 10,
-    //     },
-    // ];
-    const defaultData: Payment[] = [
+    const defaultData: Person[] = [
         {
-            id: "m5gr84i9",
-            amount: 316,
-            status: "success",
-            email: "ken99@yahoo.com",
+            firstName: "tanner",
+            lastName: "linsley",
+            age: 24,
+            visits: 100,
+            status: "In Relationship",
+            progress: 50,
         },
         {
-            id: "3u1reuv4",
-            amount: 242,
-            status: "success",
-            email: "Abe45@gmail.com",
+            firstName: "tandy",
+            lastName: "miller",
+            age: 40,
+            visits: 40,
+            status: "Single",
+            progress: 80,
         },
         {
-            id: "derv1ws0",
-            amount: 837,
-            status: "processing",
-            email: "Monserrat44@gmail.com",
-        },
-        {
-            id: "5kma53ae",
-            amount: 874,
-            status: "success",
-            email: "Silas22@gmail.com",
-        },
-        {
-            id: "bhqecj4p",
-            amount: 721,
-            status: "failed",
-            email: "carmella@hotmail.com",
+            firstName: "joe",
+            lastName: "dirte",
+            age: 45,
+            visits: 20,
+            status: "Complicated",
+            progress: 10,
         },
     ];
-    const [data, _setData] = useState(() => [...defaultData]);
 
-    const columns: ColumnDef<Payment>[] = [
+    const columns: ColumnDef<Person>[] = [
+        {
+            accessorKey: "firstName",
+            header: "First Name",
+            cell: ({ row }) => <div className="capitalize">{row.getValue("firstName")}</div>,
+        },
+        {
+            accessorKey: "lastName",
+            header: () => {
+                return <>Last Name</>;
+            },
+            cell: ({ row }) => <div className="lowercase">{row.getValue("lastName")}</div>,
+        },
+        {
+            accessorKey: "age",
+            header: "Age",
+            cell: ({ row }) => <div className="capitalize">{row.getValue("age")}</div>,
+        },
+        {
+            accessorKey: "visits",
+            header: "visits",
+            cell: ({ row }) => <div className="capitalize">{row.getValue("visits")}</div>,
+        },
         {
             accessorKey: "status",
-            header: "Status",
+            header: "status",
             cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
         },
         {
-            accessorKey: "email",
-            header: ({ column }) => {
-                return <>Email</>;
-            },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+            accessorKey: "progress",
+            header: "Progress",
+            cell: ({ row }) => <div className="capitalize">{row.getValue("progress")}</div>,
         },
-        {
-            accessorKey: "amount",
-            header: () => <div className="text-right">Amount</div>,
-            cell: ({ row }) => {
-                const amount = parseFloat(row.getValue("amount"));
-
-                // Format the amount as a dollar amount
-                const formatted = new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                }).format(amount);
-
-                return <div className="text-right font-medium">{formatted}</div>;
-            },
-        },
-        // {
-        //     id: "actions",
-
-        //     cell: ({ row }) => {
-        //         const payment = row.original;
-
-        //         return <>.....</>;
-        //     },
-        // },
     ];
-    const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
 
     return (
         <div className="flex h-full flex-col gap-1 px-6 py-3">
             <div className="flex gap-1 text-xs">
-                <Link to="">Home</Link>/<span>Field</span>
+                <Link to="">Management</Link>/<span>Field</span>
             </div>
             <div className="pageTitle text-lg font-normal text-black">Field</div>
             <div className="pageContain flex flex-grow flex-col gap-3">
@@ -191,7 +106,7 @@ const Field = () => {
                 <div className="flex flex-grow">
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
                         <div className="relative h-[558px] w-full border">
-                            <Table>
+                            {/* <Table>
                                 <TableHeader>
                                     {table.getHeaderGroups().map((headerGroup) => (
                                         <TableRow key={headerGroup.id}>
@@ -226,8 +141,11 @@ const Field = () => {
                                         </TableRow>
                                     )}
                                 </TableBody>
-                            </Table>
-
+                            </Table> */}
+                            <MapTable
+                                defaultData={defaultData}
+                                columns={columns}
+                            />
                             {/* <table></table> */}
                             <button
                                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
@@ -240,7 +158,7 @@ const Field = () => {
 
                     <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
                         <div className="relative flex h-[558px] w-full bg-slate-500">
-                            <MapContainer
+                            {/* <MapContainer
                                 center={position}
                                 zoom={12}
                                 scrollWheelZoom={true}
@@ -254,7 +172,11 @@ const Field = () => {
                                 />
                                 <CustomZoomControl />
                                 <ResizeHandler />
-                            </MapContainer>
+                            </MapContainer> */}
+                            <LeafletMap
+                                position={position}
+                                collapse={collapse}
+                            />
                             <button
                                 className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
                                 onClick={mapCollapseBtn}
