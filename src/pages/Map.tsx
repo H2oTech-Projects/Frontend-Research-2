@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, useMapEvents, Polygon, Popup } from "react-leaflet";
 import * as Icon from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 import profileImg from "../assets/profile-image.jpg";
@@ -79,13 +79,24 @@ const Map = () => {
                 zoom={8}
                 scrollWheelZoom={true}
                 zoomControl={false} // Disable default zoom control
-                minZoom={5}
+                minZoom={2}
                 style={{ height: "100%", width: "100vw" }}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                <Polygon
+                    positions={[
+                        [36.7883, -119.4279], // top-left
+                        [36.7883, -119.4079], // top-right
+                        [36.7683, -119.4079], // bottom-right
+                        [36.7683, -119.4279], // bottom-left
+                        [36.7883, -119.4279], // closing the polygon back to the top-left
+                    ]}
+                >
+                    <Popup>Click for more information</Popup>
+                </Polygon>
                 <CustomZoomControl />
             </MapContainer>
         </div>

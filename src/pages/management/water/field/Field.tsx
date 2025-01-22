@@ -1,12 +1,14 @@
-import { ChevronsLeft } from "lucide-react";
+import { ChevronsLeft, MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
 import { ColumnDef, ColumnMeta } from "@tanstack/react-table";
-
+import dayjs from "dayjs";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
-
+import DummyData from "../../../../../mapleData.json";
+import { DummyDataType } from "@/types/tableTypes";
+import { Button } from "@/components/ui/button";
 type Person = {
     firstName: string;
     lastName: string;
@@ -20,7 +22,7 @@ type Person = {
 const Field = () => {
     const [collapse, setCollapse] = useState("default");
     const [position, setPosition] = useState<[number, number]>([36.7783, -119.4179]);
-    const positions: [number, number] = [36.7783, -119.4179];
+
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
@@ -28,166 +30,34 @@ const Field = () => {
         setCollapse((prev) => (prev === "default" ? "map" : "default"));
     };
 
-    const defaultData: Person[] = [
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tandy",
-            lastName: "miller",
-            age: 40,
-            visits: 40,
-            status: "Single",
-            progress: 80,
-            center: [37.7749, -122.4194],
-        },
-        {
-            firstName: "joe",
-            lastName: "dirte",
-            age: 45,
-            visits: 20,
-            status: "Complicated",
-            progress: 10,
-            center: [32.7157, -117.1611],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tandy",
-            lastName: "miller",
-            age: 40,
-            visits: 40,
-            status: "Single",
-            progress: 80,
-            center: [37.7749, -122.4194],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-        {
-            firstName: "tanner",
-            lastName: "linsley",
-            age: 24,
-            visits: 100,
-            status: "In Relationship",
-            progress: 50,
-            center: [34.0522, -118.2437],
-        },
-    ];
+    const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
-    const columns: ColumnDef<Person>[] = [
+    const columns: ColumnDef<DummyDataType>[] = [
         {
-            accessorKey: "firstName",
-            header: "First Name",
-            cell: ({ row }) => <div className="capitalize">{row.getValue("firstName")}</div>,
+            accessorKey: "FieldID",
+            header: "Field ID",
+            size: 50, // this size value is in px
+            cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
         },
         {
-            accessorKey: "lastName",
+            accessorKey: "FieldDesc",
             header: () => {
-                return <>Last Name</>;
+                return <>Field Description</>;
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("lastName")}</div>,
+            size: 150,
+            cell: ({ row }) => <div className="lowercase">{row.getValue("FieldDesc")}</div>,
         },
         {
-            accessorKey: "age",
-            header: "Age",
-            cell: ({ row }) => <div className="capitalize">{row.getValue("age")}</div>,
+            accessorKey: "FieldAcres",
+            header: "FieldAcres",
+            size: 50,
+            cell: ({ row }) => <div className="capitalize">{row.getValue("FieldAcres")}</div>,
         },
         {
-            accessorKey: "visits",
-            header: "visits",
-            cell: ({ row }) => <div className="capitalize">{row.getValue("visits")}</div>,
+            accessorKey: "IrrigAcres",
+            header: "IrrigAcres",
+            size: 50,
+            cell: ({ row }) => <div className="capitalize">{row.getValue("IrrigAcres")}</div>,
         },
         // {
         //     accessorKey: "status",
@@ -195,20 +65,62 @@ const Field = () => {
         //     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
         // },
         {
-            accessorKey: "progress",
-            header: "Progress",
-            cell: ({ row }) => <div className="capitalize">{row.getValue("progress")}</div>,
+            accessorKey: "StandbyAcr",
+            header: "StandbyAcr",
+            size: 50,
+            cell: ({ row }) => <div>{row.getValue("StandbyAcr")}</div>,
+        },
+        {
+            accessorKey: "ParcelID",
+            header: "ParcelID",
+            size: 200,
+            cell: ({ row }) => <div>{row.getValue("ParcelID")}</div>,
+        },
+        {
+            accessorKey: "VolRateAdj",
+            header: "VolRateAdj",
+            size: 50,
+            cell: ({ row }) => <div>{row.getValue("VolRateAdj")}</div>,
+        },
+        {
+            accessorKey: "ActiveDate",
+            header: "Active Date",
+            size: 100,
+            cell: ({ row }) => <div>{dayjs(row.getValue("ActiveDate")).format("MM/DD/YYYY")}</div>,
+        },
+        {
+            accessorKey: "InactiveDa",
+            header: "Inactive Date",
+            size: 100,
+            cell: ({ row }) => <div>{dayjs(row.getValue("InactiveDa")).format("MM/DD/YYYY")}</div>,
+        },
+        {
+            accessorKey: "ActiveFlag",
+            header: "Active status ",
+            cell: ({ row }) => <div>{row.getValue("ActiveFlag")}</div>,
+        },
+        {
+            accessorKey: "unq_fld_id",
+            header: "Unique Flag Id",
+            cell: ({ row }) => <div>{row.getValue("unq_fld_id")}</div>,
+        },
+        {
+            accessorKey: "AreaAC",
+            header: "Area (Ac)",
+            cell: ({ row }) => <div>{row.getValue("AreaAC")}</div>,
         },
         {
             id: "actions",
             header: "Action",
+            size: 50,
             cell: ({ row }) => (
-                <button
-                    className="hover:bg-slate-500"
-                    onClick={() => console.log(row.original)}
+                <Button
+                    variant="ghost"
+                    className="h-8 w-8 p-0"
                 >
-                    Action
-                </button>
+                    <span className="sr-only">Open menu</span>
+                    <MoreVertical />
+                </Button>
             ),
             meta: {
                 className: "sticky right-0 !z-9 !bg-slateLight-100 dark:!bg-slateLight-950 ",

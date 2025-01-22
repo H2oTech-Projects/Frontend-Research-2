@@ -5,3 +5,18 @@ export type MapTableTypes<T> = {
     columns: ColumnDef<T>[];
     setPosition?: null | Function;
 };
+export type DummyDataType = {
+    district?: string;
+    FieldID?: string;
+    FieldDesc?: string;
+    FieldAcres?: number;
+    IrrigAcres?: number;
+    StandbyAcr?: number;
+    ParcelID?: string;
+    VolRateAdj?: number;
+    ActiveDate?: string; // ISO Date format
+    InactiveDa?: string; // ISO Date format
+    ActiveFlag?: string;
+    unq_fld_id?: number;
+    AreaAC?: number;
+};
