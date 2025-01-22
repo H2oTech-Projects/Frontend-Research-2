@@ -46,6 +46,10 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                                         // style={{
                                         //     width: "400px !important", // Dynamically set width
                                         // }}
+                                        style={{
+                                            minWidth: header.column.columnDef.size,
+                                            maxWidth: header.column.columnDef.size,
+                                        }}
                                     >
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
@@ -72,9 +76,10 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                                                         cell.column.columnDef.meta?.className ?? ""
                                                     } `}
                                                     key={cell.id}
-                                                    // style={{
-                                                    //     width: cell.column.getSize(), // Dynamically set width
-                                                    // }}
+                                                    style={{
+                                                        minWidth: cell.column.columnDef.size,
+                                                        maxWidth: cell.column.columnDef.size,
+                                                    }}
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
@@ -83,6 +88,10 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                                                     // @ts-ignore
                                                     onClick={() => setPosition(row?.original?.center)} //  we added this on click event to set center in map
                                                     key={cell.id}
+                                                    style={{
+                                                        minWidth: cell.column.columnDef.size,
+                                                        maxWidth: cell.column.columnDef.size,
+                                                    }}
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>

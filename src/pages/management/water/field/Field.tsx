@@ -47,19 +47,19 @@ const Field = () => {
             header: () => {
                 return <>Field Description</>;
             },
-            size: 150,
+            size: 300,
             cell: ({ row }) => <div className="lowercase">{row.getValue("FieldDesc")}</div>,
         },
         {
             accessorKey: "FieldAcres",
             header: "FieldAcres",
-            size: 50,
+            size: 100,
             cell: ({ row }) => <div className="capitalize">{row.getValue("FieldAcres")}</div>,
         },
         {
             accessorKey: "IrrigAcres",
             header: "IrrigAcres",
-            size: 50,
+            size: 100,
             cell: ({ row }) => <div className="capitalize">{row.getValue("IrrigAcres")}</div>,
         },
         // {
@@ -70,31 +70,31 @@ const Field = () => {
         {
             accessorKey: "StandbyAcr",
             header: "StandbyAcr",
-            size: 50,
+            size: 100,
             cell: ({ row }) => <div>{row.getValue("StandbyAcr")}</div>,
         },
         {
             accessorKey: "ParcelID",
             header: "ParcelID",
-            size: 200,
+            size: 300,
             cell: ({ row }) => <div>{row.getValue("ParcelID")}</div>,
         },
         {
             accessorKey: "VolRateAdj",
             header: "VolRateAdj",
-            size: 50,
+            size: 100,
             cell: ({ row }) => <div>{row.getValue("VolRateAdj")}</div>,
         },
         {
             accessorKey: "ActiveDate",
             header: "Active Date",
-            size: 100,
+            size: 150,
             cell: ({ row }) => <div>{dayjs(row.getValue("ActiveDate")).format("MM/DD/YYYY")}</div>,
         },
         {
             accessorKey: "InactiveDa",
             header: "Inactive Date",
-            size: 100,
+            size: 150,
             cell: ({ row }) => <div>{dayjs(row.getValue("InactiveDa")).format("MM/DD/YYYY")}</div>,
         },
         {
@@ -114,7 +114,7 @@ const Field = () => {
         },
         {
             id: "actions",
-            header: "Action",
+            header: "",
             size: 50,
             cell: ({ row }) => (
                 <Button
