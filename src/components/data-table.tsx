@@ -34,7 +34,7 @@ const getCommonPinningStyles = (column: Column<Person>, left: {}, right: {}): CS
     opacity: isPinned ? 1 : 1,
     position: isPinned ? 'sticky' : 'relative',
     zIndex: isPinned ? 1 : 0,
-    borderBottom: '1px solid #a13232'
+    borderBottom: '.5px solid rgb(148 163 184)'
   }
 }
 
@@ -101,9 +101,7 @@ function TanSackTable() {
     <div>
       <div className="table-container">
         <table
-          style={{
-            width: '100%'
-          }}
+          className="w-full"
         >
           <thead className="sticky top-0 z-[100]">
             {table.getHeaderGroups().map(headerGroup => (
@@ -117,7 +115,7 @@ function TanSackTable() {
                       colSpan={header.colSpan}
                       //IMPORTANT: This is where the magic happens!
                       style={{ ...getCommonPinningStyles(column, left, right), top: '0px', paddingRight: '20px', paddingLeft: '20px' }}
-                      className={`top-1 ${column.id}`}
+                      className={`top-1 ${column.id} bg-[#16599A] text-white`}
                     >
                       <div className="whitespace-nowrap">
                         {header.isPlaceholder
@@ -127,7 +125,7 @@ function TanSackTable() {
                               header.getContext()
                             )}{' '}
                         {/* Demo getIndex behavior */}
-                        {column.getIndex(column.getIsPinned() || 'center')}
+                        {/* {column.getIndex(column.getIsPinned() || 'center')} */}
                       </div>
                       {!header.isPlaceholder && header.column.getCanPin() && (
                         <div className="flex gap-1 justify-center">
@@ -192,7 +190,7 @@ function TanSackTable() {
                       key={cell.id}
                       //IMPORTANT: This is where the magic happens!
                       style={{ ...getCommonPinningStyles(column, left, right) }}
-                      className="truncate ... text-center"
+                      className="truncate ... text-center p-6"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
