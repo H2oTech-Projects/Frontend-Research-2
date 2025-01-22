@@ -25,7 +25,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
 
     return (
         <div className="table-container flex flex-col">
-            <div className="h-[500px]">
+            <div className="h-[500px] 2xl:h-[840px]">
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (

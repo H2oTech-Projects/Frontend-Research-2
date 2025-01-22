@@ -146,7 +146,7 @@ const Field = () => {
                 </div>
                 <div className="flex flex-grow">
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                        <div className="relative h-[558px] w-full border">
+                        <div className="relative h-[558px] w-full border 2xl:h-[900px]">
                             {/* <Table>
                                 <TableHeader>
                                     {table.getHeaderGroups().map((headerGroup) => (
@@ -199,7 +199,7 @@ const Field = () => {
                     </div>
 
                     <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-                        <div className="relative flex h-[558px] w-full bg-slate-500">
+                        <div className="relative flex h-[558px] w-full bg-slate-500 2xl:h-[900px]">
                             {/* <MapContainer
                                 center={position}
                                 zoom={12}
