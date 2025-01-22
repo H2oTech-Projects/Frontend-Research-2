@@ -9,14 +9,14 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { makeData, Person } from './makeData'
+import { makeData, Person, FieldData, tableData, tableColumns } from './makeData'
 import { faker } from '@faker-js/faker'
 
 //These are the important styles to make sticky column pinning work!
 //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
 //View the index.css file for more needed styles such as border-collapse: separate
 let leftColumnsCalculate = {}
-const getCommonPinningStyles = (column: Column<Person>, left: {}): CSSProperties => {
+const getCommonPinningStyles = (column: Column<Person>, left: {}, right: {}): CSSProperties => {
   const isPinned = column.getIsPinned()
   const isLastLeftPinnedColumn =
     isPinned === 'left' && column.getIsLastColumn('left')
@@ -30,66 +30,30 @@ const getCommonPinningStyles = (column: Column<Person>, left: {}): CSSProperties
         ? '4px 0 4px -4px gray inset'
         : undefined,
     left: isPinned === 'left' ? `${left[column.id]}px` : undefined,
-    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
-    opacity: isPinned ? 0.95 : 1,
+    right: isPinned === 'right' ? `${right[column.id]}px` : undefined,
+    opacity: isPinned ? 1 : 1,
     position: isPinned ? 'sticky' : 'relative',
     zIndex: isPinned ? 1 : 0,
+    borderBottom: '1px solid #a13232'
   }
 }
 
-const defaultColumns: ColumnDef<Person>[] = [
-  {
-    accessorKey: 'firstName',
-    id: 'firstName',
-    header: 'First Name',
+const defaultColumns: ColumnDef<FieldData>[] = tableColumns.map(column => {
+  return {
+    accessorKey: column,
+    id: column,
+    header: column,
+    //header: () => <span>Last Name</span>,
     cell: info => info.getValue(),
-    footer: props => props.column.id,
-    size: 180,
-  },
-  {
-    accessorFn: row => row.lastName,
-    id: 'lastName',
-    cell: info => info.getValue(),
-    header: () => <span>Last Name</span>,
-    footer: props => props.column.id,
-    size: 180,
-  },
-  {
-    accessorKey: 'age',
-    id: 'age',
-    header: 'Age',
-    footer: props => props.column.id,
-    size: 180,
-  },
-  {
-    accessorKey: 'visits',
-    id: 'visits',
-    header: 'Visits',
-    footer: props => props.column.id,
-    size: 180,
-  },
-  {
-    accessorKey: 'status',
-    id: 'status',
-    header: 'Status',
-    footer: props => props.column.id,
-    size: 180,
-  },
-  {
-    accessorKey: 'progress',
-    id: 'progress',
-    header: 'Profile Progress',
-    footer: props => props.column.id,
-    size: 180,
-  },
-]
-
+  }
+});
 function TanSackTable() {
-  const [data, setData] = React.useState(() => makeData(30))
+  const [data, setData] = React.useState(tableData)
   const [columns] = React.useState(() => [...defaultColumns])
   const [reCalLeft, setReCalLeft] = React.useState(false);
   const [left, setLeft] = React.useState({})
-  const rerender = () => setData(() => makeData(30))
+  const [right, setRight] = React.useState({})
+  //const rerender = () => setData(() => makeData(30))
 
   const table = useReactTable({
     data,
@@ -103,15 +67,28 @@ function TanSackTable() {
 
   useEffect(() => {
     let leftPin = 0;
+    let rightPin = 0;
+    let rightPinnedColumns: any[] = [];
     let columnLeftMapper = {};
+    let columnRightMapper = {};
     table.getHeaderGroups()[0].headers.map(header =>{
       const { column } = header
-      if (column.getIsPinned()) {
+      if (column.getIsPinned() == 'left') {
         columnLeftMapper[column.id] = leftPin;
         leftPin = leftPin + $(`.${column.id}`).innerWidth();
       }
+      if (column.getIsPinned() == 'right') {
+        rightPinnedColumns.push(column)
+      }
     })
+    rightPinnedColumns.reverse().forEach(column => {
+      columnRightMapper[column.id] = rightPin;
+      rightPin = rightPin + $(`.${column.id}`).innerWidth();
+    });
+    console.log('lkjasdflkj')
+    console.log(columnRightMapper)
     setLeft(columnLeftMapper)
+    setRight(columnRightMapper)
 }, [reCalLeft]);
 
   const randomizeColumns = () => {
@@ -139,7 +116,7 @@ function TanSackTable() {
                       key={header.id}
                       colSpan={header.colSpan}
                       //IMPORTANT: This is where the magic happens!
-                      style={{ ...getCommonPinningStyles(column, left) }}
+                      style={{ ...getCommonPinningStyles(column, left, right), top: '0px', paddingRight: '20px', paddingLeft: '20px' }}
                       className={`top-1 ${column.id}`}
                     >
                       <div className="whitespace-nowrap">
@@ -214,7 +191,8 @@ function TanSackTable() {
                     <td
                       key={cell.id}
                       //IMPORTANT: This is where the magic happens!
-                      style={{ ...getCommonPinningStyles(column, left) }}
+                      style={{ ...getCommonPinningStyles(column, left, right) }}
+                      className="truncate ... text-center"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
