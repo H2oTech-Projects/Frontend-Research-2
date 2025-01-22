@@ -1,5 +1,5 @@
 import { ChevronsLeft, MoreVertical } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
 import { ColumnDef, ColumnMeta } from "@tanstack/react-table";
@@ -9,6 +9,7 @@ import LeafletMap from "@/components/LeafletMap";
 import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@uidotdev/usehooks";
 type Person = {
     firstName: string;
     lastName: string;
@@ -20,6 +21,8 @@ type Person = {
 };
 
 const Field = () => {
+    const isHeightBig = useMediaQuery("(min-height: 768px)");
+
     const [collapse, setCollapse] = useState("default");
     const [position, setPosition] = useState<[number, number]>([36.7783, -119.4179]);
 
@@ -146,7 +149,7 @@ const Field = () => {
                 </div>
                 <div className="flex flex-grow">
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                        <div className="relative h-[558px] w-full border 2xl:h-[900px]">
+                        <div className={cn("relative w-full border", isHeightBig ? "h-[900px]" : "h-[558px]")}>
                             {/* <Table>
                                 <TableHeader>
                                     {table.getHeaderGroups().map((headerGroup) => (
@@ -199,7 +202,7 @@ const Field = () => {
                     </div>
 
                     <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-                        <div className="relative flex h-[558px] w-full bg-slate-500 2xl:h-[900px]">
+                        <div className={cn("relative flex h-[558px] w-full", isHeightBig ? "h-[900px]" : "h-[558px]")}>
                             {/* <MapContainer
                                 center={position}
                                 zoom={12}

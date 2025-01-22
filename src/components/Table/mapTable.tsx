@@ -4,8 +4,10 @@ import { MapTableTypes } from "@/types/tableTypes";
 import { useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableTypes<T>) => {
+    const isHeightBig = useMediaQuery("(min-height: 768px)");
     const [data, _setDate] = useState([...defaultData]);
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -25,7 +27,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
 
     return (
         <div className="table-container flex flex-col">
-            <div className="h-[500px] 2xl:h-[840px]">
+            <div className={cn(isHeightBig ? "h-[840px]" : "h-[500px]")}>
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
