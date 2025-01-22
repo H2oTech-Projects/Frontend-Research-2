@@ -1,4 +1,5 @@
-import React, { CSSProperties } from 'react'
+import React, { CSSProperties, useEffect } from 'react'
+import $ from 'jquery';
 import './index.css'
 
 import {
@@ -14,7 +15,8 @@ import { faker } from '@faker-js/faker'
 //These are the important styles to make sticky column pinning work!
 //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
 //View the index.css file for more needed styles such as border-collapse: separate
-const getCommonPinningStyles = (column: Column<Person>): CSSProperties => {
+let leftColumnsCalculate = {}
+const getCommonPinningStyles = (column: Column<Person>, left: {}): CSSProperties => {
   const isPinned = column.getIsPinned()
   const isLastLeftPinnedColumn =
     isPinned === 'left' && column.getIsLastColumn('left')
@@ -27,7 +29,7 @@ const getCommonPinningStyles = (column: Column<Person>): CSSProperties => {
       : isFirstRightPinnedColumn
         ? '4px 0 4px -4px gray inset'
         : undefined,
-    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+    left: isPinned === 'left' ? `${left[column.id]}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
     opacity: isPinned ? 0.95 : 1,
     position: isPinned ? 'sticky' : 'relative',
@@ -42,7 +44,7 @@ const defaultColumns: ColumnDef<Person>[] = [
     header: 'First Name',
     cell: info => info.getValue(),
     footer: props => props.column.id,
-    //size: 180,
+    size: 180,
   },
   {
     accessorFn: row => row.lastName,
@@ -50,42 +52,43 @@ const defaultColumns: ColumnDef<Person>[] = [
     cell: info => info.getValue(),
     header: () => <span>Last Name</span>,
     footer: props => props.column.id,
-    // size: 180,
+    size: 180,
   },
   {
     accessorKey: 'age',
     id: 'age',
     header: 'Age',
     footer: props => props.column.id,
-    // size: 180,
+    size: 180,
   },
   {
     accessorKey: 'visits',
     id: 'visits',
     header: 'Visits',
     footer: props => props.column.id,
-    // size: 180,
+    size: 180,
   },
   {
     accessorKey: 'status',
     id: 'status',
     header: 'Status',
     footer: props => props.column.id,
-    // size: 180,
+    size: 180,
   },
   {
     accessorKey: 'progress',
     id: 'progress',
     header: 'Profile Progress',
     footer: props => props.column.id,
-    // size: 180,
+    size: 180,
   },
 ]
 
 function TanSackTable() {
   const [data, setData] = React.useState(() => makeData(30))
   const [columns] = React.useState(() => [...defaultColumns])
-
+  const [reCalLeft, setReCalLeft] = React.useState(false);
+  const [left, setLeft] = React.useState({})
   const rerender = () => setData(() => makeData(30))
 
   const table = useReactTable({
@@ -97,6 +100,19 @@ function TanSackTable() {
     debugColumns: true,
     columnResizeMode: 'onChange',
   })
+
+  useEffect(() => {
+    let leftPin = 0;
+    let columnLeftMapper = {};
+    table.getHeaderGroups()[0].headers.map(header =>{
+      const { column } = header
+      if (column.getIsPinned()) {
+        columnLeftMapper[column.id] = leftPin;
+        leftPin = leftPin + $(`.${column.id}`).innerWidth();
+      }
+    })
+    setLeft(columnLeftMapper)
+}, [reCalLeft]);
 
   const randomizeColumns = () => {
     table.setColumnOrder(
@@ -123,8 +139,8 @@ function TanSackTable() {
                       key={header.id}
                       colSpan={header.colSpan}
                       //IMPORTANT: This is where the magic happens!
-                      style={{ ...getCommonPinningStyles(column) }}
-                      className="top-0"
+                      style={{ ...getCommonPinningStyles(column, left) }}
+                      className={`top-1 ${column.id}`}
                     >
                       <div className="whitespace-nowrap">
                         {header.isPlaceholder
@@ -143,6 +159,7 @@ function TanSackTable() {
                               className="border rounded px-2"
                               onClick={() => {
                                 header.column.pin('left')
+                                setReCalLeft(!reCalLeft)
                               }}
                             >
                               {'<='}
@@ -153,6 +170,7 @@ function TanSackTable() {
                               className="border rounded px-2"
                               onClick={() => {
                                 header.column.pin(false)
+                                setReCalLeft(!reCalLeft)
                               }}
                             >
                               X
@@ -163,6 +181,7 @@ function TanSackTable() {
                               className="border rounded px-2"
                               onClick={() => {
                                 header.column.pin('right')
+                                setReCalLeft(!reCalLeft)
                               }}
                             >
                               {'=>'}
@@ -195,7 +214,7 @@ function TanSackTable() {
                     <td
                       key={cell.id}
                       //IMPORTANT: This is where the magic happens!
-                      style={{ ...getCommonPinningStyles(column) }}
+                      style={{ ...getCommonPinningStyles(column, left) }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
