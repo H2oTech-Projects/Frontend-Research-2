@@ -80,14 +80,19 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                                                         minWidth: cell.column.columnDef.size,
                                                         maxWidth: cell.column.columnDef.size,
                                                     }}
-                                                    onClick={() => {setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
+                                                    // @ts-ignore
+                                                    onClick={() => {// @ts-ignore
+                                                      setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
+                                                    // @ts-ignore
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
                                             ) : (
                                                 <TableCell // this TableCell is not from Action column
                                                     // @ts-ignore
-                                                    onClick={() => {setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
+                                                    onClick={() => {
+                                                      // @ts-ignore
+                                                      setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
                                                     key={cell.id}
                                                     style={{
                                                         minWidth: cell.column.columnDef.size,
@@ -102,7 +107,11 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                                 ) : (
                                     <TableRow
                                       key={row.id}
-                                      onClick={() => {setPosition([row.original.center_latitude, row.original.center_longitude]); setZoomLevel(15);}} //  we added this on click event to set center in map
+                                      onClick={() => {
+                                        // @ts-ignore
+                                        setPosition([row.original.center_latitude, row.original.center_longitude]);
+                                        // @ts-ignore
+                                        setZoomLevel(15);}} //  we added this on click event to set center in map
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell
