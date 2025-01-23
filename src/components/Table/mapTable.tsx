@@ -27,7 +27,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
 
     return (
         <div className="table-container flex flex-col">
-            <div className={cn(isHeightBig ? "h-[840px]" : "h-[500px]")}>
+            <div className="h-[calc(100vh-220px)]">
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -81,8 +81,10 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                                                         maxWidth: cell.column.columnDef.size,
                                                     }}
                                                     // @ts-ignore
-                                                    onClick={() => {// @ts-ignore
-                                                      setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
+                                                    onClick={() => {
+                                                        // @ts-ignore
+                                                        setPosition([row.original.center_latitude, row.original.center_longitude]);
+                                                    }} //  we added this on click event to set center in map
                                                     // @ts-ignore
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -91,8 +93,9 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                                                 <TableCell // this TableCell is not from Action column
                                                     // @ts-ignore
                                                     onClick={() => {
-                                                      // @ts-ignore
-                                                      setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
+                                                        // @ts-ignore
+                                                        setPosition([row.original.center_latitude, row.original.center_longitude]);
+                                                    }} //  we added this on click event to set center in map
                                                     key={cell.id}
                                                     style={{
                                                         minWidth: cell.column.columnDef.size,
@@ -106,12 +109,13 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                                     </TableRow>
                                 ) : (
                                     <TableRow
-                                      key={row.id}
-                                      onClick={() => {
-                                        // @ts-ignore
-                                        setPosition([row.original.center_latitude, row.original.center_longitude]);
-                                        // @ts-ignore
-                                        setZoomLevel(15);}} //  we added this on click event to set center in map
+                                        key={row.id}
+                                        onClick={() => {
+                                            // @ts-ignore
+                                            setPosition([row.original.center_latitude, row.original.center_longitude]);
+                                            // @ts-ignore
+                                            setZoomLevel(15);
+                                        }} //  we added this on click event to set center in map
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell

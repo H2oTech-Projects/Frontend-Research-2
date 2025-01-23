@@ -151,7 +151,7 @@ const Field = () => {
                 </div>
                 <div className="flex flex-grow">
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                        <div className={cn("relative w-full border", isHeightBig ? "h-[900px]" : "h-[558px]")}>
+                        <div className={cn("relative h-[calc(100vh-160px)] w-full border")}>
                             {/* <Table>
                                 <TableHeader>
                                     {table.getHeaderGroups().map((headerGroup) => (
@@ -205,7 +205,10 @@ const Field = () => {
                     </div>
 
                     <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-                        <div className={cn("relative flex h-[558px] w-full", isHeightBig ? "h-[900px]" : "h-[558px]")} id="map">
+                        <div
+                            className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+                            id="map"
+                        >
                             {/* <MapContainer
                                 center={position}
                                 zoom={12}
