@@ -85,8 +85,6 @@ function TanSackTable() {
       columnRightMapper[column.id] = rightPin;
       rightPin = rightPin + $(`.${column.id}`).innerWidth();
     });
-    console.log('lkjasdflkj')
-    console.log(columnRightMapper)
     setLeft(columnLeftMapper)
     setRight(columnRightMapper)
 }, [reCalLeft]);
@@ -190,7 +188,7 @@ function TanSackTable() {
                       key={cell.id}
                       //IMPORTANT: This is where the magic happens!
                       style={{ ...getCommonPinningStyles(column, left, right) }}
-                      className="truncate ... text-center p-6"
+                      className="truncate ... text-center p-4"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
