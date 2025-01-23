@@ -4,6 +4,7 @@ export type MapTableTypes<T> = {
     defaultData: T[];
     columns: ColumnDef<T>[];
     setPosition?: null | Function;
+    setZoomLevel?: null | Function;
 };
 export type DummyDataType = {
     district?: string;
@@ -18,5 +19,7 @@ export type DummyDataType = {
     InactiveDa?: string; // ISO Date format
     ActiveFlag?: string;
     unq_fld_id?: number;
+    center_latitude?: number;
+    center_longitude?: number;
     AreaAC?: number;
 };

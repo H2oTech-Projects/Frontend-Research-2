@@ -10,6 +10,8 @@ import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@uidotdev/usehooks";
+import swmcFields from "../../../../geojson/SMWC_Fields.json";
+
 type Person = {
     firstName: string;
     lastName: string;
@@ -24,8 +26,8 @@ const Field = () => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
 
     const [collapse, setCollapse] = useState("default");
-    const [position, setPosition] = useState<[number, number]>([36.7783, -119.4179]);
-
+    const [position, setPosition] = useState<[number, number]>([38.86902846413033, -121.729324818604]);
+    const [zoomLevel, setZoomLevel] = useState(10);
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
@@ -190,6 +192,7 @@ const Field = () => {
                                 defaultData={defaultData}
                                 columns={columns}
                                 setPosition={setPosition as Function}
+                                setZoomLevel={setZoomLevel as Function}
                             />
                             {/* <table></table> */}
                             <button
@@ -202,7 +205,7 @@ const Field = () => {
                     </div>
 
                     <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-                        <div className={cn("relative flex h-[558px] w-full", isHeightBig ? "h-[900px]" : "h-[558px]")}>
+                        <div className={cn("relative flex h-[558px] w-full", isHeightBig ? "h-[900px]" : "h-[558px]")} id="map">
                             {/* <MapContainer
                                 center={position}
                                 zoom={12}
@@ -220,7 +223,9 @@ const Field = () => {
                             </MapContainer> */}
                             <LeafletMap
                                 position={position}
+                                zoom={zoomLevel}
                                 collapse={collapse}
+                                geojson={swmcFields}
                             />
                             <button
                                 className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"

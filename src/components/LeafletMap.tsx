@@ -1,50 +1,99 @@
-import { MapContainer, TileLayer, useMap, Polygon, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Polygon, Popup, GeoJSON } from "react-leaflet";
 import CustomZoomControl from "./MapController";
 import { useEffect } from "react";
-import DummyMapData from "../../SMWC_Fields[2].json";
+import L, { divIcon } from "leaflet";
+import $ from "jquery";
+
 type LeafletMapTypes = {
+    zoom: number,
     position: [number, number];
     collapse: string;
+    geojson: any
 };
 
-const LeafletMap = ({ position, collapse }: LeafletMapTypes) => {
+const LeafletMap = ({ zoom, position, collapse, geojson }: LeafletMapTypes) => {
     const MapHandler = () => {
         const map = useMap();
 
         useEffect(() => {
             map.invalidateSize(); // Force the map to resize
             map.setView(position); // Force the map to recenter
-        }, [collapse, position]);
+            map.setZoom(zoom);
+        }, [collapse, position, zoom]);
 
         return null;
     };
+
     return (
         <MapContainer
             center={position}
-            zoom={12}
+            zoom={zoom || 10}
             scrollWheelZoom={true}
             zoomControl={false} // Disable default zoom control
-            minZoom={3}
+            minZoom={6}
             style={{ height: "100%", width: "100%", overflow: "hidden" }}
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {DummyMapData?.features?.map((feature: any) => {
-                return (
-                    <Polygon
-                        key={feature?.properties?.FieldID}
-                        positions={feature?.geometry?.coordinates[0]}
-                        color="black"
-                        fillColor="green"
-                        fillOpacity={0.5}
-                        weight={5}
-                    >
-                        <Popup>Click for more information</Popup>
-                    </Polygon>
-                );
-            })}
+            {
+              <GeoJSON
+                pathOptions={{
+                  //color: "#9370DB",
+                  //fillColor: "lightblue",
+                  fillOpacity: 0,
+                  opacity: 1,
+                  weight: 1.5
+                }}
+                onEachFeature={(feature, layer) => {
+                  layer.on({
+                    mouseover: function (e) {
+                      const auxLayer = e.target;
+                      auxLayer.setStyle({
+                        weight: 4,
+                        //color: "#800080"
+                      });
+                      var popup = $("<div></div>", {
+                        id: "popup-" + auxLayer.feature.properties.FieldID,
+                        css: {
+                            position: "absolute",
+                            height: "50px",
+                            width: "150px",
+                            top: "0px",
+                            left: "0px",
+                            zIndex: 1002,
+                            backgroundColor: "white",
+                            //padding: "200px",
+                            border: "1px solid #ccc"
+                        }
+                    });
+                    // Insert a headline into that popup
+                    var hed = $("<div></div>", {
+                        text: "FieldID: " + auxLayer.feature.properties.FieldID,
+                        css: {fontSize: "16px", marginBottom: "3px"}
+                    }).appendTo(popup);
+                    // Add the popup to the map
+                    popup.appendTo("#map");
+                    },
+                    mouseout: function (e) {
+                      const auxLayer = e.target;
+                      auxLayer.setStyle({
+                        weight: 1,
+                        //color: "#9370DB",
+                        //fillColor: "lightblue",
+                        dashArray: "",
+                        fillOpacity: 0,
+                        opacity: 1
+                      });
+                      $("#popup-" + auxLayer.feature.properties.FieldID).remove();
+                    }
+
+                  });
+                }}
+                data={geojson}
+              />
+            }
             <CustomZoomControl />
             <MapHandler />
         </MapContainer>

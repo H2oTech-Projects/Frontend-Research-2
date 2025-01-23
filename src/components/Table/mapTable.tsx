@@ -6,7 +6,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { cn } from "@/utils/cn";
 import { useMediaQuery } from "@uidotdev/usehooks";
 
-const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableTypes<T>) => {
+const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel = null }: MapTableTypes<T>) => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
     const [data, _setDate] = useState([...defaultData]);
     const [pagination, setPagination] = useState<PaginationState>({
@@ -61,7 +61,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) =>
-                                // @ts-ignore it is to check whether there is center property in Data element object
+                                // @ts-ignore it is to check whether there is center property in Data element object}
                                 setPosition !== null && row?.original?.center ? (
                                     <TableRow
                                         key={row.id}
@@ -80,13 +80,14 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                                                         minWidth: cell.column.columnDef.size,
                                                         maxWidth: cell.column.columnDef.size,
                                                     }}
+                                                    onClick={() => {setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
                                             ) : (
                                                 <TableCell // this TableCell is not from Action column
                                                     // @ts-ignore
-                                                    onClick={() => setPosition(row?.original?.center)} //  we added this on click event to set center in map
+                                                    onClick={() => {setPosition([row.original.center_latitude, row.original.center_longitude])}} //  we added this on click event to set center in map
                                                     key={cell.id}
                                                     style={{
                                                         minWidth: cell.column.columnDef.size,
@@ -99,7 +100,10 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null }: MapTableType
                                         )}
                                     </TableRow>
                                 ) : (
-                                    <TableRow key={row.id}>
+                                    <TableRow
+                                      key={row.id}
+                                      onClick={() => {setPosition([row.original.center_latitude, row.original.center_longitude]); setZoomLevel(15);}} //  we added this on click event to set center in map
+                                    >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell
                                                 className={`${
