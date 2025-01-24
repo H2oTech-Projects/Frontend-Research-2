@@ -1,4 +1,4 @@
-import { ArrowUpDown, ChevronsLeft, Eye, FilePenLine, MoreVertical, Trash2 } from "lucide-react";
+import { ArrowUpDown, ChevronsLeft, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
@@ -20,16 +20,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
-
-type Person = {
-    firstName: string;
-    lastName: string;
-    age: number;
-    visits: number;
-    status: string;
-    progress: number;
-    center?: [number, number];
-};
 
 const Field = () => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
@@ -62,7 +52,7 @@ const Field = () => {
                 );
             },
 
-            size: 50, // this size value is in px
+            size: 100, // this size value is in px
             cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
         },
         {
@@ -294,52 +284,37 @@ const Field = () => {
             <div className="pageContain flex flex-grow flex-col gap-3">
                 <div className="flex justify-between">
                     <div className="flex gap-2">
-                        <div className="search">
-                            <input type="text" />
+                        <div className="input h-7 w-40">
+                            <Search
+                                size={16}
+                                className="text-slate-300"
+                            />
+                            <input
+                                type="text"
+                                name="search"
+                                id="search"
+                                placeholder="Search..."
+                                className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                            />
                         </div>
-                        <button>Filter</button>
+                        <Button
+                            variant={"default"}
+                            className="h-7 w-7 bg-royalBlue"
+                        >
+                            <Filter />
+                        </Button>
                     </div>
-                    <button>Add Field</button>
+                    <Button
+                        variant={"default"}
+                        className="h-7 w-auto bg-royalBlue px-2 text-xs"
+                    >
+                        <Plus size={4} />
+                        Add Field
+                    </Button>
                 </div>
                 <div className="flex flex-grow">
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                        <div className={cn("relative h-[calc(100vh-156px)] w-full")}>
-                            {/* <Table>
-                                <TableHeader>
-                                    {table.getHeaderGroups().map((headerGroup) => (
-                                        <TableRow key={headerGroup.id}>
-                                            {headerGroup.headers.map((header) => (
-                                                <TableHead key={header.id}>
-                                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                                </TableHead>
-                                            ))}
-                                        </TableRow>
-                                    ))}
-                                </TableHeader>
-                                <TableBody>
-                                    {table.getRowModel().rows?.length ? (
-                                        table.getRowModel().rows.map((row) => (
-                                            <TableRow
-                                                key={row.id}
-                                                data-state={row.getIsSelected() && "selected"}
-                                            >
-                                                {row.getVisibleCells().map((cell) => (
-                                                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                                                ))}
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell
-                                                colSpan={columns.length}
-                                                className="h-24 text-center"
-                                            >
-                                                No results.
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table> */}
+                        <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
                             <MapTable
                                 defaultData={defaultData}
                                 columns={columns}
@@ -358,24 +333,9 @@ const Field = () => {
 
                     <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
                         <div
-                            className={cn("relative flex h-[calc(100vh-156px)] w-full")}
+                            className={cn("relative flex h-[calc(100vh-160px)] w-full")}
                             id="map"
                         >
-                            {/* <MapContainer
-                                center={position}
-                                zoom={12}
-                                scrollWheelZoom={true}
-                                zoomControl={false} // Disable default zoom control
-                                minZoom={5}
-                                style={{ height: "100%", width: "100%", overflow: "hidden" }}
-                            >
-                                <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                />
-                                <CustomZoomControl />
-                                <ResizeHandler />
-                            </MapContainer> */}
                             <LeafletMap
                                 position={position}
                                 zoom={zoomLevel}

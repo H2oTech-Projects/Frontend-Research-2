@@ -36,7 +36,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                     >
                         <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
                     </button>
-                    <div className="input !h-7">
+                    <div className="input !h-6 w-60">
                         <Search
                             size={16}
                             className="text-slate-300"
@@ -46,7 +46,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                             name="search"
                             id="search"
                             placeholder="Search..."
-                            className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                            className="w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
                         />
                     </div>
                 </div>
@@ -82,7 +82,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
             {isModalOpen && (
                 <div
                     ref={modalRef}
-                    className="absolute right-3 top-14 z-50 mt-2 flex w-52 flex-col gap-1 rounded-xl border-slate-900 bg-white p-1 shadow-lg dark:bg-slate-900 dark:text-slate-50"
+                    className="absolute right-3 top-9 z-50 mt-2 flex w-52 flex-col gap-1 rounded-xl border-slate-900 bg-white p-1 shadow-lg dark:bg-slate-900 dark:text-slate-50"
                 >
                     <button
                         className="flex w-full items-center gap-2 rounded-xl px-4 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-950"

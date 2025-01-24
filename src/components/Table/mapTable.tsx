@@ -37,13 +37,9 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
         },
     });
 
-    useEffect(() => {
-        console.log(sorting);
-    }, [sorting]);
-
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-950">
-            <div className="h-[calc(100vh-214px)]">
+            <div className="h-[calc(100vh-218px)]">
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
