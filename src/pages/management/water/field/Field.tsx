@@ -28,6 +28,8 @@ const Field = () => {
     const [collapse, setCollapse] = useState("default");
     const [position, setPosition] = useState<any>({center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: '' });
     const [zoomLevel, setZoomLevel] = useState(10);
+    const [searchText, setSearchText] = useState<String>('')
+    const [doFilter, setDoFilter] = useState<Boolean>(false)
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
@@ -43,6 +45,7 @@ const Field = () => {
             header: "Field ID",
             size: 50, // this size value is in px
             cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
+            //filterFn: 'includesString',
         },
         {
             accessorKey: "FieldDesc",
@@ -143,9 +146,18 @@ const Field = () => {
                 <div className="flex justify-between">
                     <div className="flex gap-2">
                         <div className="search">
-                            <input type="text" />
+                            <input
+                              type="text"
+                              value={String(searchText)}
+                              onChange={e => {
+                                setSearchText(String(e.target.value))
+                                if (!String(e.target.value)) {
+                                  setDoFilter(!doFilter)
+                                }
+                              }}
+                            />
                         </div>
-                        <button>Filter</button>
+                        <button onClick={() => setDoFilter(!doFilter)}>Filter</button>
                     </div>
                     <button>Add Field</button>
                 </div>
@@ -191,6 +203,8 @@ const Field = () => {
                             <MapTable
                                 defaultData={defaultData}
                                 columns={columns}
+                                doFilter={doFilter}
+                                filterValue={searchText}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
                             />
