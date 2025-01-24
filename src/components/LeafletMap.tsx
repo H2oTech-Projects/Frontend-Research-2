@@ -21,7 +21,7 @@ const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: 
         useEffect(() => {
             map.invalidateSize(); // Force the map to resize
             map.setView(center); // Force the map to recenter
-            map.setZoom(zoom);
+            //map.setZoom(zoom);
         }, [collapse, center, zoom]);
 
         return null;
@@ -72,7 +72,7 @@ const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: 
     return (
         <MapContainer
             center={center}
-            zoom={zoom || 10}
+            zoom={14}
             scrollWheelZoom={true}
             zoomControl={false} // Disable default zoom control
             minZoom={6}
