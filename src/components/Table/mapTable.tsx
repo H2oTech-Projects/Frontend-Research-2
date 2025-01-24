@@ -42,8 +42,8 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
     }, [sorting]);
 
     return (
-        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white dark:bg-slateLight-950">
-            <div className="h-[calc(100vh-220px)]">
+        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-950">
+            <div className="h-[calc(100vh-214px)]">
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -55,7 +55,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                                             `${
                                                 // @ts-ignore  this code helps to ignore types in certain line
                                                 header.column.columnDef.meta?.className ?? ""
-                                            } !bg-royalBlue !text-white dark:!bg-black`,
+                                            } !bg-royalBlue !text-white !transition-colors dark:!bg-black`,
                                             `!min-w-[${header?.getSize()}px]`,
                                         )}
                                         key={header.id}

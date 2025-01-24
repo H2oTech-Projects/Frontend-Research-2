@@ -19,6 +19,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import PageHeader from "@/components/PageHeader";
 
 type Person = {
     firstName: string;
@@ -279,17 +280,17 @@ const Field = () => {
                 </DropdownMenu>
             ),
             meta: {
-                className: "sticky right-0 !z-9 !bg-white dark:!bg-slateLight-950 ",
+                className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slateLight-950 ",
             },
         },
     ];
 
     return (
-        <div className="flex h-full flex-col gap-1 px-6 py-3">
-            <div className="flex gap-1 text-xs">
-                <Link to="">Management</Link>/<span>Field</span>
-            </div>
-            <div className="pageTitle text-lg font-normal text-black">Field</div>
+        <div className="flex h-full flex-col gap-1 px-4 pt-2">
+            <PageHeader
+                pageHeaderTitle="Field"
+                breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
+            />
             <div className="pageContain flex flex-grow flex-col gap-3">
                 <div className="flex justify-between">
                     <div className="flex gap-2">
@@ -302,7 +303,7 @@ const Field = () => {
                 </div>
                 <div className="flex flex-grow">
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                        <div className={cn("relative h-[calc(100vh-160px)] w-full shadow-md")}>
+                        <div className={cn("relative h-[calc(100vh-156px)] w-full")}>
                             {/* <Table>
                                 <TableHeader>
                                     {table.getHeaderGroups().map((headerGroup) => (
@@ -357,7 +358,7 @@ const Field = () => {
 
                     <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
                         <div
-                            className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+                            className={cn("relative flex h-[calc(100vh-156px)] w-full")}
                             id="map"
                         >
                             {/* <MapContainer
