@@ -25,9 +25,11 @@ const Field = () => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
 
     const [collapse, setCollapse] = useState("default");
-    const [position, setPosition] = useState<[number, number]>([38.86902846413033, -121.729324818604]);
+    const [position, setPosition] = useState<any>({center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: '' });
     const [zoomLevel, setZoomLevel] = useState(10);
     const [clickedField, setClickedField] = useState(null);
+    const [searchText, setSearchText] = useState<String>('')
+    const [doFilter, setDoFilter] = useState<Boolean>(false)
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
@@ -55,6 +57,7 @@ const Field = () => {
 
             size: 100, // this size value is in px
             cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
+            //filterFn: 'includesString',
         },
         {
             accessorKey: "FieldDesc",
@@ -296,11 +299,19 @@ const Field = () => {
                                 id="search"
                                 placeholder="Search..."
                                 className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                                value={String(searchText)}
+                                onChange={e => {
+                                  setSearchText(String(e.target.value))
+                                  if (!String(e.target.value)) {
+                                    setDoFilter(!doFilter)
+                                  }
+                                }}
                             />
                         </div>
                         <Button
                             variant={"default"}
                             className="h-7 w-7 bg-royalBlue"
+                            onClick={() => setDoFilter(!doFilter)}
                         >
                             <Filter />
                         </Button>
@@ -319,6 +330,8 @@ const Field = () => {
                             <MapTable
                                 defaultData={defaultData}
                                 columns={columns}
+                                doFilter={doFilter}
+                                filterValue={searchText}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
                                 setClickedField={setClickedField}

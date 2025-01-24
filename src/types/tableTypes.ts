@@ -3,6 +3,8 @@ import { ColumnDef } from "@tanstack/react-table";
 export type MapTableTypes<T> = {
     defaultData: T[];
     columns: ColumnDef<T>[];
+    doFilter: Boolean;
+    filterValue: String;
     setPosition?: null | Function;
     setZoomLevel?: null | Function;
     setClickedField?: null | Function;
