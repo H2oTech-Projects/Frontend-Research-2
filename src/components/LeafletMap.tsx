@@ -1,32 +1,76 @@
 import { MapContainer, TileLayer, useMap, Polygon, Popup, GeoJSON } from "react-leaflet";
 import CustomZoomControl from "./MapController";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import L, { divIcon } from "leaflet";
 import $ from "jquery";
 
 type LeafletMapTypes = {
     zoom: number,
-    position: [number, number];
+    position: any;
     collapse: string;
     geojson: any
 };
 
 const LeafletMap = ({ zoom, position, collapse, geojson }: LeafletMapTypes) => {
+    const {center} = position;
+    console.log(position);
     const MapHandler = () => {
         const map = useMap();
 
         useEffect(() => {
             map.invalidateSize(); // Force the map to resize
-            map.setView(position); // Force the map to recenter
+            map.setView(center); // Force the map to recenter
             map.setZoom(zoom);
-        }, [collapse, position, zoom]);
+        }, [collapse, center, zoom]);
 
         return null;
     };
 
+    const polygonEventHandlers = useMemo(
+      () => ({
+        mouseover(e: any) {
+          const { id } = e.target.options;
+          showInfo(id);
+        },
+        mouseout(e: any) {
+          const { id } = e.target.options;
+          removeInfo(id);
+        }
+      }),
+      []
+    );
+
+    const showInfo = (Id: String) => {
+      var popup = $("<div></div>", {
+        id: "popup-" + Id,
+        css: {
+            position: "absolute",
+            height: "50px",
+            width: "150px",
+            top: "0px",
+            left: "0px",
+            zIndex: 1002,
+            backgroundColor: "white",
+            //padding: "200px",
+            border: "1px solid #ccc"
+        }
+      });
+      // Insert a headline into that popup
+      var hed = $("<div></div>", {
+          text: "FieldID: " + Id,
+          css: {fontSize: "16px", marginBottom: "3px"}
+      }).appendTo(popup);
+      // Add the popup to the map
+      popup.appendTo("#map");
+    }
+
+    const removeInfo = (Id: String) => {
+      $("#popup-" + Id).remove();
+    }
+
     return (
         <MapContainer
-            center={position}
+            center={center}
             zoom={zoom || 10}
             scrollWheelZoom={true}
             zoomControl={false} // Disable default zoom control
@@ -44,7 +88,7 @@ const LeafletMap = ({ zoom, position, collapse, geojson }: LeafletMapTypes) => {
                   //fillColor: "lightblue",
                   fillOpacity: 0,
                   opacity: 1,
-                  weight: 1.5
+                  weight: 2.5
                 }}
                 onEachFeature={(feature, layer) => {
                   layer.on({
@@ -54,39 +98,19 @@ const LeafletMap = ({ zoom, position, collapse, geojson }: LeafletMapTypes) => {
                         weight: 4,
                         //color: "#800080"
                       });
-                      var popup = $("<div></div>", {
-                        id: "popup-" + auxLayer.feature.properties.FieldID,
-                        css: {
-                            position: "absolute",
-                            height: "50px",
-                            width: "150px",
-                            top: "0px",
-                            left: "0px",
-                            zIndex: 1002,
-                            backgroundColor: "white",
-                            //padding: "200px",
-                            border: "1px solid #ccc"
-                        }
-                    });
-                    // Insert a headline into that popup
-                    var hed = $("<div></div>", {
-                        text: "FieldID: " + auxLayer.feature.properties.FieldID,
-                        css: {fontSize: "16px", marginBottom: "3px"}
-                    }).appendTo(popup);
-                    // Add the popup to the map
-                    popup.appendTo("#map");
+                      showInfo(auxLayer.feature.properties.FieldID);
                     },
                     mouseout: function (e) {
                       const auxLayer = e.target;
                       auxLayer.setStyle({
-                        weight: 1,
+                        weight: 2.5,
                         //color: "#9370DB",
                         //fillColor: "lightblue",
                         dashArray: "",
                         fillOpacity: 0,
                         opacity: 1
                       });
-                      $("#popup-" + auxLayer.feature.properties.FieldID).remove();
+                      removeInfo(auxLayer.feature.properties.FieldID)
                     }
 
                   });
@@ -94,6 +118,14 @@ const LeafletMap = ({ zoom, position, collapse, geojson }: LeafletMapTypes) => {
                 data={geojson}
               />
             }
+            {!!position.polygon ?
+              <Polygon
+                pathOptions={{id: position.fieldId} as Object}
+                positions={position.polygon}
+                color={'red'}
+                eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                /> :
+              null}
             <CustomZoomControl />
             <MapHandler />
         </MapContainer>
