@@ -1,4 +1,4 @@
-import { ChevronsLeft, MoreVertical } from "lucide-react";
+import { ArrowUpDown, ChevronsLeft, Eye, FilePenLine, MoreVertical, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
@@ -11,6 +11,14 @@ import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import swmcFields from "../../../../geojson/SMWC_Fields.json";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Person = {
     firstName: string;
@@ -40,28 +48,71 @@ const Field = () => {
     const columns: ColumnDef<DummyDataType>[] = [
         {
             accessorKey: "FieldID",
-            header: "Field ID",
+            // header: "Field ID",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Field ID
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
+
             size: 50, // this size value is in px
             cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
         },
         {
             accessorKey: "FieldDesc",
-            header: () => {
-                return <>Field Description</>;
+            // header: () => {
+            //     return <>Field Description</>;
+            // },
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Field Description
+                        <ArrowUpDown />
+                    </Button>
+                );
             },
             size: 300,
             cell: ({ row }) => <div className="lowercase">{row.getValue("FieldDesc")}</div>,
         },
         {
             accessorKey: "FieldAcres",
-            header: "FieldAcres",
-            size: 100,
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Field Acres
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
+            size: 150,
             cell: ({ row }) => <div className="capitalize">{row.getValue("FieldAcres")}</div>,
         },
         {
             accessorKey: "IrrigAcres",
-            header: "IrrigAcres",
-            size: 100,
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Irrig Acres
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
+            size: 150,
             cell: ({ row }) => <div className="capitalize">{row.getValue("IrrigAcres")}</div>,
         },
         // {
@@ -71,47 +122,127 @@ const Field = () => {
         // },
         {
             accessorKey: "StandbyAcr",
-            header: "StandbyAcr",
-            size: 100,
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Stand by Acres
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
+            size: 200,
             cell: ({ row }) => <div>{row.getValue("StandbyAcr")}</div>,
         },
         {
             accessorKey: "ParcelID",
-            header: "ParcelID",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        ParcelID
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
             size: 300,
             cell: ({ row }) => <div>{row.getValue("ParcelID")}</div>,
         },
         {
             accessorKey: "VolRateAdj",
-            header: "VolRateAdj",
-            size: 100,
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        VolRateAdj
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
+            size: 150,
             cell: ({ row }) => <div>{row.getValue("VolRateAdj")}</div>,
         },
         {
             accessorKey: "ActiveDate",
-            header: "Active Date",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Active Date
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
             size: 150,
             cell: ({ row }) => <div>{dayjs(row.getValue("ActiveDate")).format("MM/DD/YYYY")}</div>,
         },
         {
             accessorKey: "InactiveDa",
-            header: "Inactive Date",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Inactive Date
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
             size: 150,
             cell: ({ row }) => <div>{dayjs(row.getValue("InactiveDa")).format("MM/DD/YYYY")}</div>,
         },
         {
             accessorKey: "ActiveFlag",
-            header: "Active status ",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Active Status
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
             cell: ({ row }) => <div>{row.getValue("ActiveFlag")}</div>,
         },
         {
             accessorKey: "unq_fld_id",
-            header: "Unique Flag Id",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Unique Flag ID
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
             cell: ({ row }) => <div>{row.getValue("unq_fld_id")}</div>,
         },
         {
             accessorKey: "AreaAC",
-            header: "Area (Ac)",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Area Acres
+                        <ArrowUpDown />
+                    </Button>
+                );
+            },
             cell: ({ row }) => <div>{row.getValue("AreaAC")}</div>,
         },
         {
@@ -119,13 +250,33 @@ const Field = () => {
             header: "",
             size: 40,
             cell: ({ row }) => (
-                <Button
-                    variant="ghost"
-                    className="h-8 w-8 p-0"
-                >
-                    <span className="sr-only">Open menu</span>
-                    <MoreVertical />
-                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                        >
+                            <span className="sr-only">Open menu</span>
+                            <MoreVertical />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                            <FilePenLine /> Edit
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem>
+                            <Trash2 />
+                            Delete
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Eye />
+                            View
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             ),
             meta: {
                 className: "sticky right-0 !z-9 !bg-white dark:!bg-slateLight-950 ",

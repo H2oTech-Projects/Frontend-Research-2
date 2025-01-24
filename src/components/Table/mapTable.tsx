@@ -1,13 +1,22 @@
-import { flexRender, getCoreRowModel, useReactTable, getPaginationRowModel, PaginationState } from "@tanstack/react-table";
+import {
+    flexRender,
+    getCoreRowModel,
+    SortingState,
+    useReactTable,
+    getPaginationRowModel,
+    PaginationState,
+    getSortedRowModel,
+} from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MapTableTypes } from "@/types/tableTypes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
 import { useMediaQuery } from "@uidotdev/usehooks";
 
 const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel = null }: MapTableTypes<T>) => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
+    const [sorting, setSorting] = useState<SortingState>([]);
     const [data, _setDate] = useState([...defaultData]);
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -16,14 +25,21 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
     const table = useReactTable({
         data,
         columns,
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         onPaginationChange: setPagination,
         //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
         state: {
+            sorting,
             pagination,
         },
     });
+
+    useEffect(() => {
+        console.log(sorting);
+    }, [sorting]);
 
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white dark:bg-slateLight-950">
@@ -155,6 +171,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                         </PaginationItem>
                         <PaginationItem>
                             <PaginationLink
+                                className="dark:text-white"
                                 isActive
                                 disabled
                             >
