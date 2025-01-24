@@ -43,6 +43,7 @@ const Field = () => {
             header: "Field ID",
             size: 50, // this size value is in px
             cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
+            //filterFn: 'includesString',
         },
         {
             accessorKey: "FieldDesc",
@@ -191,6 +192,7 @@ const Field = () => {
                             <MapTable
                                 defaultData={defaultData}
                                 columns={columns}
+                                filterValue={'D1A_004'}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
                             />

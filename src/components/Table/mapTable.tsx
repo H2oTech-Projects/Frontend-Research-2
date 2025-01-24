@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, useReactTable, getPaginationRowModel, PaginationState } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, getPaginationRowModel, PaginationState, getFilteredRowModel } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MapTableTypes } from "@/types/tableTypes";
 import { useState } from "react";
@@ -6,9 +6,21 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { cn } from "@/utils/cn";
 import { useMediaQuery } from "@uidotdev/usehooks";
 
-const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel = null }: MapTableTypes<T>) => {
+interface ColumnFilter {
+  id: string
+  value: unknown
+}
+interface GlobalFilter {
+  globalFilter: any
+}
+type ColumnFiltersState = ColumnFilter[]
+
+const MapTable = <T,>({ defaultData, columns, filterValue, setPosition = null, setZoomLevel = null }: MapTableTypes<T>) => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
     const [data, _setDate] = useState([...defaultData]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [globalFilter, setGlobalFilter] = useState<any>([])
+    const [searchText, setSearchText] = useState<any>('')
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -19,15 +31,27 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onPaginationChange: setPagination,
+        getFilteredRowModel: getFilteredRowModel(),
+        globalFilterFn: 'includesString', // built-in filter function
         //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
         state: {
+            globalFilter,
             pagination,
+            columnFilters
         },
+        onGlobalFilterChange: setGlobalFilter
     });
 
     return (
         <div className="table-container flex flex-col">
             <div className="h-[calc(100vh-220px)]">
+            <div>
+              <input
+                value={searchText}
+                onChange={e => {setSearchText(String(e.target.value));table.setGlobalFilter(String(e.target.value))}}
+                placeholder="Search..."
+              />
+            </div>
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
