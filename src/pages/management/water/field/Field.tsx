@@ -117,7 +117,7 @@ const Field = () => {
         {
             id: "actions",
             header: "",
-            size: 50,
+            size: 40,
             cell: ({ row }) => (
                 <Button
                     variant="ghost"
@@ -128,7 +128,7 @@ const Field = () => {
                 </Button>
             ),
             meta: {
-                className: "sticky right-0 !z-9 !bg-slateLight-100 dark:!bg-slateLight-950 ",
+                className: "sticky right-0 !z-9 !bg-white dark:!bg-slateLight-950 ",
             },
         },
     ];
@@ -151,7 +151,7 @@ const Field = () => {
                 </div>
                 <div className="flex flex-grow">
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                        <div className={cn("relative h-[calc(100vh-160px)] w-full border")}>
+                        <div className={cn("relative h-[calc(100vh-160px)] w-full shadow-md")}>
                             {/* <Table>
                                 <TableHeader>
                                     {table.getHeaderGroups().map((headerGroup) => (

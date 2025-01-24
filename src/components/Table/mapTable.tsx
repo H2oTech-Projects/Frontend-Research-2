@@ -26,7 +26,7 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
     });
 
     return (
-        <div className="table-container flex flex-col">
+        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white dark:bg-slateLight-950">
             <div className="h-[calc(100vh-220px)]">
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
