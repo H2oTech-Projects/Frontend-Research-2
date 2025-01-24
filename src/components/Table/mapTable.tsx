@@ -131,7 +131,7 @@ const MapTable = <T,>({
                                                     // @ts-ignore
                                                     onClick={() => {
                                                         // @ts-ignore
-                                                        setPosition({center: [row.original.coords[0][0], row.original.coords[0][1]], polygon: row.original.coords, fieldId: row.original.FieldID});
+                                                        setPosition({center: [row.original.center_latitude, row.original.center_longitude], polygon: row.original.coords, fieldId: row.original.FieldID});
                                                     }} //  we added this on click event to set center in map
                                                     // @ts-ignore
                                                 >
@@ -142,7 +142,7 @@ const MapTable = <T,>({
                                                     // @ts-ignore
                                                     onClick={() => {
                                                         // @ts-ignore
-                                                        setPosition({center: [row.original.coords[0][0], row.original.coords[0][1]], polygon: row.original.coords, fieldId: row.original.FieldID});
+                                                        setPosition({center: [row.original.center_latitude, row.original.center_longitude], polygon: row.original.coords, fieldId: row.original.FieldID});
                                                     }} //  we added this on click event to set center in map
                                                     key={cell.id}
                                                     style={{
@@ -165,7 +165,7 @@ const MapTable = <T,>({
                                         )}
                                         onClick={() => {
                                             // @ts-ignore
-                                            setPosition({center: [row.original.coords[0][0], row.original.coords[0][1]], polygon: row.original.coords, fieldId: row.original.FieldID});
+                                            setPosition({center: [row.original.center_latitude, row.original.center_longitude], polygon: row.original.coords, fieldId: row.original.FieldID});
                                             // @ts-ignore
                                             setZoomLevel(13);
                                             // @ts-ignore
