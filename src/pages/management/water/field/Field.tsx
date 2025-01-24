@@ -148,7 +148,7 @@ const Field = () => {
                         <div className="search">
                             <input
                               type="text"
-                              value={searchText}
+                              value={String(searchText)}
                               onChange={e => {
                                 setSearchText(String(e.target.value))
                                 if (!String(e.target.value)) {
