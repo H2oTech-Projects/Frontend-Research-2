@@ -5,13 +5,14 @@ import L, { divIcon } from "leaflet";
 import $ from "jquery";
 
 type LeafletMapTypes = {
-    zoom: number,
+    zoom: number;
     position: [number, number];
     collapse: string;
-    geojson: any
+    geojson: any;
+    clickedField?: string | null;
 };
 
-const LeafletMap = ({ zoom, position, collapse, geojson }: LeafletMapTypes) => {
+const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: LeafletMapTypes) => {
     const MapHandler = () => {
         const map = useMap();
 
@@ -38,61 +39,76 @@ const LeafletMap = ({ zoom, position, collapse, geojson }: LeafletMapTypes) => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {
-              <GeoJSON
-                pathOptions={{
-                  //color: "#9370DB",
-                  //fillColor: "lightblue",
-                  fillOpacity: 0,
-                  opacity: 1,
-                  weight: 1.5
-                }}
-                onEachFeature={(feature, layer) => {
-                  layer.on({
-                    mouseover: function (e) {
-                      const auxLayer = e.target;
-                      auxLayer.setStyle({
-                        weight: 4,
-                        //color: "#800080"
-                      });
-                      var popup = $("<div></div>", {
-                        id: "popup-" + auxLayer.feature.properties.FieldID,
-                        css: {
-                            position: "absolute",
-                            height: "50px",
-                            width: "150px",
-                            top: "0px",
-                            left: "0px",
-                            zIndex: 1002,
-                            backgroundColor: "white",
-                            //padding: "200px",
-                            border: "1px solid #ccc"
-                        }
-                    });
-                    // Insert a headline into that popup
-                    var hed = $("<div></div>", {
-                        text: "FieldID: " + auxLayer.feature.properties.FieldID,
-                        css: {fontSize: "16px", marginBottom: "3px"}
-                    }).appendTo(popup);
-                    // Add the popup to the map
-                    popup.appendTo("#map");
-                    },
-                    mouseout: function (e) {
-                      const auxLayer = e.target;
-                      auxLayer.setStyle({
-                        weight: 1,
+                <GeoJSON
+                    pathOptions={{
                         //color: "#9370DB",
                         //fillColor: "lightblue",
-                        dashArray: "",
                         fillOpacity: 0,
-                        opacity: 1
-                      });
-                      $("#popup-" + auxLayer.feature.properties.FieldID).remove();
-                    }
-
-                  });
-                }}
-                data={geojson}
-              />
+                        opacity: 1,
+                        weight: 1.5,
+                    }}
+                    onEachFeature={(feature, layer) => {
+                        layer.on({
+                            mouseover: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 4,
+                                    //color: "#800080"
+                                });
+                                var popup = $("<div></div>", {
+                                    id: "popup-" + auxLayer.feature.properties.FieldID,
+                                    css: {
+                                        position: "absolute",
+                                        height: "50px",
+                                        width: "150px",
+                                        top: "0px",
+                                        left: "0px",
+                                        zIndex: 1002,
+                                        backgroundColor: "white",
+                                        //padding: "200px",
+                                        border: "1px solid #ccc",
+                                    },
+                                });
+                                // Insert a headline into that popup
+                                var hed = $("<div></div>", {
+                                    text: "FieldID: " + auxLayer.feature.properties.FieldID,
+                                    css: { fontSize: "16px", marginBottom: "3px" },
+                                }).appendTo(popup);
+                                // Add the popup to the map
+                                popup.appendTo("#map");
+                            },
+                            mouseout: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 1,
+                                    //color: "#9370DB",
+                                    //fillColor: "lightblue",
+                                    dashArray: "",
+                                    fillOpacity: 0,
+                                    opacity: 1,
+                                });
+                                $("#popup-" + auxLayer.feature.properties.FieldID).remove();
+                            },
+                        });
+                    }}
+                    style={(features) => {
+                        if (features?.properties?.FieldID === clickedField) {
+                            return {
+                                color: "red", // Border color
+                                fillColor: "#16599A", // Fill color for the highlighted area
+                                fillOpacity: 0.5,
+                                weight: 2,
+                            };
+                        }
+                        return {
+                            color: "blue", // Border color
+                            fillColor: "lightblue", // Fill color for normal areas
+                            fillOpacity: 0.5,
+                            weight: 2,
+                        };
+                    }}
+                    data={geojson}
+                />
             }
             <CustomZoomControl />
             <MapHandler />

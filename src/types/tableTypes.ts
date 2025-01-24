@@ -5,6 +5,8 @@ export type MapTableTypes<T> = {
     columns: ColumnDef<T>[];
     setPosition?: null | Function;
     setZoomLevel?: null | Function;
+    setClickedField?: null | Function;
+    clickedField?: null | string;
 };
 export type DummyDataType = {
     district?: string;

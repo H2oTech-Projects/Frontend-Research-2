@@ -14,8 +14,14 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { cn } from "@/utils/cn";
 import { useMediaQuery } from "@uidotdev/usehooks";
 
-const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel = null }: MapTableTypes<T>) => {
-    const isHeightBig = useMediaQuery("(min-height: 768px)");
+const MapTable = <T,>({
+    defaultData,
+    columns,
+    setPosition = null,
+    setZoomLevel = null,
+    setClickedField = null,
+    clickedField = null,
+}: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, _setDate] = useState([...defaultData]);
     const [pagination, setPagination] = useState<PaginationState>({
@@ -122,11 +128,18 @@ const MapTable = <T,>({ defaultData, columns, setPosition = null, setZoomLevel =
                                 ) : (
                                     <TableRow
                                         key={row.id}
+                                        className={cn(
+                                            // @ts-ignore
+                                            clickedField === row.original.FieldID ? "bg-slate-400" : "",
+                                            "cursor-pointer",
+                                        )}
                                         onClick={() => {
                                             // @ts-ignore
                                             setPosition([row.original.center_latitude, row.original.center_longitude]);
                                             // @ts-ignore
                                             setZoomLevel(15);
+                                            // @ts-ignore
+                                            setClickedField(row.original?.FieldID);
                                         }} //  we added this on click event to set center in map
                                     >
                                         {row.getVisibleCells().map((cell) => (

@@ -27,6 +27,7 @@ const Field = () => {
     const [collapse, setCollapse] = useState("default");
     const [position, setPosition] = useState<[number, number]>([38.86902846413033, -121.729324818604]);
     const [zoomLevel, setZoomLevel] = useState(10);
+    const [clickedField, setClickedField] = useState(null);
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
@@ -320,6 +321,8 @@ const Field = () => {
                                 columns={columns}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
+                                setClickedField={setClickedField}
+                                clickedField={clickedField}
                             />
                             {/* <table></table> */}
                             <button
@@ -341,6 +344,7 @@ const Field = () => {
                                 zoom={zoomLevel}
                                 collapse={collapse}
                                 geojson={swmcFields}
+                                clickedField={clickedField}
                             />
                             <button
                                 className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
