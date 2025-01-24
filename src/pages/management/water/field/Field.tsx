@@ -28,6 +28,8 @@ const Field = () => {
     const [collapse, setCollapse] = useState("default");
     const [position, setPosition] = useState<[number, number]>([38.86902846413033, -121.729324818604]);
     const [zoomLevel, setZoomLevel] = useState(10);
+    const [searchText, setSearchText] = useState<String>('')
+    const [doFilter, setDoFilter] = useState<Boolean>(false)
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
@@ -144,9 +146,18 @@ const Field = () => {
                 <div className="flex justify-between">
                     <div className="flex gap-2">
                         <div className="search">
-                            <input type="text" />
+                            <input
+                              type="text"
+                              value={searchText}
+                              onChange={e => {
+                                setSearchText(String(e.target.value))
+                                if (!String(e.target.value)) {
+                                  setDoFilter(!doFilter)
+                                }
+                              }}
+                            />
                         </div>
-                        <button>Filter</button>
+                        <button onClick={() => setDoFilter(!doFilter)}>Filter</button>
                     </div>
                     <button>Add Field</button>
                 </div>
@@ -192,7 +203,8 @@ const Field = () => {
                             <MapTable
                                 defaultData={defaultData}
                                 columns={columns}
-                                filterValue={'D1A_004'}
+                                doFilter={doFilter}
+                                filterValue={searchText}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
                             />

@@ -1,7 +1,7 @@
 import { flexRender, getCoreRowModel, useReactTable, getPaginationRowModel, PaginationState, getFilteredRowModel } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MapTableTypes } from "@/types/tableTypes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
 import { useMediaQuery } from "@uidotdev/usehooks";
@@ -15,7 +15,7 @@ interface GlobalFilter {
 }
 type ColumnFiltersState = ColumnFilter[]
 
-const MapTable = <T,>({ defaultData, columns, filterValue, setPosition = null, setZoomLevel = null }: MapTableTypes<T>) => {
+const MapTable = <T,>({ defaultData, columns, doFilter, filterValue, setPosition = null, setZoomLevel = null }: MapTableTypes<T>) => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
     const [data, _setDate] = useState([...defaultData]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -42,16 +42,26 @@ const MapTable = <T,>({ defaultData, columns, filterValue, setPosition = null, s
         onGlobalFilterChange: setGlobalFilter
     });
 
+    useEffect(() => {
+      //client side filtering
+      if (!!filterValue) {
+        table.setGlobalFilter(String(filterValue))
+      } else {
+        table.resetGlobalFilter(true)
+      }
+
+  }, [doFilter]);
+
     return (
         <div className="table-container flex flex-col">
             <div className="h-[calc(100vh-220px)]">
-            <div>
+            {/* <div>
               <input
                 value={searchText}
                 onChange={e => {setSearchText(String(e.target.value));table.setGlobalFilter(String(e.target.value))}}
                 placeholder="Search..."
               />
-            </div>
+            </div> */}
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
