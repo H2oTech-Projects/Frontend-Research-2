@@ -26,7 +26,7 @@ const Field = () => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
 
     const [collapse, setCollapse] = useState("default");
-    const [position, setPosition] = useState<[number, number]>([38.86902846413033, -121.729324818604]);
+    const [position, setPosition] = useState<any>({center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: '' });
     const [zoomLevel, setZoomLevel] = useState(10);
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
