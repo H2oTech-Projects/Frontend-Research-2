@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, useMap, Polygon, Popup, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Polygon, Popup, GeoJSON, LayersControl } from "react-leaflet";
 import CustomZoomControl from "./MapController";
 import { useEffect, useMemo } from "react";
 import L, { divIcon } from "leaflet";
@@ -77,10 +77,24 @@ const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: 
             minZoom={6}
             style={{ height: "100%", width: "100%", overflow: "hidden" }}
         >
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <LayersControl position="bottomleft">
+                <LayersControl.BaseLayer
+                    checked
+                    name="Satellite"
+                >
+                    <TileLayer
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                        attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
+                    />
+                </LayersControl.BaseLayer>
+
+                <LayersControl.BaseLayer name="Street Map">
+                    <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                </LayersControl.BaseLayer>
+            </LayersControl>
             {
                 <GeoJSON
                     pathOptions={{

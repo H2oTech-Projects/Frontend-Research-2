@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, useMap, useMapEvents, Polygon, Popup } from "react-leaflet";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MapContainer, TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 import * as Icon from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 import profileImg from "../assets/profile-image.jpg";
@@ -7,13 +7,63 @@ import { useDispatch } from "react-redux";
 import { logout } from "../redux/slice/authSlice";
 import { toast } from "react-toastify";
 import CustomZoomControl from "../components/MapController";
-
+import swmcFields from "../geojson/SMWC_Fields.json";
+import $ from "jquery";
 const Map = () => {
-    const position: [number, number] = [36.7783, -119.4179];
+    const position: [number, number] = [38.86902846413033, -121.729324818604];
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
+
+    const layers = [
+        {
+            name: "Satellite",
+            layer: (
+                <TileLayer
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                    attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
+                />
+            ),
+        },
+        {
+            name: "Street Map",
+            layer: (
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+            ),
+        },
+    ];
+
+    const showInfo = (Id: String) => {
+        var popup = $("<div></div>", {
+            id: "popup-" + Id,
+            css: {
+                position: "absolute",
+                height: "50px",
+                width: "150px",
+                top: "5px",
+                left: "5px",
+                zIndex: 1002,
+                backgroundColor: "white",
+                //padding: "200px",
+                border: "1px solid #ccc",
+            },
+        });
+        // Insert a headline into that popup
+        var hed = $("<div></div>", {
+            text: "FieldID: " + Id,
+            css: { fontSize: "16px", marginBottom: "3px" },
+        }).appendTo(popup);
+        // Add the popup to the map
+        popup.appendTo("#map");
+    };
+
+    const removeInfo = (Id: String) => {
+        $("#popup-" + Id).remove();
+    };
     // Close modal when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -27,7 +77,10 @@ const Map = () => {
         };
     }, []);
     return (
-        <div className="relative flex h-screen w-full">
+        <div
+            id="map"
+            className="relative flex h-screen w-full"
+        >
             <div className="absolute right-4 top-0 z-[800] flex h-[3.75rem] items-center gap-x-3">
                 <button
                     className="btn-map size-10"
@@ -76,27 +129,72 @@ const Map = () => {
             )}
             <MapContainer
                 center={position}
-                zoom={8}
+                zoom={10}
                 scrollWheelZoom={true}
                 zoomControl={false} // Disable default zoom control
                 minZoom={2}
                 style={{ height: "100%", width: "100vw" }}
             >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                <LayersControl position="bottomleft">
+                    <LayersControl.BaseLayer
+                        checked
+                        name="Satellite"
+                    >
+                        <TileLayer
+                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                            attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
+                        />
+                    </LayersControl.BaseLayer>
+
+                    <LayersControl.BaseLayer name="Street Map">
+                        <TileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                    </LayersControl.BaseLayer>
+                </LayersControl>
+
+                <GeoJSON
+                    pathOptions={{
+                        //color: "#9370DB",
+                        //fillColor: "lightblue",
+                        fillOpacity: 0,
+                        opacity: 1,
+                        weight: 2.5,
+                    }}
+                    onEachFeature={(feature, layer) => {
+                        layer.on({
+                            mouseover: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 4,
+                                    //color: "#800080"
+                                });
+                                showInfo(auxLayer.feature.properties.FieldID);
+                            },
+                            mouseout: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 2.5,
+                                    //color: "#9370DB",
+                                    //fillColor: "lightblue",
+                                    fillOpacity: 0,
+                                    opacity: 1,
+                                });
+                                removeInfo(auxLayer.feature.properties.FieldID);
+                            },
+                        });
+                    }}
+                    style={(features) => {
+                        return {
+                            color: "#16599A", // Border color
+                            fillColor: "lightblue", // Fill color for normal areas
+                            fillOpacity: 0.5,
+                            weight: 2,
+                        };
+                    }}
+                    data={swmcFields as any}
                 />
-                <Polygon
-                    positions={[
-                        [36.7883, -119.4279], // top-left
-                        [36.7883, -119.4079], // top-right
-                        [36.7683, -119.4079], // bottom-right
-                        [36.7683, -119.4279], // bottom-left
-                        [36.7883, -119.4279], // closing the polygon back to the top-left
-                    ]}
-                >
-                    <Popup>Click for more information</Popup>
-                </Polygon>
                 <CustomZoomControl />
             </MapContainer>
         </div>
