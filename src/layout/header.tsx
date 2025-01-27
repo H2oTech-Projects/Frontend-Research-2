@@ -5,6 +5,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
 interface HeaderProps {
     collapsed: Boolean;
     setCollapsed: (collapsed: Boolean) => void;
@@ -28,15 +29,22 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
     }, []);
     return (
         <>
-            <header className="relative z-10 flex h-[40px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
+            <header className="relative z-10 flex h-[48px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
                 <div className="flex items-center gap-x-3">
-                    <button
-                        className="btn-ghost size-8"
+                    {/* <button
+                        className="btn-ghost size-8 bg-royalBlue text-slate-50 dark:bg-royalBlue dark:text-slate-50  "
                         onClick={() => setCollapsed(!collapsed)}
                     >
                         <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
-                    </button>
-                    <div className="input !h-6 w-60">
+                    </button> */}
+                    <Button
+                        variant={"default"}
+                        className="h-6 !w-4"
+                        onClick={() => setCollapsed(!collapsed)}
+                    >
+                        <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
+                    </Button>
+                    <div className="input !h-7 w-60">
                         <Search
                             size={16}
                             className="text-slate-300"

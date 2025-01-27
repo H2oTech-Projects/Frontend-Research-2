@@ -7,6 +7,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 import { ChevronsLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
@@ -52,8 +53,8 @@ const Layout = () => {
                 )}
 
                 <div className={cn("relative overflow-y-auto overflow-x-hidden", !showHeader ? "p-0" : "h-[calc(100vh-60px)]")}>
-                    <div className={cn("absolute left-0 top-1/2 z-[800] -translate-y-1/2 transform", showHeader ? "hidden" : "")}>
-                        <button
+                    <div className={cn("absolute left-2 top-1/2 z-[800] -translate-y-1/2 transform", showHeader ? "hidden" : "")}>
+                        {/* <button
                             className="btn-map m-2 size-10"
                             onClick={() => setCollapsed(!collapsed)}
                         >
@@ -61,7 +62,16 @@ const Layout = () => {
                                 className={collapsed ? "rotate-180" : ""}
                                 size={32}
                             />
-                        </button>
+                        </button> */}
+                        <Button
+                            variant={"default"}
+                            onClick={() => setCollapsed(!collapsed)}
+                        >
+                            <ChevronsLeft
+                                className={collapsed ? "rotate-180" : ""}
+                                size={32}
+                            />
+                        </Button>
                     </div>
 
                     <Outlet />

@@ -13,8 +13,7 @@ type LeafletMapTypes = {
 };
 
 const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: LeafletMapTypes) => {
-    const {center} = position;
-    console.log(position);
+    const { center } = position;
     const MapHandler = () => {
         const map = useMap();
 
@@ -28,46 +27,46 @@ const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: 
     };
 
     const polygonEventHandlers = useMemo(
-      () => ({
-        mouseover(e: any) {
-          const { id } = e.target.options;
-          showInfo(id);
-        },
-        mouseout(e: any) {
-          const { id } = e.target.options;
-          removeInfo(id);
-        }
-      }),
-      []
+        () => ({
+            mouseover(e: any) {
+                const { id } = e.target.options;
+                showInfo(id);
+            },
+            mouseout(e: any) {
+                const { id } = e.target.options;
+                removeInfo(id);
+            },
+        }),
+        [],
     );
 
     const showInfo = (Id: String) => {
-      var popup = $("<div></div>", {
-        id: "popup-" + Id,
-        css: {
-            position: "absolute",
-            height: "50px",
-            width: "150px",
-            top: "0px",
-            left: "0px",
-            zIndex: 1002,
-            backgroundColor: "white",
-            //padding: "200px",
-            border: "1px solid #ccc"
-        }
-      });
-      // Insert a headline into that popup
-      var hed = $("<div></div>", {
-          text: "FieldID: " + Id,
-          css: {fontSize: "16px", marginBottom: "3px"}
-      }).appendTo(popup);
-      // Add the popup to the map
-      popup.appendTo("#map");
-    }
+        var popup = $("<div></div>", {
+            id: "popup-" + Id,
+            css: {
+                position: "absolute",
+                height: "50px",
+                width: "150px",
+                top: "0px",
+                left: "0px",
+                zIndex: 1002,
+                backgroundColor: "white",
+                //padding: "200px",
+                border: "1px solid #ccc",
+            },
+        });
+        // Insert a headline into that popup
+        var hed = $("<div></div>", {
+            text: "FieldID: " + Id,
+            css: { fontSize: "16px", marginBottom: "3px" },
+        }).appendTo(popup);
+        // Add the popup to the map
+        popup.appendTo("#map");
+    };
 
     const removeInfo = (Id: String) => {
-      $("#popup-" + Id).remove();
-    }
+        $("#popup-" + Id).remove();
+    };
 
     return (
         <MapContainer
@@ -83,66 +82,64 @@ const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: 
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {
-              <GeoJSON
-                pathOptions={{
-                  //color: "#9370DB",
-                  //fillColor: "lightblue",
-                  fillOpacity: 0,
-                  opacity: 1,
-                  weight: 2.5
-                }}
-                onEachFeature={(feature, layer) => {
-                  layer.on({
-                    mouseover: function (e) {
-                      const auxLayer = e.target;
-                      auxLayer.setStyle({
-                        weight: 4,
-                        //color: "#800080"
-                      });
-                      showInfo(auxLayer.feature.properties.FieldID);
-                    },
-                    mouseout: function (e) {
-                      const auxLayer = e.target;
-                      auxLayer.setStyle({
-                        weight: 2.5,
+                <GeoJSON
+                    pathOptions={{
                         //color: "#9370DB",
                         //fillColor: "lightblue",
                         fillOpacity: 0,
-                        opacity: 1
-                      });
-                      removeInfo(auxLayer.feature.properties.FieldID)
-                    }
-
-
-                  });
-                }}
-                style={(features) => {
-                  if (features?.properties?.FieldID === clickedField) {
-                      return {
-                          color: "red", // Border color
-                          fillColor: "#16599A", // Fill color for the highlighted area
-                          fillOpacity: 0.5,
-                          weight: 2,
-                      };
-                  }
-                  return {
-                      color: "blue", // Border color
-                      fillColor: "lightblue", // Fill color for normal areas
-                      fillOpacity: 0.5,
-                      weight: 2,
-                  };
-                }}
-                data={geojson}
-              />
+                        opacity: 1,
+                        weight: 2.5,
+                    }}
+                    onEachFeature={(feature, layer) => {
+                        layer.on({
+                            mouseover: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 4,
+                                    //color: "#800080"
+                                });
+                                showInfo(auxLayer.feature.properties.FieldID);
+                            },
+                            mouseout: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 2.5,
+                                    //color: "#9370DB",
+                                    //fillColor: "lightblue",
+                                    fillOpacity: 0,
+                                    opacity: 1,
+                                });
+                                removeInfo(auxLayer.feature.properties.FieldID);
+                            },
+                        });
+                    }}
+                    style={(features) => {
+                        if (features?.properties?.FieldID === clickedField) {
+                            return {
+                                color: "red", // Border color
+                                fillColor: "#16599A", // Fill color for the highlighted area
+                                fillOpacity: 0.5,
+                                weight: 2,
+                            };
+                        }
+                        return {
+                            color: "#16599A", // Border color
+                            fillColor: "lightblue", // Fill color for normal areas
+                            fillOpacity: 0.5,
+                            weight: 2,
+                        };
+                    }}
+                    data={geojson}
+                />
             }
-            {!!position.polygon ?
-              <Polygon
-                pathOptions={{id: position.fieldId} as Object}
-                positions={position.polygon}
-                color={'red'}
-                eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-                /> :
-              null}
+            {!!position.polygon ? (
+                <Polygon
+                    pathOptions={{ id: position.fieldId } as Object}
+                    positions={position.polygon}
+                    color={"red"}
+                    eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                />
+            ) : null}
             <CustomZoomControl />
             <MapHandler />
         </MapContainer>

@@ -16,13 +16,13 @@ import { cn } from "@/utils/cn";
 import { useMediaQuery } from "@uidotdev/usehooks";
 
 interface ColumnFilter {
-  id: string
-  value: unknown
+    id: string;
+    value: unknown;
 }
 interface GlobalFilter {
-  globalFilter: any
+    globalFilter: any;
 }
-type ColumnFiltersState = ColumnFilter[]
+type ColumnFiltersState = ColumnFilter[];
 
 const MapTable = <T,>({
     defaultData,
@@ -36,9 +36,9 @@ const MapTable = <T,>({
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, _setDate] = useState([...defaultData]);
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [globalFilter, setGlobalFilter] = useState<any>([])
-    const [searchText, setSearchText] = useState<any>('')
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [globalFilter, setGlobalFilter] = useState<any>([]);
+    const [searchText, setSearchText] = useState<any>("");
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -52,26 +52,25 @@ const MapTable = <T,>({
         getSortedRowModel: getSortedRowModel(),
         onPaginationChange: setPagination,
         getFilteredRowModel: getFilteredRowModel(),
-        globalFilterFn: 'includesString', // built-in filter function
+        globalFilterFn: "includesString", // built-in filter function
         //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
         state: {
             sorting,
             globalFilter,
             pagination,
-            columnFilters
+            columnFilters,
         },
-        onGlobalFilterChange: setGlobalFilter
+        onGlobalFilterChange: setGlobalFilter,
     });
 
     useEffect(() => {
-      //client side filtering
-      if (!!filterValue) {
-        table.setGlobalFilter(String(filterValue))
-      } else {
-        table.resetGlobalFilter(true)
-      }
-
-  }, [doFilter]);
+        //client side filtering
+        if (!!filterValue) {
+            table.setGlobalFilter(String(filterValue));
+        } else {
+            table.resetGlobalFilter(true);
+        }
+    }, [doFilter]);
 
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-950">
@@ -87,7 +86,7 @@ const MapTable = <T,>({
                                             `${
                                                 // @ts-ignore  this code helps to ignore types in certain line
                                                 header.column.columnDef.meta?.className ?? ""
-                                            } !bg-royalBlue !text-white !transition-colors dark:!bg-black`,
+                                            } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
                                             `!min-w-[${header?.getSize()}px]`,
                                         )}
                                         key={header.id}
@@ -128,10 +127,15 @@ const MapTable = <T,>({
                                                         minWidth: cell.column.columnDef.size,
                                                         maxWidth: cell.column.columnDef.size,
                                                     }}
-                                                    // @ts-ignore
                                                     onClick={() => {
-                                                        // @ts-ignore
-                                                        setPosition({center: [row.original.center_latitude, row.original.center_longitude], polygon: row.original.coords, fieldId: row.original.FieldID});
+                                                        setPosition({
+                                                            // @ts-ignore
+                                                            center: [row.original?.center_latitude, row.original?.center_longitude],
+                                                            // @ts-ignore
+                                                            polygon: row.original?.coords,
+                                                            // @ts-ignore
+                                                            fieldId: row.original?.FieldID,
+                                                        });
                                                     }} //  we added this on click event to set center in map
                                                     // @ts-ignore
                                                 >
@@ -142,7 +146,14 @@ const MapTable = <T,>({
                                                     // @ts-ignore
                                                     onClick={() => {
                                                         // @ts-ignore
-                                                        setPosition({center: [row.original.center_latitude, row.original.center_longitude], polygon: row.original.coords, fieldId: row.original.FieldID});
+                                                        setPosition({
+                                                            // @ts-ignore
+                                                            center: [row.original.center_latitude, row.original.center_longitude],
+                                                            // @ts-ignore
+                                                            polygon: row.original.coords,
+                                                            // @ts-ignore
+                                                            fieldId: row.original.FieldID,
+                                                        });
                                                     }} //  we added this on click event to set center in map
                                                     key={cell.id}
                                                     style={{
@@ -165,7 +176,14 @@ const MapTable = <T,>({
                                         )}
                                         onClick={() => {
                                             // @ts-ignore
-                                            setPosition({center: [row.original.center_latitude, row.original.center_longitude], polygon: row.original.coords, fieldId: row.original.FieldID});
+                                            setPosition({
+                                                // @ts-ignore
+                                                center: [row.original.center_latitude, row.original.center_longitude],
+                                                // @ts-ignore
+                                                polygon: row.original.coords,
+                                                // @ts-ignore
+                                                fieldId: row.original.FieldID,
+                                            });
                                             // @ts-ignore
                                             setZoomLevel(13);
                                             // @ts-ignore

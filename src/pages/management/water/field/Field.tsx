@@ -1,4 +1,4 @@
-import { ArrowUpDown, ChevronsLeft, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
+import { ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
@@ -25,11 +25,11 @@ const Field = () => {
     const isHeightBig = useMediaQuery("(min-height: 768px)");
 
     const [collapse, setCollapse] = useState("default");
-    const [position, setPosition] = useState<any>({center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: '' });
+    const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "" });
     const [zoomLevel, setZoomLevel] = useState(10);
     const [clickedField, setClickedField] = useState(null);
-    const [searchText, setSearchText] = useState<String>('')
-    const [doFilter, setDoFilter] = useState<Boolean>(false)
+    const [searchText, setSearchText] = useState<String>("");
+    const [doFilter, setDoFilter] = useState<Boolean>(false);
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
     };
@@ -300,17 +300,17 @@ const Field = () => {
                                 placeholder="Search..."
                                 className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
                                 value={String(searchText)}
-                                onChange={e => {
-                                  setSearchText(String(e.target.value))
-                                  if (!String(e.target.value)) {
-                                    setDoFilter(!doFilter)
-                                  }
+                                onChange={(e) => {
+                                    setSearchText(String(e.target.value));
+                                    if (!String(e.target.value)) {
+                                        setDoFilter(!doFilter);
+                                    }
                                 }}
                             />
                         </div>
                         <Button
                             variant={"default"}
-                            className="h-7 w-7 bg-royalBlue"
+                            className="h-7 w-7"
                             onClick={() => setDoFilter(!doFilter)}
                         >
                             <Filter />
@@ -318,7 +318,7 @@ const Field = () => {
                     </div>
                     <Button
                         variant={"default"}
-                        className="h-7 w-auto bg-royalBlue px-2 text-xs"
+                        className="h-7 w-auto px-2 text-sm"
                     >
                         <Plus size={4} />
                         Add Field
@@ -338,12 +338,18 @@ const Field = () => {
                                 clickedField={clickedField}
                             />
                             {/* <table></table> */}
-                            <button
+                            {/* <button
                                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
                                 onClick={tableCollapseBtn}
                             >
                                 <ChevronsLeft size={20} />
-                            </button>
+                            </button> */}
+                            <Button
+                                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-10 h-7 w-6 items-center justify-center"
+                                onClick={mapCollapseBtn}
+                            >
+                                <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} />
+                            </Button>
                         </div>
                     </div>
 
@@ -359,7 +365,7 @@ const Field = () => {
                                 geojson={swmcFields}
                                 clickedField={clickedField}
                             />
-                            <button
+                            {/* <button
                                 className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
                                 onClick={mapCollapseBtn}
                             >
@@ -367,7 +373,13 @@ const Field = () => {
                                     size={20}
                                     className="rotate-180"
                                 />
-                            </button>
+                            </button> */}
+                            <Button
+                                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-7 w-6 items-center justify-center"
+                                onClick={tableCollapseBtn}
+                            >
+                                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} />
+                            </Button>
                         </div>
                     </div>
                 </div>
