@@ -1,4 +1,4 @@
-import EarthLightLogo from "../assets/earth-dark.svg";
+import FlowLogo from "../assets/rt_logo.png";
 import H2OLogo from "../assets/logo.png";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { cn } from "../utils/cn";
@@ -43,9 +43,9 @@ const AuthenticationCard = ({ Form, title }: { Form: React.ReactNode; title: str
                     </div>
                 </div>
                 <div className="icon absolute left-1/2 top-1/2 z-10 h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white p-1 dark:bg-slateLight-800">
-                    <div className="circle h-full w-full rounded-full bg-royalBlue dark:bg-slateLight-800">
+                    <div className="circle h-full w-full rounded-full bg-white dark:bg-slateLight-800">
                         <img
-                            src={EarthLightLogo}
+                            src={FlowLogo}
                             alt="Flow"
                             className="h-full w-full"
                         />

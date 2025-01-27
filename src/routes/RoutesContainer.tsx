@@ -5,6 +5,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Loader } from "lucide-react";
 const Login = lazy(async () => await import("./../pages/auth/Login"));
 const ResetPassword = lazy(async () => await import("./../pages/auth/ResetPassword"));
 const ForgotPassword = lazy(async () => await import("./../pages/auth/ForgotPassword"));
@@ -16,7 +17,13 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
     const isAuthenticated = useSelector((state: any) => state.auth.isLoggedIn);
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense
+            fallback={
+                <div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">
+                    Loading <Loader size={20} />
+                </div>
+            }
+        >
             <Routes>
                 <>
                     <Route

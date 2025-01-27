@@ -166,18 +166,14 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
                 collapsed ? "max-md:-left-full" : "max-md:left-0",
             )}
         >
-            <div className="flex items-center gap-x-3 p-3">
+            <div className="flex items-center gap-x-3 px-3 py-2">
                 <img
-                    src={EarthLightLogo}
+                    src="rt_logo.png"
                     alt="Flow"
-                    className="h-[32px] w-[32px] dark:hidden"
+                    className="h-[36px] w-[36px]"
                 />
-                <img
-                    src={EarthDarkLogo}
-                    alt="Flow"
-                    className="hidden h-[32px] w-[32px] dark:block"
-                />
-                {!collapsed && <p className="animate-slideIn text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">Flow</p>}
+
+                {!collapsed && <p className="animate-slideIn text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">FLOW</p>}
             </div>
             <div className="flex w-full animate-slideIn flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-2 [scrollbar-width:_thin]">
                 {menuLinks.map((navbarLink) => (

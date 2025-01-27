@@ -46,7 +46,7 @@ const Login = () => {
                                 "w-full rounded-2xl p-3 text-royalBlue",
                                 isDesktopDevice
                                     ? "input"
-                                    : "flex h-10 flex-shrink-0 items-center justify-center gap-4 border border-slate-300 px-2 text-base",
+                                    : "flex h-10 flex-shrink-0 items-center justify-center gap-4 border border-slate-300 px-2 text-base dark:border-slateLight-900 dark:bg-slateLight-900",
                             )}
                         >
                             <Mail size={20} />
@@ -54,7 +54,7 @@ const Login = () => {
                                 type="text"
                                 name="email"
                                 placeholder="Email"
-                                className="flex-grow bg-slate-50 outline-none dark:bg-slateLight-800"
+                                className="flex-grow bg-slate-50 outline-none dark:bg-slateLight-900"
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
@@ -70,7 +70,7 @@ const Login = () => {
                                 "w-full rounded-2xl p-3 text-royalBlue",
                                 isDesktopDevice
                                     ? "input"
-                                    : "flex h-10 flex-shrink-0 items-center justify-center gap-4 border border-slate-300 px-2 text-base",
+                                    : "flex h-10 flex-shrink-0 items-center justify-center gap-4 border border-slate-300 px-2 text-base dark:border-slateLight-900 dark:bg-slateLight-900",
                             )}
                         >
                             <Key size={20} />

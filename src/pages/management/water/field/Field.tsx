@@ -288,7 +288,7 @@ const Field = () => {
             <div className="pageContain flex flex-grow flex-col gap-3">
                 <div className="flex justify-between">
                     <div className="flex gap-2">
-                        <div className="input h-7 w-40">
+                        <div className="input h-7 w-52">
                             <Search
                                 size={16}
                                 className="text-slate-300"
@@ -298,7 +298,7 @@ const Field = () => {
                                 name="search"
                                 id="search"
                                 placeholder="Search..."
-                                className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
                                 value={String(searchText)}
                                 onChange={(e) => {
                                     setSearchText(String(e.target.value));
