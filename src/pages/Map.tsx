@@ -131,7 +131,7 @@ const Map = () => {
             )}
             <MapContainer
                 center={position}
-                zoom={10}
+                zoom={11}
                 scrollWheelZoom={true}
                 zoomControl={false} // Disable default zoom control
                 minZoom={2}
