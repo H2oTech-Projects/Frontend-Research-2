@@ -11,6 +11,7 @@ import swmcFields from "../geojson/SMWC_Fields.json";
 import irrigatedFields from "../geojson/Irrigated_Fields.json";
 import nonIrrigatedFields from "../geojson/NonIrrigated_Fields.json";
 import $ from "jquery";
+import { Button } from "@/components/ui/button";
 const Map = () => {
     const position: [number, number] = [38.86902846413033, -121.729324818604];
     const { theme, setTheme } = useTheme();
@@ -84,8 +85,9 @@ const Map = () => {
             className="relative flex h-screen w-full"
         >
             <div className="absolute right-4 top-0 z-[800] flex h-[3.75rem] items-center gap-x-3">
-                <button
-                    className="btn-map size-10"
+                <Button
+                    variant={"default"}
+                    className="size-8"
                     onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                 >
                     <Icon.Sun
@@ -96,10 +98,12 @@ const Map = () => {
                         size={20}
                         className="hidden dark:block"
                     />
-                </button>
-                <button className="btn-map size-10">
+                </Button>
+                <Button
+                    variant={"default"}
+                    className="size-8">
                     <Icon.Bell size={20} />
-                </button>
+                </Button>
                 <button
                     className="size-10 overflow-hidden rounded-full"
                     onClick={() => setIsModalOpen(!isModalOpen)}
