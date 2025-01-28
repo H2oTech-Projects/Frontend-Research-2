@@ -65,11 +65,12 @@ const Layout = () => {
                         </button> */}
                         <Button
                             variant={"default"}
+                            className="size-8"
                             onClick={() => setCollapsed(!collapsed)}
                         >
                             <ChevronsLeft
                                 className={collapsed ? "rotate-180" : ""}
-                                size={32}
+                                size={20}
                             />
                         </Button>
                     </div>
