@@ -1,4 +1,4 @@
-import { ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../../utils/cn";
@@ -49,8 +49,8 @@ const Field = () => {
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Field ID
-                        <ArrowUpDown />
+                        Field ID {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+
                     </Button>
                 );
             },
@@ -71,7 +71,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Field Description
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -87,7 +87,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Field Acres
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -103,7 +103,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Irrig Acres
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -124,7 +124,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Stand by Acres
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -140,7 +140,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         ParcelID
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -156,7 +156,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         VolRateAdj
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -172,7 +172,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Active Date
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -188,7 +188,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Inactive Date
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -204,7 +204,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Active Status
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -219,7 +219,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Unique Flag ID
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
@@ -234,7 +234,7 @@ const Field = () => {
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Area Acres
-                        <ArrowUpDown />
+                        {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
                     </Button>
                 );
             },
