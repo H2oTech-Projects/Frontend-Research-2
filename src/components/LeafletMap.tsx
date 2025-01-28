@@ -75,7 +75,7 @@ const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: 
             scrollWheelZoom={true}
             zoomControl={false} // Disable default zoom control
             minZoom={6}
-            style={{ height: "100%", width: "100%", overflow: "hidden" }}
+            style={{ height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
         >
             <LayersControl position="bottomleft">
                 <LayersControl.BaseLayer
