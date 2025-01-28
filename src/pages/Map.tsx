@@ -8,7 +8,10 @@ import { logout } from "../redux/slice/authSlice";
 import { toast } from "react-toastify";
 import CustomZoomControl from "../components/MapController";
 import swmcFields from "../geojson/SMWC_Fields.json";
+import irrigatedFields from "../geojson/Irrigated_Fields.json";
+import nonIrrigatedFields from "../geojson/NonIrrigated_Fields.json";
 import $ from "jquery";
+import { Button } from "@/components/ui/button";
 const Map = () => {
     const position: [number, number] = [38.86902846413033, -121.729324818604];
     const { theme, setTheme } = useTheme();
@@ -82,8 +85,9 @@ const Map = () => {
             className="relative flex h-screen w-full"
         >
             <div className="absolute right-4 top-0 z-[800] flex h-[3.75rem] items-center gap-x-3">
-                <button
-                    className="btn-map size-10"
+                <Button
+                    variant={"default"}
+                    className="size-8"
                     onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                 >
                     <Icon.Sun
@@ -94,10 +98,12 @@ const Map = () => {
                         size={20}
                         className="hidden dark:block"
                     />
-                </button>
-                <button className="btn-map size-10">
+                </Button>
+                <Button
+                    variant={"default"}
+                    className="size-8">
                     <Icon.Bell size={20} />
-                </button>
+                </Button>
                 <button
                     className="size-10 overflow-hidden rounded-full"
                     onClick={() => setIsModalOpen(!isModalOpen)}
@@ -129,7 +135,7 @@ const Map = () => {
             )}
             <MapContainer
                 center={position}
-                zoom={10}
+                zoom={11}
                 scrollWheelZoom={true}
                 zoomControl={false} // Disable default zoom control
                 minZoom={2}
@@ -193,7 +199,48 @@ const Map = () => {
                             weight: 2,
                         };
                     }}
-                    data={swmcFields as any}
+                    data={irrigatedFields as any}
+                />
+                <GeoJSON
+                    pathOptions={{
+                        //color: "#9370DB",
+                        //fillColor: "lightblue",
+                        fillOpacity: 0,
+                        opacity: 1,
+                        weight: 2.5,
+                    }}
+                    onEachFeature={(feature, layer) => {
+                        layer.on({
+                            mouseover: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 4,
+                                    //color: "#800080"
+                                });
+                                showInfo(auxLayer.feature.properties.FieldID);
+                            },
+                            mouseout: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 2.5,
+                                    //color: "#9370DB",
+                                    //fillColor: "lightblue",
+                                    fillOpacity: 0,
+                                    opacity: 1,
+                                });
+                                removeInfo(auxLayer.feature.properties.FieldID);
+                            },
+                        });
+                    }}
+                    style={(features) => {
+                        return {
+                            color: "red", // Border color
+                            fillColor: "lightblue", // Fill color for normal areas
+                            fillOpacity: 0.5,
+                            weight: 2,
+                        };
+                    }}
+                    data={nonIrrigatedFields as any}
                 />
                 <CustomZoomControl />
             </MapContainer>

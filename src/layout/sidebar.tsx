@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 
 // import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
 import * as Icon from "lucide-react";
-import EarthLightLogo from "../assets/earth-light.svg";
-import EarthDarkLogo from "../assets/earth-dark.svg";
+import LightLogo from "../assets/Circular-Black.png";
+import DarkLogo from "../assets/Circular-Light-Gray.png";
 
 import { cn } from "../utils/cn";
 const menuLinks = [
@@ -36,9 +36,9 @@ const menuLinks = [
                 path: null,
                 type: "group",
                 Children: [
-                    { label: "Measurement Point", path: "/measurementPoint" },
-                    { label: "Field", path: "/field" },
-                    { label: "District", path: "/district" },
+                    { label: "Measurement Points", path: "/measurementPoint" },
+                    { label: "Fields", path: "/field" },
+                    { label: "Districts", path: "/district" },
                 ],
             },
             {
@@ -168,9 +168,14 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
         >
             <div className="flex items-center gap-x-3 px-3 py-2">
                 <img
-                    src="rt_logo.png"
+                    src={LightLogo}
                     alt="Flow"
-                    className="h-[36px] w-[36px]"
+                    className="h-[32px] w-[32px] dark:hidden"
+                />
+                <img
+                    src={DarkLogo}
+                    alt="Flow"
+                    className="hidden h-[32px] w-[32px] dark:block"
                 />
 
                 {!collapsed && <p className="animate-slideIn text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">FLOW</p>}
@@ -206,8 +211,8 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
                                             childMenu.parentName === link.label && childMenu.showChildren
                                                 ? "sidebar-menuName-active"
                                                 : activeLinkGroup === link.label
-                                                  ? "sidebar-menuName-activeLink"
-                                                  : "sidebar-menuName",
+                                                    ? "sidebar-menuName-activeLink"
+                                                    : "sidebar-menuName",
                                             "animate-slideIn",
                                             collapsed && "md:w-[45px]",
                                         )}
