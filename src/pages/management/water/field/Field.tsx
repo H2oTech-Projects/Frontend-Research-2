@@ -274,7 +274,7 @@ const Field = () => {
                 </DropdownMenu>
             ),
             meta: {
-                className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slateLight-950 ",
+                className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slateLight-500 ",
             },
         },
     ];
@@ -345,10 +345,10 @@ const Field = () => {
                                 <ChevronsLeft size={20} />
                             </button> */}
                             <Button
-                                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-10 h-7 w-6 items-center justify-center"
+                                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
                                 onClick={mapCollapseBtn}
                             >
-                                <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} />
+                                <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
                             </Button>
                         </div>
                     </div>
@@ -375,10 +375,10 @@ const Field = () => {
                                 />
                             </button> */}
                             <Button
-                                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-7 w-6 items-center justify-center"
+                                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
                                 onClick={tableCollapseBtn}
                             >
-                                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} />
+                                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
                             </Button>
                         </div>
                     </div>

@@ -73,7 +73,7 @@ const MapTable = <T,>({
     }, [doFilter]);
 
     return (
-        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-950">
+        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
             <div className="h-[calc(100vh-218px)]">
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
@@ -84,8 +84,8 @@ const MapTable = <T,>({
                                         // this class code help to differentiate action column
                                         className={cn(
                                             `${
-                                                // @ts-ignore  this code helps to ignore types in certain line
-                                                header.column.columnDef.meta?.className ?? ""
+                                            // @ts-ignore  this code helps to ignore types in certain line
+                                            header.column.columnDef.meta?.className ?? ""
                                             } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
                                             `!min-w-[${header?.getSize()}px]`,
                                         )}
@@ -121,7 +121,7 @@ const MapTable = <T,>({
                                                     className={`${
                                                         // @ts-ignore
                                                         cell.column.columnDef.meta?.className ?? ""
-                                                    } `}
+                                                        } `}
                                                     key={cell.id}
                                                     style={{
                                                         minWidth: cell.column.columnDef.size,
@@ -137,7 +137,7 @@ const MapTable = <T,>({
                                                             fieldId: row.original?.FieldID,
                                                         });
                                                     }} //  we added this on click event to set center in map
-                                                    // @ts-ignore
+                                                // @ts-ignore
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
@@ -195,7 +195,7 @@ const MapTable = <T,>({
                                                 className={`${
                                                     // @ts-ignore
                                                     cell.column.columnDef.meta?.className ?? ""
-                                                } `}
+                                                    } `}
                                                 key={cell.id}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
