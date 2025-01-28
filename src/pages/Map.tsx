@@ -8,6 +8,8 @@ import { logout } from "../redux/slice/authSlice";
 import { toast } from "react-toastify";
 import CustomZoomControl from "../components/MapController";
 import swmcFields from "../geojson/SMWC_Fields.json";
+import irrigatedFields from "../geojson/Irrigated_Fields.json";
+import nonIrrigatedFields from "../geojson/NonIrrigated_Fields.json";
 import $ from "jquery";
 const Map = () => {
     const position: [number, number] = [38.86902846413033, -121.729324818604];
@@ -193,7 +195,48 @@ const Map = () => {
                             weight: 2,
                         };
                     }}
-                    data={swmcFields as any}
+                    data={irrigatedFields as any}
+                />
+                <GeoJSON
+                    pathOptions={{
+                        //color: "#9370DB",
+                        //fillColor: "lightblue",
+                        fillOpacity: 0,
+                        opacity: 1,
+                        weight: 2.5,
+                    }}
+                    onEachFeature={(feature, layer) => {
+                        layer.on({
+                            mouseover: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 4,
+                                    //color: "#800080"
+                                });
+                                showInfo(auxLayer.feature.properties.FieldID);
+                            },
+                            mouseout: function (e) {
+                                const auxLayer = e.target;
+                                auxLayer.setStyle({
+                                    weight: 2.5,
+                                    //color: "#9370DB",
+                                    //fillColor: "lightblue",
+                                    fillOpacity: 0,
+                                    opacity: 1,
+                                });
+                                removeInfo(auxLayer.feature.properties.FieldID);
+                            },
+                        });
+                    }}
+                    style={(features) => {
+                        return {
+                            color: "red", // Border color
+                            fillColor: "lightblue", // Fill color for normal areas
+                            fillOpacity: 0.5,
+                            weight: 2,
+                        };
+                    }}
+                    data={nonIrrigatedFields as any}
                 />
                 <CustomZoomControl />
             </MapContainer>
