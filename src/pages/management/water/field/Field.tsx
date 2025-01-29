@@ -1,11 +1,15 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Polygon, Popup, GeoJSON, LayersControl } from "react-leaflet";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import $ from "jquery";
 import { cn } from "../../../../utils/cn";
 import { ColumnDef, ColumnMeta } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
+import RtPolygon from "@/components/RtPolygon";
+import RtGeoJson from "@/components/RtGeoJson";
 import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
@@ -279,6 +283,89 @@ const Field = () => {
         },
     ];
 
+    const polygonEventHandlers = useMemo(
+      () => ({
+        mouseover(e: any) {
+          const { id } = e.target.options;
+          showInfo(id);
+        },
+        mouseout(e: any) {
+          const { id } = e.target.options;
+          removeInfo(id);
+        },
+      }),
+      [],
+    );
+
+    const showInfo = (Id: String) => {
+      var popup = $("<div></div>", {
+          id: "popup-" + Id,
+          css: {
+              position: "absolute",
+              height: "50px",
+              width: "150px",
+              top: "0px",
+              left: "0px",
+              zIndex: 1002,
+              backgroundColor: "white",
+              //padding: "200px",
+              border: "1px solid #ccc",
+          },
+      });
+      // Insert a headline into that popup
+      var hed = $("<div></div>", {
+          text: "FieldID: " + Id,
+          css: { fontSize: "16px", marginBottom: "3px" },
+      }).appendTo(popup);
+      // Add the popup to the map
+      popup.appendTo("#map");
+  };
+
+  const removeInfo = (Id: String) => {
+      $("#popup-" + Id).remove();
+  };
+
+  const geoJsonLayerEvents = (feature: any, layer: any) => {
+    layer.on({
+        mouseover: function (e: any) {
+            const auxLayer = e.target;
+            auxLayer.setStyle({
+                weight: 4,
+                //color: "#800080"
+            });
+            showInfo(auxLayer.feature.properties.FieldID);
+        },
+        mouseout: function (e: any) {
+            const auxLayer = e.target;
+            auxLayer.setStyle({
+                weight: 2.5,
+                //color: "#9370DB",
+                //fillColor: "lightblue",
+                fillOpacity: 0,
+                opacity: 1,
+            });
+            removeInfo(auxLayer.feature.properties.FieldID);
+        },
+    });
+  }
+
+  const geoJsonStyle = (features: any) => {
+    if (features?.properties?.FieldID === clickedField) {
+        return {
+            color: "red", // Border color
+            fillColor: "#16599A", // Fill color for the highlighted area
+            fillOpacity: 0.5,
+            weight: 2,
+        };
+    }
+    return {
+        color: "#16599A", // Border color
+        fillColor: "lightblue", // Fill color for normal areas
+        fillOpacity: 0.5,
+        weight: 2,
+    };
+  }
+
     return (
         <div className="flex h-full flex-col gap-1 px-4 pt-2">
             <PageHeader
@@ -337,13 +424,6 @@ const Field = () => {
                                 setClickedField={setClickedField}
                                 clickedField={clickedField}
                             />
-                            {/* <table></table> */}
-                            {/* <button
-                                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
-                                onClick={tableCollapseBtn}
-                            >
-                                <ChevronsLeft size={20} />
-                            </button> */}
                             <Button
                                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
                                 onClick={mapCollapseBtn}
@@ -364,16 +444,21 @@ const Field = () => {
                                 collapse={collapse}
                                 geojson={swmcFields}
                                 clickedField={clickedField}
-                            />
-                            {/* <button
-                                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
-                                onClick={mapCollapseBtn}
                             >
-                                <ChevronsLeft
-                                    size={20}
-                                    className="rotate-180"
+                              <RtGeoJson
+                                  layerEvents={geoJsonLayerEvents}
+                                  style={geoJsonStyle}
+                                  data={swmcFields}
+                              />
+                              {!!position.polygon ? (
+                                <RtPolygon
+                                    pathOptions={{ id: position.fieldId } as Object}
+                                    positions={position.polygon}
+                                    color={"red"}
+                                    eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
                                 />
-                            </button> */}
+                              ) : null}
+                            </LeafletMap>
                             <Button
                                 className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
                                 onClick={tableCollapseBtn}

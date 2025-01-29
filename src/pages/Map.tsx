@@ -133,6 +133,28 @@ const Map = () => {
                     </button>
                 </div>
             )}
+
+            <LeafletMap
+                position={position}
+                zoom={11}
+                collapse={false}
+                geojson={swmcFields}
+                clickedField={clickedField}
+            >
+              <RtGeoJson
+                  layerEvents={geoJsonLayerEvents}
+                  style={geoJsonStyle}
+                  data={swmcFields}
+              />
+              {!!position.polygon ? (
+                <RtPolygon
+                    pathOptions={{ id: position.fieldId } as Object}
+                    positions={position.polygon}
+                    color={"red"}
+                    eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                />
+              ) : null}
+            </LeafletMap>
             <MapContainer
                 center={position}
                 zoom={11}
