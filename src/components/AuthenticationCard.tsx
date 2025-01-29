@@ -1,5 +1,5 @@
 import FlowLogo from "../assets/Circular-Black.png";
-import FlowLogoDark from "../assets/Circular-light-Gray.png";
+import FlowLogoDark from "../assets/Circular-Light-Gray.png";
 import H2OLogo from "../assets/logo.png";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { cn } from "../utils/cn";
