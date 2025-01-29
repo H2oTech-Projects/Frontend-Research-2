@@ -2,9 +2,15 @@ import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/utils/cn";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, Info } from "lucide-react";
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 interface EmailProps {
     value: string;
     label: string;
@@ -19,6 +25,57 @@ const Insight = () => {
     const mapCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "map" : "default"));
     };
+    const dummyData = [{
+        "MAD_MA_00250": {
+            "account_id": "MAD_MA_00250",
+            "account_name": "Gerald Cederquist 1",
+            "mailing_address": "8606 North Fuller Avenue, Fresno, CA 93720",
+            "start_date": "2024-01-01",
+            "end_date": "2024-11-30",
+            "msmt_method": "IrriWatch", //Measurement Method: 
+            "report_creation_date": "01-02-2025",
+            "report_revision_date": "-",
+
+            "farm_units": [
+                {
+                    "farm_unit_zone": "Chowchilla Subbasin Madera County GSA East", //Farm Unit
+                    "fu_sy_ac": 307.9, // Sustainable Yield Acreage (AC)
+                    "fu_tw_ac": 305.9, // Transitional Water Acreage (AC)
+                    "fu_alloc_af": 651.3, // 2024vAllocationv (AF)
+                    "fu_carryover_af": "525.2", // Carryover (AF) 
+                    "adjustment": 0, //2024 Adjustment (s) (AF)
+                    "fu_total_adjustment_af": 1176.5, //Total Allocation (AF)
+                    "fu_etaw_af": 615.6,// ETAW (AF)
+                    "fu_remain_af": 560.9, //Remaining (AF)
+                    "remaining_%": 47.7, // calculated by (fu_remain_af/ fu_total_adjustment_af)*100
+                    "parcels": ["030-032-015", "030-031-017", "030-032-011"],
+                    "parcel_geometries": {
+                        "030-032-015": [[-120.13266934604674, 37.09983618811289], [-120.13266617641497, 37.10016575452752], [-120.132429063436, 37.09983470523583]],
+                        "030-031-017": [[-120.13266934604674, 37.09983618811289], [-120.13266617641497, 37.10016575452752], [-120.132429063436, 37.09983470523583]],
+                        "030-032-011": [[-120.13266934604674, 37.09983618811289], [-120.13266617641497, 37.10016575452752], [-120.132429063436, 37.09983470523583]]
+                    }
+                },
+                {
+                    "farm_unit_zone": "Madera Subbasin Madera County GSA East - Northern",
+                    "fu_sy_ac": 307.9,
+                    "fu_tw_ac": 305.9,
+                    "fu_alloc_af": 651.3,
+                    "fu_carryover_af": "525.2",
+                    "adjustment": 0,
+                    "fu_total_adjustment_af": 1176.5,
+                    "fu_etaw_af": 615.6,
+                    "fu_remain_af": 560.9,
+                    "remaining_%": 47.7,
+                    "parcels": ["030-032-015", "030-031-017", "030-032-011"],
+                    "parcel_geometries": {
+                        "030-032-015": [[-120.13266934604674, 37.09983618811289], [-120.13266617641497, 37.10016575452752], [-120.132429063436, 37.09983470523583]],
+                        "030-031-017": [[-120.13266934604674, 37.09983618811289], [-120.13266617641497, 37.10016575452752], [-120.132429063436, 37.09983470523583]],
+                        "030-032-011": [[-120.13266934604674, 37.09983618811289], [-120.13266617641497, 37.10016575452752], [-120.132429063436, 37.09983470523583]]
+                    }
+                }
+            ]
+        }
+    }]
     const emailList: EmailProps[] = [
         {
             value: "johndoe@example.com",
@@ -79,19 +136,28 @@ const Insight = () => {
             <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
                 <div className={cn("relative h-[calc(100vh-152px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
-                    <div className="p-2  overflow-auto h-full">
+                    <div className="py-2 px-3 overflow-auto h-full">
                         <div className="text-black dark:text-white text-md font-semibold ">
                             Account Summary
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger> <Info className="inline-block items-baseline ml-2" size={24} /></TooltipTrigger>
+                                    <TooltipContent side="right" align="center" sideOffset={10}>
+                                        <div className="text-black text-sm dark:text-white w-[300px]">
+                                            Note: For additional information about Account information, contact Madera Country Water and Natural Resources Department at (559) 662-8015 or WNR@maderacounty.com for information.
+                                        </div>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+
                         </div>
-                        <div className="text-black text-sm dark:text-white">
-                            Note: For additional information about Account information, contact Madera Country Water and Natural Resources Department at (559) 662-8015 or WNR@maderacounty.com for information.
-                        </div>
-                        <div className=" mt-2">
+
+                        <div className="rounded-[8px] overflow-hidden mt-2 shadow-xl">
                             <Table>
                                 <TableHeader >
-                                    <TableRow className="bg-royalBlue !text-white hover:bg-none">
-                                        <TableHead>Description</TableHead>
-                                        <TableHead>Value</TableHead>
+                                    <TableRow >
+                                        <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none">Description</TableHead>
+                                        <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none">Value</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -177,6 +243,24 @@ const Insight = () => {
                                     </TableRow>
                                 </TableBody>
                             </Table>
+                        </div>
+                        <div >
+                            <div className="text-black dark:text-white text-md font-semibold mt-2">
+                                Farm Unit Summary
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger> <Info className="inline-block items-baseline ml-2" size={24} /></TooltipTrigger>
+                                        <TooltipContent side="right" align="center" sideOffset={10}>
+                                            <div className="text-black text-sm dark:text-white w-[300px]">
+                                                Note: For additional information about Allocations, ETAW, Remaining Allocation, and Carryover Water, contact the Madera County Water and Natural
+                                                Resources Department Office at (559) 662-8015 or WNR@maderacounty.com for information. Total Allocation (AF) is equal to the sum of 2024
+                                                Allocation (AF), Carryover (AF), and 2024 Adjustment(s) (AF)
+                                            </div>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+
                         </div>
                     </div>
                     <Button
