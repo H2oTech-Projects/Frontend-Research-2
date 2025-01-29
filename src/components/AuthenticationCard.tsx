@@ -1,4 +1,5 @@
-import FlowLogo from "../assets/rt_logo.png";
+import FlowLogo from "../assets/Circular-Black.png";
+import FlowLogoDark from "../assets/Circular-light-Gray.png";
 import H2OLogo from "../assets/logo.png";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { cn } from "../utils/cn";
@@ -44,10 +45,16 @@ const AuthenticationCard = ({ Form, title }: { Form: React.ReactNode; title: str
                 </div>
                 <div className="icon absolute left-1/2 top-1/2 z-10 h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white p-1 dark:bg-slateLight-800">
                     <div className="circle h-full w-full rounded-full bg-white dark:bg-slateLight-800">
+
                         <img
                             src={FlowLogo}
                             alt="Flow"
-                            className="h-full w-full"
+                            className="h-full w-full dark:hidden"
+                        />
+                        <img
+                            src={FlowLogoDark}
+                            alt="Flow"
+                            className="hidden h-full w-full dark:block"
                         />
                     </div>
                 </div>
