@@ -2,24 +2,22 @@ import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/utils/cn";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Info } from "lucide-react";
-import { useState } from "react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { ColumnDef } from "@tanstack/react-table";
-import { FarmUnit } from "@/types/tableTypes";
+import { AccountDetails, dummyGroundWaterDataTypes, FarmUnit } from "@/types/tableTypes";
 import dummyGroundWaterData from "../../data_demo2.json"
+import MapTable from "@/components/Table/mapTable";
+import InsightTitle from "@/components/InsightTitle";
 interface EmailProps {
     value: string;
     label: string;
 }
 const Insight = () => {
-    const [selectedEmail, setSelectedEmail] = useState<string>("");
+    const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as dummyGroundWaterDataTypes;
+    const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
+    const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
     const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "" });
     const [collapse, setCollapse] = useState("default");
     const tableCollapseBtn = () => {
@@ -28,128 +26,93 @@ const Insight = () => {
     const mapCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "map" : "default"));
     };
+    useEffect(() => {
+        setGroundWaterAccountData(defaultData[selectedEmailValue])
+
+    }, [selectedEmailValue]);
+
     const emailList: EmailProps[] = [
         {
-            value: "johndoe@example.com",
+            value: "MAD_MA_00001",
             label: "johndoe@example.com"
         },
         {
-            value: "janesmith@fake.com",
+            value: "MAD_MA_00004",
             label: "janesmith@fake.com"
         },
         {
-            value: "alice.smith@test.org",
+            value: "MAD_MA_00005",
             label: "alice.smith@test.org"
         },
         {
-            value: "robert_johnson@dummy.net",
+            value: "MAD_MA_00006",
             label: "robert_johnson@dummy.net"
         },
         {
-            value: "sarah.miller@mock.io",
+            value: "MAD_MA_00007",
             label: "sarah.miller@mock.io"
         },
     ]
-    // console.log(Object.keys(dummyGroundWaterData))
+
 
     const columns: ColumnDef<FarmUnit>[] = [
         {
             accessorKey: "farm_unit_zone",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Farm Unit Zone {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
-            size: 200,
+            header: "Farm Unit Zone",
+            size: 150,
             cell: ({ row }) => <div>{row.getValue("farm_unit_zone")}</div>,
         },
         {
             accessorKey: "fu_sy_ac",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Sustainable Yield Acreage (AC) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: "Sustainable Yield Acreage (AC)",
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_sy_ac")}</div>,
         },
         {
             accessorKey: "fu_tw_ac",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Transitional Water Acreage (AC) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: "Total Water Use (AC)",
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_tw_ac")}</div>,
         },
         {
             accessorKey: "fu_alloc_af",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    2024 Allocation (AF) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: '2024 Allocation (AF)',
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_alloc_af")}</div>,
         },
         {
             accessorKey: "fu_carryover_af",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Carryover (AF) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: 'Carryover (AF)',
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_carryover_af")}</div>,
         },
         {
             accessorKey: "adjustment",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    2024 Adjustment (AF) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: '2024 Adjustment (AF)',
             size: 150,
             cell: ({ row }) => <div>{row.getValue("adjustment")}</div>,
         },
         {
             accessorKey: "fu_total_adjustment_af",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Total Allocation (AF) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: 'Total Adjustment (AF)',
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_total_adjustment_af")}</div>,
         },
         {
             accessorKey: "fu_etaw_af",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    ETAW (AF) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: 'ETAW (AF)',
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_etaw_af")}</div>,
         },
         {
             accessorKey: "fu_remain_af",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Remaining (AF) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: 'Remaining (AF)',
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_remain_af")}</div>,
         },
         {
             accessorKey: "remaining_%",
-            header: ({ column }) => (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Remaining (%) {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-                </Button>
-            ),
+            header: 'Remaining (%)',
             size: 150,
             cell: ({ row }) => <div>{row.getValue("remaining_%")}</div>,
         },
@@ -158,11 +121,11 @@ const Insight = () => {
     return (
         <div className="flex flex-col px-3 py-2 ">
             <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
-            <div className="flex  items-center mt-2 gap-8 dark:text-slate-50">
+            <div className="flex  items-center mt-2 gap-8 dark:text-slate-50 ">
                 <div className="flex items-center gap-2">
                     <label>Select an Account : </label>
-                    <Select onValueChange={(value) => setSelectedEmail(value)}>
-                        <SelectTrigger className="w-56 h-8 transition-colors">
+                    <Select value={selectedEmailValue} onValueChange={(value) => setSelectedEmailValue(value)}>
+                        <SelectTrigger className="w-56 h-8 transition-colors ">
                             <SelectValue placeholder="Select an email" />
                         </SelectTrigger>
                         <SelectContent>
@@ -174,13 +137,13 @@ const Insight = () => {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 ">
                     <label>Year : </label>
-                    <Select onValueChange={(value) => setSelectedEmail(value)}>
+                    <Select onValueChange={(value) => console.log(value)}>
                         <SelectTrigger className="w-56 h-8 transition-colors">
                             <SelectValue placeholder="Select a year" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="!z-[800]">
                             {emailList.map((email) => (
                                 <SelectItem key={email.value} value={email.value}>
                                     {email.label}
@@ -195,20 +158,13 @@ const Insight = () => {
                     <div className={cn("relative h-[calc(100vh-152px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
                         <div className="py-2 px-3 overflow-auto h-full">
-                            <div className="text-black dark:text-white text-md font-semibold ">
-                                Account Summary
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger> <Info className="inline-block items-baseline ml-2" size={24} /></TooltipTrigger>
-                                        <TooltipContent side="right" align="center" sideOffset={10}>
-                                            <div className="text-black text-sm dark:text-white w-[300px]">
-                                                Note: For additional information about Account information, contact Madera Country Water and Natural Resources Department at (559) 662-8015 or WNR@maderacounty.com for information.
-                                            </div>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
 
-                            </div>
+                            <InsightTitle
+                                title="Account Summary"
+                                note="Note: For additional information about Account information, 
+                                contact Madera Country Water and Natural Resources Department at (559) 662-8015 
+                                or WNR@maderacounty.com for information."
+                            />
 
                             <div className="rounded-[8px] overflow-hidden mt-2 shadow-xl">
                                 <Table>
@@ -224,31 +180,16 @@ const Insight = () => {
                                                 Account ID :
                                             </TableCell>
                                             <TableCell>
-                                                MAD_MA_00250
+                                                {groundWaterAccountData?.account_id}
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow>
-                                            <TableCell>
-                                                Account ID :
-                                            </TableCell>
-                                            <TableCell>
-                                                MAD_MA_00250
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>
-                                                Account ID :
-                                            </TableCell>
-                                            <TableCell>
-                                                MAD_MA_00250
-                                            </TableCell>
-                                        </TableRow>
+
                                         <TableRow>
                                             <TableCell>
                                                 Account Name :
                                             </TableCell>
                                             <TableCell>
-                                                Gerald Cederquist 1
+                                                {groundWaterAccountData?.account_name}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
@@ -256,7 +197,7 @@ const Insight = () => {
                                                 Mailing Address :
                                             </TableCell>
                                             <TableCell>
-                                                8606 North Fuller Avenue, Fresno, CA 93720
+                                                {groundWaterAccountData?.mailing_address}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
@@ -264,7 +205,7 @@ const Insight = () => {
                                                 Start Date (YYYY-MM-DD) :
                                             </TableCell>
                                             <TableCell>
-                                                2024-01-01
+                                                {groundWaterAccountData?.start_date}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
@@ -272,7 +213,7 @@ const Insight = () => {
                                                 End Date (YYYY-MM-DD) :
                                             </TableCell>
                                             <TableCell>
-                                                2024-11-30
+                                                {groundWaterAccountData?.end_date}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
@@ -280,7 +221,7 @@ const Insight = () => {
                                                 Measurement Method :
                                             </TableCell>
                                             <TableCell>
-                                                IrriWatch
+                                                {groundWaterAccountData?.msmt_method}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
@@ -288,7 +229,7 @@ const Insight = () => {
                                                 Report Creation Date :
                                             </TableCell>
                                             <TableCell>
-                                                01-02-2025
+                                                {groundWaterAccountData?.report_creation_date}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
@@ -296,30 +237,50 @@ const Insight = () => {
                                                 Report Revision Date
                                             </TableCell>
                                             <TableCell>
-                                                -
+                                                {groundWaterAccountData?.report_revision_date}
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
                             </div>
-                            <div >
-                                <div className="text-black dark:text-white text-md font-semibold mt-2">
-                                    Farm Unit Summary
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger> <Info className="inline-block items-baseline ml-2" size={24} /></TooltipTrigger>
-                                            <TooltipContent side="right" align="center" sideOffset={10}>
-                                                <div className="text-black text-sm dark:text-white w-[300px]">
-                                                    Note: For additional information about Allocations, ETAW, Remaining Allocation, and Carryover Water, contact the Madera County Water and Natural
-                                                    Resources Department Office at (559) 662-8015 or WNR@maderacounty.com for information. Total Allocation (AF) is equal to the sum of 2024
-                                                    Allocation (AF), Carryover (AF), and 2024 Adjustment(s) (AF)
-                                                </div>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
 
+
+                            <InsightTitle
+                                title="Farm Unit Summary"
+                                note=" Note: For additional information about Allocations, ETAW, Remaining Allocation, and Carryover Water, contact the Madera County Water and Natural
+                                                Resources Department Office at (559) 662-8015 or WNR@maderacounty.com for information. Total Allocation (AF) is equal to the sum of 2024
+                                                Allocation (AF), Carryover (AF), and 2024 Adjustment(s) (AF)"
+                            />
+                            <div className="mt-2">
+                                <MapTable
+                                    defaultData={groundWaterAccountData?.farm_units as FarmUnit[] || []}
+                                    columns={columns}
+                                    doFilter={false}
+                                    filterValue={""}
+                                    fullHeight={false}
+                                    showPagination={false}
+
+                                />
                             </div>
+
+                            <InsightTitle title="County Assessor's Farm Unit Information"
+                                note="Note: The following information is based on records from the Madera County Assessor's Office. Contact the Madera County Assessor's Office at (559)
+                                        675-7710 or assessor@maderacounty.com for information."
+                            />
+                            <div className="mt-2">
+                                {groundWaterAccountData?.farm_units?.map((farmUnit, index) => {
+                                    return (<div key={index}>
+                                        <div className="text-black dark:text-slate-50 text-sm font-bold">Farm Unit: {farmUnit?.farm_unit_zone}</div>
+                                        <div className="text-black dark:text-slate-50 text-sm">Number of Mailing Address: 1</div>
+                                        <div className="text-black dark:text-slate-50 text-sm">{groundWaterAccountData?.mailing_address}</div>
+                                        <div className="text-black dark:text-slate-50 text-sm">Number of Parcels:{farmUnit?.parcels.length}</div>
+                                        {farmUnit?.parcels.map((parcel, index) => {
+                                            return <div key={index} className="text-black dark:text-slate-50 text-sm ml-2">Parcel {index + 1} : {parcel}</div>
+                                        })}
+                                    </div>)
+                                })}
+                            </div>
+
                         </div>
                         <Button
                             className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
@@ -333,13 +294,13 @@ const Insight = () => {
                 <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
                     <div
                         className={cn("relative flex h-[calc(100vh-152px)] w-full")}
-                        id="map"
+                        id="map2"
                     >
                         <LeafletMap
                             position={position}
                             zoom={10}
                             collapse={collapse}
-                            geojson={[]}
+                            geojson={groundWaterAccountData?.geojson_parcels}
 
                         />
                         {/* <button

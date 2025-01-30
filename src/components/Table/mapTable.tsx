@@ -33,9 +33,11 @@ const MapTable = <T,>({
     setZoomLevel = null,
     setClickedField = null,
     clickedField = null,
+    fullHeight = true,
+    showPagination = true,
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [data, _setDate] = useState([...defaultData]);
+    const [data, setDate] = useState([...defaultData]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>([]);
     const [searchText, setSearchText] = useState<any>("");
@@ -43,6 +45,9 @@ const MapTable = <T,>({
         pageIndex: 0,
         pageSize: 10,
     });
+    useEffect(() => {
+        setDate(defaultData);
+    }, [defaultData]);
     const table = useReactTable({
         data,
         columns,
@@ -74,7 +79,7 @@ const MapTable = <T,>({
 
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-            <div className="h-[calc(100vh-218px)]">
+            <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -217,7 +222,7 @@ const MapTable = <T,>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex-grow p-2">
+            {showPagination && (<div className="flex-grow p-2">
                 <Pagination>
                     <PaginationContent>
                         <PaginationItem>
@@ -244,7 +249,7 @@ const MapTable = <T,>({
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>
-            </div>
+            </div>)}
         </div>
     );
 };
