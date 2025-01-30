@@ -15,7 +15,7 @@ interface EmailProps {
     label: string;
 }
 const Insight = () => {
-    const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as dummyGroundWaterDataTypes;
+    const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
     const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "" });
