@@ -47,11 +47,30 @@ const Insight = () => {
         {
             value: "MAD_MA_00006",
             label: "robert_johnson@dummy.net"
+        }
+    ]
+
+    const yearList: EmailProps[] = [
+        {
+            value: "2024",
+            label: "2024"
         },
         {
-            value: "MAD_MA_00007",
-            label: "sarah.miller@mock.io"
+            value: "2023",
+            label: "2023"
         },
+        {
+            value: "2022",
+            label: "2022"
+        },
+        {
+            value: "2021",
+            label: "2021"
+        },
+        {
+            value: "2020",
+            label: "2020"
+        }
     ]
 
 
@@ -144,9 +163,9 @@ const Insight = () => {
                             <SelectValue placeholder="Select a year" />
                         </SelectTrigger>
                         <SelectContent className="!z-[800]">
-                            {emailList.map((email) => (
-                                <SelectItem key={email.value} value={email.value}>
-                                    {email.label}
+                            {yearList.map((year) => (
+                                <SelectItem key={year.value} value={year.value}>
+                                    {year.label}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -234,7 +253,7 @@ const Insight = () => {
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>
-                                                Report Revision Date
+                                                Report Revision Date :
                                             </TableCell>
                                             <TableCell>
                                                 {groundWaterAccountData?.report_revision_date}

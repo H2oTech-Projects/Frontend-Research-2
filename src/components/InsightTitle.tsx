@@ -13,7 +13,7 @@ const InsightTitle = ({ title, note }: { title: string, note: string }) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger> <Info className="inline-block items-baseline ml-2" size={24} /></TooltipTrigger>
-          <TooltipContent side="right" align="center" sideOffset={10}>
+          <TooltipContent side="right" align="center" sideOffset={10} className="z-[850]">
             <div className="text-black text-sm dark:text-white w-[300px]">
               {note}
             </div>
