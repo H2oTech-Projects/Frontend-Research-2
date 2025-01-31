@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import EarthLightLogo from "../../assets/earth-dark.svg";
+import EarthLightLogo from "../../assets/Circular-Black.png";
 import H2OLogo from "../../assets/logo.png";
 import { Mail, ArrowLeft } from "lucide-react";
 const ForgotPassword = () => {
