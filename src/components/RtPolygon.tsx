@@ -3,17 +3,17 @@ import { Polygon } from "react-leaflet";
 type RtTypes = {
   pathOptions: Object;
   positions: any;
-  color: String;
-  polygonEventHandlers: L.LeafletEventHandlerFnMap;
+  color: string;
+  eventHandlers: L.LeafletEventHandlerFnMap;
 };
 
-const RtPolygon = ({ pathOptions, positions, color, polygonEventHandlers }: RtTypes) => {
+const RtPolygon = ({ pathOptions, positions, color, eventHandlers }: RtTypes) => {
     return (
       <Polygon
       pathOptions={pathOptions}
       positions={positions}
       color={color}
-      eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+      eventHandlers={eventHandlers as L.LeafletEventHandlerFnMap}
   />
     );
 };
