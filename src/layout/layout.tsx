@@ -2,14 +2,15 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 import { useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../hooks/use-click-outside";
 import { cn } from "../utils/cn";
-
 import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 import { ChevronsLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import { setSideMenuCollapse } from "@/redux/slice/menuCollapse";
+import { useDispatch } from "react-redux";
 const Layout = () => {
+    const dispatch = useDispatch();
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
     const [collapsed, setCollapsed] = useState<Boolean>(!isDesktopDevice);
     const [showHeader, setShowHeader] = useState<Boolean>(false);
@@ -19,6 +20,9 @@ const Layout = () => {
     useEffect(() => {
         setCollapsed(!isDesktopDevice);
     }, [isDesktopDevice]);
+    useEffect(() => {
+        dispatch(setSideMenuCollapse(collapsed ? true : false));
+    }, [collapsed])
 
     useClickOutside([sidebarRef], () => {
         if (!isDesktopDevice && !collapsed) {
