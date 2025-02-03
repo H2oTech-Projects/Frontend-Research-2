@@ -56,7 +56,7 @@ export type FarmUnit = {
     report_revision_date: string; // Placeholder for revision date (can be "-" or a date)
     farm_units: FarmUnit[];
     geojson_parcels: any;
-    
+    parcel_geometries: any;
   }
 
 export type dummyGroundWaterDataTypes={

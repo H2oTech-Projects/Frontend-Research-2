@@ -30,6 +30,9 @@ const Insight = () => {
     };
     useEffect(() => {
         setGroundWaterAccountData(defaultData[selectedEmailValue])
+        let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
+        let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
+        setPosition((prev: any)=> ({...prev, center: latlong}))
     }, [selectedEmailValue]);
 
     const emailList: EmailProps[] = [
@@ -381,7 +384,7 @@ const Insight = () => {
                     >
                         <LeafletMap
                             position={position}
-                            zoom={10}
+                            zoom={14}
                             collapse={collapse}
                             configurations={{'minZoom': 4, 'containerStyle': { height: "100%", width: "100vw" }}}
                         >
