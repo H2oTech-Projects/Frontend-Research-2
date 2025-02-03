@@ -40,7 +40,6 @@ const MapTable = <T,>({
     const [data, setDate] = useState([...defaultData]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>([]);
-    const [searchText, setSearchText] = useState<any>("");
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -77,6 +76,61 @@ const MapTable = <T,>({
         }
     }, [doFilter]);
 
+    const rowCells = (row: any) => {
+      return (
+        row.getVisibleCells().map((cell: any) => (
+          <TableCell
+            className={`${
+              // @ts-ignore
+              cell.column.columnDef.meta?.className ?? ""
+              } `}
+            key={cell.id}
+            style={{ minWidth: cell.column.columnDef.size, maxWidth: cell.column.columnDef.size, }}
+          >
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))
+      )
+    }
+
+    const tableBody = () => {
+      let tableContent =null;
+      if ((table.getRowModel().rows?.length) < 1){
+        return (
+          <TableBody>
+            <TableCell colSpan={columns.length} className="h-24 text-center" > No results. </TableCell>
+          </TableBody>
+        )
+      } else{
+        tableContent = <TableBody>
+          { table.getRowModel().rows.map((row) => {
+            // @ts-ignore
+            let className = row?.original?.center ? "cursor-pointer text-sm hover:bg-slate-500" : cn(clickedField === row.original.FieldID ? "bg-slate-400" : "", "cursor-pointer",);
+            let rowCellContents = rowCells(row);
+            return (
+              <TableRow
+                key={row.id}
+                className={className}
+                onClick={() => {
+                  // @ts-ignore
+                  setPosition({ center: [row.original.center_latitude, row.original.center_longitude], polygon: row.original.coords, fieldId: row.original.FieldID,
+                  });
+                  // @ts-ignore
+                  setZoomLevel(13);
+                  // @ts-ignore
+                  setClickedField(row.original?.FieldID);
+              }} //  we added this on click event to set center in map
+              >
+                {rowCellContents}
+              </TableRow>
+            )
+          })
+        }
+        </TableBody>;
+      }
+      return tableContent;
+    }
+
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
             <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
@@ -109,117 +163,7 @@ const MapTable = <T,>({
                             </TableRow>
                         ))}
                     </TableHeader>
-
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) =>
-                                // @ts-ignore it is to check whether there is center property in Data element object}
-                                setPosition !== null && row?.original?.center ? (
-                                    <TableRow
-                                        key={row.id}
-                                        className="cursor-pointer text-sm hover:bg-slate-500"
-                                    >
-                                        {row.getVisibleCells().map((cell) =>
-                                            // @ts-ignore  Below condition check is to determine where rows are from action column or not
-                                            cell.column.columnDef.meta?.className ? (
-                                                <TableCell
-                                                    className={`${
-                                                        // @ts-ignore
-                                                        cell.column.columnDef.meta?.className ?? ""
-                                                        } `}
-                                                    key={cell.id}
-                                                    style={{
-                                                        minWidth: cell.column.columnDef.size,
-                                                        maxWidth: cell.column.columnDef.size,
-                                                    }}
-                                                    onClick={() => {
-                                                        setPosition({
-                                                            // @ts-ignore
-                                                            center: [row.original?.center_latitude, row.original?.center_longitude],
-                                                            // @ts-ignore
-                                                            polygon: row.original?.coords,
-                                                            // @ts-ignore
-                                                            fieldId: row.original?.FieldID,
-                                                        });
-                                                    }} //  we added this on click event to set center in map
-                                                // @ts-ignore
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ) : (
-                                                <TableCell // this TableCell is not from Action column
-                                                    // @ts-ignore
-                                                    onClick={() => {
-                                                        // @ts-ignore
-                                                        setPosition({
-                                                            // @ts-ignore
-                                                            center: [row.original.center_latitude, row.original.center_longitude],
-                                                            // @ts-ignore
-                                                            polygon: row.original.coords,
-                                                            // @ts-ignore
-                                                            fieldId: row.original.FieldID,
-                                                        });
-                                                    }} //  we added this on click event to set center in map
-                                                    key={cell.id}
-                                                    style={{
-                                                        minWidth: cell.column.columnDef.size,
-                                                        maxWidth: cell.column.columnDef.size,
-                                                    }}
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ),
-                                        )}
-                                    </TableRow>
-                                ) : (
-                                    <TableRow
-                                        key={row.id}
-                                        className={cn(
-                                            // @ts-ignore
-                                            clickedField === row.original.FieldID ? "bg-slate-400" : "",
-                                            "cursor-pointer",
-                                        )}
-                                        onClick={() => {
-                                            // @ts-ignore
-                                            setPosition({
-                                                // @ts-ignore
-                                                center: [row.original.center_latitude, row.original.center_longitude],
-                                                // @ts-ignore
-                                                polygon: row.original.coords,
-                                                // @ts-ignore
-                                                fieldId: row.original.FieldID,
-                                            });
-                                            // @ts-ignore
-                                            setZoomLevel(13);
-                                            // @ts-ignore
-                                            setClickedField(row.original?.FieldID);
-                                        }} //  we added this on click event to set center in map
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell
-                                                className={`${
-                                                    // @ts-ignore
-                                                    cell.column.columnDef.meta?.className ?? ""
-                                                    } `}
-                                                key={cell.id}
-                                            >
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ),
-                            )
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
-                                    No results.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
+                    {tableBody()}
                 </Table>
             </div>
             {showPagination && (<div className="flex-grow p-2">
