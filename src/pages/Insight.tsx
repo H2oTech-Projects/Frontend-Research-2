@@ -1,3 +1,4 @@
+import $ from "jquery";
 import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +11,7 @@ import { AccountDetails, dummyGroundWaterDataTypes, FarmUnit } from "@/types/tab
 import dummyGroundWaterData from "../../data_demo2.json"
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
+import RtGeoJson from "@/components/RtGeoJson";
 interface EmailProps {
     value: string;
     label: string;
@@ -18,7 +20,7 @@ const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
-    const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "" });
+    const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "" });
     const [collapse, setCollapse] = useState("default");
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -28,7 +30,6 @@ const Insight = () => {
     };
     useEffect(() => {
         setGroundWaterAccountData(defaultData[selectedEmailValue])
-
     }, [selectedEmailValue]);
 
     const emailList: EmailProps[] = [
@@ -137,6 +138,69 @@ const Insight = () => {
         },
 
     ];
+
+    const showInfo = (Id: String) => {
+      var popup = $("<div></div>", {
+          id: "popup-" + Id,
+          css: {
+              position: "absolute",
+              height: "50px",
+              width: "150px",
+              top: "0px",
+              left: "0px",
+              zIndex: 1002,
+              backgroundColor: "white",
+              //padding: "200px",
+              border: "1px solid #ccc",
+          },
+      });
+      // Insert a headline into that popup
+      var hed = $("<div></div>", {
+          text: "FieldID: " + Id,
+          css: { fontSize: "16px", marginBottom: "3px" },
+      }).appendTo(popup);
+      // Add the popup to the map
+      popup.appendTo("#map2");
+    };
+
+    const removeInfo = (Id: String) => {
+      $("#popup-" + Id).remove();
+    };
+
+    const geoJsonLayerEvents = (feature: any, layer: any) => {
+      layer.on({
+          mouseover: function (e: any) {
+              const auxLayer = e.target;
+              auxLayer.setStyle({
+                  weight: 4,
+                  //color: "#800080"
+              });
+              showInfo(auxLayer.feature.properties.apn);
+          },
+          mouseout: function (e: any) {
+              const auxLayer = e.target;
+              auxLayer.setStyle({
+                  weight: 2.5,
+                  //color: "#9370DB",
+                  //fillColor: "lightblue",
+                  fillOpacity: 0,
+                  opacity: 1,
+              });
+              removeInfo(auxLayer.feature.properties.apn);
+          },
+      });
+    }
+
+    const geoJsonStyle = (features: any) => {
+      return {
+          color: "#16599A", // Border color
+          fillColor: "lightblue", // Fill color for normal areas
+          fillOpacity: 0.5,
+          weight: 2,
+      };
+    }
+
+    console.log(groundWaterAccountData?.geojson_parcels)
     return (
         <div className="flex flex-col px-3 py-2 ">
             <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
@@ -180,8 +244,8 @@ const Insight = () => {
 
                             <InsightTitle
                                 title="Account Summary"
-                                note="Note: For additional information about Account information, 
-                                contact Madera Country Water and Natural Resources Department at (559) 662-8015 
+                                note="Note: For additional information about Account information,
+                                contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
                             />
 
@@ -319,9 +383,16 @@ const Insight = () => {
                             position={position}
                             zoom={10}
                             collapse={collapse}
-                            geojson={groundWaterAccountData?.geojson_parcels}
-
-                        />
+                            configurations={{'minZoom': 4, 'containerStyle': { height: "100%", width: "100vw" }}}
+                        >
+                          {groundWaterAccountData?.geojson_parcels && <RtGeoJson
+                            key={selectedEmailValue}
+                            layerEvents={geoJsonLayerEvents}
+                            style={geoJsonStyle}
+                            data={JSON.parse(groundWaterAccountData?.geojson_parcels)}
+                          />
+                          }
+                        </LeafletMap>
                         {/* <button
                                 className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
                                 onClick={mapCollapseBtn}

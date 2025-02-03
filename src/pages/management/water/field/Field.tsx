@@ -1,10 +1,8 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
-import { Polygon, Popup, GeoJSON, LayersControl } from "react-leaflet";
-import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo } from "react";
 import $ from "jquery";
 import { cn } from "../../../../utils/cn";
-import { ColumnDef, ColumnMeta } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
@@ -13,7 +11,6 @@ import RtGeoJson from "@/components/RtGeoJson";
 import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
-import { useMediaQuery } from "@uidotdev/usehooks";
 import swmcFields from "../../../../geojson/SMWC_Fields.json";
 import {
     DropdownMenu,
@@ -444,6 +441,7 @@ const Field = () => {
                                 configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }}}
                             >
                               <RtGeoJson
+                                  key={"fields"}
                                   layerEvents={geoJsonLayerEvents}
                                   style={geoJsonStyle}
                                   data={swmcFields}

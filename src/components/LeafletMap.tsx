@@ -17,7 +17,6 @@ type LeafletMapTypes = {
 };
 
 const LeafletMap = ({ zoom, position, collapse, clickedField = null, configurations = {'minZoom': 11, 'containerStyle': {}}, children }: LeafletMapTypes) => {
-  debugger
   const { center } = position;
   const MapHandler = () => {
     const map = useMap();
