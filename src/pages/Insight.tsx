@@ -231,7 +231,7 @@ const Insight = () => {
                         <SelectTrigger className="w-56 h-8 transition-colors ">
                             <SelectValue placeholder="Select an email" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="!z-[800]">
                             {emailList.map((email) => (
                                 <SelectItem key={email.value} value={email.value}>
                                     {email.label}
