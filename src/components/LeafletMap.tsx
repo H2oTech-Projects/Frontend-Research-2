@@ -26,7 +26,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
 
     useEffect(() => {
       map.invalidateSize(); // Force the map to resize
-      //map.setView(center); // Force the map to recenter
+      map.setView(center); // Force the map to recenter
       if (!!viewBound){
         map.fitBounds(viewBound);
       }
