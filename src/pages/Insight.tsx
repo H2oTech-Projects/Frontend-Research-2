@@ -209,7 +209,7 @@ const Insight = () => {
                 <div className="flex items-center gap-2 ">
                     <label>Year : </label>
                     <Select onValueChange={(value) => console.log(value)}>
-                        <SelectTrigger className="w-56 h-8 transition-colors">
+                        <SelectTrigger className="w-56 h-8 transition-colors" disabled>
                             <SelectValue placeholder="Select a year" />
                         </SelectTrigger>
                         <SelectContent className="!z-[800]">
@@ -370,7 +370,7 @@ const Insight = () => {
                             zoom={14}
                             viewBound={groundWaterAccountData?.view_bounds}
                             collapse={collapse}
-                            configurations={{'minZoom': 4, 'containerStyle': { height: "100%", width: "100vw" }}}
+                            configurations={{'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}}
                         >
                           {groundWaterAccountData?.geojson_parcels && <RtGeoJson
                             key={selectedEmailValue}

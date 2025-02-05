@@ -438,7 +438,7 @@ const Field = () => {
                                 zoom={zoomLevel}
                                 collapse={collapse}
                                 clickedField={clickedField}
-                                configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }}}
+                                configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
                             >
                               <RtGeoJson
                                   key={"fields"}
