@@ -14,9 +14,10 @@ type LeafletMapTypes = {
     clickedField?: string | null;
     configurations?: mapConfiguration;
     children?: any;
+    viewBound?: any;
 };
 
-const LeafletMap = ({ zoom, position, collapse, clickedField = null, configurations = {'minZoom': 11, 'containerStyle': {}}, children }: LeafletMapTypes) => {
+const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}}, children }: LeafletMapTypes) => {
   const { center } = position;
   const MapHandler = () => {
     const map = useMap();
@@ -24,8 +25,9 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, configurati
     useEffect(() => {
       map.invalidateSize(); // Force the map to resize
       map.setView(center); // Force the map to recenter
+      map.fitBounds(viewBound);
       //map.setZoom(zoom);
-    }, [collapse, center, zoom]);
+    }, [collapse, center, zoom, viewBound]);
 
     return null;
   };

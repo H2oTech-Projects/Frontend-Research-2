@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { AccountDetails, dummyGroundWaterDataTypes, FarmUnit } from "@/types/tableTypes";
-import dummyGroundWaterData from "../../data_demo2.json"
+import dummyGroundWaterData from "../../data3.json"
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
 import RtGeoJson from "@/components/RtGeoJson";
@@ -20,7 +20,7 @@ const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
-    const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "" });
+    const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
     const [collapse, setCollapse] = useState("default");
     const tableCollapseBtn = () => {
         setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -32,7 +32,7 @@ const Insight = () => {
         setGroundWaterAccountData(defaultData[selectedEmailValue])
         let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
         let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
-        setPosition((prev: any)=> ({...prev, center: latlong}))
+        setPosition((prev: any)=> ({...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds}))
     }, [selectedEmailValue]);
 
     const emailList: EmailProps[] = [
@@ -203,7 +203,10 @@ const Insight = () => {
       };
     }
 
-    console.log(groundWaterAccountData?.geojson_parcels)
+    if (!groundWaterAccountData){
+      return "";
+    }
+
     return (
         <div className="flex flex-col px-3 py-2 ">
             <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
@@ -385,6 +388,7 @@ const Insight = () => {
                         <LeafletMap
                             position={position}
                             zoom={14}
+                            viewBound={groundWaterAccountData?.view_bounds}
                             collapse={collapse}
                             configurations={{'minZoom': 4, 'containerStyle': { height: "100%", width: "100vw" }}}
                         >
