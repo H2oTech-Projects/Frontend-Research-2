@@ -17,7 +17,7 @@ interface EmailProps {
     value: string;
     label: string;
 }
-const farmUnitFields = [{'mailing_address_no': "Number of Mailing Address"}, {'mailing_address_no': "Number of Mailing Address"}]
+
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
@@ -224,7 +224,7 @@ const Insight = () => {
             </div>
             <div className="flex flex-grow mt-2">
                 <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                    <div className={cn("relative h-[calc(100vh-152px)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
+                    <div className={cn("relative h-[calc(100vh-152px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
                         <div className="py-2 px-3 overflow-auto h-full">
 
@@ -335,7 +335,7 @@ const Insight = () => {
                                 note="Note: The following information is based on records from the Madera County Assessor's Office. Contact the Madera County Assessor's Office at (559)
                                         675-7710 or assessor@maderacounty.com for information."
                             />
-                            <div className="rounded-[8px] overflow-hidden mt-2 ring-2 ring-blue-500/50">
+                            <div className="rounded-[8px] overflow-hidden mt-2 ring-2 ring-blue-500/50 shadow-xl">
                                 {groundWaterAccountData?.farm_units?.map((farmUnit, index) => {
                                     return (<div key={index} className="pl-[20px]">
                                         <div className="text-black dark:text-slate-50 text-sm font-bold mt-[15px]">Farm Unit:{farmUnit?.farm_unit_zone}</div>
