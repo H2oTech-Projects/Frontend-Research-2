@@ -29,6 +29,7 @@ interface EmailProps {
     value: string;
     label: string;
 }
+const farmUnitFields = [{'mailing_address_no': "Number of Mailing Address"}, {'mailing_address_no': "Number of Mailing Address"}]
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
@@ -262,10 +263,10 @@ const Insight = () => {
                             {emailList.map((email) => (
                                 <CommandItem
                           key={email.value}
-                          value={email.label}  
+                          value={email.label}
                           onSelect={(currentValue) => {
                             const selectedEmail = emailList.find((e) => e.label === currentValue);
-                            setSelectedEmailValue(selectedEmail ? selectedEmail.value : ""); 
+                            setSelectedEmailValue(selectedEmail ? selectedEmail.value : "");
                             setOpen(false);
                           }}
                         >
@@ -302,7 +303,7 @@ const Insight = () => {
             </div>
             <div className="flex flex-grow mt-2">
                 <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                    <div className={cn("relative h-[calc(100vh-152px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
+                    <div className={cn("relative h-[calc(100vh-152px)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
 
                         <div className="py-2 px-3 overflow-auto h-full">
 
@@ -391,7 +392,6 @@ const Insight = () => {
                                 </Table>
                             </div>
 
-
                             <InsightTitle
                                 title="Farm Unit Summary"
                                 note=" Note: For additional information about Allocations, ETAW, Remaining Allocation, and Carryover Water, contact the Madera County Water and Natural
@@ -414,17 +414,20 @@ const Insight = () => {
                                 note="Note: The following information is based on records from the Madera County Assessor's Office. Contact the Madera County Assessor's Office at (559)
                                         675-7710 or assessor@maderacounty.com for information."
                             />
-                            <div className="mt-2">
+                            <div className="rounded-[8px] overflow-hidden mt-2 ring-2 ring-blue-500/50">
                                 {groundWaterAccountData?.farm_units?.map((farmUnit, index) => {
-                                    return (<div key={index}>
-                                        <div className="text-black dark:text-slate-50 text-sm font-bold">Farm Unit: {farmUnit?.farm_unit_zone}</div>
-                                        <div className="text-black dark:text-slate-50 text-sm">Number of Mailing Address: 1</div>
-                                        <div className="text-black dark:text-slate-50 text-sm">{groundWaterAccountData?.mailing_address}</div>
-                                        <div className="text-black dark:text-slate-50 text-sm">Number of Parcels:{farmUnit?.parcels.length}</div>
-                                        {farmUnit?.parcels.map((parcel, index) => {
-                                            return <div key={index} className="text-black dark:text-slate-50 text-sm ml-2">Parcel {index + 1} : {parcel}</div>
-                                        })}
-                                    </div>)
+                                    return (<div key={index} className="pl-[20px]">
+                                        <div className="text-black dark:text-slate-50 text-sm font-bold mt-[15px]">Farm Unit:{farmUnit?.farm_unit_zone}</div>
+                                        <tbody>
+                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="flex justify-between w-[190px]"><span>Number of Mailing Address</span><span className="text-right">:</span></td> <td><span className="pl-[5px] italic">1</span></td></tr>
+                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="flex justify-between w-[190px]"><span>Owner Mailing Address</span><span className="text-right">:</span></td><td><span className="pl-[5px] italic">{groundWaterAccountData?.mailing_address}</span></td></tr>
+                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="flex justify-between w-[190px]"><span>Number of Parcels</span><span className="text-right">:</span></td><td><span className="pl-[5px] italic">{farmUnit?.parcels.length}</span></td></tr>
+                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="w-[190px]"></td><td><ul className="list-inside list-disc">{farmUnit?.parcels.map((parcel, index) => {
+                                            return <li key={index} className="text-black dark:text-slate-50 text-sm italic">Parcel {index + 1} : {parcel}</li>
+                                        })}</ul></td></tr>
+                                        </tbody>
+                                    </div>
+                                    )
                                 })}
                             </div>
 
