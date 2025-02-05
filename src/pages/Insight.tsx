@@ -110,10 +110,10 @@ const Insight = () => {
             cell: ({ row }) => <div>{row.getValue("adjustment")}</div>,
         },
         {
-            accessorKey: "fu_total_adjustment_af",
-            header: 'Total Adjustment (AF)',
+            accessorKey: "fu_total_alloc_af",
+            header: 'Total Allocation (AF)',
             size: 150,
-            cell: ({ row }) => <div>{row.getValue("fu_total_adjustment_af")}</div>,
+            cell: ({ row }) => <div>{row.getValue("fu_total_alloc_af")}</div>,
         },
         {
             accessorKey: "fu_etaw_af",
