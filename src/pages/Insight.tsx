@@ -3,7 +3,7 @@ import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/utils/cn";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Check, ChevronsLeft, ChevronsRight, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -12,6 +12,19 @@ import dummyGroundWaterData from "../../data3.json"
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
 import RtGeoJson from "@/components/RtGeoJson";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 interface EmailProps {
     value: string;
     label: string;
@@ -19,6 +32,7 @@ interface EmailProps {
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
+    const [open, setOpen] = useState(false)
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
     const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
     const [collapse, setCollapse] = useState("default");
@@ -213,7 +227,7 @@ const Insight = () => {
             <div className="flex  items-center mt-2 gap-8 dark:text-slate-50 ">
                 <div className="flex items-center gap-2">
                     <label>Select an Account : </label>
-                    <Select value={selectedEmailValue} onValueChange={(value) => setSelectedEmailValue(value)}>
+                    {/* <Select value={selectedEmailValue} onValueChange={(value) => setSelectedEmailValue(value)}>
                         <SelectTrigger className="w-56 h-8 transition-colors ">
                             <SelectValue placeholder="Select an email" />
                         </SelectTrigger>
@@ -224,7 +238,51 @@ const Insight = () => {
                                 </SelectItem>
                             ))}
                         </SelectContent>
-                    </Select>
+                    </Select> */}
+                   <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-[200px] justify-between"
+                      >
+                        {selectedEmailValue
+                          ? emailList.find((email) => email.value === selectedEmailValue)?.label
+                          : "Select email..."}
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0 z-[800]">
+                      <Command>
+                        <CommandInput placeholder="Search email..." className="h-9" />
+                        <CommandList>
+                          <CommandEmpty>No Email found.</CommandEmpty>
+                          <CommandGroup>
+                            {emailList.map((email) => (
+                                <CommandItem
+                          key={email.value}
+                          value={email.label}  
+                          onSelect={(currentValue) => {
+                            const selectedEmail = emailList.find((e) => e.label === currentValue);
+                            setSelectedEmailValue(selectedEmail ? selectedEmail.value : ""); 
+                            setOpen(false);
+                          }}
+                        >
+                                {email.label}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    selectedEmailValue === email.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="flex items-center gap-2 ">
                     <label>Year : </label>
