@@ -29,7 +29,7 @@ const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label}:RtSelectPr
 const [open, setOpen] = useState(false)
   return (
     <div className="flex items-center gap-2">
-                    <label>{label} : </label>
+                    <label className="w-[6rem] ">{label} : </label>
 
                    <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
@@ -37,7 +37,7 @@ const [open, setOpen] = useState(false)
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-[250px] justify-between h-8 font-normal"
+                        className="w-auto min-w-64 justify-between h-8 font-normal"
                       >
                         {selectedValue
                           ? dropdownList.find((email) => email.value === selectedValue)?.label
@@ -45,7 +45,7 @@ const [open, setOpen] = useState(false)
                          <ChevronDown className="h-4 w-4 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[250px] p-0 z-[800]">
+                    <PopoverContent className="w-auto min-w-64 p-0 z-[800]">
                       <Command>
                         <CommandInput placeholder={`Search ${label}...`} className="h-9" />
                         <CommandList>
