@@ -1,7 +1,6 @@
 import $ from "jquery";
 import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/utils/cn";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,7 +20,8 @@ interface EmailProps {
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
-    const [open, setOpen] = useState(false)
+    const [selectedYearValue, setSelectedYearValue] = useState<string>("");
+    const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit summary");
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
     const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
     const [collapse, setCollapse] = useState("default");
@@ -222,9 +222,9 @@ const Insight = () => {
             <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
             <div className="flex flex-col items-start  mt-2 gap-2 dark:text-slate-50 ">
                
-                <RtSelect selectedValue={selectedEmailValue} dropdownList={emailList} label="Email" setSelectedValue={setSelectedEmailValue}/>
-                <BasicSelect itemList={ReportTypeList} label="Report Type"/>
-                <BasicSelect itemList={yearList} label="Year"/>
+                <RtSelect selectedValue={selectedEmailValue} dropdownList={emailList} label="Account" setSelectedValue={setSelectedEmailValue}/>
+                <BasicSelect itemList={ReportTypeList} label="Report Type"  Value={selectedReportTypeValue} setValue={setSelectedReportTypeValue}/>
+                <BasicSelect itemList={yearList} label="Year" Value={selectedYearValue} setValue={setSelectedYearValue}/>
                   {/* <div className="flex items-center gap-2 ">
                     <label>Report Type : </label>
                     <Select value="Account Farm Unit summary" onValueChange={(value) => console.log(value)}>
