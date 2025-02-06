@@ -35,6 +35,7 @@ const MapTable = <T,>({
     clickedField = null,
     fullHeight = true,
     showPagination = true,
+    textAlign = "center",
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setDate] = useState([...defaultData]);
@@ -93,6 +94,7 @@ const MapTable = <T,>({
                                             header.column.columnDef.meta?.className ?? ""
                                             } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
                                             `!min-w-[${header?.getSize()}px]`,
+                                            `text-${textAlign}`,
                                         )}
                                         key={header.id}
                                         // style={{
@@ -120,8 +122,8 @@ const MapTable = <T,>({
                                         className="cursor-pointer text-sm hover:bg-slate-500"
                                     >
                                         {row.getVisibleCells().map((cell) =>
-                                            // @ts-ignore  Below condition check is to determine where rows are from action column or not
-                                            cell.column.columnDef.meta?.className ? (
+                                          
+                                          
                                                 <TableCell
                                                     className={`${
                                                         // @ts-ignore
@@ -131,6 +133,7 @@ const MapTable = <T,>({
                                                     style={{
                                                         minWidth: cell.column.columnDef.size,
                                                         maxWidth: cell.column.columnDef.size,
+                                                        
                                                     }}
                                                     onClick={() => {
                                                         setPosition({
@@ -146,29 +149,7 @@ const MapTable = <T,>({
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
-                                            ) : (
-                                                <TableCell // this TableCell is not from Action column
-                                                    // @ts-ignore
-                                                    onClick={() => {
-                                                        // @ts-ignore
-                                                        setPosition({
-                                                            // @ts-ignore
-                                                            center: [row.original.center_latitude, row.original.center_longitude],
-                                                            // @ts-ignore
-                                                            polygon: row.original.coords,
-                                                            // @ts-ignore
-                                                            fieldId: row.original.FieldID,
-                                                        });
-                                                    }} //  we added this on click event to set center in map
-                                                    key={cell.id}
-                                                    style={{
-                                                        minWidth: cell.column.columnDef.size,
-                                                        maxWidth: cell.column.columnDef.size,
-                                                    }}
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ),
+                                            
                                         )}
                                     </TableRow>
                                 ) : (
@@ -200,7 +181,7 @@ const MapTable = <T,>({
                                                 className={`${
                                                     // @ts-ignore
                                                     cell.column.columnDef.meta?.className ?? ""
-                                                    } `}
+                                                    } text-${textAlign}`}
                                                 key={cell.id}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

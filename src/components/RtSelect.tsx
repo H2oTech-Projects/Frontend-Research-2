@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 type RtSelectProps = {
@@ -37,12 +37,12 @@ const [open, setOpen] = useState(false)
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-[250px] justify-between"
+                        className="w-[250px] justify-between h-8 font-normal"
                       >
                         {selectedValue
                           ? dropdownList.find((email) => email.value === selectedValue)?.label
                           : `Select ${label}...`}
-                        <ChevronsUpDown className="opacity-50" />
+                         <ChevronDown className="h-4 w-4 opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[250px] p-0 z-[800]">

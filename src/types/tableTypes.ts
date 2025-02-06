@@ -12,6 +12,7 @@ export type MapTableTypes<T> = {
     clickedField?: null | string;
     fullHeight?: boolean;
     showPagination?: boolean;
+    textAlign?: "left" | "center" | "right";
 };
 export type DummyDataType = {
     district?: string;
