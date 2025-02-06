@@ -19,7 +19,16 @@ interface EmailProps {
 }
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
-    const [selectedEmailValue, setSelectedEmailValue] = useState<string>("MAD_MA_00001");
+    const objectKeys = Object.keys(defaultData);
+    const emailList: EmailProps[] = []
+    objectKeys.sort().forEach((item) => {
+        emailList.push({
+            value: item,
+            label: item
+        })
+    }
+)
+    const [selectedEmailValue, setSelectedEmailValue] = useState<string>(emailList[0].value);
     const [selectedYearValue, setSelectedYearValue] = useState<string>("");
     const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit summary");
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
@@ -37,16 +46,13 @@ const Insight = () => {
         let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
         setPosition((prev: any)=> ({...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds}))
     }, [selectedEmailValue]);
+  
+//   for (let key in objectKeys.sort()) {
 
-    const emailList: EmailProps[] = [
-     
-    ]
-
-  for (let key in defaultData) {
-    emailList.push({
-      value: key,
-      label:key
-})}
+//     emailList.push({
+//       value: key,
+//       label:key
+// })}
 
     const yearList: EmailProps[] = [
         {
