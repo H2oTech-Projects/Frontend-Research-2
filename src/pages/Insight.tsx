@@ -13,6 +13,7 @@ import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
 import RtGeoJson from "@/components/RtGeoJson";
 import RtSelect from "@/components/RtSelect";
+import BasicSelect from "@/components/BasicSelect";
 interface EmailProps {
     value: string;
     label: string;
@@ -70,6 +71,22 @@ const Insight = () => {
         }
     ]
 
+  const ReportTypeList :EmailProps[] = [
+{
+  label:"Account Farm Unit summary",
+  value:"Account Farm Unit summary"
+},
+{
+  label:"Farm Unit Parcel summary",
+  value:"Farm Unit Parcel summary"
+},
+{
+  label:"Measurement Detail Report",
+  value:"Measurement Detail Report",
+},
+
+]
+
 
     const columns: ColumnDef<FarmUnit>[] = [
         {
@@ -86,7 +103,7 @@ const Insight = () => {
         },
         {
             accessorKey: "fu_tw_ac",
-            header: "Total Water Use (AC)",
+            header: "Transitional Water Acreage (AC)",
             size: 150,
             cell: ({ row }) => <div>{row.getValue("fu_tw_ac")}</div>,
         },
@@ -203,10 +220,27 @@ const Insight = () => {
     return (
         <div className="flex flex-col px-3 py-2 ">
             <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
-            <div className="flex  items-center mt-2 gap-8 dark:text-slate-50 ">
+            <div className="flex flex-col items-start  mt-2 gap-2 dark:text-slate-50 ">
                
                 <RtSelect selectedValue={selectedEmailValue} dropdownList={emailList} label="Email" setSelectedValue={setSelectedEmailValue}/>
-                <div className="flex items-center gap-2 ">
+                <BasicSelect itemList={ReportTypeList} label="Report Type"/>
+                <BasicSelect itemList={yearList} label="Year"/>
+                  {/* <div className="flex items-center gap-2 ">
+                    <label>Report Type : </label>
+                    <Select value="Account Farm Unit summary" onValueChange={(value) => console.log(value)}>
+                        <SelectTrigger className="w-64 h-8 transition-colors" >
+                            <SelectValue  placeholder="Select a Report Type" />
+                        </SelectTrigger>
+                        <SelectContent className="!z-[800]">
+                            {ReportTypeList.map((reportType) => (
+                                <SelectItem key={reportType.value} value={reportType.value}>
+                                    {reportType.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div> */}
+                {/* <div className="flex items-center gap-2 ">
                     <label>Year : </label>
                     <Select onValueChange={(value) => console.log(value)}>
                         <SelectTrigger className="w-56 h-8 transition-colors" disabled>
@@ -220,11 +254,12 @@ const Insight = () => {
                             ))}
                         </SelectContent>
                     </Select>
-                </div>
+                </div> */}
+                
             </div>
             <div className="flex flex-grow mt-2">
                 <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                    <div className={cn("relative h-[calc(100vh-152px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
+                    <div className={cn("relative h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
                         <div className="py-2 px-3 overflow-auto h-full">
 
@@ -239,73 +274,73 @@ const Insight = () => {
                                 <Table>
                                     <TableHeader >
                                         <TableRow >
-                                            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none">Description</TableHead>
-                                            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none">Value</TableHead>
+                                            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Description</TableHead>
+                                            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         <TableRow>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 Account ID :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell  className="!text-left">
                                                 {groundWaterAccountData?.account_id}
                                             </TableCell>
                                         </TableRow>
 
-                                        <TableRow>
-                                            <TableCell>
+                                        <TableRow >
+                                            <TableCell className="!text-left">
                                                 Account Name :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 {groundWaterAccountData?.account_name}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 Mailing Address :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 {groundWaterAccountData?.mailing_address}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>
+                                            <TableCell className="!text-left w-auto">
                                                 Start Date (YYYY-MM-DD) :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 {groundWaterAccountData?.start_date}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>
+                                            <TableCell className="!text-left w-auto">
                                                 End Date (YYYY-MM-DD) :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 {groundWaterAccountData?.end_date}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 Measurement Method :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 {groundWaterAccountData?.msmt_method}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 Report Creation Date :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 {groundWaterAccountData?.report_creation_date}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 Report Revision Date :
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="!text-left">
                                                 {groundWaterAccountData?.report_revision_date}
                                             </TableCell>
                                         </TableRow>
@@ -328,6 +363,7 @@ const Insight = () => {
                                     filterValue={""}
                                     fullHeight={false}
                                     showPagination={false}
+                                    textAlign="left" // this aligns the text to the left in the table, if not provided it will be center
 
                                 />
                             </div>
@@ -362,7 +398,7 @@ const Insight = () => {
 
                 <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
                     <div
-                        className={cn("relative flex h-[calc(100vh-152px)] w-full")}
+                        className={cn("relative flex h-[calc(100vh-232px)] w-full")}
                         id="map2"
                     >
                         <LeafletMap
