@@ -379,7 +379,7 @@ const Field = () => {
         weight: 2,
     };
   }
-    debugger
+
     return (
         <div className="flex h-full flex-col gap-1 px-4 pt-2">
             <PageHeader
@@ -464,8 +464,7 @@ const Field = () => {
                                   layerEvents={geoJsonLayerEvents}
                                   style={geoJsonStyle}
                                   data={swmcFields}
-                              >
-                              </RtGeoJson>
+                              />
                               {!!position.polygon ? (
                                 <RtPolygon
                                     pathOptions={{ id: position.fieldId } as Object}
