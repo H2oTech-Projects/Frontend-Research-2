@@ -6,9 +6,10 @@ type RtGeoJsonTypes = {
   data: any;
   style: any;
   key: string;
+  children: any;
 };
 
-const RtGeoJson = ({ layerEvents, data, style, key }: RtGeoJsonTypes) => {
+const RtGeoJson = ({ layerEvents, data, style, key, children }: RtGeoJsonTypes) => {
   const geoJsonRef = useRef<L.GeoJSON>(null);
   useEffect(() => {
     if (geoJsonRef.current) {
@@ -34,7 +35,9 @@ const RtGeoJson = ({ layerEvents, data, style, key }: RtGeoJsonTypes) => {
     onEachFeature={layerEvents}
     data={data}
     style={style}
-    />
+    >
+      {children}
+    </GeoJSON>
   );
 };
 

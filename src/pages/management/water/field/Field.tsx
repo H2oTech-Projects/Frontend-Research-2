@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import $ from "jquery";
+import { Popup } from "react-leaflet";
 import { cn } from "../../../../utils/cn";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -12,6 +13,8 @@ import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
 import swmcFields from "../../../../geojson/SMWC_Fields.json";
+import './mapStyle.css'
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -24,7 +27,7 @@ import PageHeader from "@/components/PageHeader";
 
 const Field = () => {
   const [collapse, setCollapse] = useState("default");
-  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "" });
+  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
   const [searchText, setSearchText] = useState<String>("");
@@ -288,6 +291,9 @@ const Field = () => {
         const { id } = e.target.options;
         removeInfo(id);
       },
+      click: (e: any) => {
+        e.target.openPopup(); // Opens popup when clicked
+      }
     }),
     [],
   );
@@ -320,7 +326,20 @@ const Field = () => {
       $("#popup-" + Id).remove();
   };
 
+  const buildPopupMessage = (properties: any) => {
+    if (!properties) return "";
+    const tableContent = Object.keys(properties).map((key) => {return(`<tr><td>${key}</td><td>:${!!properties[key] ? properties[key] : ""}</td></tr>`)})
+    return (
+      `<table>
+        <tbody>
+          ${tableContent}
+        </tbody>
+      </table>`
+    )
+  }
+
   const geoJsonLayerEvents = (feature: any, layer: any) => {
+    layer.bindPopup(buildPopupMessage(feature.properties));
     layer.on({
         mouseover: function (e: any) {
             const auxLayer = e.target;
@@ -360,7 +379,7 @@ const Field = () => {
         weight: 2,
     };
   }
-
+    debugger
     return (
         <div className="flex h-full flex-col gap-1 px-4 pt-2">
             <PageHeader
@@ -445,14 +464,19 @@ const Field = () => {
                                   layerEvents={geoJsonLayerEvents}
                                   style={geoJsonStyle}
                                   data={swmcFields}
-                              />
+                              >
+                              </RtGeoJson>
                               {!!position.polygon ? (
                                 <RtPolygon
                                     pathOptions={{ id: position.fieldId } as Object}
                                     positions={position.polygon}
                                     color={"red"}
                                     eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-                                />
+                                >
+                                  <Popup>
+                                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+                                  </Popup>
+                                </RtPolygon>
                               ) : null}
                             </LeafletMap>
                             <Button

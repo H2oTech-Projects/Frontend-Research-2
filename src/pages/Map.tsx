@@ -84,6 +84,7 @@ const Map = () => {
     }, []);
 
   const geoJsonLayerEvents = (feature: Feature, layer: L.Layer) => {
+    layer.bindPopup("yes");
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
@@ -92,6 +93,7 @@ const Map = () => {
             //color: "#800080"
         });
         showInfo(auxLayer.feature.properties.FieldID);
+        layer.bindPopup("<h>Hello</h>");
       },
       mouseout: function (e) {
         const auxLayer = e.target;

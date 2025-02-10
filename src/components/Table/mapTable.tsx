@@ -122,8 +122,8 @@ const MapTable = <T,>({
                                         className="cursor-pointer text-sm hover:bg-slate-500"
                                     >
                                         {row.getVisibleCells().map((cell) =>
-                                          
-                                          
+
+
                                                 <TableCell
                                                     className={`${
                                                         // @ts-ignore
@@ -133,7 +133,7 @@ const MapTable = <T,>({
                                                     style={{
                                                         minWidth: cell.column.columnDef.size,
                                                         maxWidth: cell.column.columnDef.size,
-                                                        
+
                                                     }}
                                                     onClick={() => {
                                                         setPosition({
@@ -143,13 +143,15 @@ const MapTable = <T,>({
                                                             polygon: row.original?.coords,
                                                             // @ts-ignore
                                                             fieldId: row.original?.FieldID,
+                                                            // @ts-ignore
+                                                            features: row.original
                                                         });
                                                     }} //  we added this on click event to set center in map
                                                 // @ts-ignore
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
-                                            
+
                                         )}
                                     </TableRow>
                                 ) : (
@@ -169,6 +171,7 @@ const MapTable = <T,>({
                                                 polygon: row.original.coords,
                                                 // @ts-ignore
                                                 fieldId: row.original.FieldID,
+                                                features: row.original
                                             });
                                             // @ts-ignore
                                             setZoomLevel(13);
