@@ -20,14 +20,16 @@ interface EmailProps {
 
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
+    console.log(defaultData['column_properties'])
     const objectKeys = Object.keys(defaultData);
     const emailList: EmailProps[] = []
     objectKeys.sort().forEach((item) => {
+  if (item !== "column_properties") {
         emailList.push({
             value: item,
             label: item
         })
-    }
+    }}
 )
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>(emailList[0].value);
     const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
@@ -338,7 +340,7 @@ const Insight = () => {
                                     fullHeight={false}
                                     showPagination={false}
                                     textAlign="left" // this aligns the text to the left in the table, if not provided it will be center
-
+                                    columnProperties={defaultData['column_properties']}  
                                 />
                             </div>
 

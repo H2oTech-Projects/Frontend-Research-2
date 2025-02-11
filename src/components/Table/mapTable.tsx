@@ -36,6 +36,7 @@ const MapTable = <T,>({
     fullHeight = true,
     showPagination = true,
     textAlign = "center",
+    columnProperties = null,
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setDate] = useState([...defaultData]);
@@ -94,7 +95,7 @@ const MapTable = <T,>({
                                             header.column.columnDef.meta?.className ?? ""
                                             } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
                                             `!min-w-[${header?.getSize()}px]`,
-                                            `text-${textAlign}`,
+                                            `text-${columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign}`,
                                         )}
                                         key={header.id}
                                         // style={{
@@ -181,7 +182,7 @@ const MapTable = <T,>({
                                                 className={`${
                                                     // @ts-ignore
                                                     cell.column.columnDef.meta?.className ?? ""
-                                                    } text-${textAlign}`}
+                                                    } text-${columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign}`}
                                                 key={cell.id}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

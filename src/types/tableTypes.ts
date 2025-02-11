@@ -13,6 +13,7 @@ export type MapTableTypes<T> = {
     fullHeight?: boolean;
     showPagination?: boolean;
     textAlign?: "left" | "center" | "right";
+    columnProperties?: any | null;
 };
 export type DummyDataType = {
     district?: string;
