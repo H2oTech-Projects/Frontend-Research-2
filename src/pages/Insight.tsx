@@ -13,6 +13,7 @@ import InsightTitle from "@/components/InsightTitle";
 import RtGeoJson from "@/components/RtGeoJson";
 import RtSelect from "@/components/RtSelect";
 import BasicSelect from "@/components/BasicSelect";
+import CollapseBtn from "@/components/CollapseBtn";
 interface EmailProps {
     value: string;
     label: string;
@@ -20,7 +21,6 @@ interface EmailProps {
 
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
-    console.log(defaultData['column_properties'])
     const objectKeys = Object.keys(defaultData);
     const emailList: EmailProps[] = []
     objectKeys.sort().forEach((item) => {
@@ -374,12 +374,13 @@ const Insight = () => {
                         </div>
                        
                     </div>
-                     <Button
+                     <CollapseBtn
                             className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
                             onClick={mapCollapseBtn}
+                            note={collapse === 'default' ? 'View Full Table' : "Show Map"}
                         >
-                            <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
-                        </Button>
+                          <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
+                      </CollapseBtn>
                 </div>
 
                 <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
@@ -411,12 +412,13 @@ const Insight = () => {
                                     className="rotate-180"
                                 />
                             </button> */}
-                        <Button
-                            className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
+                        <CollapseBtn
+                            className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
                             onClick={tableCollapseBtn}
+                            note={collapse === 'default' ? 'View Full Map' : "Show Table"}
                         >
                             <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-                        </Button>
+                        </CollapseBtn>
                     </div>
                 </div>
             </div>
