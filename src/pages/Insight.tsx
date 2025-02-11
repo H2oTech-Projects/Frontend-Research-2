@@ -8,11 +8,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ColumnDef } from "@tanstack/react-table";
 import { AccountDetails, dummyGroundWaterDataTypes, FarmUnit } from "@/types/tableTypes";
 import dummyGroundWaterData from "../../data3.json"
+import parcelsData from "../../parcels.json"
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
 import RtGeoJson from "@/components/RtGeoJson";
 import RtSelect from "@/components/RtSelect";
 import BasicSelect from "@/components/BasicSelect";
+import { buildPopupMessage } from "@/utils/map";
+
 interface EmailProps {
     value: string;
     label: string;
@@ -20,6 +23,7 @@ interface EmailProps {
 
 const Insight = () => {
     const defaultData: dummyGroundWaterDataTypes = dummyGroundWaterData as any;
+    const parcels: any = parcelsData as any;
     const objectKeys = Object.keys(defaultData);
     const emailList: EmailProps[] = []
     objectKeys.sort().forEach((item) => {
@@ -188,6 +192,7 @@ const Insight = () => {
     };
 
     const geoJsonLayerEvents = (feature: any, layer: any) => {
+      layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
       layer.on({
           mouseover: function (e: any) {
               const auxLayer = e.target;

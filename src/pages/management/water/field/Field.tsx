@@ -13,6 +13,7 @@ import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
 import swmcFields from "../../../../geojson/SMWC_Fields.json";
+import { buildPopupMessage } from "@/utils/map";
 import './mapStyle.css'
 
 import {
@@ -325,18 +326,6 @@ const Field = () => {
   const removeInfo = (Id: String) => {
       $("#popup-" + Id).remove();
   };
-
-  const buildPopupMessage = (properties: any) => {
-    if (!properties) return "";
-    const tableContent = Object.keys(properties).map((key) => {return(`<tr><td>${key}</td><td>:${!!properties[key] ? properties[key] : ""}</td></tr>`)})
-    return (
-      `<table>
-        <tbody>
-          ${tableContent}
-        </tbody>
-      </table>`
-    )
-  }
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     layer.bindPopup(buildPopupMessage(feature.properties));
