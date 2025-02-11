@@ -226,6 +226,86 @@ const Insight = () => {
       return "";
     }
 
+    const IntroTable = () => {
+      return (
+      <Table>
+       <TableHeader >
+          <TableRow >
+            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
+            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className="!text-left">
+              Account ID :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.account_id}
+            </TableCell>
+          </TableRow>
+
+          <TableRow >
+            <TableCell className="!text-left">
+              Account Name :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.account_name}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Mailing Address :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.mailing_address}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left w-auto">
+              Start Date (YYYY-MM-DD) :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.start_date}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left w-auto">
+              End Date (YYYY-MM-DD) :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.end_date}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Measurement Method :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.msmt_method}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Report Creation Date :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.report_creation_date}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Report Revision Date :
+            </TableCell>
+            <TableCell className="!text-left">
+              {groundWaterAccountData?.report_revision_date}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    )
+    }
+
     return (
         <div className="flex flex-col px-3 py-2 ">
             <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
@@ -248,81 +328,7 @@ const Insight = () => {
                             />
 
                             <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] ">
-                                <Table>
-                                    <TableHeader >
-                                        <TableRow >
-                                            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
-                                            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell className="!text-left">
-                                                Account ID :
-                                            </TableCell>
-                                            <TableCell  className="!text-left">
-                                                {groundWaterAccountData?.account_id}
-                                            </TableCell>
-                                        </TableRow>
-
-                                        <TableRow >
-                                            <TableCell className="!text-left">
-                                                Account Name :
-                                            </TableCell>
-                                            <TableCell className="!text-left">
-                                                {groundWaterAccountData?.account_name}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="!text-left">
-                                                Mailing Address :
-                                            </TableCell>
-                                            <TableCell className="!text-left">
-                                                {groundWaterAccountData?.mailing_address}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="!text-left w-auto">
-                                                Start Date (YYYY-MM-DD) :
-                                            </TableCell>
-                                            <TableCell className="!text-left">
-                                                {groundWaterAccountData?.start_date}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="!text-left w-auto">
-                                                End Date (YYYY-MM-DD) :
-                                            </TableCell>
-                                            <TableCell className="!text-left">
-                                                {groundWaterAccountData?.end_date}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="!text-left">
-                                                Measurement Method :
-                                            </TableCell>
-                                            <TableCell className="!text-left">
-                                                {groundWaterAccountData?.msmt_method}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="!text-left">
-                                                Report Creation Date :
-                                            </TableCell>
-                                            <TableCell className="!text-left">
-                                                {groundWaterAccountData?.report_creation_date}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="!text-left">
-                                                Report Revision Date :
-                                            </TableCell>
-                                            <TableCell className="!text-left">
-                                                {groundWaterAccountData?.report_revision_date}
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
+                               <IntroTable/>
                             </div>
 
                             <InsightTitle
