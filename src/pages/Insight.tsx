@@ -16,6 +16,8 @@ import RtSelect from "@/components/RtSelect";
 import BasicSelect from "@/components/BasicSelect";
 import { buildPopupMessage } from "@/utils/map";
 import CollapseBtn from "@/components/CollapseBtn";
+import StackedBarChart from "@/components/charts/stackedBarChart";
+
 interface EmailProps {
     value: string;
     label: string;
@@ -313,13 +315,21 @@ const Insight = () => {
                     <div className={cn("h-auto w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
                         <div className="pb-2 px-3 overflow-auto h-full">
-
+                        <div className="rounded-[8px] h-[300px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
                             <InsightTitle
-                                title="Account Summary"
+                                title="% of Total Allocation"
                                 note="Note: For additional information about Account information,
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
                             />
+                            <StackedBarChart
+                              data={groundWaterAccountData?.chart_data}
+                              config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
+                              layout={'vertical'}
+                              stack1={'remaining'}
+                              stack2={'allocation_used'}
+                            />
+                          </div>
 
                             <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] ">
                                <IntroTable/>
