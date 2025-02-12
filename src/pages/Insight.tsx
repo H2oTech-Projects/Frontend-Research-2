@@ -156,7 +156,7 @@ const Insight = () => {
             accessorKey: "remaining",
             header: 'Remaining (%)',
             size: 150,
-            cell: ({ row }) => <div>{row.getValue("remaining_%")}</div>,
+            cell: ({ row }) => <div>{row.getValue("remaining")}</div>,
         },
 
     ];
