@@ -21,11 +21,12 @@ type RtSelectProps = {
   selectedValue: string;
   setSelectedValue: (value: string) => void;
   label: string;
+  showSearch?: boolean;
 }
 
 
 
-const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label}:RtSelectProps) => {
+const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label,showSearch=true}:RtSelectProps) => {
 const [open, setOpen] = useState(false)
   return (
     <div className="flex items-center gap-2">
@@ -47,7 +48,9 @@ const [open, setOpen] = useState(false)
                     </PopoverTrigger>
                     <PopoverContent className="w-auto min-w-64 p-0 z-[800]">
                       <Command>
-                        <CommandInput placeholder={`Search ${label}...`} className="h-9" />
+                        {showSearch && (
+                          <CommandInput placeholder={`Search ${label}...`} className="h-9" />
+                        )}
                         <CommandList>
                           <CommandEmpty>No Result Found.</CommandEmpty>
                           <CommandGroup>

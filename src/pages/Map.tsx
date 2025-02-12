@@ -46,17 +46,7 @@ const Map = () => {
     const showInfo = (Id: String) => {
       var popup = $("<div></div>", {
         id: "popup-" + Id,
-        css: {
-            position: "absolute",
-            height: "50px",
-            width: "150px",
-            top: "5px",
-            left: "5px",
-            zIndex: 1002,
-            backgroundColor: "white",
-            //padding: "200px",
-            border: "1px solid #ccc",
-        },
+        class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
       });
       // Insert a headline into that popup
       var hed = $("<div></div>", {

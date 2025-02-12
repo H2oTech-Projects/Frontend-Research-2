@@ -24,6 +24,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
+import CollapseBtn from "@/components/CollapseBtn";
 
 const Field = () => {
   const [collapse, setCollapse] = useState("default");
@@ -301,17 +302,7 @@ const Field = () => {
   const showInfo = (Id: String) => {
     var popup = $("<div></div>", {
         id: "popup-" + Id,
-        css: {
-            position: "absolute",
-            height: "50px",
-            width: "150px",
-            top: "0px",
-            left: "0px",
-            zIndex: 1002,
-            backgroundColor: "white",
-            //padding: "200px",
-            border: "1px solid #ccc",
-        },
+        class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
     var hed = $("<div></div>", {
@@ -426,12 +417,13 @@ const Field = () => {
                                 setClickedField={setClickedField}
                                 clickedField={clickedField}
                             />
-                            <Button
-                                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
-                                onClick={mapCollapseBtn}
-                            >
-                                <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
-                            </Button>
+                          <CollapseBtn
+                            className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
+                            onClick={mapCollapseBtn}
+                            note={collapse === 'default' ? 'View Full Table' : "Show Map"}
+                        >
+                          <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
+                      </CollapseBtn>
                         </div>
                     </div>
 
@@ -466,12 +458,13 @@ const Field = () => {
                                 </RtPolygon>
                               ) : null}
                             </LeafletMap>
-                            <Button
-                                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
-                                onClick={tableCollapseBtn}
-                            >
-                                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-                            </Button>
+                        <CollapseBtn
+                            className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
+                            onClick={tableCollapseBtn}
+                            note={collapse === 'default' ? 'View Full Map' : "Show Table"}
+                        >
+                            <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
+                        </CollapseBtn>
                         </div>
                     </div>
                 </div>
