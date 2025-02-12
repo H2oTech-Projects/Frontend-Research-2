@@ -315,7 +315,7 @@ const Insight = () => {
                     <div className={cn("h-auto w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
                         <div className="pb-2 px-3 overflow-auto h-full">
-                        <div className="rounded-[8px] h-[300px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
+                        <div className="rounded-[8px] h-[300px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
                             <InsightTitle
                                 title="% of Total Allocation"
                                 note="Note: For additional information about Account information,
