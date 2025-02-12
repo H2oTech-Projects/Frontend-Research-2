@@ -14,7 +14,6 @@ interface CollapseBtnPropsType {
 }
 
 const CollapseBtn = ({ className, onClick, children, note }: CollapseBtnPropsType) => {
-  console.log(note)
   return (
     <Button className={className} onClick={onClick}>
       <TooltipProvider>
