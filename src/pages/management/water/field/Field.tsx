@@ -14,7 +14,6 @@ import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
 import swmcFields from "../../../../geojson/SMWC_Fields.json";
 import { buildPopupMessage } from "@/utils/map";
-import './mapStyle.css'
 
 import {
     DropdownMenu,

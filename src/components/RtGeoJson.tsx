@@ -1,6 +1,6 @@
 import { GeoJSON } from "react-leaflet";
 import { useEffect, useRef } from "react";
-
+import './mapStyle.css'
 type RtGeoJsonTypes = {
   layerEvents: any;
   data: any;
