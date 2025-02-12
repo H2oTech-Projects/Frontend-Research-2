@@ -331,6 +331,12 @@ const Insight = () => {
                             />
                           </div>
 
+                            <InsightTitle
+                                title="Account Summary"
+                                note="Note: For additional information about Account information,
+                                contact Madera Country Water and Natural Resources Department at (559) 662-8015
+                                or WNR@maderacounty.com for information."
+                            />
                             <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] ">
                                <IntroTable/>
                             </div>
