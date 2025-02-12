@@ -59,6 +59,7 @@ export type FarmUnit = {
     geojson_parcels: any;
     parcel_geometries: any;
     view_bounds: any;
+    chart_data: any;
   }
 
 export type dummyGroundWaterDataTypes={
