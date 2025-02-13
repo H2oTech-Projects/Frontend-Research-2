@@ -266,7 +266,7 @@ const Insight = () => {
             </div>
             <div className="flex flex-grow mt-2">
                 <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                    <div className={cn("relative h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
+                    <div className={cn("relative h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
 
                         <div className="py-2 px-3 overflow-auto h-full">
 
