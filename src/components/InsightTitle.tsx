@@ -8,7 +8,7 @@ import { Info } from "lucide-react"
 
 const InsightTitle = ({ title, note }: { title: string, note: string }) => {
   return (
-    <div className="text-black dark:text-white  font-semibold mt-3 flex items-center justify-center w-full">
+    <div className="text-black dark:text-white  font-semibold mt-3 ">
       {title}
       <TooltipProvider>
         <Tooltip>
