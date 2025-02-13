@@ -30,7 +30,7 @@ const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label,showSearch=
 const [open, setOpen] = useState(false)
   return (
     <div className="flex items-center gap-2">
-                    <label className="w-[6rem] flex justify-between"><span>{label}</span> <span>:</span> </label>
+                    <label className="w-[6rem] flex gap-1"><span>{label}</span> <span>:</span> </label>
 
                    <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>

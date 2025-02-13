@@ -305,8 +305,8 @@ const Insight = () => {
                 <RtSelect selectedValue={selectedYearValue} dropdownList={yearList} label="Year" setSelectedValue={setSelectedYearValue} showSearch={false} />                          
             </div>
             <div className="flex flex-grow mt-2">
-                <div className={cn("relative h-[calc(100vh-232px)] w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                    <div className={cn("h-auto w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
+                <div className={cn("relative  w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
+                    <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
                         <div className="pb-2 px-3 overflow-auto h-full">
 
