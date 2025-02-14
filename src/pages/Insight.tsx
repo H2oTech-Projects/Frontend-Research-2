@@ -46,7 +46,8 @@ const Insight = () => {
     useEffect(() => {
         setGroundWaterAccountData(defaultData[selectedEmailValue])
         let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
-        let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
+        let parcelWithLatLong = parcels.find((parcel) => defaultData[selectedEmailValue].parcel_geometries[parcel] != null);
+        let latlong = !!parcelWithLatLong ? defaultData[selectedEmailValue].parcel_geometries[parcelWithLatLong][0] : [36.96830684650072, -120.26398612842706]
         setPosition((prev: any)=> ({...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds}))
     }, [selectedEmailValue]);
 
