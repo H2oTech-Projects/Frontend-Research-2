@@ -384,9 +384,8 @@ const Field = () => {
                                 value={String(searchText)}
                                 onChange={(e) => {
                                     setSearchText(String(e.target.value));
-                                    if (!String(e.target.value)) {
-                                        setDoFilter(!doFilter);
-                                    }
+                                    setDoFilter(!doFilter);
+
                                 }}
                             />
                         </div>
