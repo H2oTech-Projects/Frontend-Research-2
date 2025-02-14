@@ -315,13 +315,14 @@ const Insight = () => {
                     <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
 
                         <div className="pb-2 px-3 overflow-auto h-full">
-                        <div className={`rounded-[8px] h-[${150* groundWaterAccountData?.chart_data.length}px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]`}>
-                            <InsightTitle
-                                title="Farm Unit Allocation Summary"
-                                note="Note: For additional information about Account information,
-                                contact Madera Country Water and Natural Resources Department at (559) 662-8015
-                                or WNR@maderacounty.com for information."
-                            />
+                        <InsightTitle
+                              title="Farm Unit Allocation Summary"
+                              note="Note: For additional information about Account information,
+                              contact Madera Country Water and Natural Resources Department at (559) 662-8015
+                              or WNR@maderacounty.com for information."
+                          />
+                          <div className={"rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 150* groundWaterAccountData?.chart_data.length }}
+                          >
                             <StackedBarChart
                               data={groundWaterAccountData?.chart_data}
                               config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
