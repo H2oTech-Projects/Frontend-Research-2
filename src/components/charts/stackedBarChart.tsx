@@ -73,10 +73,11 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
         //barGap={-10}
         >
         <Tooltip content={<CustomTooltip />} /> {/* ✅ Custom Tooltip */}
-        <XAxis type="number" tickCount={10} ticks={generateTicks(minTick, maxTick, 20)}/>
+        <XAxis type="number" tickCount={10} stroke="black" ticks={generateTicks(minTick, maxTick, 20)} tick={{ fill: '#666', fontSize: 14, fontWeight: 'semibold' }} />
         <YAxis
           dataKey="category"
           type="category"
+          stroke="black"
           tick={<CustomYAxisTick />}
         />
         <Tooltip />
