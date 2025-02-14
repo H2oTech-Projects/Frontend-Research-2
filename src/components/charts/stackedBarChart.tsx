@@ -32,9 +32,9 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
     const dataItem = data.find((d: any) => d.category === payload.value);
     return (
       <g transform={`translate(${x},${y})`} style={{ cursor: "pointer" }}>
-        <text x={-10} y={0} dy={4} textAnchor="end" fill="#666">
+        <text x={-10} y={0} dy={4} textAnchor="end" className="dark:fill-white">
           {payload.value.length > 5 ? payload.value.slice(0, 5) + "..." : payload.value}
-          <title>{dataItem.full_label}</title>
+          <title className="text-white">{dataItem.full_label}</title>
         </text>
       </g>
     );
@@ -73,10 +73,21 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
         //barGap={-10}
         >
         <Tooltip content={<CustomTooltip />} /> {/* ✅ Custom Tooltip */}
-        <XAxis type="number" tickCount={10} ticks={generateTicks(minTick, maxTick, 20)}/>
+        <XAxis type="number" tickCount={10} stroke="black" ticks={generateTicks(minTick, maxTick, 20)} tick={props => (
+    <text 
+      x={props.x} 
+      y={props.y} 
+      dy={10} 
+      textAnchor="middle"
+      className=" font-semibold text-[14px] dark:fill-white" // Tailwind classes
+    >
+      {props.payload.value}
+    </text>
+  )}/>
         <YAxis
           dataKey="category"
           type="category"
+          stroke="black"
           tick={<CustomYAxisTick />}
         />
         <Tooltip />
