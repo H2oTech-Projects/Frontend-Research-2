@@ -312,7 +312,7 @@ const Insight = () => {
             </div>
             <div className="flex flex-grow mt-2">
                 <div className={cn("relative  w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                    <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
+                    <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
 
                         <div className="pb-2 px-3 overflow-auto h-full">
                         <InsightTitle
@@ -338,7 +338,7 @@ const Insight = () => {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
                             />
-                            <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] ">
+                            <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500">
                                <IntroTable/>
                             </div>
 
@@ -348,7 +348,7 @@ const Insight = () => {
                                                 Resources Department Office at (559) 662-8015 or WNR@maderacounty.com for information. Total Allocation (AF) is equal to the sum of 2024
                                                 Allocation (AF), Carryover (AF), and 2024 Adjustment(s) (AF)"
                             />
-                            <div className="my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
+                            <div className="my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500">
                                 <MapTable
                                     defaultData={groundWaterAccountData?.farm_units as FarmUnit[] || []}
                                     columns={columns}
@@ -365,7 +365,7 @@ const Insight = () => {
                                 note="Note: The following information is based on records from the Madera County Assessor's Office. Contact the Madera County Assessor's Office at (559)
                                         675-7710 or assessor@maderacounty.com for information."
                             />
-                            <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
+                            <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500">
                                 {groundWaterAccountData?.farm_units?.map((farmUnit, index) => {
                                     return (<div key={index} className="pl-[20px] py-[10px]">
                                         <div className="text-black dark:text-slate-50 text-sm font-bold mt-[15px]">Farm Unit:{farmUnit?.farm_unit_zone}</div>
