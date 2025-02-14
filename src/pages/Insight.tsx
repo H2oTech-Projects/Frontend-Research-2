@@ -277,7 +277,7 @@ const Insight = () => {
                                 or WNR@maderacounty.com for information."
                             />
 
-                            <div className="rounded-[8px] overflow-hidden mt-2 shadow-xl">
+                            <div className="rounded-[8px] overflow-hidden mt-2 shadow-xl dark:bg-slate-500 ">
                                 <Table>
                                     <TableHeader >
                                         <TableRow >
@@ -361,7 +361,7 @@ const Insight = () => {
                                                 Resources Department Office at (559) 662-8015 or WNR@maderacounty.com for information. Total Allocation (AF) is equal to the sum of 2024
                                                 Allocation (AF), Carryover (AF), and 2024 Adjustment(s) (AF)"
                             />
-                            <div className="mt-2">
+                            <div className="mt-2 dark:bg-slate-500">
                                 <MapTable
                                     defaultData={groundWaterAccountData?.farm_units as FarmUnit[] || []}
                                     columns={columns}
@@ -378,7 +378,7 @@ const Insight = () => {
                                 note="Note: The following information is based on records from the Madera County Assessor's Office. Contact the Madera County Assessor's Office at (559)
                                         675-7710 or assessor@maderacounty.com for information."
                             />
-                            <div className="rounded-[8px] overflow-hidden mt-2 ring-2 ring-blue-500/50 shadow-xl">
+                            <div className="rounded-[8px] overflow-hidden mt-2 ring-2 ring-blue-500/50 shadow-xl dark:bg-slate-500">
                                 {groundWaterAccountData?.farm_units?.map((farmUnit, index) => {
                                     return (<div key={index} className="pl-[20px]">
                                         <div className="text-black dark:text-slate-50 text-sm font-bold mt-[15px]">Farm Unit:{farmUnit?.farm_unit_zone}</div>
