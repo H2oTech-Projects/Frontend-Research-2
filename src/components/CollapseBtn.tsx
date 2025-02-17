@@ -1,5 +1,4 @@
-import React from 'react'
-import { Button } from './ui/button';
+import React, { useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -14,10 +13,20 @@ interface CollapseBtnPropsType {
 }
 
 const CollapseBtn = ({ className, onClick, children, note }: CollapseBtnPropsType) => {
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+    const handleTouchStart = () => {
+    setIsTooltipOpen(true);
+  };
+
+  const handleTouchEnd = () => {
+    setTimeout(() => {
+      setIsTooltipOpen(false);
+    }, 500); // Delay to mimic hover effect
+  };
   return (
     <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger className={`${className} bg-royalBlue text-slate-50 hover:bg-slate-900/90 rounded-md `} onClick={onClick} >
+        <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
+          <TooltipTrigger className={`${className} bg-royalBlue text-slate-50 hover:bg-slate-900/90 rounded-md `} onClick={onClick} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             {children}
           </TooltipTrigger>
           <TooltipContent side="top" align="center" sideOffset={20}  className="z-[11000]">
