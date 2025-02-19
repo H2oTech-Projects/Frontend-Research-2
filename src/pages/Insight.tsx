@@ -31,7 +31,7 @@ const Insight = () => {
     const objectKeys = Object.keys(defaultData);
     const emailList: EmailProps[] = []
     objectKeys.sort().forEach((item) => {
-  if (item !== "column_properties") {
+  if (item !== "column_properties" || "parcel_column_properties") {
         emailList.push({
             value: item,
             label: item
@@ -359,7 +359,7 @@ const Insight = () => {
                                               <AccordionItem value={`item-${index}`}>
                                                 <AccordionTrigger className="hover:no-underline hover:text-royalBlue">Farm Unit: {farmUnit?.farm_unit_zone}</AccordionTrigger>
                                                 <AccordionContent>
-                                                  <AccordionTable data={farmUnit?.parcel_table_info}/>
+                                                  <AccordionTable data={farmUnit?.parcel_table_info} columnProperties={defaultData['parcel_column_properties']}/>
                                                 </AccordionContent>
                                               </AccordionItem>                                         
                                           </div>

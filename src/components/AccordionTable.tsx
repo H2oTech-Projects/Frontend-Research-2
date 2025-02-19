@@ -55,7 +55,7 @@ export const columns: ColumnDef<ParcelData>[] = [
 ];
 
 
-const AccordionTable = ({data}:{data:ParcelData[]}) => {
+const AccordionTable = ({data ,columnProperties}:{data:ParcelData[]; columnProperties:any}) => {
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   return (
@@ -95,6 +95,7 @@ const AccordionTable = ({data}:{data:ParcelData[]}) => {
           filterValue={searchText}
           fullHeight={false}
           tableCSSConfig={{headerFontSize:null, bodyFontSize:"text-xs"}}
+          columnProperties={columnProperties}
         />
       </div>
     </div>
