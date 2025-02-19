@@ -359,7 +359,7 @@ const Insight = () => {
                                               <AccordionItem value={`item-${index}`}>
                                                 <AccordionTrigger className="hover:no-underline hover:text-royalBlue">Farm Unit: {farmUnit?.farm_unit_zone}</AccordionTrigger>
                                                 <AccordionContent>
-                                                  <AccordionTable/>
+                                                  <AccordionTable data={farmUnit?.parcel_table_info}/>
                                                 </AccordionContent>
                                               </AccordionItem>                                         
                                           </div>

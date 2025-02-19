@@ -188,7 +188,7 @@ export const columns: ColumnDef<ParcelData>[] = [
 ];
 
 
-const AccordionTable = () => {
+const AccordionTable = ({data}:{data:ParcelData[]}) => {
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   return (
@@ -222,7 +222,7 @@ const AccordionTable = () => {
       </div>
       <div>
         <MapTable
-          defaultData={DummyData}
+          defaultData={data}
           columns={columns}
           doFilter={doFilter}
           filterValue={searchText}
