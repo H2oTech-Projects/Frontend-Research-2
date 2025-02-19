@@ -153,16 +153,16 @@ const DummyData: ParcelData[] = [
 
 export const columns: ColumnDef<ParcelData>[] = [
   {
+    accessorKey: "zone_name",
+    header: "Zone Name",
+  },
+  {
     accessorKey: "parcel_id",
     header: "Parcel ID",
   },
   {
     accessorKey: "account_id",
     header: "Account ID",
-  },
-  {
-    accessorKey: "zone_name",
-    header: "Zone Name",
   },
   {
     accessorKey: "zone_abr",
