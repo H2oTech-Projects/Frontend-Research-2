@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 type RtSelectProps = {
   dropdownList: { label: string; value: string }[];
@@ -27,7 +28,8 @@ type RtSelectProps = {
 
 
 const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label,showSearch=true}:RtSelectProps) => {
-const [open, setOpen] = useState(false)
+const [open, setOpen] = useState(false);
+const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
     <div className="flex items-center gap-2">
                     <label className="w-[6rem] flex gap-1"><span>{label}</span><span>:</span> </label>
@@ -38,15 +40,17 @@ const [open, setOpen] = useState(false)
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className=" w-80 justify-between h-8 font-normal"
+                        className={cn("justify-between  overflow-y-hidden h-8 font-normal", isDesktopDevice ? "w-80 " :"w-60")}
                       >
-                        {selectedValue
+                        <div className={cn(" overflow-x-auto ")}>
+                          {selectedValue
                           ? dropdownList.find((email) => email.value === selectedValue)?.label
                           : `Select ${label}...`}
+                        </div>
                          <ChevronDown className="h-4 w-4 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className=" w-80 p-0 z-[800]">
+                    <PopoverContent className={cn(" p-0 z-[800]", isDesktopDevice ? "w-80 " :"w-60")}>
                       <Command>
                         {showSearch && (
                           <CommandInput placeholder={`Search ${label}...`} className="h-9" />
