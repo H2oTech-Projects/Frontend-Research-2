@@ -13,6 +13,11 @@ export type ParcelData = {
   coords: [number, number][];
 };
 
+export type tableCSSConfig = {
+  headerFontSize: string | null;
+  bodyFontSize: string | null;
+}
+
 export type MapTableTypes<T> = {
     defaultData: T[];
     columns: ColumnDef<T>[];
@@ -26,6 +31,7 @@ export type MapTableTypes<T> = {
     showPagination?: boolean;
     textAlign?: "left" | "center" | "right";
     columnProperties?: any | null;
+    tableCSSConfig?:tableCSSConfig |null;
 };
 export type DummyDataType = {
     district?: string;
