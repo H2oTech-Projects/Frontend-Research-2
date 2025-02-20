@@ -235,7 +235,7 @@ const Insight = () => {
         <TableBody>
           <TableRow>
             <TableCell className="!text-left">
-              Account ID :
+              Account ID:
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.account_id}
@@ -244,7 +244,7 @@ const Insight = () => {
 
           <TableRow >
             <TableCell className="!text-left">
-              Account Name :
+              Account Name:
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.account_name}
@@ -252,7 +252,7 @@ const Insight = () => {
           </TableRow>
           <TableRow>
             <TableCell className="!text-left">
-              Mailing Address :
+              Mailing Address:
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.mailing_address}
@@ -260,7 +260,7 @@ const Insight = () => {
           </TableRow>
           <TableRow>
             <TableCell className="!text-left w-auto">
-              Start Date (YYYY-MM-DD) :
+              Start Date (YYYY-MM-DD):
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.start_date}
@@ -268,7 +268,7 @@ const Insight = () => {
           </TableRow>
           <TableRow>
             <TableCell className="!text-left w-auto">
-              End Date (YYYY-MM-DD) :
+              End Date (YYYY-MM-DD):
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.end_date}
@@ -276,7 +276,7 @@ const Insight = () => {
           </TableRow>
           <TableRow>
             <TableCell className="!text-left">
-              Measurement Method :
+              Measurement Method:
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.msmt_method}
@@ -284,7 +284,7 @@ const Insight = () => {
           </TableRow>
           <TableRow>
             <TableCell className="!text-left">
-              Report Creation Date :
+              Report Creation Date:
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.report_creation_date}
@@ -292,7 +292,7 @@ const Insight = () => {
           </TableRow>
           <TableRow>
             <TableCell className="!text-left">
-              Report Revision Date :
+              Report Revision Date:
             </TableCell>
             <TableCell className="!text-left">
               {groundWaterAccountData?.report_revision_date}
@@ -362,7 +362,7 @@ const Insight = () => {
                                 />
                             </div>
 
-                            <InsightTitle title="County Assessor's Farm Unit Information"
+                            <InsightTitle title="County Assessor's Parcel Information"
                                 note="Note: The following information is based on records from the Madera County Assessor's Office. Contact the Madera County Assessor's Office at (559)
                                         675-7710 or assessor@maderacounty.com for information."
                             />
