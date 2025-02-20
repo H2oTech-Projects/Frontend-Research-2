@@ -1,6 +1,23 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { string } from "yup";
 
+export type ParcelData = {
+  parcel_id: string;
+  account_id: string;
+  zone_name: string;
+  zone_abr: string;
+  alloc_af: number;
+  primary_crop: string;
+  legal_ac: number;
+  carryover_af: number;
+  coords: [number, number][];
+};
+
+export type tableCSSConfig = {
+  headerFontSize: string | null;
+  bodyFontSize: string | null;
+}
+
 export type MapTableTypes<T> = {
     defaultData: T[];
     columns: ColumnDef<T>[];
@@ -14,6 +31,7 @@ export type MapTableTypes<T> = {
     showPagination?: boolean;
     textAlign?: "left" | "center" | "right";
     columnProperties?: any | null;
+    tableCSSConfig?:tableCSSConfig |null;
 };
 export type DummyDataType = {
     district?: string;
@@ -45,6 +63,7 @@ export type FarmUnit = {
     fu_remain_af: number; // Remaining (AF)
     "remaining_%": number; // Remaining Percentage (calculated)
     parcels:string[];
+    parcel_table_info: ParcelData[];
   }
 
   export interface AccountDetails {

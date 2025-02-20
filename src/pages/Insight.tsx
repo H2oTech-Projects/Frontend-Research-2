@@ -18,6 +18,13 @@ import { buildPopupMessage } from "@/utils/map";
 import CollapseBtn from "@/components/CollapseBtn";
 import StackedBarChart from "@/components/charts/stackedBarChart";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import AccordionTable from "@/components/AccordionTable";
 interface EmailProps {
     value: string;
     label: string;
@@ -29,7 +36,7 @@ const Insight = () => {
     const objectKeys = Object.keys(defaultData);
     const emailList: EmailProps[] = []
     objectKeys.sort().forEach((item) => {
-  if (item !== "column_properties") {
+  if (item !== "column_properties" || "parcel_column_properties") {
         emailList.push({
             value: item,
             label: item
@@ -367,20 +374,21 @@ const Insight = () => {
                                         675-7710 or assessor@maderacounty.com for information."
                             />
                             <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500">
-                                {groundWaterAccountData?.farm_units?.map((farmUnit, index) => {
-                                    return (<div key={index} className="pl-[20px] py-[10px]">
-                                        <div className="text-black dark:text-slate-50 text-sm font-bold mt-[15px]">Farm Unit:{farmUnit?.farm_unit_zone}</div>
-                                        <tbody>
-                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="flex justify-between w-[190px]"><span>Number of Mailing Address</span><span className="text-right">:</span></td> <td><span className="pl-[5px] italic">1</span></td></tr>
-                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="flex justify-between w-[190px]"><span>Owner Mailing Address</span><span className="text-right">:</span></td><td><span className="pl-[5px] italic">{groundWaterAccountData?.mailing_address}</span></td></tr>
-                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="flex justify-between w-[190px]"><span>Number of Parcels</span><span className="text-right">:</span></td><td><span className="pl-[5px] italic">{farmUnit?.parcels.length}</span></td></tr>
-                                        <tr className="text-black dark:text-slate-50 text-sm"><td className="w-[190px]"></td><td><ul className="list-inside list-disc">{farmUnit?.parcels.map((parcel, index) => {
-                                            return <li key={index} className="text-black dark:text-slate-50 text-sm italic">Parcel {index + 1} : {parcel}</li>
-                                        })}</ul></td></tr>
-                                        </tbody>
-                                    </div>
-                                    )
-                                })}
+                                <Accordion type="multiple"  className=" dark:text-white ">
+                                  {groundWaterAccountData?.farm_units?.map((farmUnit, index) => {
+                                    return (
+                                            <div key={index} className="px-[20px] py-[10px]">
+                                              <AccordionItem value={`item-${index}`}>
+                                                <AccordionTrigger className="hover:no-underline hover:text-royalBlue">Farm Unit: {farmUnit?.farm_unit_zone}</AccordionTrigger>
+                                                <AccordionContent>
+                                                  <AccordionTable data={farmUnit?.parcel_table_info} columnProperties={defaultData['parcel_column_properties']}/>
+                                                </AccordionContent>
+                                              </AccordionItem>
+                                          </div>
+                                          )
+                                      })}
+                                </Accordion>
+
                             </div>
 
                         </div>
