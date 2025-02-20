@@ -10,3 +10,10 @@
   opacity: .9;
   color: white;
 }
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: white;
+}
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: white;
+}
