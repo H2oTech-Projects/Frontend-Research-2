@@ -31,7 +31,9 @@ export type MapTableTypes<T> = {
     showPagination?: boolean;
     textAlign?: "left" | "center" | "right";
     columnProperties?: any | null;
-    tableCSSConfig?:tableCSSConfig |null;
+    tableCSSConfig?: tableCSSConfig | null;
+    tableType?: string | null;
+    setSelectedFarm?: null | Function;
 };
 export type DummyDataType = {
     district?: string;
