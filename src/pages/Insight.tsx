@@ -45,6 +45,9 @@ const Insight = () => {
 )
     const [selectedEmailValue, setSelectedEmailValue] = useState<string>(emailList[0].value);
     const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
+    const [selectedFarm, setSelectedFarm] = useState<string>("");
+    const [selectedFarmGeoJson, setselectedFarmGeoJson] = useState<string>("");
+    const [viewBoundFarmGeoJson, setViewBound] = useState<[]>([]);
     const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit Summary");
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
     const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
@@ -61,7 +64,20 @@ const Insight = () => {
         let parcelWithLatLong = parcels.find((parcel) => defaultData[selectedEmailValue].parcel_geometries[parcel] != null);
         let latlong = !!parcelWithLatLong ? defaultData[selectedEmailValue].parcel_geometries[parcelWithLatLong][0] : [36.96830684650072, -120.26398612842706]
         setPosition((prev: any)=> ({...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds}))
+        setViewBound(defaultData[selectedEmailValue].view_bounds)
+        setSelectedFarm("")
+        setselectedFarmGeoJson("")
     }, [selectedEmailValue]);
+
+    useEffect(() => {
+      if (!!selectedFarm) {
+        let selectFarm = groundWaterAccountData!['farm_units'].find((farm_unit) => farm_unit['farm_unit_zone'] == selectedFarm)
+        // @ts-ignore
+        setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
+        // @ts-ignore
+        setViewBound(selectFarm['view_bounds'])
+      }
+    }, [selectedFarm])
 
 //   for (let key in objectKeys.sort()) {
 
@@ -177,7 +193,7 @@ const Insight = () => {
     const showInfo = (Id: String) => {
       var popup = $("<div></div>", {
           id: "popup-" + Id,
-          class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+          class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-[#16599a] text-slate-50 bg-opacity-65",
       });
       // Insert a headline into that popup
       var hed = $("<div></div>", {
@@ -220,7 +236,16 @@ const Insight = () => {
     const geoJsonStyle = (features: any) => {
       return {
           color: "#16599A", // Border color
-          fillColor: "lightblue", // Fill color for normal areas
+          fillColor: "lightBlue", // Fill color for normal areas
+          fillOpacity: 0.5,
+          weight: 2,
+      };
+    }
+
+    const geoFarmJsonStyle = (features: any) => {
+      return {
+          color: "#16599A", // Border color
+          fillColor: "red", // Fill color for normal areas
           fillOpacity: 0.5,
           weight: 2,
       };
@@ -366,6 +391,8 @@ const Insight = () => {
                                     showPagination={false}
                                     textAlign="left" // this aligns the text to the left in the table, if not provided it will be center
                                     columnProperties={defaultData['column_properties']}
+                                    tableType={"farm"}
+                                    setSelectedFarm={setSelectedFarm}
                                 />
                             </div>
 
@@ -411,7 +438,7 @@ const Insight = () => {
                         <LeafletMap
                             position={position}
                             zoom={14}
-                            viewBound={groundWaterAccountData?.view_bounds}
+                            viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : groundWaterAccountData?.view_bounds}
                             collapse={collapse}
                             configurations={{'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}}
                         >
@@ -420,6 +447,16 @@ const Insight = () => {
                             layerEvents={geoJsonLayerEvents}
                             style={geoJsonStyle}
                             data={JSON.parse(groundWaterAccountData?.geojson_parcels)}
+                            color={"#16599a"}
+                          />
+                        }
+                          {
+                            !!selectedFarmGeoJson && <RtGeoJson
+                            key={selectedFarm}
+                            layerEvents={geoJsonLayerEvents}
+                            style={geoFarmJsonStyle}
+                            data={JSON.parse(selectedFarmGeoJson)}
+                            color={"red"}
                           />
                           }
                         </LeafletMap>

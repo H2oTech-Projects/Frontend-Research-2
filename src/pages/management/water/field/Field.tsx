@@ -443,6 +443,7 @@ const Field = () => {
                                   layerEvents={geoJsonLayerEvents}
                                   style={geoJsonStyle}
                                   data={swmcFields}
+                                  color={"#16599a"}
                               />
                               {!!position.polygon ? (
                                 <RtPolygon

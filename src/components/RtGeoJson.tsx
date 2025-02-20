@@ -6,9 +6,10 @@ type RtGeoJsonTypes = {
   data: any;
   style: any;
   key: string;
+  color: string;
 };
 
-const RtGeoJson = ({ layerEvents, data, style, key }: RtGeoJsonTypes) => {
+const RtGeoJson = ({ layerEvents, data, style, key, color }: RtGeoJsonTypes) => {
   const geoJsonRef = useRef<L.GeoJSON>(null);
   useEffect(() => {
     if (geoJsonRef.current) {
@@ -16,6 +17,8 @@ const RtGeoJson = ({ layerEvents, data, style, key }: RtGeoJsonTypes) => {
       geoJsonRef.current.addData(data); // Add new data
       geoJsonRef.current.setStyle({
         fillColor: "transparent",
+        color: color,
+        weight: 1.5,
       });
     }
   }, [data]); // Re-run effect when `data` changes
