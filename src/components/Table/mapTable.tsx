@@ -37,7 +37,7 @@ const MapTable = <T,>({
     showPagination = true,
     textAlign = "center",
     columnProperties = null,
-    tableCSSConfig = null
+    tableCSSConfig = {headerFontSize:null , bodyFontSize:null}
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setDate] = useState([...defaultData]);
@@ -96,7 +96,7 @@ const MapTable = <T,>({
                                             header.column.columnDef.meta?.className ?? ""
                                             } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
                                             `!min-w-[${header?.getSize()}px]`,
-                                            `text-${columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign} ${tableCSSConfig?.headerFontSize && tableCSSConfig?.headerFontSize }`,
+                                            ` ${tableCSSConfig?.headerFontSize && tableCSSConfig?.headerFontSize }`,
                                         )}
                                         key={header.id}
                                         // style={{
@@ -105,6 +105,7 @@ const MapTable = <T,>({
                                         style={{
                                             minWidth: header.column.columnDef.size,
                                             maxWidth: header.column.columnDef.size,
+                                            textAlign: columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign
                                         }}
                                     >
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
@@ -179,12 +180,16 @@ const MapTable = <T,>({
                                         }} //  we added this on click event to set center in map
                                     >
                                         {row.getVisibleCells().map((cell) => (
-                                            <TableCell
+                                             <TableCell
                                                 className={`${
                                                     // @ts-ignore
                                                     cell.column.columnDef.meta?.className ?? ""
-                                                    } text-${columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign} ${tableCSSConfig?.bodyFontSize  && tableCSSConfig?.bodyFontSize }`}
+                                                    } ${tableCSSConfig?.bodyFontSize  && tableCSSConfig?.bodyFontSize }`}
                                                 key={cell.id}
+                                            style={{
+                                         
+                                            textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign
+                                        }}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </TableCell>
