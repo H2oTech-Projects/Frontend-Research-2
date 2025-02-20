@@ -55,7 +55,7 @@ export const columns: ColumnDef<ParcelData>[] = [
 ];
 
 
-const AccordionTable = ({data ,columnProperties}:{data:ParcelData[]; columnProperties:any}) => {
+const AccordionTable = ({data , columnProperties}:{data:ParcelData[]; columnProperties:any;}) => {
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   return (
