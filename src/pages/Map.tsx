@@ -22,27 +22,6 @@ const Map = () => {
     const modalRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
 
-    const layers = [
-        {
-          name: "Satellite",
-          layer: (
-            <TileLayer
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
-            />
-          ),
-        },
-        {
-            name: "Street Map",
-            layer: (
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-            ),
-        },
-    ];
-
     const showInfo = (Id: String) => {
       var popup = $("<div></div>", {
         id: "popup-" + Id,
