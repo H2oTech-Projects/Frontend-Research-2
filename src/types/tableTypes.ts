@@ -83,6 +83,7 @@ export type FarmUnit = {
     parcel_geometries: any;
     view_bounds: any;
     chart_data: any;
+    parcel_table_info: ParcelData[];
   }
 
 export type dummyGroundWaterDataTypes={

@@ -55,7 +55,7 @@ export const columns: ColumnDef<ParcelData>[] = [
 ];
 
 
-const AccordionTable = ({data , columnProperties}:{data:ParcelData[]; columnProperties:any;}) => {
+const AccordionTable = ({data , columnProperties, setSelectedParcel, farm_unit}:{data:ParcelData[]; columnProperties:any; setSelectedParcel: Function, farm_unit: string}) => {
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   return (
@@ -96,6 +96,8 @@ const AccordionTable = ({data , columnProperties}:{data:ParcelData[]; columnProp
           fullHeight={false}
           tableCSSConfig={{headerFontSize:null, bodyFontSize:"text-xs"}}
           columnProperties={columnProperties}
+          tableType={"parcel"}
+          setSelectedParcel={ (parcel_id: string) => setSelectedParcel({parcel_id: parcel_id, farmname: farm_unit})}
         />
       </div>
     </div>

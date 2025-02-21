@@ -3,7 +3,7 @@ import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { AccountDetails, dummyGroundWaterDataTypes, FarmUnit } from "@/types/tableTypes";
@@ -17,6 +17,8 @@ import BasicSelect from "@/components/BasicSelect";
 import { buildPopupMessage } from "@/utils/map";
 import CollapseBtn from "@/components/CollapseBtn";
 import StackedBarChart from "@/components/charts/stackedBarChart";
+import { Popup } from "react-leaflet";
+import RtPolygon from "@/components/RtPolygon";
 
 import {
   Accordion,
@@ -48,6 +50,8 @@ const Insight = () => {
     const [selectedFarm, setSelectedFarm] = useState<string>("");
     const [selectedFarmGeoJson, setselectedFarmGeoJson] = useState<string>("");
     const [viewBoundFarmGeoJson, setViewBound] = useState<[]>([]);
+    const [selectedParcelGeom, setSelectedParcelGeom] = useState<[]>([]);
+    const [selectedParcel, setSelectedParcel] = useState<any>({parcel: '', farmname: ''});
     const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit Summary");
     const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails | null>(null);
     const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
@@ -78,6 +82,36 @@ const Insight = () => {
         setViewBound(selectFarm['view_bounds'])
       }
     }, [selectedFarm])
+
+    useEffect(() => {
+      if (!!selectedParcel && !!selectedParcel.farmname) {
+        let selectFarm = groundWaterAccountData!['farm_units'].find((farm_unit) => farm_unit['farm_unit_zone'] == selectedParcel.farmname)
+        let selectParcel = selectFarm!['parcel_table_info'].find((parcels) => parcels['parcel_id'] == selectedParcel.parcel_id)
+        // @ts-ignore
+        setSelectedParcelGeom(selectParcel['coords'])
+        debugger
+        // @ts-ignore
+        setViewBound(selectParcel['view_bound'])
+        setselectedFarmGeoJson("")
+      }
+    }, [selectedParcel])
+
+    const polygonEventHandlers = useMemo(
+      () => ({
+        mouseover(e: any) {
+          const { id } = e.target.options;
+          showInfo(id);
+        },
+        mouseout(e: any) {
+          const { id } = e.target.options;
+          removeInfo(id);
+        },
+        click: (e: any) => {
+          //e.target.openPopup(); // Opens popup when clicked
+        }
+      }),
+      [],
+    );
 
 //   for (let key in objectKeys.sort()) {
 
@@ -408,7 +442,7 @@ const Insight = () => {
                                               <AccordionItem value={`item-${index}`}>
                                                 <AccordionTrigger className="hover:no-underline hover:text-royalBlue">Farm Unit: {farmUnit?.farm_unit_zone}</AccordionTrigger>
                                                 <AccordionContent>
-                                                  <AccordionTable data={farmUnit?.parcel_table_info} columnProperties={defaultData['parcel_column_properties']}/>
+                                                  <AccordionTable data={farmUnit?.parcel_table_info} columnProperties={defaultData['parcel_column_properties']} setSelectedParcel={setSelectedParcel} farm_unit={farmUnit?.farm_unit_zone}/>
                                                 </AccordionContent>
                                               </AccordionItem>
                                           </div>
@@ -458,6 +492,20 @@ const Insight = () => {
                             data={JSON.parse(selectedFarmGeoJson)}
                             color={"red"}
                           />
+                          }
+
+                          {
+                            !!selectedParcel.parcel_id &&
+                            <RtPolygon
+                              pathOptions={{ id: selectedParcel.parcel_id } as Object}
+                              positions={selectedParcelGeom}
+                              color={"red"}
+                              eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                            >
+                              <Popup>
+                                <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+                              </Popup>
+                            </RtPolygon>
                           }
                         </LeafletMap>
                         {/* <button
