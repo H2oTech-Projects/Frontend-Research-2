@@ -46,7 +46,7 @@ const [open, setOpen] = useState(false)
                          <ChevronDown className="h-4 w-4 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className=" w-80 p-0 z-[800]">
+                    <PopoverContent className=" w-80 p-0 z-[100000]">
                       <Command>
                         {showSearch && (
                           <CommandInput placeholder={`Search ${label}...`} className="h-9" />
