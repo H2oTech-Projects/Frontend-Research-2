@@ -147,7 +147,7 @@ const Map = () => {
 
       <LeafletMap position={position} zoom={11} configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
         <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields} color={"#16599a"}/>
-        <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"#16599a"}/>
+        <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"red"}/>
       </LeafletMap>
     </div>
   );
