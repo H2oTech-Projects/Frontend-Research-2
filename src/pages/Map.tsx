@@ -22,27 +22,6 @@ const Map = () => {
     const modalRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
 
-    const layers = [
-        {
-          name: "Satellite",
-          layer: (
-            <TileLayer
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
-            />
-          ),
-        },
-        {
-            name: "Street Map",
-            layer: (
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-            ),
-        },
-    ];
-
     const showInfo = (Id: String) => {
       var popup = $("<div></div>", {
         id: "popup-" + Id,
@@ -166,7 +145,7 @@ const Map = () => {
           </div>
       )}
 
-      <LeafletMap position={position} zoom={11} configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }}}>
+      <LeafletMap position={position} zoom={11} configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
         <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields} color={"#16599a"}/>
         <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"#16599a"}/>
       </LeafletMap>
