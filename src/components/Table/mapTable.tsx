@@ -40,6 +40,7 @@ const MapTable = <T,>({
     tableCSSConfig = {headerFontSize:null , bodyFontSize:null},
     tableType,
     setSelectedFarm=null,
+    setSelectedParcel=null
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setDate] = useState([...defaultData]);
@@ -83,6 +84,11 @@ const MapTable = <T,>({
     }, [doFilter]);
 
     const handleOnClick = ((row: any, type: any) => {
+      if (type=="parcel") {
+        // @ts-ignore
+        setSelectedParcel(row.original?.parcel_id)
+        return;
+      }
       if (type=="farm") {
         // @ts-ignore
         setSelectedFarm(row.original?.farm_unit_zone)
@@ -104,7 +110,7 @@ const MapTable = <T,>({
       // @ts-ignore
       setClickedField(row.original?.FieldID);
     });
-    console.log(tableType,"asdfasdf")
+
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
             <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>

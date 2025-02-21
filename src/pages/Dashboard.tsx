@@ -3,23 +3,22 @@ import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { ChevronsLeft, ChevronsRight, Filter, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { Popup } from "react-leaflet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { AccountDetails, AccountDetails2, dummyGroundWaterDataTypes, dummyGroundWaterDataTypes2, FarmUnit, ParcelData } from "@/types/tableTypes";
 import dummyGroundWaterData from "../../data4.json"
+import parcelsData from "../../parcels.json"
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
 import RtGeoJson from "@/components/RtGeoJson";
 import RtSelect from "@/components/RtSelect";
 import BasicSelect from "@/components/BasicSelect";
+import { buildPopupMessage } from "@/utils/map";
 import CollapseBtn from "@/components/CollapseBtn";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+import RtPolygon from "@/components/RtPolygon";
+
 import AccordionTable from "@/components/AccordionTable";
 interface EmailProps {
   value: string;
@@ -28,6 +27,7 @@ interface EmailProps {
 
 const Insight = () => {
   const defaultData: dummyGroundWaterDataTypes2 = dummyGroundWaterData as any;
+  const parcels: any = parcelsData as any;
   const objectKeys = Object.keys(defaultData);
   const emailList: EmailProps[] = []
   objectKeys.sort().forEach((item) => {
@@ -41,6 +41,11 @@ const Insight = () => {
   )
   const [selectedEmailValue, setSelectedEmailValue] = useState<string>(emailList[0].value);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
+  const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const [selectedFarmGeoJson, setselectedFarmGeoJson] = useState<string>("");
+  const [selectedParcelGeom, setSelectedParcelGeom] = useState<[]>([]);
+  const [selectedParcel, setSelectedParcel] = useState<string>("");
+  const [viewBoundFarmGeoJson, setViewBound] = useState<[]>([]);
   const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit Summary");
   const [groundWaterAccountData, setGroundWaterAccountData] = useState<AccountDetails2 | null>(null);
   const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
@@ -58,7 +63,53 @@ const Insight = () => {
     let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
     let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
     setPosition((prev: any) => ({ ...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds }))
+    setViewBound(defaultData[selectedEmailValue].view_bounds)
+    setSelectedFarm("")
+    setselectedFarmGeoJson("")
+
+    setSelectedParcel("")
+    setSelectedParcelGeom([])
   }, [selectedEmailValue]);
+
+  useEffect(() => {
+    if (!!selectedFarm) {
+      let selectFarm = groundWaterAccountData!['farm_units'].find((farm_unit) => farm_unit['farm_unit_zone'] == selectedFarm)
+      // @ts-ignore
+      setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
+      // @ts-ignore
+      setViewBound(selectFarm['view_bounds'])
+      setSelectedParcel("")
+      setSelectedParcelGeom([])
+    }
+  }, [selectedFarm])
+
+  useEffect(() => {
+    if (!!selectedParcel) {
+      let selectParcel = groundWaterAccountData!['parcel_table_info'].find((parcels) => parcels['parcel_id'] == selectedParcel)
+      // @ts-ignore
+      setSelectedParcelGeom(selectParcel['coords'])
+      // @ts-ignore
+      setViewBound(selectParcel['view_bounds'])
+      setselectedFarmGeoJson("")
+    }
+  }, [selectedParcel])
+
+  const polygonEventHandlers = useMemo(
+    () => ({
+      mouseover(e: any) {
+        const { id } = e.target.options;
+        showInfo(id);
+      },
+      mouseout(e: any) {
+        const { id } = e.target.options;
+        removeInfo(id);
+      },
+      click: (e: any) => {
+        //e.target.openPopup(); // Opens popup when clicked
+      }
+    }),
+    [],
+  );
 
   //   for (let key in objectKeys.sort()) {
 
@@ -209,11 +260,11 @@ const Insight = () => {
   const showInfo = (Id: String) => {
     var popup = $("<div></div>", {
       id: "popup-" + Id,
-      class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+      class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-[#16599a] text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
     var hed = $("<div></div>", {
-      text: "FieldID: " + Id,
+      text: "Parcel: " + Id,
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
     // Add the popup to the map
@@ -225,6 +276,7 @@ const Insight = () => {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
+    layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -257,6 +309,14 @@ const Insight = () => {
     };
   }
 
+  const geoFarmJsonStyle = (features: any) => {
+    return {
+      color: "#16599A", // Border color
+      fillColor: "red", // Fill color for normal areas
+      fillOpacity: 0.5,
+      weight: 2,
+    };
+  }
   if (!groundWaterAccountData) {
     return "";
   }
@@ -382,6 +442,8 @@ const Insight = () => {
                   showPagination={false}
                   textAlign="left" // this aligns the text to the left in the table, if not provided it will be center
                   columnProperties={defaultData['column_properties']}
+                  tableType={"farm"}
+                  setSelectedFarm={setSelectedFarm}
                 />
               </div>
 
@@ -420,13 +482,15 @@ const Insight = () => {
                   </div>
                   <div>
                     <MapTable
-                      defaultData={groundWaterAccountData?.parcel_table_info}
+                      defaultData={groundWaterAccountData?.parcel_table_info || []}
                       columns={columns2}
                       doFilter={doFilter}
                       filterValue={searchText}
                       fullHeight={false}
                       tableCSSConfig={{ headerFontSize: null, bodyFontSize: "text-xs" }}
                       columnProperties={defaultData['parcel_column_properties']}
+                      tableType={"parcel"}
+                      setSelectedParcel={setSelectedParcel}
                     />
                   </div>
                 </div>
@@ -453,7 +517,7 @@ const Insight = () => {
             <LeafletMap
               position={position}
               zoom={14}
-              viewBound={groundWaterAccountData?.view_bounds}
+              viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : groundWaterAccountData?.view_bounds}
               collapse={collapse}
               configurations={{ 'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
             >
@@ -462,7 +526,31 @@ const Insight = () => {
                 layerEvents={geoJsonLayerEvents}
                 style={geoJsonStyle}
                 data={JSON.parse(groundWaterAccountData?.geojson_parcels)}
+                color={"#16599a"}
               />
+              }
+              {
+                !!selectedFarmGeoJson && <RtGeoJson
+                key={selectedFarm}
+                layerEvents={geoJsonLayerEvents}
+                style={geoFarmJsonStyle}
+                data={JSON.parse(selectedFarmGeoJson)}
+                color={"red"}
+              />
+              }
+
+              {
+                !!selectedParcel &&
+                <RtPolygon
+                  pathOptions={{ id: selectedParcel } as Object}
+                  positions={selectedParcelGeom}
+                  color={"red"}
+                  eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                >
+                  <Popup>
+                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+                  </Popup>
+                </RtPolygon>
               }
             </LeafletMap>
             {/* <button

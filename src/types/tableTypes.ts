@@ -34,6 +34,7 @@ export type MapTableTypes<T> = {
     tableCSSConfig?: tableCSSConfig | null;
     tableType?: string | null;
     setSelectedFarm?: null | Function;
+    setSelectedParcel?: null | Function;
 };
 export type DummyDataType = {
     district?: string;
