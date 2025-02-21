@@ -11,6 +11,10 @@ export const RouteList = [
     Component: lazy(async () => await import("./../pages/Insight")),
   },
   {
+    path: routeUrl.Dashboard?.url,
+    Component: lazy(async () => await import("./../pages/Dashboard")),
+  },
+  {
     path: routeUrl.Field?.url,
     Component: lazy(
       async () => await import("./../pages/management/water/field/Field")

@@ -87,3 +87,22 @@ export type FarmUnit = {
 export type dummyGroundWaterDataTypes={
     [key: string]: AccountDetails
 }
+  export interface AccountDetails2 {
+    account_id: string;
+    account_name: string;
+    mailing_address: string;
+    start_date: string; // ISO date format (YYYY-MM-DD)
+    end_date: string; // ISO date format (YYYY-MM-DD)
+    msmt_method: string; // Measurement Method
+    report_creation_date: string; // Date in DD-MM-YYYY format
+    report_revision_date: string; // Placeholder for revision date (can be "-" or a date)
+    farm_units: FarmUnit[];
+    geojson_parcels: any;
+    parcel_geometries: any;
+    view_bounds: any;
+    parcel_table_info: ParcelData[];
+  }
+
+export type dummyGroundWaterDataTypes2={
+    [key: string]: AccountDetails2
+}

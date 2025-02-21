@@ -61,10 +61,10 @@ const isDesktopDevice = useMediaQuery("(min-width: 768px)");
                             {dropdownList.map((email) => (
                                 <CommandItem
                           key={email.value}
-                          value={email.label}  
+                          value={email.label}
                           onSelect={(currentValue:string) => {
                             const searchValue = dropdownList.find((e) => e.label === currentValue);
-                            setSelectedValue(searchValue ? searchValue.value : ""); 
+                            setSelectedValue(searchValue ? searchValue.value : "");
                             setOpen(false);
                           }}
                         >
