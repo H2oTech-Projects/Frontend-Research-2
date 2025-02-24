@@ -227,7 +227,7 @@ const Insight = () => {
       header: ({ column }) => {
               return (
                   <div
-                      className="flex gap-2 align-middle"
+                      className="flex gap-2 align-middle cursor-pointer"
                       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                   >
                      Parcel Id
@@ -241,7 +241,7 @@ const Insight = () => {
       header: ({ column }) => {
               return (
                   <div
-                      className="flex gap-2 align-middle justify-end"
+                      className="flex gap-2 align-middle justify-end cursor-pointer"
                       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                   >
                       Legal Acres
@@ -256,7 +256,7 @@ const Insight = () => {
       header: ({ column }) => {
               return (
                   <div
-                      className="flex gap-2"
+                      className="flex gap-2 cursor-pointer"
                       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                   >
                       Primary Crop
@@ -271,7 +271,7 @@ const Insight = () => {
       header: ({ column }) => {
               return (
                   <div
-                      className="flex gap-2 align-middle justify-end"
+                      className="flex gap-2 align-middle justify-end cursor-pointer"
                       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                   >
                       Allocated (AF)
@@ -285,7 +285,7 @@ const Insight = () => {
       header: ({ column }) => {
               return (
                   <div
-                      className="flex gap-2 align-middle justify-end"
+                      className="flex gap-2 align-middle justify-end cursor-pointer"
                       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                   >
                       Carryover (AF)
@@ -299,7 +299,7 @@ const Insight = () => {
       header: ({ column }) => {
               return (
                   <div
-                      className="flex gap-2"
+                      className="flex gap-2 cursor-pointer"
                       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                   >
                       Zone Abbreviation
