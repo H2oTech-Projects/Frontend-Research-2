@@ -102,6 +102,7 @@ export type dummyGroundWaterDataTypes={
     geojson_parcels: any;
     parcel_geometries: any;
     view_bounds: any;
+    chart_data: any;
     parcel_table_info: ParcelData[];
   }
 

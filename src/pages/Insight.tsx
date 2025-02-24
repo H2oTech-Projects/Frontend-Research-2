@@ -20,6 +20,7 @@ import CollapseBtn from "@/components/CollapseBtn";
 import RtPolygon from "@/components/RtPolygon";
 
 import AccordionTable from "@/components/AccordionTable";
+import StackedBarChart from "@/components/charts/stackedBarChart";
 interface EmailProps {
   value: string;
   label: string;
@@ -249,7 +250,6 @@ const Insight = () => {
                   </div>
               );
           },
-      size:120
     },
     {
       accessorKey: "primary_crop",
@@ -476,7 +476,16 @@ const Insight = () => {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
-
+                 <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * groundWaterAccountData?.chart_data.length + 80 }}
+                          >
+                            <StackedBarChart
+                              data={groundWaterAccountData?.chart_data}
+                              config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
+                              layout={'vertical'}
+                              stack1={'remaining'}
+                              stack2={'allocation_used'}
+                            />
+                          </div>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] ">
                 <IntroTable />
               </div>
