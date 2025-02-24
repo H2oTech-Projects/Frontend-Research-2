@@ -8,11 +8,11 @@ export const RouteList = [
   },
   {
     path: routeUrl.Insight?.url,
-    Component: lazy(async () => await import("./../pages/Insight")),
+    Component: lazy(async () => await import("../pages/Insight")),
   },
   {
     path: routeUrl.Dashboard?.url,
-    Component: lazy(async () => await import("./../pages/Dashboard")),
+    Component: lazy(async () => await import("../pages/Insight")),
   },
   {
     path: routeUrl.Field?.url,
