@@ -21,11 +21,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { FormInput } from '@/components/FormComponent/FormInput'
 const formSchema = z.object({
   fieldID: z.string().min(5, "FieldID must be at least 5 characters"),
-  country: z.string().min(1, "Please select a country"),
-  dob: z.date({ required_error: "Date of birth is required" }),
-  acceptTerms: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms",
-  }),
+  farmedAcres: z.coerce.number()
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -36,9 +32,7 @@ const AddField = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fieldID: "",
-      country: "",
-      dob: undefined,
-      acceptTerms: false,
+      farmedAcres: undefined,
     },
   });
  const onSubmit = (data: FormValues) => {
@@ -57,7 +51,6 @@ const AddField = () => {
         {/* Name Input */}
       <FormInput control={form.control} name='fieldID' label='FieldID' placeholder='Enter FieldID' type='text' />
       <FormInput control={form.control} name='farmedAcres' label='Farmed Acres' placeholder='Enter Farmed Acres' type='number' />
-      <FormInput control={form.control} name='irrigableAcres' label='Irrigable Acres' placeholder='Enter Irrigable Acres' type='number' />
 
     
 
