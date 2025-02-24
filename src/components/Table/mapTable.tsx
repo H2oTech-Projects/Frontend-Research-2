@@ -79,7 +79,7 @@ const MapTable = <T,>({
     }, [doFilter]);
 
     return (
-        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
+        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slate-500">
             <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
                 <Table className="relative">
                     <TableHeader className="sticky top-0">

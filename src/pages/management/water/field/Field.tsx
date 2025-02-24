@@ -273,7 +273,7 @@ const Field = () => {
               </DropdownMenu>
           ),
           meta: {
-              className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slateLight-500 ",
+              className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slate-500 ",
           },
       },
   ];

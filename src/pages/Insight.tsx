@@ -361,7 +361,7 @@ const Insight = () => {
                                                 Resources Department Office at (559) 662-8015 or WNR@maderacounty.com for information. Total Allocation (AF) is equal to the sum of 2024
                                                 Allocation (AF), Carryover (AF), and 2024 Adjustment(s) (AF)"
                             />
-                            <div className="mt-2 dark:bg-slate-500">
+                            <div className="mt-2">
                                 <MapTable
                                     defaultData={groundWaterAccountData?.farm_units as FarmUnit[] || []}
                                     columns={columns}
