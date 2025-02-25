@@ -10,11 +10,11 @@ type mapConfiguration = {
     enableLayers?: boolean;
 };
 
-const layerMapper ={
-  'rt_2023:wy2023_202309_eta_accumulation_in': {'id': 'ETA'},
-  'rt_2023:wy2023_202309_etaw_accumulation_in': {'id': 'ETAW'},
-  'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR'},
-  'rt_2023:wy2023_p_total_in': {'id': 'P_TOTAL'},
+const layerMapper: any ={
+  'rt_2023:wy2023_202309_eta_accumulation_in': {'id': 'ETA', 'name': 'Evapotransiration (ET)'},
+  'rt_2023:wy2023_202309_etaw_accumulation_in': {'id': 'ETAW', 'name': 'Evapotranspiration of Applied Water (ETAW)'},
+  'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR', 'name': 'Evapotranispiration of Percipitation (ETPR)'},
+  'rt_2023:wy2023_p_total_in': {'id': 'P_TOTAL', 'name': 'Precipitation (P)'},
 }
 
 type LeafletMapTypes = {
@@ -29,7 +29,7 @@ type LeafletMapTypes = {
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
 const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
   const { center } = position;
-  const [addedLayers, setAddedLayers] = useState([])
+  const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
   const MapHandler = () => {
     const map = useMap();
@@ -93,7 +93,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
     const addLayers = () => {
       return (
         <>
-          <LayersControl.Overlay name="ETA">
+          <LayersControl.Overlay checked name="Evapotransiration (ET)">
             <WMSTileLayer
               url={`${geoserverUrl}`}
               params={{
@@ -104,7 +104,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
               }}
             />
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="ETAW">
+          <LayersControl.Overlay name="Evapotranspiration of Applied Water (ETAW)">
             <WMSTileLayer
               url={`${geoserverUrl}`}
               params={{
@@ -115,7 +115,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
               }}
             />
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="ETPR">
+          <LayersControl.Overlay name="Evapotranispiration of Percipitation (ETPR)">
             <WMSTileLayer
               url={`${geoserverUrl}`}
               params={{
@@ -126,7 +126,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
               }}
             />
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="P_TOTAL">
+          <LayersControl.Overlay name="Precipitation (P)">
             <WMSTileLayer
               url={`${geoserverUrl}`}
               params={{
