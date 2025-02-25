@@ -466,7 +466,7 @@ const Insight = () => {
       </div>
       <div className="flex flex-grow mt-2">
         <div className={cn("relative  w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-          <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-500 rounded-[8px]  ")}>
+          <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
 
             <div className="pb-2 px-3 overflow-auto h-full">
 
@@ -486,7 +486,7 @@ const Insight = () => {
                               stack2={'allocation_used'}
                             />
                           </div>
-              <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] ">
+              <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <IntroTable />
               </div>
 
