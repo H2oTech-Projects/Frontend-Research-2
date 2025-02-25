@@ -39,7 +39,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                     </button> */}
                     <Button
                         variant={"default"}
-                        className="h-6 !w-4"
+                        className="h-8 !w-6"
                         onClick={() => setCollapsed(!collapsed)}
                     >
                         <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
@@ -59,8 +59,9 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-x-3">
-                    <button
-                        className="btn-ghost size-10"
+                    <Button
+                        variant={"default"}
+                        className="dark:bg-royalBlue h-8 !w-6"
                         onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                     >
                         <Sun
@@ -71,10 +72,10 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                             size={16}
                             className="hidden dark:block"
                         />
-                    </button>
-                    <button className="btn-ghost size-10">
+                    </Button>
+                    <Button variant={"default"} className="dark:bg-royalBlue h-8 !w-6">
                         <Bell size={16} />
-                    </button>
+                    </Button>
                     <button
                         className="size-8 overflow-hidden rounded-full"
                         onClick={() => setIsModalOpen(!isModalOpen)}
