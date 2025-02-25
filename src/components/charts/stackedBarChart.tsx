@@ -52,7 +52,7 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
           <span>{`${payload[0].payload.full_label}`}</span>
             {
               payload.map((subBar: any) => {
-                const num = subBar.dataKey == 'remaining' ? subBar.payload.fu_etaw_af : subBar.payload.fu_remain_af
+                const num = subBar.dataKey == 'remaining' ? subBar.payload.fu_remain_af : subBar.payload.fu_etaw_af
                 return ( <p style={{color: subBar.color}}>{`${subBar.name}: ${subBar.value}% (${num} AF)`}</p> )
               })
             }
