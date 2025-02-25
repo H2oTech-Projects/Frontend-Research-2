@@ -11,26 +11,29 @@ import { toast } from "react-toastify";
 import irrigatedFields from "../geojson/Irrigated_Fields.json";
 import nonIrrigatedFields from "../geojson/NonIrrigated_Fields.json";
 import rt30_data from "../../rt30_data.json"
+import parcelsData from "../../parcels.json"
+import { buildPopupMessage } from "@/utils/map";
 import $ from "jquery";
 import { Button } from "@/components/ui/button";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 
 const Map = () => {
-    const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "" });
+    const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
+    const parcels: any = parcelsData as any;
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
 
-    const showInfo = (Id: String) => {
+    const showInfo = (label: String, Id: String) => {
       var popup = $("<div></div>", {
         id: "popup-" + Id,
         class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
       });
       // Insert a headline into that popup
       var hed = $("<div></div>", {
-        text: "FieldID: " + Id,
+        text: `${label}: ` + Id,
         css: { fontSize: "16px", marginBottom: "3px" },
       }).appendTo(popup);
       // Add the popup to the map
@@ -61,7 +64,7 @@ const Map = () => {
             weight: 4,
             //color: "#800080"
         });
-        showInfo(auxLayer.feature.properties.FieldID);
+        showInfo('FieldID', auxLayer.feature.properties.FieldID);
       },
       mouseout: function (e) {
         const auxLayer = e.target;
@@ -71,6 +74,30 @@ const Map = () => {
             opacity: 1,
         });
         removeInfo(auxLayer.feature.properties.FieldID);
+      },
+    });
+  }
+
+  const maderaLayerEvents = (feature: Feature, layer: L.Layer) => {
+    // @ts-ignore
+    layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
+    layer.on({
+      mouseover: function (e) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+            weight: 4,
+            //color: "#800080"
+        });
+        showInfo('Parcel Id', auxLayer.feature.properties.apn);
+      },
+      mouseout: function (e) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+            weight: 2.5,
+            fillOpacity: 0,
+            opacity: 1,
+        });
+        removeInfo(auxLayer.feature.properties.apn);
       },
     });
   }
@@ -153,10 +180,10 @@ const Map = () => {
           </div>
       )}
 
-      <LeafletMap position={position} zoom={11} configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
+      <LeafletMap position={position} zoom={10} configurations={{'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
         <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields} color={"#16599a"}/>
         <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"red"}/>
-        <RtGeoJson key={'50003'} layerEvents={geoJsonLayerEvents} style={maderaJsonStyle} data={rt30_data} />
+        <RtGeoJson key={'50003'} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"}/>
       </LeafletMap>
     </div>
   );
