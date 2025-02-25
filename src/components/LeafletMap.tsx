@@ -19,7 +19,7 @@ type LeafletMapTypes = {
     children?: any;
     viewBound?: any;
 };
-
+const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
 const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
   const { center } = position;
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
@@ -35,23 +35,51 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
       //map.setZoom(zoom);
     }, [collapse, center, zoom, viewBound]);
 
-        useEffect(() => {
-            setTimeout(() => {
-                map.invalidateSize();
-            }, 300)
+    useEffect(() => {
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 300)
 
 
-        }, [collapse, isMenuCollapsed]);
+    }, [collapse, isMenuCollapsed]);
+
+    useEffect(() => {
+      const handleLayerAdd = (event: any) => {
+        console.log('Layer checked:', event.layer);
+      };
+
+      const handleLayerRemove = (event: any) => {
+        console.log('Layer unchecked:', event.layer);
+      };
+
+      map.on('overlayadd', handleLayerAdd);
+      map.on('overlayremove', handleLayerRemove);
+
+      // Cleanup on unmount
+      return () => {
+        map.off('overlayadd', handleLayerAdd);
+        map.off('overlayremove', handleLayerRemove);
+      };
+    }, [map]);
 
         return null;
     };
+
+    const addLegends = () => {
+      const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=rt_2023:wy2023_202309_eta_accumulation_in`;
+      return (
+        <div className="absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65">
+          <img src={url} alt="Legend" style={{ width: "80px", height: "150px" }} />
+        </div>
+      )
+    }
 
     const addLayers = () => {
       return (
         <>
           <LayersControl.Overlay name="ETA">
             <WMSTileLayer
-              url={`https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms`}
+              url={`${geoserverUrl}`}
               params={{
                 format:"image/png",
                 layers:"rt_2023:wy2023_202309_eta_accumulation_in",
@@ -62,7 +90,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
           </LayersControl.Overlay>
           <LayersControl.Overlay name="ETAW">
             <WMSTileLayer
-              url={`https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms`}
+              url={`${geoserverUrl}`}
               params={{
                 format:"image/png",
                 layers:"rt_2023:wy2023_202309_etaw_accumulation_in",
@@ -73,7 +101,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
           </LayersControl.Overlay>
           <LayersControl.Overlay name="ETPR">
             <WMSTileLayer
-              url={`https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms`}
+              url={`${geoserverUrl}`}
               params={{
                 format:"image/png",
                 layers:"rt_2023:wy2023_202309_etpr_accumulation_in",
@@ -84,7 +112,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
           </LayersControl.Overlay>
           <LayersControl.Overlay name="P_TOTAL">
             <WMSTileLayer
-              url={`https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms`}
+              url={`${geoserverUrl}`}
               params={{
                 format:"image/png",
                 layers:"rt_2023:wy2023_p_total_in",
@@ -163,6 +191,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
                 </LayersControl.BaseLayer>
                 {configurations.enableLayers && addLayers()}
             </LayersControl>
+            {addLegends()}
             {children}
             <CustomZoomControl />
             <MapHandler />
