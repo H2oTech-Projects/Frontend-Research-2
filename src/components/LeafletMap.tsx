@@ -207,7 +207,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
                 </LayersControl.BaseLayer>
                 {configurations.enableLayers && addLayers()}
             </LayersControl>
-            {addLegends()}
+            {configurations.enableLayers && addLegends()}
             {children}
             <CustomZoomControl />
             <MapHandler />
