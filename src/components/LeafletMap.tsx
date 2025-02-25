@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, useMap, LayersControl, WMSTileLayer } from "react-leaflet";
 import CustomZoomControl from "./MapController";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Layer } from "recharts";
 
@@ -9,6 +9,13 @@ type mapConfiguration = {
     containerStyle: {};
     enableLayers?: boolean;
 };
+
+const layerMapper ={
+  'rt_2023:wy2023_202309_eta_accumulation_in': {'id': 'ETA'},
+  'rt_2023:wy2023_202309_etaw_accumulation_in': {'id': 'ETAW'},
+  'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR'},
+  'rt_2023:wy2023_p_total_in': {'id': 'P_TOTAL'},
+}
 
 type LeafletMapTypes = {
     zoom: number;
@@ -22,6 +29,7 @@ type LeafletMapTypes = {
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
 const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
   const { center } = position;
+  const [addedLayers, setAddedLayers] = useState([])
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
   const MapHandler = () => {
     const map = useMap();
@@ -45,11 +53,17 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
 
     useEffect(() => {
       const handleLayerAdd = (event: any) => {
-        console.log('Layer checked:', event.layer);
+        let OldaddedLayers = addedLayers.slice();
+        // @ts-ignore
+        OldaddedLayers.push(event.layer.options.layers);
+        setAddedLayers(OldaddedLayers)
       };
 
       const handleLayerRemove = (event: any) => {
-        console.log('Layer unchecked:', event.layer);
+        let OldaddedLayers = addedLayers.slice();
+        // @ts-ignore
+        OldaddedLayers = OldaddedLayers.filter((layer) => layer != event.layer.options.layers)
+        setAddedLayers(OldaddedLayers)
       };
 
       map.on('overlayadd', handleLayerAdd);
@@ -66,9 +80,11 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
     };
 
     const addLegends = () => {
-      const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=rt_2023:wy2023_202309_eta_accumulation_in`;
+      if (addedLayers.length <= 0) return ;
+      const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=${addedLayers[addedLayers.length-1]}`;
       return (
-        <div className="absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65">
+        <div className="absolute top-20 right-2 z-[1002] h-auto  w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65">
+          <label className="text-center">{layerMapper[addedLayers[addedLayers.length-1]].id}</label>
           <img src={url} alt="Legend" style={{ width: "80px", height: "150px" }} />
         </div>
       )

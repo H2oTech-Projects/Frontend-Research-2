@@ -10,6 +10,7 @@ import { logout } from "../redux/slice/authSlice";
 import { toast } from "react-toastify";
 import irrigatedFields from "../geojson/Irrigated_Fields.json";
 import nonIrrigatedFields from "../geojson/NonIrrigated_Fields.json";
+import rt30_data from "../../rt30_data.json"
 import $ from "jquery";
 import { Button } from "@/components/ui/button";
 import LeafletMap from "@/components/LeafletMap";
@@ -53,7 +54,6 @@ const Map = () => {
     }, []);
 
   const geoJsonLayerEvents = (feature: Feature, layer: L.Layer) => {
-    layer.bindPopup("yes");
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
@@ -62,7 +62,6 @@ const Map = () => {
             //color: "#800080"
         });
         showInfo(auxLayer.feature.properties.FieldID);
-        layer.bindPopup("<h>Hello</h>");
       },
       mouseout: function (e) {
         const auxLayer = e.target;
@@ -77,6 +76,15 @@ const Map = () => {
   }
 
   const irrigatedgeoJsonStyle = (features: Feature) => {
+    return {
+      color: "#16599A", // Border color
+      fillColor: "lightblue", // Fill color for normal areas
+      fillOpacity: 0.5,
+      weight: 2,
+    };
+  }
+
+  const maderaJsonStyle = (features: Feature) => {
     return {
       color: "#16599A", // Border color
       fillColor: "lightblue", // Fill color for normal areas
@@ -148,6 +156,7 @@ const Map = () => {
       <LeafletMap position={position} zoom={11} configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
         <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields}/>
         <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} />
+        <RtGeoJson key={'50003'} layerEvents={geoJsonLayerEvents} style={maderaJsonStyle} data={rt30_data} />
       </LeafletMap>
     </div>
   );
