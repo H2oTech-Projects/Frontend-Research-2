@@ -52,7 +52,8 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
           <span>{`${payload[0].payload.full_label}`}</span>
             {
               payload.map((subBar: any) => {
-                return ( <p style={{color: subBar.color}}>{`${subBar.name}: ${subBar.value}%`}</p> )
+                const num = subBar.dataKey == 'remaining' ? subBar.payload.fu_etaw_af : subBar.payload.fu_remain_af
+                return ( <p style={{color: subBar.color}}>{`${subBar.name}: ${subBar.value}% (${num} AF)`}</p> )
               })
             }
         </div>
@@ -74,10 +75,10 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
         >
         <Tooltip content={<CustomTooltip />} /> {/* ✅ Custom Tooltip */}
         <XAxis type="number" tickCount={10} stroke="black" ticks={generateTicks(minTick, maxTick, 20)} tick={props => (
-    <text 
-      x={props.x} 
-      y={props.y} 
-      dy={10} 
+    <text
+      x={props.x}
+      y={props.y}
+      dy={10}
       textAnchor="middle"
       className=" font-semibold text-[14px] dark:fill-white" // Tailwind classes
     >
@@ -92,10 +93,10 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
         />
         <Tooltip />
         <Legend />
-        <Bar dataKey={stack2} stackId="a" fill="#a6611a" name="Allocation Used" />
-        <Bar dataKey={stack1} stackId="a" fill="#018571" name="Remaining"/>
-        <ReferenceLine x={0} stroke="red" strokeWidth={3} strokeDasharray="3 3" label={{ value: "0%", position: "insideLeft", style: { fill: "#16599a", fontSize: 15, fontWeight: "bold" } }}/>
-        <ReferenceLine x={100} stroke="red"  strokeWidth={3} strokeDasharray="3 3" label={{ value: "100%", position: "left", style: { fill: "red", fontSize: 15, fontWeight: "bold" } }}/>
+        <Bar dataKey={stack2} stackId="a" fill="#d8b365" name="Allocation Used" />
+        <Bar dataKey={stack1} stackId="a" fill="#5ab4ac" name="Remaining"/>
+        <ReferenceLine x={0} stroke="#c94c4c" strokeWidth={3} strokeDasharray="3 3" label={{ value: "0%", position: "left", style: { fill: "#16599a", fontSize: 15, fontWeight: "bold" } }}/>
+        <ReferenceLine x={100} stroke="#c94c4c"  strokeWidth={3} strokeDasharray="3 3" label={{ value: "100%", position: "right", style: { fill: "red", fontSize: 15, fontWeight: "bold" } }}/>
         {/* <ReferenceArea x1={0} x2={10} fill="lightblue" fillOpacity={0.3}/> */}
       </BarChart>
     </ResponsiveContainer>
