@@ -154,8 +154,8 @@ const Map = () => {
       )}
 
       <LeafletMap position={position} zoom={11} configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
-        <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields}/>
-        <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} />
+        <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields} color={"#16599a"}/>
+        <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"red"}/>
         <RtGeoJson key={'50003'} layerEvents={geoJsonLayerEvents} style={maderaJsonStyle} data={rt30_data} />
       </LeafletMap>
     </div>

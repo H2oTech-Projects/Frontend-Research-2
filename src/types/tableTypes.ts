@@ -1,6 +1,23 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { string } from "yup";
 
+export type ParcelData = {
+  parcel_id: string;
+  account_id: string;
+  zone_name: string;
+  zone_abr: string;
+  alloc_af: number;
+  primary_crop: string;
+  legal_ac: number;
+  carryover_af: number;
+  coords: [number, number][];
+};
+
+export type tableCSSConfig = {
+  headerFontSize: string | null;
+  bodyFontSize: string | null;
+}
+
 export type MapTableTypes<T> = {
     defaultData: T[];
     columns: ColumnDef<T>[];
@@ -14,6 +31,10 @@ export type MapTableTypes<T> = {
     showPagination?: boolean;
     textAlign?: "left" | "center" | "right";
     columnProperties?: any | null;
+    tableCSSConfig?: tableCSSConfig | null;
+    tableType?: string | null;
+    setSelectedFarm?: null | Function;
+    setSelectedParcel?: null | Function;
 };
 export type DummyDataType = {
     district?: string;
@@ -45,6 +66,7 @@ export type FarmUnit = {
     fu_remain_af: number; // Remaining (AF)
     "remaining_%": number; // Remaining Percentage (calculated)
     parcels:string[];
+    parcel_table_info: ParcelData[];
   }
 
   export interface AccountDetails {
@@ -61,8 +83,29 @@ export type FarmUnit = {
     parcel_geometries: any;
     view_bounds: any;
     chart_data: any;
+    parcel_table_info: ParcelData[];
   }
 
 export type dummyGroundWaterDataTypes={
     [key: string]: AccountDetails
+}
+  export interface AccountDetails2 {
+    account_id: string;
+    account_name: string;
+    mailing_address: string;
+    start_date: string; // ISO date format (YYYY-MM-DD)
+    end_date: string; // ISO date format (YYYY-MM-DD)
+    msmt_method: string; // Measurement Method
+    report_creation_date: string; // Date in DD-MM-YYYY format
+    report_revision_date: string; // Placeholder for revision date (can be "-" or a date)
+    farm_units: FarmUnit[];
+    geojson_parcels: any;
+    parcel_geometries: any;
+    view_bounds: any;
+    chart_data: any;
+    parcel_table_info: ParcelData[];
+  }
+
+export type dummyGroundWaterDataTypes2={
+    [key: string]: AccountDetails2
 }

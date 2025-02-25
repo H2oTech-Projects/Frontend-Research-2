@@ -25,6 +25,13 @@ const menuLinks = [
                 type: "link",
                 Children: [],
             },
+            // {
+            //     label: "Dashboard",
+            //     icon: Icon.LayoutDashboard,
+            //     path: "/dashboard",
+            //     type: "link",
+            //     Children: [],
+            // },
         ],
     },
     {

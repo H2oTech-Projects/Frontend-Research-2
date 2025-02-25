@@ -7,6 +7,10 @@ const Insight = {
     url: "/insight",
     name: "Insight",
 };
+const Dashboard = {
+    url: "/dashboard",
+    name: "Dashboard",
+};
 
 const Field = {
     url: "/field",
@@ -98,6 +102,7 @@ const Help = {
 export {
     Map,
     Insight,
+    Dashboard,
     Field,
     AddField,
     EditField,

@@ -37,6 +37,10 @@ const MapTable = <T,>({
     showPagination = true,
     textAlign = "center",
     columnProperties = null,
+    tableCSSConfig = {headerFontSize:null , bodyFontSize:null},
+    tableType,
+    setSelectedFarm=null,
+    setSelectedParcel=null
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setDate] = useState([...defaultData]);
@@ -79,6 +83,34 @@ const MapTable = <T,>({
         }
     }, [doFilter]);
 
+    const handleOnClick = ((row: any, type: any) => {
+      if (type=="parcel") {
+        // @ts-ignore
+        setSelectedParcel(row.original?.parcel_id)
+        return;
+      }
+      if (type=="farm") {
+        // @ts-ignore
+        setSelectedFarm(row.original?.farm_unit_zone)
+        return;
+      }
+      // @ts-ignore
+      setPosition({
+        // @ts-ignore
+        center: [row.original?.center_latitude, row.original?.center_longitude],
+        // @ts-ignore
+        polygon: row.original?.coords,
+        // @ts-ignore
+        fieldId: row.original?.FieldID,
+        // @ts-ignore
+        features: row.original
+      });
+      // @ts-ignore
+      setZoomLevel(13);
+      // @ts-ignore
+      setClickedField(row.original?.FieldID);
+    });
+
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
             <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
@@ -95,7 +127,7 @@ const MapTable = <T,>({
                                             header.column.columnDef.meta?.className ?? ""
                                             } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
                                             `!min-w-[${header?.getSize()}px]`,
-                                            `text-${columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign}`,
+                                            ` ${tableCSSConfig?.headerFontSize && tableCSSConfig?.headerFontSize }`,
                                         )}
                                         key={header.id}
                                         // style={{
@@ -104,6 +136,7 @@ const MapTable = <T,>({
                                         style={{
                                             minWidth: header.column.columnDef.size,
                                             maxWidth: header.column.columnDef.size,
+                                            textAlign: columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign
                                         }}
                                     >
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
@@ -136,19 +169,7 @@ const MapTable = <T,>({
                                                         maxWidth: cell.column.columnDef.size,
 
                                                     }}
-                                                    onClick={() => {
-                                                        setPosition({
-                                                            // @ts-ignore
-                                                            center: [row.original?.center_latitude, row.original?.center_longitude],
-                                                            // @ts-ignore
-                                                            polygon: row.original?.coords,
-                                                            // @ts-ignore
-                                                            fieldId: row.original?.FieldID,
-                                                            // @ts-ignore
-                                                            features: row.original
-                                                        });
-                                                    }} //  we added this on click event to set center in map
-                                                // @ts-ignore
+                                                    onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
@@ -163,30 +184,19 @@ const MapTable = <T,>({
                                             clickedField === row.original.FieldID ? "bg-slate-400" : "",
                                             "cursor-pointer",
                                         )}
-                                        onClick={() => {
-                                            // @ts-ignore
-                                            setPosition({
-                                                // @ts-ignore
-                                                center: [row.original.center_latitude, row.original.center_longitude],
-                                                // @ts-ignore
-                                                polygon: row.original.coords,
-                                                // @ts-ignore
-                                                fieldId: row.original.FieldID,
-                                                features: row.original
-                                            });
-                                            // @ts-ignore
-                                            setZoomLevel(13);
-                                            // @ts-ignore
-                                            setClickedField(row.original?.FieldID);
-                                        }} //  we added this on click event to set center in map
+                                        onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
                                     >
                                         {row.getVisibleCells().map((cell) => (
-                                            <TableCell
+                                             <TableCell
                                                 className={`${
                                                     // @ts-ignore
                                                     cell.column.columnDef.meta?.className ?? ""
-                                                    } text-${columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign}`}
+                                                    } ${tableCSSConfig?.bodyFontSize  && tableCSSConfig?.bodyFontSize }`}
                                                 key={cell.id}
+                                            style={{
+
+                                            textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign
+                                        }}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </TableCell>
