@@ -6,9 +6,10 @@ interface ChartParameters {
   config: any;
   stack1: string;
   stack2: string;
+  setSelectedFarm: Function;
 }
 
-const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
+const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartParameters) => {
 
   const remainings = data.map((d: any) => d.remaining);
   const allocation_useds = data.map((d: any) => d.allocation_used);
@@ -62,6 +63,10 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
     return <></>;;
   };
 
+  const barClick = (e: any) => {
+    setSelectedFarm(e.full_label)
+  }
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
@@ -93,8 +98,8 @@ const StackedBarChart = ({data, config, stack1, stack2}: ChartParameters) => {
         />
         <Tooltip />
         <Legend />
-        <Bar dataKey={stack2} stackId="a" fill="#d8b365" name="Allocation Used" />
-        <Bar dataKey={stack1} stackId="a" fill="#5ab4ac" name="Remaining"/>
+        <Bar dataKey={stack2} stackId="a" fill="#d8b365" name="Allocation Used" onClick={barClick}/>
+        <Bar dataKey={stack1} stackId="a" fill="#5ab4ac" name="Remaining" onClick={barClick}/>
         <ReferenceLine x={0} stroke="#c94c4c" strokeWidth={3} strokeDasharray="3 3" label={{ value: "0%", position: "left", style: { fill: "#16599a", fontSize: 15, fontWeight: "bold" } }}/>
         <ReferenceLine x={100} stroke="#c94c4c"  strokeWidth={3} strokeDasharray="3 3" label={{ value: "100%", position: "right", style: { fill: "red", fontSize: 15, fontWeight: "bold" } }}/>
         {/* <ReferenceArea x1={0} x2={10} fill="lightblue" fillOpacity={0.3}/> */}

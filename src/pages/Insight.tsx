@@ -484,6 +484,7 @@ const Insight = () => {
                               layout={'vertical'}
                               stack1={'remaining'}
                               stack2={'allocation_used'}
+                              setSelectedFarm={setSelectedFarm}
                             />
                           </div>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
