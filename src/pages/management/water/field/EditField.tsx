@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-export const ControlledInput = ({ control, name, label, rules, type = "text", placeholder, className }:any) => {
+
+export const ControlledInput = ({ control, name, label, rules, type = "text", placeholder, className }: any) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <div className={cn("space-y-2", className)}>
       {label && <Label htmlFor={name}>{label}</Label>}
@@ -18,7 +21,20 @@ export const ControlledInput = ({ control, name, label, rules, type = "text", pl
         rules={rules}
         render={({ field, fieldState: { error } }) => (
           <div className="space-y-1">
-            <Input id={name} type={type} placeholder={placeholder} {...field} />
+            <Input
+              id={name}
+              type={type}
+              placeholder={placeholder}
+              ref={inputRef}
+              defaultValue={field.value} // Uncontrolled behavior
+              onChange={(e) => {
+                if (inputRef.current) {
+                  const value = type === "number" ? String(Number(e.target.value) || "") : e.target.value;
+                  inputRef.current.value = value; // Ensure it's always a string
+                  field.onChange(type === "number" ? Number(value) : value);
+                }
+              }}
+            />
             {error && <p className="text-sm text-red-500">{error.message}</p>}
           </div>
         )}
@@ -26,6 +42,8 @@ export const ControlledInput = ({ control, name, label, rules, type = "text", pl
     </div>
   );
 };
+
+
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
