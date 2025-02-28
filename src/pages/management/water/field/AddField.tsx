@@ -12,11 +12,13 @@ import {
 
 import { FormInput } from '@/components/FormComponent/FormInput'
 import { useCallback } from 'react'
+import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
   fieldID: z.string().min(5, "FieldID must be at least 5 characters"),
   farmedAcres: z.coerce.number(),
+  year: z.string(),
   coordinates: z.array(
     z.tuple([
       z.coerce.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90"),
@@ -39,6 +41,7 @@ const AddField = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fieldID: "",
+      year: "",
       farmedAcres: Number(''),
       coordinates: [[Number(''), Number('')]],
     },
@@ -65,7 +68,8 @@ const AddField = () => {
          
           <FormInput control={form.control} name='fieldID' label='FieldID' placeholder='Enter FieldID' type='text' />
           <FormInput control={form.control} name='farmedAcres' label='Farmed Acres' placeholder='Enter Farmed Acres' type='number' />
-              <FormItem>
+          <FormComboBox control={form.control} name = "year" label= 'Year' options={[{ label:"2022",value:"2022"},{ label:"2023",value:"2023"},{ label:"2024",value:"2024"}]}/>
+          <FormItem>
           <FormLabel>Coordinates</FormLabel>
           {fields.map((field, index) => (
             <div key={field.id} className='flex gap-2 items-center my-3'> 
