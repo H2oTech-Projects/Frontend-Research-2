@@ -7,17 +7,18 @@ interface FormInputProps {
   name: string;
   label: string;
   placeholder: string;
+  showLabel?: boolean;
   type: "text" | "password" | "email" | "number";
 }
 
-export function FormInput({ control, name, label, placeholder,type }: FormInputProps) {
+export function FormInput({ control, name, label, placeholder,type,showLabel=true }: FormInputProps) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          {showLabel && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <Input placeholder={placeholder} {...field} type={type}/>
           </FormControl>
