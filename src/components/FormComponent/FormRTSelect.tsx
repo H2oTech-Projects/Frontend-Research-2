@@ -35,7 +35,7 @@ export function FormComboBox({ control, name, label, options, placeholder = "Sel
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-[200px] p-0 z-[900]">
               <Command>
                 <CommandInput placeholder="Search..." className="h-9" />
                 <CommandList>
