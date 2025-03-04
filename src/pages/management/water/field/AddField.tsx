@@ -12,25 +12,25 @@ import {
 } from "@/components/ui/form"
 import { FormInput } from '@/components/FormComponent/FormInput'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
-import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet"
-import { EditControl } from "react-leaflet-draw"
+
 import "leaflet/dist/leaflet.css"
 import "leaflet-draw/dist/leaflet.draw.css"
-import { LatLng, LeafletEvent, Layer } from "leaflet"
+import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup  } from "leaflet"
 import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap'
 import { string } from 'yup'
+import { useRef } from 'react'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
   fieldID: z.string().min(5, "FieldID must be at least 5 characters"),
   farmedAcres: z.coerce.number(),
   year: z.string(),
-  coordinates: z.array(
+  coordinates: z.array(z.array(
     z.tuple([
       z.coerce.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90"),
       z.coerce.number().min(-180, "Longitude must be between -180 and 180").max(180, "Longitude must be between -180 and 180"),
     ])
-  ).min(1, "At least  coordinate is required"),
+  )).min(1, "At least  coordinate is required").max(1, "Only one polygon is allowed"),
   markers:  z.array(
     z.tuple([
       z.coerce.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90"),
@@ -42,6 +42,8 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const AddField = () => {
+  const featureGroupPolygonRef = useRef<LeafletFeatureGroup>(null);
+  const featureGroupMarkerRef = useRef<LeafletFeatureGroup>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,7 +54,7 @@ const AddField = () => {
       markers: [],
     },
   });
-
+  const polygons = form.watch("coordinates");
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "coordinates",
@@ -60,34 +62,35 @@ const AddField = () => {
 
   // Helper function to extract coordinates from a polygon layer
   const getPolygonCoordinates = (layer: Layer): [number, number][] => {
-    console.log((layer as any).getLatLngs(),"latlngs")
     const latlngs = (layer as any).getLatLngs()[0] as LatLng[];
     return latlngs.map((latlng) => [latlng.lat, latlng.lng]);
   };
 
   // Handle polygon creation event
   const onPolygonCreated = (e: LeafletEvent) => {
+
     const layer = (e as any).layer;
     const formattedCoords = getPolygonCoordinates(layer);
-    form.setValue("coordinates", formattedCoords);
+  
+    form.setValue("coordinates", [...polygons, formattedCoords]);
+  
+
   };
 
   // Handle polygon edit event
   const onPolygonEdited = (e: LeafletEvent) => {
-    const layers = (e as any).layers; // Layers contain all edited polygons
-    layers.eachLayer((layer: Layer) => {
-      const updatedCoords = getPolygonCoordinates(layer);
-      form.setValue("coordinates", updatedCoords); // Update form value
-      console.log("Updated Coordinates:", updatedCoords);
-    });
+    const updatedPolygons: [number, number][][] = [];
+    featureGroupPolygonRef.current?.eachLayer((layer: Layer) => {
+      updatedPolygons.push(getPolygonCoordinates(layer));});
+    form.setValue("coordinates", updatedPolygons);
   };
 
   // Handle polygon deletion event
 const onPolygonDeleted = (e: LeafletEvent) => {
-    const layers = (e as any).layers;
-    if (layers.getLayers().length !== 0) {
-      form.setValue("coordinates", []); // Clear coordinates on delete
-    }
+    const remainingPolygons: [number, number][][] = [];
+    featureGroupPolygonRef.current?.eachLayer((layer: Layer) => {
+      remainingPolygons.push(getPolygonCoordinates(layer));});
+    form.setValue("coordinates", remainingPolygons);
   };
 
     // Extract marker coordinates from a layer
@@ -142,8 +145,8 @@ const onPolygonDeleted = (e: LeafletEvent) => {
           <FormInput control={form.control} name='fieldID' label='FieldID' placeholder='Enter FieldID' type='text' />
           <FormInput control={form.control} name='farmedAcres' label='Farmed Acres' placeholder='Enter Farmed Acres' type='number' />
           <FormComboBox control={form.control} name = "year" label= 'Year' options={[{ label:"2022",value:"2022"},{ label:"2023",value:"2023"},{ label:"2024",value:"2024"}]}/>
-          <FormCoordinatesMap control={form.control} name="coordinates" label="Polygon Coordinates" onCreated={onPolygonCreated} onEdited={onPolygonEdited} onDeleted={onPolygonDeleted} type="polygon"/>
-          <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker"/>
+          <FormCoordinatesMap control={form.control} name="coordinates" label="Polygon Coordinates" onCreated={onPolygonCreated} onEdited={onPolygonEdited} onDeleted={onPolygonDeleted} type="polygon" refLayer={featureGroupPolygonRef}/>
+          <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/>
           <Button className='mt-4 w-24' type="submit">Submit</Button>
         </form>
       </Form>
