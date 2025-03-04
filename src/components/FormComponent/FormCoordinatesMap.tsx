@@ -11,10 +11,11 @@ type FormCoordinatesMapProps = {
   onEdited: (e:LeafletEvent)=>void;
   onDeleted: (e:LeafletEvent)=>void;
   type:"marker"|"polygon"|"polyline";
-  refLayer: React.RefObject<LeafletFeatureGroup<any>>
+  refLayer: React.RefObject<LeafletFeatureGroup<any>>;
+  layerCounts?: "single" | "multiple";
 }
 
-const FormCoordinatesMap = ({control,name,label,onCreated,onEdited,onDeleted,type, refLayer}:FormCoordinatesMapProps) => {
+const FormCoordinatesMap = ({control,name,label,onCreated,onEdited,onDeleted,type, refLayer, layerCounts = "multiple"}:FormCoordinatesMapProps) => {
   return (
          <FormField 
           control={control}
@@ -42,6 +43,8 @@ const FormCoordinatesMap = ({control,name,label,onCreated,onEdited,onDeleted,typ
                 />
               </FeatureGroup>
             </MapContainer>
+            
+            {layerCounts === "single" && field.value?.length > 1 ? <FormMessage>Only one {type} is allowed</FormMessage> : null}
             <FormMessage/>
           </FormItem>
 )}

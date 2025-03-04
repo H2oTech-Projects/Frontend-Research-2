@@ -73,7 +73,7 @@ const AddField = () => {
     const formattedCoords = getPolygonCoordinates(layer);
   
     form.setValue("coordinates", [...polygons, formattedCoords]);
-  
+    form.clearErrors("coordinates");
 
   };
 
@@ -106,6 +106,7 @@ const onPolygonDeleted = (e: LeafletEvent) => {
 
     // Add new marker to the list
     form.setValue("markers",  [newMarker]);
+    form.clearErrors("markers"); // Clear errors on new marker creation
   };
 
   // Handle marker edit event
@@ -145,7 +146,7 @@ const onPolygonDeleted = (e: LeafletEvent) => {
           <FormInput control={form.control} name='fieldID' label='FieldID' placeholder='Enter FieldID' type='text' />
           <FormInput control={form.control} name='farmedAcres' label='Farmed Acres' placeholder='Enter Farmed Acres' type='number' />
           <FormComboBox control={form.control} name = "year" label= 'Year' options={[{ label:"2022",value:"2022"},{ label:"2023",value:"2023"},{ label:"2024",value:"2024"}]}/>
-          <FormCoordinatesMap control={form.control} name="coordinates" label="Polygon Coordinates" onCreated={onPolygonCreated} onEdited={onPolygonEdited} onDeleted={onPolygonDeleted} type="polygon" refLayer={featureGroupPolygonRef}/>
+          <FormCoordinatesMap control={form.control} name="coordinates" label="Polygon Coordinates" onCreated={onPolygonCreated} onEdited={onPolygonEdited} onDeleted={onPolygonDeleted} type="polygon" refLayer={featureGroupPolygonRef} layerCounts='single'/>
           <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/>
           <Button className='mt-4 w-24' type="submit">Submit</Button>
         </form>
