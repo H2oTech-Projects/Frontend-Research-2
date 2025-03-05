@@ -21,12 +21,14 @@ import RtPolygon from "@/components/RtPolygon";
 
 import AccordionTable from "@/components/AccordionTable";
 import StackedBarChart from "@/components/charts/stackedBarChart";
+import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList } from "@/services/insight";
 interface EmailProps {
   value: string;
   label: string;
 }
 
 const Insight = () => {
+  const {data,isLoading} = useGetAccountAllocationChart("Madera County All Accounts");
   const defaultData: dummyGroundWaterDataTypes2 = dummyGroundWaterData as any;
   const parcels: any = parcelsData as any;
   const objectKeys = Object.keys(defaultData);
@@ -118,6 +120,12 @@ const Insight = () => {
   //       value: key,
   //       label:key
   // })}
+
+  useEffect(() => {
+  console.log(isLoading,"isLoading");
+  console.log(data?.data,"data");
+
+},[isLoading])
 
   const yearList: EmailProps[] = [
     {
