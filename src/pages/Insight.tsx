@@ -21,14 +21,20 @@ import RtPolygon from "@/components/RtPolygon";
 
 import AccordionTable from "@/components/AccordionTable";
 import StackedBarChart from "@/components/charts/stackedBarChart";
-import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList } from "@/services/insight";
+import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList,useGetAccountFarmUnits,useGetAccountParcels, useGetAllAccountData } from "@/services/insight";
+import { array } from "yup";
 interface EmailProps {
   value: string;
   label: string;
 }
 
 const Insight = () => {
-  const {data,isLoading} = useGetAccountAllocationChart("Madera County All Accounts");
+function removeBrackets(text:string) {
+  return text?.replace(/\s*\(.*?\)\s*/g, '').trim();
+}
+  const {data: accountList,isLoading, isFetched} = useGetAccountsList();
+
+  // const {data,isLoading} = useGetAccountAllocationChart("Madera County All Accounts");
   const defaultData: dummyGroundWaterDataTypes2 = dummyGroundWaterData as any;
   const parcels: any = parcelsData as any;
   const objectKeys = Object.keys(defaultData);
@@ -42,7 +48,7 @@ const Insight = () => {
     }
   }
   )
-  const [selectedEmailValue, setSelectedEmailValue] = useState<string>(emailList[0].value);
+  const [selectedEmailValue, setSelectedEmailValue] = useState<string>();
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
   const [selectedFarm, setSelectedFarm] = useState<string>("");
   const [selectedFarmGeoJson, setselectedFarmGeoJson] = useState<string>("");
@@ -61,18 +67,27 @@ const Insight = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
+  const {data:allData, isLoading:allDataLoading}= useGetAllAccountData(removeBrackets(selectedEmailValue as string));
+  // const {data:accountDetail} = useGetAccountDetails(removeBrackets(selectedEmailValue as string));
+  // const {data:accountFarmUnits} = useGetAccountFarmUnits(removeBrackets(selectedEmailValue as string));
+  // const {data:accountParcels} = useGetAccountParcels(removeBrackets(selectedEmailValue as string));
+  // const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(removeBrackets(selectedEmailValue as string));
+  // useEffect(()=>{console.log(allData,)},[allDataLoading])
   useEffect(() => {
-    setGroundWaterAccountData(defaultData[selectedEmailValue])
-    let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
-    let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
-    setPosition((prev: any) => ({ ...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds }))
-    setViewBound(defaultData[selectedEmailValue].view_bounds)
-    setSelectedFarm("")
-    setselectedFarmGeoJson("")
+    isFetched && setSelectedEmailValue(accountList?.data[0]?.value)
+},[isLoading]);
+  // useEffect(() => {
+  //   setGroundWaterAccountData(defaultData[selectedEmailValue])
+  //   let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
+  //   let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
+  //   setPosition((prev: any) => ({ ...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds }))
+  //   setViewBound(defaultData[selectedEmailValue].view_bounds)
+  //   setSelectedFarm("")
+  //   setselectedFarmGeoJson("")
 
-    setSelectedParcel("")
-    setSelectedParcelGeom([])
-  }, [selectedEmailValue]);
+  //   setSelectedParcel("")
+  //   setSelectedParcelGeom([])
+  // }, [selectedEmailValue]);
 
   useEffect(() => {
     if (!!selectedFarm) {
@@ -121,11 +136,6 @@ const Insight = () => {
   //       label:key
   // })}
 
-  useEffect(() => {
-  console.log(isLoading,"isLoading");
-  console.log(data?.data,"data");
-
-},[isLoading])
 
   const yearList: EmailProps[] = [
     {
@@ -380,9 +390,7 @@ const Insight = () => {
       weight: 2,
     };
   }
-  if (!groundWaterAccountData) {
-    return "";
-  }
+
 
   const IntroTable = () => {
     return (
@@ -399,7 +407,7 @@ const Insight = () => {
               Account ID:
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.account_id}
+              {allData?.accountDetail?.account_id}
             </TableCell>
           </TableRow>
 
@@ -408,7 +416,7 @@ const Insight = () => {
               Account Name:
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.account_name}
+              {allData?.accountDetail?.account_name}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -416,7 +424,7 @@ const Insight = () => {
               Mailing Address:
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.mailing_address}
+              {allData?.accountDetail?.mailing_address}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -424,7 +432,7 @@ const Insight = () => {
               Start Date (YYYY-MM-DD):
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.start_date}
+              {allData?.accountDetail?.start_date}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -432,7 +440,7 @@ const Insight = () => {
               End Date (YYYY-MM-DD):
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.end_date}
+              {allData?.accountDetail?.end_date}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -440,7 +448,7 @@ const Insight = () => {
               Measurement Method:
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.msmt_method}
+              {allData?.accountDetail?.msmt_method}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -448,7 +456,7 @@ const Insight = () => {
               Report Creation Date:
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.report_creation_date}
+              {allData?.accountDetail?.report_creation_date}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -456,7 +464,7 @@ const Insight = () => {
               Report Revision Date:
             </TableCell>
             <TableCell className="!text-left">
-              {groundWaterAccountData?.report_revision_date}
+              {allData?.accountDetail?.report_revision_date}
             </TableCell>
           </TableRow>
         </TableBody>
@@ -464,11 +472,16 @@ const Insight = () => {
     )
   }
 
-  return (
+
+
+ if(isLoading){
+   return <div>Loading...</div>}
+else {
+ return (
     <div className="flex flex-col px-3 py-2 ">
       <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
       <div className="flex flex-col items-start  mt-2 gap-2 dark:text-slate-50 ">
-        <RtSelect selectedValue={selectedEmailValue} dropdownList={emailList} label="Account" setSelectedValue={setSelectedEmailValue} />
+        <RtSelect selectedValue={selectedEmailValue as string} dropdownList={accountList?.data} label="Account" setSelectedValue={setSelectedEmailValue} />
         <RtSelect selectedValue={selectedReportTypeValue} dropdownList={ReportTypeList} label="Report Type" setSelectedValue={setSelectedReportTypeValue} showSearch={false} />
         <RtSelect selectedValue={selectedYearValue} dropdownList={yearList} label="Year" setSelectedValue={setSelectedYearValue} showSearch={false} />
       </div>
@@ -484,17 +497,19 @@ const Insight = () => {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
-                 <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * groundWaterAccountData?.chart_data.length + 80 }}
+                 {allDataLoading ? <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>Loading...</div> : <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * allData?.allocationChart?.length + 80 }}
                           >
-                            <StackedBarChart
-                              data={groundWaterAccountData?.chart_data}
+                            {
+                              allData?.allocationChart.length > 0 ? <StackedBarChart
+                              data={ allData?.allocationChart }
                               config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
                               layout={'vertical'}
                               stack1={'remaining'}
                               stack2={'allocation_used'}
                               setSelectedFarm={setSelectedFarm}
-                            />
-                          </div>
+                            /> : <div className="flex justify-center items-center h-full">No Data Available</div>                             
+                            }
+                  </div>}
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <IntroTable />
               </div>
@@ -507,7 +522,7 @@ const Insight = () => {
               />
               <div className="my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
                 <MapTable
-                  defaultData={groundWaterAccountData?.farm_units as FarmUnit[] || []}
+                  defaultData={allData?.accountFarmUnits as FarmUnit[] || []}
                   columns={columns}
                   doFilter={false}
                   filterValue={""}
@@ -555,7 +570,7 @@ const Insight = () => {
                   </div>
                   <div>
                     <MapTable
-                      defaultData={groundWaterAccountData?.parcel_table_info || []}
+                      defaultData={allData?.accountParcels || []}
                       columns={columns2}
                       doFilter={doFilter}
                       filterValue={searchText}
@@ -589,15 +604,16 @@ const Insight = () => {
             <LeafletMap
               position={position}
               zoom={14}
-              viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : groundWaterAccountData?.view_bounds}
+              viewBound={ allData?.accountDetail?.view_bounds }
+              // viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
               collapse={collapse}
               configurations={{ 'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
             >
-              {groundWaterAccountData?.geojson_parcels && <RtGeoJson
-                key={selectedEmailValue}
+              {allData?.accountDetail?.geojson_parcels && <RtGeoJson
+                key={selectedEmailValue as string}
                 layerEvents={geoJsonLayerEvents}
                 style={geoJsonStyle}
-                data={JSON.parse(groundWaterAccountData?.geojson_parcels)}
+                data={JSON.parse(allData?.accountDetail?.geojson_parcels)}
                 color={"#16599a"}
               />
               }
@@ -625,15 +641,7 @@ const Insight = () => {
                 </RtPolygon>
               }
             </LeafletMap>
-            {/* <button
-                                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-10 h-6 w-6 items-center justify-center rounded-full bg-blue-400"
-                                onClick={mapCollapseBtn}
-                            >
-                                <ChevronsLeft
-                                    size={20}
-                                    className="rotate-180"
-                                />
-                            </button> */}
+          
             <CollapseBtn
               className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
               onClick={tableCollapseBtn}
@@ -645,8 +653,9 @@ const Insight = () => {
         </div>
       </div>
     </div>
-  )
+  )}
 
-};
+}
+
 
 export default Insight;
