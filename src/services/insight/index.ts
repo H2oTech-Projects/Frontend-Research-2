@@ -1,9 +1,9 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, UseQueryResult, useQueries } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryInsightService } from "./service";
 import { GET_ACCOUNT_ALLOCATION_CHART_KEY, GET_ACCOUNT_DETAILS_KEY, GET_ACCOUNT_FARM_UNITS_KEY, GET_ACCOUNT_PARCELS_KEY, GET_ACCOUNTS_LIST_KEY } from "./constant";
 
-export const useGetAccountsList = () => {
+export const useGetAccountsList= ()=> {
   return useQuery({
     queryKey: [GET_ACCOUNTS_LIST_KEY],
     queryFn: queryInsightService.getAccountsList,
@@ -18,7 +18,7 @@ export const useGetAccountDetails = (accountName:string) => {
 export const useGetAccountAllocationChart = (accountName:string) => {
   return useQuery({
     queryKey: [GET_ACCOUNT_ALLOCATION_CHART_KEY,accountName],
-    queryFn:()=> queryInsightService.getAccountDetails(accountName),
+    queryFn:()=> queryInsightService.getAccountAllocationChart(accountName),
      ...queryConfig  });
 }
 export const useGetAccountFarmUnits = (accountName:string) => {
@@ -33,3 +33,42 @@ export const useGetAccountParcels = (accountName:string) => {
     queryFn:()=> queryInsightService.getAccountParcels(accountName),
      ...queryConfig  });
 }
+
+export const useGetAllAccountData = (accountName: string) => {
+  const queries = useQueries({
+    queries: [
+      {
+        queryKey: [GET_ACCOUNT_DETAILS_KEY, accountName],
+        queryFn: () => queryInsightService.getAccountDetails(accountName),
+        ...queryConfig,
+      },
+      {
+        queryKey: [GET_ACCOUNT_ALLOCATION_CHART_KEY, accountName],
+        queryFn: () => queryInsightService.getAccountAllocationChart(accountName),
+        ...queryConfig,
+      },
+      {
+        queryKey: [GET_ACCOUNT_FARM_UNITS_KEY, accountName],
+        queryFn: () => queryInsightService.getAccountFarmUnits(accountName),
+        ...queryConfig,
+      },
+      {
+        queryKey: [GET_ACCOUNT_PARCELS_KEY, accountName],
+        queryFn: () => queryInsightService.getAccountParcels(accountName),
+        ...queryConfig,
+      },
+    ],
+  });
+
+  const isLoading = queries.some((query) => query.isLoading);
+  const isError = queries.some((query) => query.isError);
+  const error = queries.find((query) => query.error)?.error;
+  const data = {
+    accountDetail: queries[0].data?.data,
+    allocationChart: queries[1].data?.data,
+    accountFarmUnits: queries[2].data?.data,
+    accountParcels: queries[3].data?.data,
+  };
+
+  return { data, isLoading, isError, error };
+};

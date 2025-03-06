@@ -44,7 +44,7 @@ const isDesktopDevice = useMediaQuery("(min-width: 768px)");
                       >
                         <div className={cn(" overflow-x-auto ")}>
                           {selectedValue
-                          ? dropdownList.find((email) => email.value === selectedValue)?.label
+                          ? dropdownList?.find((email) => email.value === selectedValue)?.label
                           : `Select ${label}...`}
                         </div>
                          <ChevronDown className="h-4 w-4 opacity-50" />
@@ -58,12 +58,12 @@ const isDesktopDevice = useMediaQuery("(min-width: 768px)");
                         <CommandList>
                           <CommandEmpty>No Result Found.</CommandEmpty>
                           <CommandGroup>
-                            {dropdownList.map((email) => (
+                            {dropdownList?.map((email) => (
                                 <CommandItem
                           key={email.value}
                           value={email.label}
                           onSelect={(currentValue:string) => {
-                            const searchValue = dropdownList.find((e) => e.label === currentValue);
+                            const searchValue = dropdownList?.find((e) => e.label === currentValue);
                             setSelectedValue(searchValue ? searchValue.value : "");
                             setOpen(false);
                           }}

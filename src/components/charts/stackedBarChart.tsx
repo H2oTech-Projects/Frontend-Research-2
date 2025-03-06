@@ -10,12 +10,11 @@ interface ChartParameters {
 }
 
 const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartParameters) => {
+  const remainings = data?.map((d: any) => d.remaining);
+  const allocation_useds = data?.map((d: any) => d.allocation_used);
 
-  const remainings = data.map((d: any) => d.remaining);
-  const allocation_useds = data.map((d: any) => d.allocation_used);
-
-  const min = Math.min(Math.min(...remainings), Math.min(...allocation_useds))
-  const max = Math.max(Math.max(...remainings), Math.max(...allocation_useds))
+  const min = Math?.min(Math.min(...remainings), Math.min(...allocation_useds))
+  const max = Math?.max(Math.max(...remainings), Math.max(...allocation_useds))
   let minTick = Math.round(min / 20) * 20 ;
   minTick = minTick >= 0 ? -20 : minTick;
   let maxTick = Math.round(max / 20) * 20;
