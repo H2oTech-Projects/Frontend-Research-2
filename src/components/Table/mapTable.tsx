@@ -40,7 +40,8 @@ const MapTable = <T,>({
     tableCSSConfig = {headerFontSize:null , bodyFontSize:null},
     tableType,
     setSelectedFarm=null,
-    setSelectedParcel=null
+    setSelectedParcel=null,
+    isLoading = false,
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setDate] = useState(defaultData.length > 0 ?  [...defaultData] : []);
@@ -145,8 +146,15 @@ const MapTable = <T,>({
                             </TableRow>
                         ))}
                     </TableHeader>
-
-                    <TableBody>
+            {isLoading ? (
+                              <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    Data Loading
+                                </TableCell>
+                            </TableRow>) : ( <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) =>
                                 // @ts-ignore it is to check whether there is center property in Data element object}
@@ -214,7 +222,8 @@ const MapTable = <T,>({
                                 </TableCell>
                             </TableRow>
                         )}
-                    </TableBody>
+                    </TableBody>)}
+                   
                 </Table>
             </div>
             {showPagination && (<div className="flex-grow p-2">

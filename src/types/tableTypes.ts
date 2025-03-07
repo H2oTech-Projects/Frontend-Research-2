@@ -35,6 +35,7 @@ export type MapTableTypes<T> = {
     tableType?: string | null;
     setSelectedFarm?: null | Function;
     setSelectedParcel?: null | Function;
+    isLoading?: boolean;
 };
 export type DummyDataType = {
     district?: string;

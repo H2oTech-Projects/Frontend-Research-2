@@ -23,6 +23,7 @@ import AccordionTable from "@/components/AccordionTable";
 import StackedBarChart from "@/components/charts/stackedBarChart";
 import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList,useGetAccountFarmUnits,useGetAccountParcels, useGetAllAccountData } from "@/services/insight";
 import { array } from "yup";
+import { Skeleton } from "@/components/ui/skeleton";
 interface EmailProps {
   value: string;
   label: string;
@@ -73,7 +74,7 @@ function removeBrackets(text:string) {
   // const {data:accountParcels} = useGetAccountParcels(removeBrackets(selectedEmailValue as string));
   // const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(removeBrackets(selectedEmailValue as string));
   // useEffect(()=>{console.log(allData,)},[allDataLoading])
-  useEffect(() => {
+useEffect(() => {
     isFetched && setSelectedEmailValue(accountList?.data[0]?.value)
 },[isLoading]);
   // useEffect(() => {
@@ -91,6 +92,7 @@ function removeBrackets(text:string) {
 
   useEffect(() => {
     if (!!selectedFarm) {
+      console.log(selectedFarm)
       let selectFarm = allData?.accountFarmUnits?.find((farm_unit:any) => farm_unit['farm_unit_zone'] == selectedFarm)
       // @ts-ignore
       setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
@@ -475,7 +477,20 @@ function removeBrackets(text:string) {
 
 
  if(isLoading){
-   return <div>Loading...</div>}
+   return <div className="flex flex-col px-3 py-2 gap-3">
+        <Skeleton className="h-6 w-[250px]" />
+        <Skeleton className="h-6 w-[200px]" />
+        <Skeleton className="h-6 w-[200px]" />
+        <Skeleton className="h-6 w-[200px]" />
+         <div className="flex flex-grow mt-2">
+            <div className="w-1/2 pr-3" >
+              <Skeleton className="h-[calc(100vh-232px)] w-full rounded-[8px] " />
+             </div>
+            <div className="w-1/2 pl-3" >
+              <Skeleton className="h-[calc(100vh-232px)] w-full rounded-[8px] " /> 
+            </div>
+          </div>
+    </div>}
 else {
  return (
     <div className="flex flex-col px-3 py-2 ">
@@ -497,7 +512,7 @@ else {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
-                 {allDataLoading ? <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>Loading...</div> : <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * allData?.allocationChart?.length + 80 }}
+                 {allDataLoading ? <div className={"dark:bg-slate-500 flex justify-center items-center rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>Loading...</div> : <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * allData?.allocationChart?.length + 80 }}
                           >
                             {
                               allData?.allocationChart.length > 0 ? <StackedBarChart
@@ -532,6 +547,7 @@ else {
                   columnProperties={defaultData['column_properties']}
                   tableType={"farm"}
                   setSelectedFarm={setSelectedFarm}
+                  isLoading={allDataLoading}
                 />
               </div>
 
@@ -578,6 +594,7 @@ else {
                       columnProperties={defaultData['parcel_column_properties']}
                       tableType={"parcel"}
                       setSelectedParcel={setSelectedParcel}
+                      isLoading={allDataLoading}
                     />
                   </div>
                 </div>
