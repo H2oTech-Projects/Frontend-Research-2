@@ -91,7 +91,7 @@ function removeBrackets(text:string) {
 
   useEffect(() => {
     if (!!selectedFarm) {
-      let selectFarm = groundWaterAccountData!['farm_units'].find((farm_unit) => farm_unit['farm_unit_zone'] == selectedFarm)
+      let selectFarm = allData?.accountFarmUnits?.find((farm_unit:any) => farm_unit['farm_unit_zone'] == selectedFarm)
       // @ts-ignore
       setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
       // @ts-ignore
@@ -103,7 +103,7 @@ function removeBrackets(text:string) {
 
   useEffect(() => {
     if (!!selectedParcel) {
-      let selectParcel = groundWaterAccountData!['parcel_table_info'].find((parcels) => parcels['parcel_id'] == selectedParcel)
+      let selectParcel = allData?.accountParcels?.find((parcels:any) => parcels['parcel_id'] == selectedParcel)
       // @ts-ignore
       setSelectedParcelGeom(selectParcel['coords'])
       // @ts-ignore
