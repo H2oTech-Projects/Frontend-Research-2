@@ -27,10 +27,6 @@ interface EmailProps {
 }
 
 const Insight = () => {
-function removeBrackets(text:string | null):string | null {
-  if (text === null) return null;
-  return text?.replace(/\s*\(.*?\)\s*/g, '').trim();
-}
   const {data: accountList,isLoading, isFetched} = useGetAccountsList();
   const parcels: any = parcelsData as any;
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
@@ -52,11 +48,10 @@ function removeBrackets(text:string | null):string | null {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const {data:accountDetail ,isLoading:accountDetailLoading} = useGetAccountDetails(removeBrackets(selectedEmailValue));
-  const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(removeBrackets(selectedEmailValue as string));
-  const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(removeBrackets(selectedEmailValue as string));
-  const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(removeBrackets(selectedEmailValue as string));
-  // useEffect(()=>{console.log(allData,)},[allDataLoading])
+  const {data:accountDetail ,isLoading:accountDetailLoading} = useGetAccountDetails(selectedEmailValue);
+  const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(selectedEmailValue);
+  const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(selectedEmailValue);
+  const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(selectedEmailValue);
 useEffect(() => {
     isFetched && accountList?.data[0]?.value !== undefined &&  setSelectedEmailValue(accountList?.data[0]?.value)
 },[isFetched]);
