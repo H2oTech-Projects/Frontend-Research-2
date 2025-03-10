@@ -8,7 +8,6 @@ import { Popup } from "react-leaflet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { AccountDetails, AccountDetails2, dummyGroundWaterDataTypes, dummyGroundWaterDataTypes2, FarmUnit, ParcelData } from "@/types/tableTypes";
-import dummyGroundWaterData from "../../data4.json"
 import parcelsData from "../../parcels.json"
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
@@ -18,12 +17,10 @@ import BasicSelect from "@/components/BasicSelect";
 import { buildPopupMessage } from "@/utils/map";
 import CollapseBtn from "@/components/CollapseBtn";
 import RtPolygon from "@/components/RtPolygon";
-
-import AccordionTable from "@/components/AccordionTable";
 import StackedBarChart from "@/components/charts/stackedBarChart";
 import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList,useGetAccountFarmUnits,useGetAccountParcels, useGetAllAccountData } from "@/services/insight";
-import { array } from "yup";
 import { Skeleton } from "@/components/ui/skeleton";
+import { farmUnitColumnProperties, parcelColumnProperties } from "@/utils/constant";
 interface EmailProps {
   value: string;
   label: string;
@@ -35,21 +32,7 @@ function removeBrackets(text:string | null):string | null {
   return text?.replace(/\s*\(.*?\)\s*/g, '').trim();
 }
   const {data: accountList,isLoading, isFetched} = useGetAccountsList();
-
-  // const {data,isLoading} = useGetAccountAllocationChart("Madera County All Accounts");
-  const defaultData: dummyGroundWaterDataTypes2 = dummyGroundWaterData as any;
   const parcels: any = parcelsData as any;
-  const objectKeys = Object.keys(defaultData);
-  const emailList: EmailProps[] = []
-  objectKeys.sort().forEach((item) => {
-    if (item !== "column_properties" || "parcel_column_properties") {
-      emailList.push({
-        value: item,
-        label: item
-      })
-    }
-  }
-  )
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
   const [selectedFarm, setSelectedFarm] = useState<string>("");
@@ -69,7 +52,6 @@ function removeBrackets(text:string | null):string | null {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const {data:allData, isLoading:allDataLoading}= useGetAllAccountData(removeBrackets(selectedEmailValue));
   const {data:accountDetail ,isLoading:accountDetailLoading} = useGetAccountDetails(removeBrackets(selectedEmailValue));
   const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(removeBrackets(selectedEmailValue as string));
   const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(removeBrackets(selectedEmailValue as string));
@@ -546,7 +528,7 @@ else {
                   fullHeight={false}
                   showPagination={false}
                   textAlign="left" // this aligns the text to the left in the table, if not provided it will be center
-                  columnProperties={defaultData['column_properties']}
+                  columnProperties={farmUnitColumnProperties}
                   tableType={"farm"}
                   setSelectedFarm={setSelectedFarm}
                   isLoading={accountFarmUnitsLoading}
@@ -593,7 +575,7 @@ else {
                       doFilter={doFilter}
                       filterValue={searchText}
                       fullHeight={false}
-                      columnProperties={defaultData['parcel_column_properties']}
+                      columnProperties={parcelColumnProperties}
                       tableType={"parcel"}
                       setSelectedParcel={setSelectedParcel}
                       isLoading={accountParcelsLoading}
