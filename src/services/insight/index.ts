@@ -9,27 +9,27 @@ export const useGetAccountsList= ()=> {
     queryFn: queryInsightService.getAccountsList,
      ...queryConfig  });
 }
-export const useGetAccountDetails = (accountName:string) => {
+export const useGetAccountDetails = (accountName:string | null) => {
   return useQuery({
     queryKey: [GET_ACCOUNT_DETAILS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountDetails(accountName),
      ...queryConfig  });
 }
-export const useGetAccountAllocationChart = (accountName:string) => {
+export const useGetAccountAllocationChart = (accountName:string | null) => {
    
   return useQuery({
     queryKey: [GET_ACCOUNT_ALLOCATION_CHART_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountAllocationChart(accountName),
      ...queryConfig  });
 }
-export const useGetAccountFarmUnits = (accountName:string) => {
+export const useGetAccountFarmUnits = (accountName:string | null) => {
    
   return useQuery({
     queryKey: [GET_ACCOUNT_FARM_UNITS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountFarmUnits(accountName),
      ...queryConfig  });
 }
-export const useGetAccountParcels = (accountName:string) => {
+export const useGetAccountParcels = (accountName:string | null) => {
    
   return useQuery({
     queryKey: [GET_ACCOUNT_PARCELS_KEY,accountName],

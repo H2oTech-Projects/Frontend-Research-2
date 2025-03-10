@@ -70,13 +70,12 @@ function removeBrackets(text:string | null):string | null {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
   const {data:allData, isLoading:allDataLoading}= useGetAllAccountData(removeBrackets(selectedEmailValue));
-  // const {data:accountDetail} = useGetAccountDetails(removeBrackets(selectedEmailValue));
-  // const {data:accountFarmUnits} = useGetAccountFarmUnits(removeBrackets(selectedEmailValue as string));
-  // const {data:accountParcels} = useGetAccountParcels(removeBrackets(selectedEmailValue as string));
-  // const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(removeBrackets(selectedEmailValue as string));
+  const {data:accountDetail ,isLoading:accountDetailLoading} = useGetAccountDetails(removeBrackets(selectedEmailValue));
+  const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(removeBrackets(selectedEmailValue as string));
+  const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(removeBrackets(selectedEmailValue as string));
+  const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(removeBrackets(selectedEmailValue as string));
   // useEffect(()=>{console.log(allData,)},[allDataLoading])
 useEffect(() => {
-
     isFetched && accountList?.data[0]?.value !== undefined &&  setSelectedEmailValue(accountList?.data[0]?.value)
 },[isFetched]);
   // useEffect(() => {
@@ -94,12 +93,13 @@ useEffect(() => {
 
   useEffect(() => {
     if (!!selectedFarm) {
-      console.log(selectedFarm)
-      let selectFarm = allData?.accountFarmUnits?.find((farm_unit:any) => farm_unit['farm_unit_zone'] == selectedFarm)
+     
+      let selectFarm = accountFarmUnits?.data?.find((farm_unit:any) => farm_unit['farm_unit_zone'] == selectedFarm)
+      
       // @ts-ignore
-      setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
+      selectFarm && setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
       // @ts-ignore
-      setViewBound(selectFarm['view_bounds'])
+      selectFarm && setViewBound(selectFarm['view_bounds'])
       setSelectedParcel("")
       setSelectedParcelGeom([])
     }
@@ -107,11 +107,11 @@ useEffect(() => {
 
   useEffect(() => {
     if (!!selectedParcel) {
-      let selectParcel = allData?.accountParcels?.find((parcels:any) => parcels['parcel_id'] == selectedParcel)
+      let selectParcel = accountParcels?.data?.find((parcels:any) => parcels['parcel_id'] == selectedParcel)
       // @ts-ignore
-      setSelectedParcelGeom(selectParcel['coords'])
+      selectParcel && setSelectedParcelGeom(selectParcel['coords'])
       // @ts-ignore
-      setViewBound(selectParcel['view_bounds'])
+      selectParcel && setViewBound(selectParcel['view_bounds'])
       setselectedFarmGeoJson("")
     }
   }, [selectedParcel])
@@ -411,7 +411,7 @@ useEffect(() => {
               Account ID:
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.account_id}
+              {accountDetail?.data?.account_id}
             </TableCell>
           </TableRow>
 
@@ -420,7 +420,7 @@ useEffect(() => {
               Account Name:
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.account_name}
+              {accountDetail?.data?.account_name}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -428,7 +428,7 @@ useEffect(() => {
               Mailing Address:
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.mailing_address}
+              {accountDetail?.data?.mailing_address}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -436,7 +436,7 @@ useEffect(() => {
               Start Date (YYYY-MM-DD):
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.start_date}
+              {accountDetail?.data?.start_date}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -444,7 +444,7 @@ useEffect(() => {
               End Date (YYYY-MM-DD):
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.end_date}
+              {accountDetail?.data?.end_date}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -452,7 +452,7 @@ useEffect(() => {
               Measurement Method:
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.msmt_method}
+              {accountDetail?.data?.msmt_method}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -460,7 +460,7 @@ useEffect(() => {
               Report Creation Date:
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.report_creation_date}
+              {accountDetail?.data?.report_creation_date}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -468,7 +468,7 @@ useEffect(() => {
               Report Revision Date:
             </TableCell>
             <TableCell className="!text-left">
-              {allData?.accountDetail?.report_revision_date}
+              {accountDetail?.data?.report_revision_date}
             </TableCell>
           </TableRow>
         </TableBody>
@@ -514,11 +514,11 @@ else {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
-                 {allDataLoading ? <div className={"dark:bg-slate-500 flex justify-center items-center rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>Loading...</div> : <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * allData?.allocationChart?.length + 80 }}
+                 {chartLoading ? <div className={"dark:bg-slate-500 flex justify-center items-center rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>Loading...</div> : <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * accountAllocationChart?.data?.length + 80 }}
                           >
                             {
-                              allData?.allocationChart?.length > 0 ? <StackedBarChart
-                              data={ allData?.allocationChart }
+                              accountAllocationChart?.data?.length > 0 ? <StackedBarChart
+                              data={ accountAllocationChart?.data }
                               config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
                               layout={'vertical'}
                               stack1={'remaining'}
@@ -539,7 +539,7 @@ else {
               />
               <div className="my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
                 <MapTable
-                  defaultData={allData?.accountFarmUnits as FarmUnit[] || []}
+                  defaultData={accountFarmUnits?.data as FarmUnit[] || []}
                   columns={columns}
                   doFilter={false}
                   filterValue={""}
@@ -549,7 +549,7 @@ else {
                   columnProperties={defaultData['column_properties']}
                   tableType={"farm"}
                   setSelectedFarm={setSelectedFarm}
-                  isLoading={allDataLoading}
+                  isLoading={accountFarmUnitsLoading}
                 />
               </div>
 
@@ -588,7 +588,7 @@ else {
                   </div>
                   <div>
                     <MapTable
-                      defaultData={allData?.accountParcels || []}
+                      defaultData={accountParcels?.data || []}
                       columns={columns2}
                       doFilter={doFilter}
                       filterValue={searchText}
@@ -596,7 +596,7 @@ else {
                       columnProperties={defaultData['parcel_column_properties']}
                       tableType={"parcel"}
                       setSelectedParcel={setSelectedParcel}
-                      isLoading={allDataLoading}
+                      isLoading={accountParcelsLoading}
                     />
                   </div>
                 </div>
@@ -623,16 +623,16 @@ else {
             <LeafletMap
               position={position}
               zoom={14}
-              viewBound={ allData?.accountDetail?.view_bounds }
+              viewBound={ accountDetail?.data?.view_bounds }
               // viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
               collapse={collapse}
               configurations={{ 'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
             >
-              {allData?.accountDetail?.geojson_parcels && <RtGeoJson
+              {accountDetail?.data?.geojson_parcels && <RtGeoJson
                 key={selectedEmailValue as string}
                 layerEvents={geoJsonLayerEvents}
                 style={geoJsonStyle}
-                data={JSON.parse(allData?.accountDetail?.geojson_parcels)}
+                data={JSON.parse(accountDetail?.data?.geojson_parcels)}
                 color={"#16599a"}
               />
               }
