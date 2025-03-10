@@ -30,7 +30,8 @@ interface EmailProps {
 }
 
 const Insight = () => {
-function removeBrackets(text:string) {
+function removeBrackets(text:string | null):string | null {
+  if (text === null) return null;
   return text?.replace(/\s*\(.*?\)\s*/g, '').trim();
 }
   const {data: accountList,isLoading, isFetched} = useGetAccountsList();
@@ -49,7 +50,7 @@ function removeBrackets(text:string) {
     }
   }
   )
-  const [selectedEmailValue, setSelectedEmailValue] = useState<string>();
+  const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
   const [selectedFarm, setSelectedFarm] = useState<string>("");
   const [selectedFarmGeoJson, setselectedFarmGeoJson] = useState<string>("");
@@ -68,15 +69,16 @@ function removeBrackets(text:string) {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const {data:allData, isLoading:allDataLoading}= useGetAllAccountData(removeBrackets(selectedEmailValue as string));
-  // const {data:accountDetail} = useGetAccountDetails(removeBrackets(selectedEmailValue as string));
+  const {data:allData, isLoading:allDataLoading}= useGetAllAccountData(removeBrackets(selectedEmailValue));
+  // const {data:accountDetail} = useGetAccountDetails(removeBrackets(selectedEmailValue));
   // const {data:accountFarmUnits} = useGetAccountFarmUnits(removeBrackets(selectedEmailValue as string));
   // const {data:accountParcels} = useGetAccountParcels(removeBrackets(selectedEmailValue as string));
   // const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(removeBrackets(selectedEmailValue as string));
   // useEffect(()=>{console.log(allData,)},[allDataLoading])
 useEffect(() => {
-    isFetched && setSelectedEmailValue(accountList?.data[0]?.value)
-},[isLoading]);
+
+    isFetched && accountList?.data[0]?.value !== undefined &&  setSelectedEmailValue(accountList?.data[0]?.value)
+},[isFetched]);
   // useEffect(() => {
   //   setGroundWaterAccountData(defaultData[selectedEmailValue])
   //   let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
@@ -515,7 +517,7 @@ else {
                  {allDataLoading ? <div className={"dark:bg-slate-500 flex justify-center items-center rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>Loading...</div> : <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * allData?.allocationChart?.length + 80 }}
                           >
                             {
-                              allData?.allocationChart.length > 0 ? <StackedBarChart
+                              allData?.allocationChart?.length > 0 ? <StackedBarChart
                               data={ allData?.allocationChart }
                               config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
                               layout={'vertical'}

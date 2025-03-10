@@ -16,25 +16,28 @@ export const useGetAccountDetails = (accountName:string) => {
      ...queryConfig  });
 }
 export const useGetAccountAllocationChart = (accountName:string) => {
+   
   return useQuery({
     queryKey: [GET_ACCOUNT_ALLOCATION_CHART_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountAllocationChart(accountName),
      ...queryConfig  });
 }
 export const useGetAccountFarmUnits = (accountName:string) => {
+   
   return useQuery({
     queryKey: [GET_ACCOUNT_FARM_UNITS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountFarmUnits(accountName),
      ...queryConfig  });
 }
 export const useGetAccountParcels = (accountName:string) => {
+   
   return useQuery({
     queryKey: [GET_ACCOUNT_PARCELS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountParcels(accountName),
      ...queryConfig  });
 }
 
-export const useGetAllAccountData = (accountName: string) => {
+export const useGetAllAccountData = (accountName: string | null) => {
   const queries = useQueries({
     queries: [
       {
