@@ -25,8 +25,6 @@ interface EmailProps {
 }
 
 const Insight = () => {
-  const {data: parcelList,isLoading:parcelLoading} = useGetParcelList();
-  const {data: accountList,isLoading, isFetched} = useGetAccountsList();
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
   const [selectedFarm, setSelectedFarm] = useState<string>("");
@@ -40,16 +38,21 @@ const Insight = () => {
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   const [collapse, setCollapse] = useState("default");
+
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
   };
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
+
+  const {data: accountList, isLoading, isFetched} = useGetAccountsList();
+  const {data: parcelList,isLoading:parcelLoading} = useGetParcelList();
   const {data:accountDetail ,isLoading:accountDetailLoading} = useGetAccountDetails(selectedEmailValue);
   const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(selectedEmailValue);
   const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(selectedEmailValue);
   const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(selectedEmailValue);
+
 useEffect(() => {
     isFetched && accountList?.data[0]?.value !== undefined &&  setSelectedEmailValue(accountList?.data[0]?.value)
 },[isFetched]);
@@ -68,9 +71,9 @@ useEffect(() => {
 
   useEffect(() => {
     if (!!selectedFarm) {
-     
+
       let selectFarm = accountFarmUnits?.data?.find((farm_unit:any) => farm_unit['farm_unit_zone'] == selectedFarm)
-      
+
       // @ts-ignore
       selectFarm && setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
       // @ts-ignore
@@ -372,6 +375,23 @@ useEffect(() => {
 
 
   const IntroTable = () => {
+    if (accountDetailLoading)
+      return <Table>
+              <TableHeader >
+                <TableRow >
+                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
+                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableCell className="!text-left">
+                  <Skeleton className="h-[300px] w-full rounded-[8px] w-[100%]" />
+                </TableCell>
+                <TableCell className="!text-left">
+                  <Skeleton className="h-[300px] w-full rounded-[8px] w-[100%]" />
+                </TableCell>
+              </TableBody>
+            </Table>
     return (
       <Table>
         <TableHeader >
@@ -451,6 +471,30 @@ useEffect(() => {
     )
   }
 
+  const ChartContent = () => {
+    if (chartLoading)
+    return <div
+              className={"dark:bg-slate-500 flex justify-center items-center rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>
+              Loading...
+            </div>
+    alert('chart loading')
+    const chartBars = accountAllocationChart?.data?.length > 0 ?
+      <StackedBarChart
+        data={ accountAllocationChart?.data }
+        config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
+        layout={'vertical'}
+        stack1={'remaining'}
+        stack2={'allocation_used'}
+        setSelectedFarm={setSelectedFarm}
+      /> : <div className="flex justify-center items-center h-full">No Data Available</div>
+    return <div
+            className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
+            style={{ height: 70 * accountAllocationChart?.data?.length + 80 }}
+           >
+            { chartBars }
+          </div>
+  }
+
 
 
  if(isLoading || parcelLoading){
@@ -464,7 +508,7 @@ useEffect(() => {
               <Skeleton className="h-[calc(100vh-232px)] w-full rounded-[8px] " />
              </div>
             <div className="w-1/2 pl-3" >
-              <Skeleton className="h-[calc(100vh-232px)] w-full rounded-[8px] " /> 
+              <Skeleton className="h-[calc(100vh-232px)] w-full rounded-[8px] " />
             </div>
           </div>
     </div>}
@@ -489,19 +533,7 @@ else {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
-                 {chartLoading ? <div className={"dark:bg-slate-500 flex justify-center items-center rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>Loading...</div> : <div className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"} style={{ height: 70 * accountAllocationChart?.data?.length + 80 }}
-                          >
-                            {
-                              accountAllocationChart?.data?.length > 0 ? <StackedBarChart
-                              data={ accountAllocationChart?.data }
-                              config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
-                              layout={'vertical'}
-                              stack1={'remaining'}
-                              stack2={'allocation_used'}
-                              setSelectedFarm={setSelectedFarm}
-                            /> : <div className="flex justify-center items-center h-full">No Data Available</div>                             
-                            }
-                  </div>}
+                <ChartContent />
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <IntroTable />
               </div>
@@ -635,7 +667,7 @@ else {
                 </RtPolygon>
               }
             </LeafletMap>
-          
+
             <CollapseBtn
               className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
               onClick={tableCollapseBtn}
