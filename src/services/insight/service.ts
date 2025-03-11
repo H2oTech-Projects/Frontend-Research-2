@@ -3,11 +3,16 @@ import { BASE_API_URL } from "@/utils/constant";
 import { toJson} from "@/utils/reactQueryConfig";
 
 const GET_ACCOUNTS_LIST = BASE_API_URL + "/accounts";
+const GET_PARCEL_LIST = BASE_API_URL + "/parcel_list";
 
 export const queryInsightService = {
 
   getAccountsList: async () => {
     const response = await axios.get(GET_ACCOUNTS_LIST).catch((err) => console.log(err));
+    return toJson(response?.data);
+  },
+  getParcelList: async () => {
+    const response = await axios.get(GET_PARCEL_LIST).catch((err) => console.log(err));
     return toJson(response?.data);
   },
   getAccountDetails: async (accountName:string | null) => {

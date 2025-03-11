@@ -1,8 +1,14 @@
 import { useQuery, useMutation, UseQueryResult, useQueries } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryInsightService } from "./service";
-import { GET_ACCOUNT_ALLOCATION_CHART_KEY, GET_ACCOUNT_DETAILS_KEY, GET_ACCOUNT_FARM_UNITS_KEY, GET_ACCOUNT_PARCELS_KEY, GET_ACCOUNTS_LIST_KEY } from "./constant";
+import { GET_ACCOUNT_ALLOCATION_CHART_KEY, GET_ACCOUNT_DETAILS_KEY, GET_ACCOUNT_FARM_UNITS_KEY, GET_ACCOUNT_PARCELS_KEY, GET_ACCOUNTS_LIST_KEY, GET_PARCEL_LIST_KEY } from "./constant";
 
+export const useGetParcelList = ()=> {
+  return useQuery({
+    queryKey: [GET_PARCEL_LIST_KEY],
+    queryFn: queryInsightService.getParcelList,
+     ...queryConfig  });
+}
 export const useGetAccountsList= ()=> {
   return useQuery({
     queryKey: [GET_ACCOUNTS_LIST_KEY],
