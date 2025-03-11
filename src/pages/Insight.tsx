@@ -8,17 +8,15 @@ import { Popup } from "react-leaflet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { AccountDetails, AccountDetails2, dummyGroundWaterDataTypes, dummyGroundWaterDataTypes2, FarmUnit, ParcelData } from "@/types/tableTypes";
-import parcelsData from "../../parcels.json"
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
 import RtGeoJson from "@/components/RtGeoJson";
 import RtSelect from "@/components/RtSelect";
-import BasicSelect from "@/components/BasicSelect";
 import { buildPopupMessage } from "@/utils/map";
 import CollapseBtn from "@/components/CollapseBtn";
 import RtPolygon from "@/components/RtPolygon";
 import StackedBarChart from "@/components/charts/stackedBarChart";
-import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList,useGetAccountFarmUnits,useGetAccountParcels, useGetAllAccountData } from "@/services/insight";
+import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList,useGetAccountFarmUnits,useGetAccountParcels, useGetAllAccountData, useGetParcelList } from "@/services/insight";
 import { Skeleton } from "@/components/ui/skeleton";
 import { farmUnitColumnProperties, parcelColumnProperties } from "@/utils/constant";
 interface EmailProps {
@@ -27,8 +25,8 @@ interface EmailProps {
 }
 
 const Insight = () => {
+  const {data: parcelList,isLoading:parcelLoading} = useGetParcelList();
   const {data: accountList,isLoading, isFetched} = useGetAccountsList();
-  const parcels: any = parcelsData as any;
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
   const [selectedFarm, setSelectedFarm] = useState<string>("");
@@ -330,7 +328,7 @@ useEffect(() => {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
+    layer.bindPopup(buildPopupMessage(parcelList[feature.properties.apn]));
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -455,7 +453,7 @@ useEffect(() => {
 
 
 
- if(isLoading){
+ if(isLoading || parcelLoading){
    return <div className="flex flex-col px-3 py-2 gap-3">
         <Skeleton className="h-6 w-[250px]" />
         <Skeleton className="h-6 w-[200px]" />
@@ -600,8 +598,8 @@ else {
             <LeafletMap
               position={position}
               zoom={14}
-              viewBound={ accountDetail?.data?.view_bounds }
-              // viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
+              // viewBound={ accountDetail?.data?.view_bounds }
+              viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
               collapse={collapse}
               configurations={{ 'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
             >
@@ -632,7 +630,7 @@ else {
                   eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
                 >
                   <Popup>
-                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+                    <div dangerouslySetInnerHTML={{ __html: "test" }} />
                   </Popup>
                 </RtPolygon>
               }
