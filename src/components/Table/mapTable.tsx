@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
 import { useMediaQuery } from "@uidotdev/usehooks";
+import { DataTablePagination } from "./MapTablePagination";
 
 interface ColumnFilter {
     id: string;
@@ -50,7 +51,7 @@ const MapTable = <T,>({
     const [searchText, setSearchText] = useState<any>("");
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
-        pageSize: 10,
+        pageSize: 50,
     });
     useEffect(() => {
         setDate(defaultData);
@@ -226,8 +227,9 @@ const MapTable = <T,>({
                    
                 </Table>
             </div>
-            {showPagination && (<div className="flex-grow p-2">
-                <Pagination>
+            {showPagination && (
+            <div className="flex flex-grow p-2  justify-center items-center">
+                {/* <Pagination>
                     <PaginationContent>
                         <PaginationItem>
                             <PaginationPrevious
@@ -235,13 +237,42 @@ const MapTable = <T,>({
                                 disabled={!table?.getCanPreviousPage()}
                             />
                         </PaginationItem>
-                        <PaginationItem>
+                  {!table?.getCanPreviousPage() && ( <PaginationItem>
                             <PaginationLink
                                 className="dark:text-white"
-                                isActive
+                                isActive={pagination?.pageIndex + 1 === pagination?.pageIndex + 1}
                                 disabled
                             >
                                 {pagination?.pageIndex + 1}
+                            </PaginationLink>
+                        </PaginationItem>)}
+                       
+                        <PaginationItem>
+                            <PaginationLink
+                                className="dark:text-white"
+                                isActive={pagination?.pageIndex + 2 === pagination?.pageIndex + 2}
+                                disabled
+                            >
+                                {pagination?.pageIndex + 2}
+                            </PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink
+                                className="dark:text-white"
+                                isActive={pagination?.pageIndex + 3 === pagination?.pageIndex + 2}
+                                disabled
+                            >
+                                {pagination?.pageIndex + 3}
+                            </PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink
+                                className="dark:text-white"
+                                isActive={pagination?.pageIndex + 4 === pagination?.pageIndex}
+                                disabled
+                            >
+                                        
+                                {pagination?.pageIndex + 4}
                             </PaginationLink>
                         </PaginationItem>
 
@@ -252,7 +283,8 @@ const MapTable = <T,>({
                             />
                         </PaginationItem>
                     </PaginationContent>
-                </Pagination>
+                </Pagination> */}
+                <DataTablePagination table={table} />
             </div>)}
         </div>
     );
