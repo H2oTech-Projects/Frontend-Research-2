@@ -23,7 +23,7 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex items-center justify-between px-2">
+    <div className="flex items-center justify-between px-2 dark:text-white">
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
@@ -33,7 +33,7 @@ export function DataTablePagination<TData>({
               table.setPageSize(Number(value))
             }}
           >
-            <SelectTrigger className="h-8 w-[70px]">
+            <SelectTrigger className="h-8 w-[70px] bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -57,7 +57,7 @@ export function DataTablePagination<TData>({
               table.setPageIndex(Number(value))
             }}
           >
-            <SelectTrigger className="h-8 w-[60px]">
+            <SelectTrigger className="h-8 w-[60px]  bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top" className="min-w-[60px]">
@@ -77,8 +77,8 @@ export function DataTablePagination<TData>({
         </div>
         <div className="flex items-center space-x-2">
           <Button
-            variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            variant="default"
+            className="hidden h-8 w-8 p-0 lg:flex  bg-royalBlue text-white dark:bg-royalBlue"
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
@@ -86,8 +86,8 @@ export function DataTablePagination<TData>({
             <ChevronsLeft />
           </Button>
           <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
+            variant="default"
+            className="h-8 w-8 p-0  bg-royalBlue text-white dark:bg-royalBlue"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -95,8 +95,8 @@ export function DataTablePagination<TData>({
             <ChevronLeft />
           </Button>
           <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
+            variant="default"
+            className="h-8 w-8 p-0  bg-royalBlue text-white dark:bg-royalBlue"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
@@ -104,8 +104,8 @@ export function DataTablePagination<TData>({
             <ChevronRight />
           </Button>
           <Button
-            variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            variant="default"
+            className="hidden h-8 w-8 p-0 lg:flex  bg-royalBlue text-white dark:bg-royalBlue"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
