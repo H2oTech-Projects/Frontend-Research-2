@@ -1,8 +1,9 @@
 import { GeoJSON } from "react-leaflet";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+
 import './mapStyle.css'
 type RtGeoJsonTypes = {
-  layerEvents: any;
+  layerEvents?: any;
   data: any;
   style: any;
   key: string;
@@ -41,4 +42,4 @@ const RtGeoJson = ({ layerEvents, data, style, key, color }: RtGeoJsonTypes) => 
   );
 };
 
-export default RtGeoJson;
+export default React.memo(RtGeoJson);

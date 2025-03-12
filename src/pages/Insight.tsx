@@ -3,7 +3,7 @@ import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Filter, Search } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Popup } from "react-leaflet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -23,6 +23,24 @@ interface EmailProps {
   value: string;
   label: string;
 }
+
+const ChartContent = React.memo(({chartLoading, data}) => {
+  const chartBars = data?.length > 0 ?
+    <StackedBarChart
+      data={ data }
+      config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
+      layout={'vertical'}
+      stack1={'remaining'}
+      stack2={'allocation_used'}
+      //setSelectedFarm={setSelectedFarm}
+    /> : <div className="flex justify-center items-center h-full">No Data Available</div>
+  return <div
+          className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
+          style={{ height: 70 * data?.length + 80 }}
+         >
+          { chartBars }
+        </div>
+})
 
 const Insight = () => {
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
@@ -53,21 +71,19 @@ const Insight = () => {
   const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(selectedEmailValue);
   const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(selectedEmailValue);
 
-useEffect(() => {
-    isFetched && accountList?.data[0]?.value !== undefined &&  setSelectedEmailValue(accountList?.data[0]?.value)
-},[isFetched]);
-  // useEffect(() => {
-  //   setGroundWaterAccountData(defaultData[selectedEmailValue])
-  //   let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
-  //   let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
-  //   setPosition((prev: any) => ({ ...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds }))
-  //   setViewBound(defaultData[selectedEmailValue].view_bounds)
-  //   setSelectedFarm("")
-  //   setselectedFarmGeoJson("")
+  useEffect(() => {
+      isFetched && accountList?.data[0]?.value !== undefined &&  setSelectedEmailValue(accountList?.data[0]?.value)
+  },[isFetched]);
+  useEffect(() => {
+    if (!!accountDetail?.data){
+      setViewBound(JSON.parse(accountDetail?.data?.geojson_parcels))
+      setSelectedFarm("")
+      setselectedFarmGeoJson("")
 
-  //   setSelectedParcel("")
-  //   setSelectedParcelGeom([])
-  // }, [selectedEmailValue]);
+      setSelectedParcel("")
+      setSelectedParcelGeom([])
+    }
+  }, [accountDetail]);
 
   useEffect(() => {
     if (!!selectedFarm) {
@@ -471,31 +487,31 @@ useEffect(() => {
     )
   }
 
-  const ChartContent = () => {
-    if (chartLoading)
-    return <div
-              className={"dark:bg-slate-500 flex justify-center items-center rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}>
-              Loading...
-            </div>
-    alert('chart loading')
-    const chartBars = accountAllocationChart?.data?.length > 0 ?
-      <StackedBarChart
-        data={ accountAllocationChart?.data }
-        config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
-        layout={'vertical'}
-        stack1={'remaining'}
-        stack2={'allocation_used'}
-        setSelectedFarm={setSelectedFarm}
-      /> : <div className="flex justify-center items-center h-full">No Data Available</div>
-    return <div
-            className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
-            style={{ height: 70 * accountAllocationChart?.data?.length + 80 }}
-           >
-            { chartBars }
-          </div>
+
+
+
+ const memoizedData = React.useMemo(() => ({ 'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }), []);
+ const leafletChildren = React.useMemo(() => {
+    const accountPacels = accountDetail?.data?.geojson_parcels && <RtGeoJson
+    key={selectedEmailValue as string}
+    layerEvents={geoJsonLayerEvents}
+    style={geoJsonStyle}
+    data={JSON.parse(accountDetail?.data?.geojson_parcels)}
+    color={"#16599a"}
+    />
+    const farmParcels = !!selectedFarmGeoJson && <RtGeoJson
+      key={selectedFarm}
+      layerEvents={geoJsonLayerEvents}
+      style={geoFarmJsonStyle}
+      data={JSON.parse(selectedFarmGeoJson)}
+      color={"red"}
+    />
+  return <>
+    {accountPacels}
+    {farmParcels}
+    </>
   }
-
-
+, [selectedEmailValue, accountDetail?.data?.geojson_parcels, accountDetail?.data, selectedFarmGeoJson])
 
  if(isLoading || parcelLoading){
    return <div className="flex flex-col px-3 py-2 gap-3">
@@ -533,7 +549,7 @@ else {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
-                <ChartContent />
+                <ChartContent chartLoading={chartLoading} data={accountAllocationChart?.data}/>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <IntroTable />
               </div>
@@ -628,43 +644,26 @@ else {
             id="map2"
           >
             <LeafletMap
-              position={position}
+              center={position.center}
               zoom={14}
-              // viewBound={ accountDetail?.data?.view_bounds }
+              //viewBound={ accountDetail?.data?.view_bounds }
               viewBound={viewBoundFarmGeoJson.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
               collapse={collapse}
-              configurations={{ 'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
+              configurations={memoizedData}
             >
-              {accountDetail?.data?.geojson_parcels && <RtGeoJson
-                key={selectedEmailValue as string}
-                layerEvents={geoJsonLayerEvents}
-                style={geoJsonStyle}
-                data={JSON.parse(accountDetail?.data?.geojson_parcels)}
-                color={"#16599a"}
-              />
-              }
+              {leafletChildren}
               {
-                !!selectedFarmGeoJson && <RtGeoJson
-                key={selectedFarm}
-                layerEvents={geoJsonLayerEvents}
-                style={geoFarmJsonStyle}
-                data={JSON.parse(selectedFarmGeoJson)}
-                color={"red"}
-              />
-              }
-
-              {
-                !!selectedParcel &&
-                <RtPolygon
-                  pathOptions={{ id: selectedParcel } as Object}
-                  positions={selectedParcelGeom}
-                  color={"red"}
-                  eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-                >
-                  <Popup>
-                    <div dangerouslySetInnerHTML={{ __html: "test" }} />
-                  </Popup>
-                </RtPolygon>
+                // !!selectedParcel &&
+                // <RtPolygon
+                //   pathOptions={{ id: selectedParcel } as Object}
+                //   positions={selectedParcelGeom}
+                //   color={"red"}
+                //   //eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                // >
+                //   <Popup>
+                //     <div dangerouslySetInnerHTML={{ __html: "test" }} />
+                //   </Popup>
+                // </RtPolygon>
               }
             </LeafletMap>
 

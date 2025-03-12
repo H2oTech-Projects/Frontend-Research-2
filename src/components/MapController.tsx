@@ -1,5 +1,5 @@
 import { Minus, Plus } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useMap, useMapEvents } from "react-leaflet";
 
 const CustomZoomControl = () => {
@@ -42,4 +42,4 @@ const CustomZoomControl = () => {
     );
 };
 
-export default CustomZoomControl;
+export default React.memo(CustomZoomControl);

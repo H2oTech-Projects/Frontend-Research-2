@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Info } from "lucide-react"
-import { useState } from "react";
+import React, { useState } from "react";
 
 const InsightTitle = ({ title, note }: { title: string, note: string }) => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -20,7 +20,7 @@ const InsightTitle = ({ title, note }: { title: string, note: string }) => {
       setIsTooltipOpen(false);
     }, 500); // Delay to mimic hover effect
   };
-
+  console.log(title)
   return (
     <div className="text-black dark:text-white  font-semibold mt-3 ">
       {title}
@@ -38,4 +38,4 @@ const InsightTitle = ({ title, note }: { title: string, note: string }) => {
   )
 }
 
-export default InsightTitle
+export default React.memo(InsightTitle)
