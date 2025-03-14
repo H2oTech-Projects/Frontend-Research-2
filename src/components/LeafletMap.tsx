@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, useMap, LayersControl, WMSTileLayer } from "react-leaflet";
 import CustomZoomControl from "./MapController";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Layer } from "recharts";
 
@@ -28,6 +28,7 @@ type LeafletMapTypes = {
 };
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
 const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
+  console.log("testerererererer")
   const { center } = position;
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
@@ -215,4 +216,4 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
     );
 };
 
-export default LeafletMap;
+export default React.memo(LeafletMap);

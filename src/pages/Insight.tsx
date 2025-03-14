@@ -3,7 +3,7 @@ import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Filter, Search } from "lucide-react";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Popup } from "react-leaflet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -24,7 +24,53 @@ interface EmailProps {
   value: string;
   label: string;
 }
-const LeafletMapConfig =  { 'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } 
+
+const Map =React.memo(({position,viewBoundFarmGeoJson,accountDetail,collapse,LeafletMapConfig,selectedEmailValue,geoJsonLayerEvents,geoJsonStyle,selectedFarmGeoJson,selectedFarm,geoFarmJsonStyle,selectedParcel,selectedParcelGeom,polygonEventHandlers}:any)=>{
+
+  return (<LeafletMap
+              position={position}
+              zoom={14}
+              // viewBound={ accountDetail?.data?.view_bounds }
+              viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
+              collapse={collapse}
+              configurations={LeafletMapConfig}
+            >
+       
+              {accountDetail?.data?.geojson_parcels && <RtGeoJson
+                key={selectedEmailValue as string}
+                layerEvents={geoJsonLayerEvents}
+                style={geoJsonStyle}
+                data={JSON.parse(accountDetail?.data?.geojson_parcels)}
+                color={"#16599a"}
+              />
+              }
+              {
+                !!selectedFarmGeoJson && <RtGeoJson
+                key={selectedFarm}
+                layerEvents={geoJsonLayerEvents}
+                style={geoFarmJsonStyle}
+                data={JSON.parse(selectedFarmGeoJson)}
+                color={"red"}
+              />
+              }
+
+              {
+                !!selectedParcel &&
+                <RtPolygon
+                  pathOptions={{ id: selectedParcel } as Object}
+                  positions={selectedParcelGeom}
+                  color={"red"}
+                  eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                >
+                  <Popup>
+                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+                  </Popup>
+                </RtPolygon>
+              }
+            </LeafletMap>)
+
+})
+
 const ChartContent = React.memo(({loading,data,setSelectedFarm}:{loading:boolean,data:any,setSelectedFarm:Function})=>{
 if(loading)
   return (
@@ -52,9 +98,139 @@ const ChartBars =()=> data?.length > 0 ?
           </div>
 })
 
+ const IntroTable = React.memo(({accountDetailLoading,accountDetail}:any) => {
+    if (accountDetailLoading)
+      return <Table>
+              <TableHeader >
+                <TableRow >
+                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
+                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableCell className="!text-left">
+                  <Skeleton className="h-[300px] w-full rounded-[8px]" />
+                </TableCell>
+                <TableCell className="!text-left">
+                  <Skeleton className="h-[300px] w-full rounded-[8px]" />
+                </TableCell>
+              </TableBody>
+            </Table>
+    return (
+      <Table>
+        <TableHeader >
+          <TableRow >
+            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
+            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className="!text-left">
+              Account ID:
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.account_id}
+            </TableCell>
+          </TableRow>
+
+          <TableRow >
+            <TableCell className="!text-left">
+              Account Name:
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.account_name}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Mailing Address:
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.mailing_address}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left w-auto">
+              Start Date (YYYY-MM-DD):
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.start_date}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left w-auto">
+              End Date (YYYY-MM-DD):
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.end_date}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Measurement Method:
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.msmt_method}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Report Creation Date:
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.report_creation_date}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="!text-left">
+              Report Revision Date:
+            </TableCell>
+            <TableCell className="!text-left">
+              {accountDetail?.data?.report_revision_date}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    )
+  })
 
 
 const Insight = () => {
+  const geoJsonLayerEvents = useCallback((feature: any, layer: any) => {
+
+    // layer.bindPopup(buildPopupMessage(feature.properties));
+    // layer.bindPopup(buildPopupMessage(accountParcels?.data?.parcel_table_data?.find((parcel:any) => parcel['parcel_id'] == feature.properties.apn)));
+    layer.on({
+      mouseover: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 4,
+          //color: "#800080"
+        });
+        showInfo(auxLayer.feature.properties.apn);
+      },
+      mouseout: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 2.5,
+          //color: "#9370DB",
+          //fillColor: "lightblue",
+          fillOpacity: 0,
+          opacity: 1,
+        });
+        removeInfo(auxLayer.feature.properties.apn);
+      },
+    });
+  },[]);
+
+  const geoJsonStyle = useMemo (()=>{ return {
+      color: "#16599A", // Border color
+      fillColor: "lightblue", // Fill color for normal areas
+      fillOpacity: 0.5,
+      weight: 2,
+    }},[])
+  
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
   const [selectedFarm, setSelectedFarm] = useState<string>("");
@@ -359,174 +535,19 @@ useEffect(() => {
     $("#popup-" + Id).remove();
   };
 
-  const geoJsonLayerEvents2 = (feature: any, layer: any) => {
   
-    // layer.bindPopup(buildPopupMessage(feature.properties));
-    // layer.bindPopup(buildPopupMessage(accountParcels?.data?.parcel_table_data?.find((parcel:any) => parcel['parcel_id'] == feature.properties.apn)));
-    layer.on({
-      mouseover: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
-        showInfo(auxLayer.feature.properties.apn);
-      },
-      mouseout: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2.5,
-          //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
-          opacity: 1,
-        });
-        removeInfo(auxLayer.feature.properties.apn);
-      },
-    });
-  }
-  const geoJsonLayerEvents = (feature: any, layer: any) => {
 
-    // layer.bindPopup(buildPopupMessage(feature.properties));
-    // layer.bindPopup(buildPopupMessage(accountParcels?.data?.parcel_table_data?.find((parcel:any) => parcel['parcel_id'] == feature.properties.apn)));
-    layer.on({
-      mouseover: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
-        showInfo(auxLayer.feature.properties.apn);
-      },
-      mouseout: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2.5,
-          //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
-          opacity: 1,
-        });
-        removeInfo(auxLayer.feature.properties.apn);
-      },
-    });
-  }
-
-  const geoJsonStyle = (features: any) => {
-    return {
-      color: "#16599A", // Border color
-      fillColor: "lightblue", // Fill color for normal areas
-      fillOpacity: 0.5,
-      weight: 2,
-    };
-  }
-
-  const geoFarmJsonStyle = (features: any) => {
+  const geoFarmJsonStyle = useMemo(() => {
     return {
       color: "#16599A", // Border color
       fillColor: "red", // Fill color for normal areas
       fillOpacity: 0.5,
       weight: 2,
     };
-  }
+  },[])
 
 
-  const IntroTable = () => {
-    if (accountDetailLoading)
-      return <Table>
-              <TableHeader >
-                <TableRow >
-                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
-                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableCell className="!text-left">
-                  <Skeleton className="h-[300px] w-full rounded-[8px]" />
-                </TableCell>
-                <TableCell className="!text-left">
-                  <Skeleton className="h-[300px] w-full rounded-[8px]" />
-                </TableCell>
-              </TableBody>
-            </Table>
-    return (
-      <Table>
-        <TableHeader >
-          <TableRow >
-            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
-            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell className="!text-left">
-              Account ID:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.account_id}
-            </TableCell>
-          </TableRow>
-
-          <TableRow >
-            <TableCell className="!text-left">
-              Account Name:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.account_name}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Mailing Address:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.mailing_address}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left w-auto">
-              Start Date (YYYY-MM-DD):
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.start_date}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left w-auto">
-              End Date (YYYY-MM-DD):
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.end_date}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Measurement Method:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.msmt_method}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Report Creation Date:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.report_creation_date}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Report Revision Date:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.report_revision_date}
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    )
-  }
+ const LeafletMapConfig =  useMemo(()=>{return  {'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}},[]) 
 
 
  if(isLoading){
@@ -565,10 +586,11 @@ else {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
+ 
           
                 <ChartContent data={accountAllocationChart?.data} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
-                <IntroTable />
+                <IntroTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail} />
               </div>
 
               <InsightTitle
@@ -660,46 +682,8 @@ else {
             className={cn("relative flex h-[calc(100vh-232px)] w-full")}
             id="map2"
           >
-            <LeafletMap
-              position={position}
-              zoom={14}
-              // viewBound={ accountDetail?.data?.view_bounds }
-              viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
-              collapse={collapse}
-              configurations={LeafletMapConfig}
-            >
-              {accountDetail?.data?.geojson_parcels && <RtGeoJson
-                key={selectedEmailValue as string}
-                layerEvents={geoJsonLayerEvents}
-                style={geoJsonStyle}
-                data={JSON.parse(accountDetail?.data?.geojson_parcels)}
-                color={"#16599a"}
-              />
-              }
-              {
-                !!selectedFarmGeoJson && <RtGeoJson
-                key={selectedFarm}
-                layerEvents={geoJsonLayerEvents2}
-                style={geoFarmJsonStyle}
-                data={JSON.parse(selectedFarmGeoJson)}
-                color={"red"}
-              />
-              }
-
-              {
-                !!selectedParcel &&
-                <RtPolygon
-                  pathOptions={{ id: selectedParcel } as Object}
-                  positions={selectedParcelGeom}
-                  color={"red"}
-                  eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-                >
-                  <Popup>
-                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
-                  </Popup>
-                </RtPolygon>
-              }
-            </LeafletMap>
+            <Map position={position} viewBoundFarmGeoJson={viewBoundFarmGeoJson} accountDetail={accountDetail} collapse={collapse} LeafletMapConfig={LeafletMapConfig} selectedEmailValue={selectedEmailValue} geoJsonLayerEvents={geoJsonLayerEvents} geoJsonStyle={geoJsonStyle} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm} geoFarmJsonStyle={geoFarmJsonStyle} selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom} polygonEventHandlers={polygonEventHandlers}/>
+            
 
             <CollapseBtn
               className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"

@@ -1,3 +1,4 @@
+import React from "react";
 import { Polygon } from "react-leaflet";
 
 type RtTypes = {
@@ -9,6 +10,7 @@ type RtTypes = {
 };
 
 const RtPolygon = ({ pathOptions, positions, color, eventHandlers, children }: RtTypes) => {
+  console.log("RT polysgon renderdd")
     return (
       <Polygon
       pathOptions={pathOptions}
@@ -21,4 +23,4 @@ const RtPolygon = ({ pathOptions, positions, color, eventHandlers, children }: R
     );
 };
 
-export default RtPolygon;
+export default React.memo(RtPolygon);

@@ -1,5 +1,5 @@
 import { GeoJSON } from "react-leaflet";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import './mapStyle.css'
 type RtGeoJsonTypes = {
   layerEvents: any;
@@ -10,7 +10,8 @@ type RtGeoJsonTypes = {
 };
 
 const RtGeoJson = ({ layerEvents, data, style, key, color }: RtGeoJsonTypes) => {
-  const geoJsonRef = useRef<L.GeoJSON>(null);
+ console.log("rendering")
+const geoJsonRef = useRef<L.GeoJSON>(null);
   useEffect(() => {
     if (geoJsonRef.current) {
       geoJsonRef.current.clearLayers(); // Remove old data
@@ -41,4 +42,4 @@ const RtGeoJson = ({ layerEvents, data, style, key, color }: RtGeoJsonTypes) => 
   );
 };
 
-export default RtGeoJson;
+export default React.memo(RtGeoJson);
