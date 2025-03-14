@@ -1,3 +1,4 @@
+import React from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend,Line, ResponsiveContainer, ReferenceLine, ReferenceArea } from "recharts";
 
 interface ChartParameters {
@@ -63,7 +64,7 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
   };
 
   const barClick = (e: any) => {
-    setSelectedFarm(e.full_label)
+     setSelectedFarm(e.full_label)
   }
 
   return (
@@ -107,4 +108,4 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
   );
 };
 
-export default StackedBarChart;
+export default React.memo(StackedBarChart);
