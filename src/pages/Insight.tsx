@@ -280,9 +280,9 @@ useEffect(() => {
       let selectFarm = accountFarmUnits?.data?.find((farm_unit:any) => farm_unit['farm_unit_zone'] == selectedFarm)
 
       // @ts-ignore
-      selectFarm && setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
+      selectFarm['farm_parcel_geojson'] && setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
       // @ts-ignore
-      selectFarm && setViewBound(selectFarm['view_bounds'])
+      selectFarm['view_bounds'] && setViewBound(selectFarm['view_bounds'])
       setSelectedParcel("")
       setSelectedParcelGeom([])
     }
@@ -292,9 +292,9 @@ useEffect(() => {
     if (!!selectedParcel) {
       let selectParcel = accountParcels?.data?.parcel_table_data?.find((parcels:any) => parcels['parcel_id'] == selectedParcel)
       // @ts-ignore
-      selectParcel && setSelectedParcelGeom(selectParcel['coords'])
+      selectParcel['coords'] && setSelectedParcelGeom(selectParcel['coords'])
       // @ts-ignore
-      selectParcel && setViewBound(selectParcel['view_bounds'])
+      selectParcel['view_bounds'] && setViewBound(selectParcel['view_bounds'])
       setselectedFarmGeoJson("")
     }
   }, [selectedParcel])
