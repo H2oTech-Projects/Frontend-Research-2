@@ -1,6 +1,7 @@
 export const queryConfig = {
   refetchOnWindowFocus: false,
   staleTime: Infinity,
+  keepPreviousData: true,
 };
 export const toJson = (res: any) => {
   if (typeof res === "object") {

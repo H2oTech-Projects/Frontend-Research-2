@@ -16,9 +16,11 @@ export const useGetAccountsList= ()=> {
      ...queryConfig  });
 }
 export const useGetAccountDetails = (accountName:string | null) => {
+
   return useQuery({
     queryKey: [GET_ACCOUNT_DETAILS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountDetails(accountName),
+    enabled: accountName !== null,
      ...queryConfig  });
 }
 export const useGetAccountAllocationChart = (accountName:string | null) => {
@@ -26,6 +28,7 @@ export const useGetAccountAllocationChart = (accountName:string | null) => {
   return useQuery({
     queryKey: [GET_ACCOUNT_ALLOCATION_CHART_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountAllocationChart(accountName),
+    enabled: accountName !== null,
      ...queryConfig  });
 }
 export const useGetAccountFarmUnits = (accountName:string | null) => {
@@ -33,6 +36,7 @@ export const useGetAccountFarmUnits = (accountName:string | null) => {
   return useQuery({
     queryKey: [GET_ACCOUNT_FARM_UNITS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountFarmUnits(accountName),
+    enabled: accountName !== null,
      ...queryConfig  });
 }
 export const useGetAccountParcels = (accountName:string | null) => {
@@ -40,6 +44,7 @@ export const useGetAccountParcels = (accountName:string | null) => {
   return useQuery({
     queryKey: [GET_ACCOUNT_PARCELS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountParcels(accountName),
+    enabled: accountName !== null,
      ...queryConfig  });
 }
 
