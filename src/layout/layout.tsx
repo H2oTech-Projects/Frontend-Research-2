@@ -9,16 +9,23 @@ import { ChevronsLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { setSideMenuCollapse } from "@/redux/slice/menuCollapse";
 import { useDispatch } from "react-redux";
+import { json } from "stream/consumers";
 const Layout = () => {
     const dispatch = useDispatch();
+    const isCollapse = JSON.parse(localStorage.getItem("isMenuCollapsed") as string)
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
     const [collapsed, setCollapsed] = useState<Boolean>(!isDesktopDevice);
     const [showHeader, setShowHeader] = useState<Boolean>(false);
     const sidebarRef = useRef(null);
     const location = useLocation();
+    const handleCollapse = ()=> {
+      setCollapsed(!collapsed);
+      localStorage.setItem("isMenuCollapsed",JSON.stringify(!collapsed))
+};
 
     useEffect(() => {
         setCollapsed(!isDesktopDevice);
+        // localStorage.setItem("isMenuCollapsed",JSON.stringify(!isDesktopDevice))      
     }, [isDesktopDevice]);
     useEffect(() => {
         dispatch(setSideMenuCollapse(collapsed ? true : false));
@@ -35,6 +42,7 @@ const Layout = () => {
             setShowHeader(false);
         } else setShowHeader(true);
     }, [location.pathname]);
+    useEffect(()=>{setCollapsed(isCollapse)},[])
     return (
         <div className="min-h-screen bg-slateLight-100 transition-colors dark:bg-slateLight-950">
             {/* <div
@@ -70,7 +78,7 @@ const Layout = () => {
                         <Button
                             variant={"default"}
                             className="size-8"
-                            onClick={() => setCollapsed(!collapsed)}
+                            onClick={handleCollapse}
                         >
                             <ChevronsLeft
                                 className={collapsed ? "rotate-180" : ""}

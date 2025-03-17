@@ -128,6 +128,10 @@ const menuLinks = [
     },
 ];
 export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
+      const handleCollapse = ()=> {
+      setCollapsed(false);
+      localStorage.setItem("isMenuCollapsed",JSON.stringify(false))
+};
     const route = window.location.pathname;
     const initialChildMenu = {
         parentName: "",
@@ -150,7 +154,7 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
     };
     const DisplaySubmenu = (parentName: string, show: boolean) => {
         setChildMenu({ parentName: parentName, showChildren: collapsed ? true : childMenu?.parentName === parentName ? !show : show });
-        collapsed && setCollapsed(false);
+        collapsed && handleCollapse();
     };
     useEffect(() => {
         if (collapsed) {

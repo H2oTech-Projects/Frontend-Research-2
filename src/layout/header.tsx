@@ -11,6 +11,10 @@ interface HeaderProps {
     setCollapsed: (collapsed: Boolean) => void;
 }
 export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
+       const handleCollapse = ()=> {
+      setCollapsed(!collapsed);
+      localStorage.setItem("isMenuCollapsed",JSON.stringify(!collapsed))
+};
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
@@ -40,7 +44,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                     <Button
                         variant={"default"}
                         className="h-8 !w-6"
-                        onClick={() => setCollapsed(!collapsed)}
+                        onClick={() => handleCollapse()}
                     >
                         <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
                     </Button>
