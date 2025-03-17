@@ -348,6 +348,7 @@ const Insight = () => {
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     layer.bindPopup(buildPopupMessage(parcelList[feature.properties.apn]));
+    //layer.bindPopup(buildPopupMessage(feature.properties.apn));
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -511,7 +512,7 @@ const Insight = () => {
     {farmParcels}
     </>
   }
-, [selectedEmailValue, accountDetail?.data?.geojson_parcels, accountDetail?.data, selectedFarmGeoJson])
+, [parcelList,selectedEmailValue, accountDetail?.data?.geojson_parcels, accountDetail?.data, selectedFarmGeoJson])
 
  if(isLoading || parcelLoading){
    return <div className="flex flex-col px-3 py-2 gap-3">
@@ -529,6 +530,8 @@ const Insight = () => {
           </div>
     </div>}
 else {
+  console.log(parcelList)
+  console.log(parcelLoading, isLoading)
  return (
     <div className="flex flex-col px-3 py-2 ">
       <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
