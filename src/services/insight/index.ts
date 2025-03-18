@@ -2,6 +2,7 @@ import { useQuery, useMutation, UseQueryResult, useQueries } from "@tanstack/rea
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryInsightService } from "./service";
 import { GET_ACCOUNT_ALLOCATION_CHART_KEY, GET_ACCOUNT_DETAILS_KEY, GET_ACCOUNT_FARM_UNITS_KEY, GET_ACCOUNT_PARCELS_KEY, GET_ACCOUNTS_LIST_KEY, GET_PARCEL_LIST_KEY } from "./constant";
+import { AccountAllocationChartResponseType, AccountDetailResponseType, AccountFarmUnitDataResponseType, AccountsListType, ParcelDataListResponseType } from "@/types/apiResponseType";
 
 export const useGetParcelList = ()=> {
   return useQuery({
@@ -9,21 +10,20 @@ export const useGetParcelList = ()=> {
     queryFn: queryInsightService.getParcelList,
      ...queryConfig  });
 }
-export const useGetAccountsList= ()=> {
+export const useGetAccountsList=():UseQueryResult<AccountsListType>=> {
   return useQuery({
     queryKey: [GET_ACCOUNTS_LIST_KEY],
     queryFn: queryInsightService.getAccountsList,
      ...queryConfig  });
 }
-export const useGetAccountDetails = (accountName:string | null) => {
-
+export const useGetAccountDetails = (accountName:string | null):UseQueryResult<AccountDetailResponseType> => {
   return useQuery({
     queryKey: [GET_ACCOUNT_DETAILS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountDetails(accountName),
     enabled: accountName !== null,
      ...queryConfig  });
 }
-export const useGetAccountAllocationChart = (accountName:string | null) => {
+export const useGetAccountAllocationChart = (accountName:string | null):UseQueryResult<AccountAllocationChartResponseType> => {
    
   return useQuery({
     queryKey: [GET_ACCOUNT_ALLOCATION_CHART_KEY,accountName],
@@ -31,7 +31,7 @@ export const useGetAccountAllocationChart = (accountName:string | null) => {
     enabled: accountName !== null,
      ...queryConfig  });
 }
-export const useGetAccountFarmUnits = (accountName:string | null) => {
+export const useGetAccountFarmUnits = (accountName:string | null):UseQueryResult<AccountFarmUnitDataResponseType> => {
    
   return useQuery({
     queryKey: [GET_ACCOUNT_FARM_UNITS_KEY,accountName],
@@ -39,7 +39,7 @@ export const useGetAccountFarmUnits = (accountName:string | null) => {
     enabled: accountName !== null,
      ...queryConfig  });
 }
-export const useGetAccountParcels = (accountName:string | null) => {
+export const useGetAccountParcels = (accountName:string | null):UseQueryResult<ParcelDataListResponseType> => {
    
   return useQuery({
     queryKey: [GET_ACCOUNT_PARCELS_KEY,accountName],
