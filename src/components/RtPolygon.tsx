@@ -10,7 +10,6 @@ type RtTypes = {
 };
 
 const RtPolygon = ({ pathOptions, positions, color, eventHandlers, children }: RtTypes) => {
-  console.log("RT polysgon renderdd")
     return (
       <Polygon
       pathOptions={pathOptions}

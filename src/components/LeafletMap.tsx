@@ -28,7 +28,6 @@ type LeafletMapTypes = {
 };
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
 const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
-  console.log("testerererererer")
   const { center } = position;
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)

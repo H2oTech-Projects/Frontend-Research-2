@@ -10,7 +10,6 @@ type RtGeoJsonTypes = {
 };
 
 const RtGeoJson = ({ layerEvents, data, style, key, color }: RtGeoJsonTypes) => {
- console.log("rendering")
 const geoJsonRef = useRef<L.GeoJSON>(null);
   useEffect(() => {
     if (geoJsonRef.current) {
