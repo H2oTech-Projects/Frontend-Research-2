@@ -215,4 +215,4 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
     );
 };
 
-export default React.memo(LeafletMap);
+export default LeafletMap;

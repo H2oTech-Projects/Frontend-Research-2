@@ -22,4 +22,4 @@ const RtPolygon = ({ pathOptions, positions, color, eventHandlers, children }: R
     );
 };
 
-export default React.memo(RtPolygon);
+export default RtPolygon;

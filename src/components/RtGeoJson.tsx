@@ -41,4 +41,4 @@ const geoJsonRef = useRef<L.GeoJSON>(null);
   );
 };
 
-export default React.memo(RtGeoJson);
+export default RtGeoJson;
