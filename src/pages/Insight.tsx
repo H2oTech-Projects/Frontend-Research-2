@@ -20,58 +20,60 @@ import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList,
 import { Skeleton } from "@/components/ui/skeleton";
 import { farmUnitColumnProperties, parcelColumnProperties } from "@/utils/constant";
 import { boolean } from "yup";
+import { AccountFarmUnitDataType, AllocationChartDataType } from "@/types/apiResponseType";
+import InsightMap from "@/components/insightPageComponent/insightMap";
 interface EmailProps {
   value: string;
   label: string;
 }
 
-const Map =React.memo(({position,viewBoundFarmGeoJson,accountDetail,collapse,LeafletMapConfig,selectedEmailValue,geoJsonLayerEvents,geoJsonStyle,selectedFarmGeoJson,selectedFarm,geoFarmJsonStyle,selectedParcel,selectedParcelGeom,polygonEventHandlers}:any)=>{
+// const Map =React.memo(({position,viewBoundFarmGeoJson,accountDetail,collapse,LeafletMapConfig,selectedEmailValue,geoJsonLayerEvents,geoJsonStyle,selectedFarmGeoJson,selectedFarm,geoFarmJsonStyle,selectedParcel,selectedParcelGeom,polygonEventHandlers}:any)=>{
 
-  return (<LeafletMap
-              position={position}
-              zoom={14}
-              // viewBound={ accountDetail?.data?.view_bounds }
-              viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
-              collapse={collapse}
-              configurations={LeafletMapConfig}
-            >
+//   return (<LeafletMap
+//               position={position}
+//               zoom={14}
+//               // viewBound={ accountDetail?.data?.view_bounds }
+//               viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
+//               collapse={collapse}
+//               configurations={LeafletMapConfig}
+//             >
        
-              {accountDetail?.data?.geojson_parcels && <RtGeoJson
-                key={selectedEmailValue as string}
-                layerEvents={geoJsonLayerEvents}
-                style={geoJsonStyle}
-                data={JSON.parse(accountDetail?.data?.geojson_parcels)}
-                color={"#16599a"}
-              />
-              }
-              {
-                !!selectedFarmGeoJson && <RtGeoJson
-                key={selectedFarm}
-                layerEvents={geoJsonLayerEvents}
-                style={geoFarmJsonStyle}
-                data={JSON.parse(selectedFarmGeoJson)}
-                color={"red"}
-              />
-              }
+//               {accountDetail?.data?.geojson_parcels && <RtGeoJson
+//                 key={selectedEmailValue as string}
+//                 layerEvents={geoJsonLayerEvents}
+//                 style={geoJsonStyle}
+//                 data={JSON.parse(accountDetail?.data?.geojson_parcels)}
+//                 color={"#16599a"}
+//               />
+//               }
+//               {
+//                 !!selectedFarmGeoJson && <RtGeoJson
+//                 key={selectedFarm}
+//                 layerEvents={geoJsonLayerEvents}
+//                 style={geoFarmJsonStyle}
+//                 data={JSON.parse(selectedFarmGeoJson)}
+//                 color={"red"}
+//               />
+//               }
 
-              {
-                !!selectedParcel &&
-                <RtPolygon
-                  pathOptions={{ id: selectedParcel } as Object}
-                  positions={selectedParcelGeom}
-                  color={"red"}
-                  eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-                >
-                  <Popup>
-                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
-                  </Popup>
-                </RtPolygon>
-              }
-            </LeafletMap>)
+//               {
+//                 !!selectedParcel &&
+//                 <RtPolygon
+//                   pathOptions={{ id: selectedParcel } as Object}
+//                   positions={selectedParcelGeom}
+//                   color={"red"}
+//                   eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+//                 >
+//                   <Popup>
+//                     <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+//                   </Popup>
+//                 </RtPolygon>
+//               }
+//             </LeafletMap>)
 
-})
+// })
 
-const ChartContent = React.memo(({loading,data,setSelectedFarm}:{loading:boolean,data:any,setSelectedFarm:Function})=>{
+const ChartContent = React.memo(({loading,data,setSelectedFarm}:{loading:boolean,data:AllocationChartDataType[],setSelectedFarm:Function})=>{
 if(loading)
   return (
     <div
@@ -237,7 +239,7 @@ const Insight = () => {
   const [selectedFarmGeoJson, setselectedFarmGeoJson] = useState<string>("");
   const [selectedParcelGeom, setSelectedParcelGeom] = useState<[]>([]);
   const [selectedParcel, setSelectedParcel] = useState<string>("");
-  const [viewBoundFarmGeoJson, setViewBound] = useState<[]>([]);
+  const [viewBoundFarmGeoJson, setViewBound] = useState<[number,number][]>([]);
   const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit Summary");
   const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
   const [searchText, setSearchText] = useState<String>("");
@@ -266,7 +268,7 @@ useEffect(() => {
     // let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
     // let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
     // setPosition((prev: any) => ({ ...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds }))
-    accountDetail && setViewBound(accountDetail?.data?.view_bounds)
+    accountDetail?.data?.view_bounds && setViewBound(accountDetail?.data?.view_bounds)
     setSelectedFarm("")
     setselectedFarmGeoJson("")
 
@@ -299,7 +301,11 @@ useEffect(() => {
     }
   }, [selectedParcel])
 
-  const polygonEventHandlers = useMemo(
+  const polygonEventHandlers :{
+  mouseover: (e: L.LeafletMouseEvent) => void;
+  mouseout: (e: L.LeafletMouseEvent) => void;
+  click: (e: L.LeafletMouseEvent) => void;
+} = useMemo(
     () => ({
       mouseover(e: any) {
         const { id } = e.target.options;
@@ -364,7 +370,7 @@ useEffect(() => {
   ]
 
 
-  const columns: ColumnDef<FarmUnit>[] = [
+  const columns: ColumnDef<AccountFarmUnitDataType>[] = [
     {
       accessorKey: "farm_unit_zone",
       header: "Farm Unit Zone",
@@ -570,7 +576,7 @@ else {
     <div className="flex flex-col px-3 py-2 ">
       <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
       <div className="flex flex-col items-start  mt-2 gap-2 dark:text-slate-50 ">
-        <RtSelect selectedValue={selectedEmailValue as string} dropdownList={accountList?.data} label="Account" setSelectedValue={setSelectedEmailValue} />
+        <RtSelect selectedValue={selectedEmailValue as string} dropdownList={accountList?.data ?? []} label="Account" setSelectedValue={setSelectedEmailValue} />
         <RtSelect selectedValue={selectedReportTypeValue} dropdownList={ReportTypeList} label="Report Type" setSelectedValue={setSelectedReportTypeValue} showSearch={false} />
         <RtSelect selectedValue={selectedYearValue} dropdownList={yearList} label="Year" setSelectedValue={setSelectedYearValue} showSearch={false} />
       </div>
@@ -588,7 +594,7 @@ else {
               />
  
           
-                <ChartContent data={accountAllocationChart?.data} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
+                <ChartContent data={accountAllocationChart?.data || []} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <IntroTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail} />
               </div>
@@ -601,7 +607,7 @@ else {
               />
               <div className="my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]">
                 <MapTable
-                  defaultData={accountFarmUnits?.data as FarmUnit[] || []}
+                  defaultData={accountFarmUnits?.data as AccountFarmUnitDataType[] || []}
                   columns={columns}
                   doFilter={false}
                   filterValue={""}
@@ -682,7 +688,7 @@ else {
             className={cn("relative flex h-[calc(100vh-232px)] w-full")}
             id="map2"
           >
-            <Map position={position} viewBoundFarmGeoJson={viewBoundFarmGeoJson} accountDetail={accountDetail} collapse={collapse} LeafletMapConfig={LeafletMapConfig} selectedEmailValue={selectedEmailValue} geoJsonLayerEvents={geoJsonLayerEvents} geoJsonStyle={geoJsonStyle} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm} geoFarmJsonStyle={geoFarmJsonStyle} selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom} polygonEventHandlers={polygonEventHandlers}/>
+            <InsightMap position={position} viewBoundFarmGeoJson={viewBoundFarmGeoJson} accountDetail={accountDetail?.data!} collapse={collapse} LeafletMapConfig={LeafletMapConfig} selectedEmailValue={selectedEmailValue} geoJsonLayerEvents={geoJsonLayerEvents} geoJsonStyle={geoJsonStyle} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm} geoFarmJsonStyle={geoFarmJsonStyle} selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom} polygonEventHandlers={polygonEventHandlers}/>
             
 
             <CollapseBtn
