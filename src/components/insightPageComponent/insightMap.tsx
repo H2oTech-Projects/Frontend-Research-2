@@ -1,68 +1,96 @@
+import $ from "jquery";
 import React from 'react'
 import LeafletMap from '../LeafletMap'
 import RtGeoJson from '../RtGeoJson'
 import RtPolygon from '../RtPolygon'
-import { buildPopupMessage } from '@/utils/map'
 import { Popup } from 'react-leaflet'
 import { AccountDetailType } from '@/types/apiResponseType'
+import { geoFarmJsonStyle, geoJsonStyle, InsightMapPosition, LeafletMapConfig } from '@/utils/mapConstant'
 
 interface InsightMapProps {
-  position: any;
   viewBoundFarmGeoJson:[number,number][];
   accountDetail:AccountDetailType;
   collapse:string;
-  LeafletMapConfig:{
-      minZoom: number;
-      containerStyle: {
-          height: string;
-          width: string;
-          overflow: string;
-          borderRadius: string;
-      };
-  };
   selectedEmailValue:string | null;
-  geoJsonLayerEvents:Function;
-  geoJsonStyle:{
-    color: string;
-    fillColor: string;
-    fillOpacity: number;
-    weight: number;
-  };
   selectedFarmGeoJson:string;
   selectedFarm:string;
-  geoFarmJsonStyle:{
-    color: string;
-    fillColor: string;
-    fillOpacity: number;
-    weight: number;
-  };
   selectedParcel:string;
   selectedParcelGeom:[];
-  polygonEventHandlers: {
-  mouseover: (e: L.LeafletMouseEvent) => void;
-  mouseout: (e: L.LeafletMouseEvent) => void;
-  click: (e: L.LeafletMouseEvent) => void;
-}
 }
 
 const InsightMap =({
-position,
-viewBoundFarmGeoJson,
-accountDetail,
-collapse,
-LeafletMapConfig,
-selectedEmailValue,
-geoJsonLayerEvents,
-geoJsonStyle,
-selectedFarmGeoJson,
-selectedFarm,
-geoFarmJsonStyle,
-selectedParcel,
-selectedParcelGeom,
-polygonEventHandlers}:InsightMapProps)=>{
+  viewBoundFarmGeoJson,
+  accountDetail,
+  collapse,
+  selectedEmailValue,
+  selectedFarmGeoJson,
+  selectedFarm,
+  selectedParcel,
+  selectedParcelGeom,
+}:InsightMapProps)=>{
+   const showInfo = (Id: String) => {
+    var popup = $("<div></div>", {
+      id: "popup-" + Id,
+      class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-[#16599a] text-slate-50 bg-opacity-65",
+    });
+    // Insert a headline into that popup
+    var hed = $("<div></div>", {
+      text: "Parcel: " + Id,
+      css: { fontSize: "16px", marginBottom: "3px" },
+    }).appendTo(popup);
+    // Add the popup to the map
+    popup.appendTo("#map2");
+  };
+
+  const removeInfo = (Id: String) => {
+    $("#popup-" + Id).remove();
+  };
+  const geoJsonLayerEvents = (feature: any, layer: any) => {
+    // layer.bindPopup(buildPopupMessage(feature.properties));
+    // layer.bindPopup(buildPopupMessage(accountParcels?.data?.parcel_table_data?.find((parcel:any) => parcel['parcel_id'] == feature.properties.apn)));
+    layer.on({
+      mouseover: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 4,
+          //color: "#800080"
+        });
+        showInfo(auxLayer.feature.properties.apn);
+      },
+      mouseout: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 2.5,
+          //color: "#9370DB",
+          //fillColor: "lightblue",
+          fillOpacity: 0,
+          opacity: 1,
+        });
+        removeInfo(auxLayer.feature.properties.apn);
+      },
+    })};
+  
+  const polygonEventHandlers: {
+  mouseover: (e: L.LeafletMouseEvent) => void;
+  mouseout: (e: L.LeafletMouseEvent) => void;
+  click: (e: L.LeafletMouseEvent) => void;
+} = {
+  mouseover(e: L.LeafletMouseEvent) {
+    const { id } = e.target.options;
+    showInfo(id);
+  },
+  mouseout(e: L.LeafletMouseEvent) {
+    const { id } = e.target.options;
+    removeInfo(id);
+  },
+  click(e: L.LeafletMouseEvent) {
+    // e.target.openPopup(); // Opens popup when clicked
+  },
+};
+
 
   return (<LeafletMap
-              position={position}
+              position={InsightMapPosition}
               zoom={14}
               // viewBound={ accountDetail?.data?.view_bounds }
               viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds}
@@ -97,7 +125,7 @@ polygonEventHandlers}:InsightMapProps)=>{
                   eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
                 >
                   <Popup>
-                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+                    <div dangerouslySetInnerHTML={{ __html: "test" }} />
                   </Popup>
                 </RtPolygon>
               }

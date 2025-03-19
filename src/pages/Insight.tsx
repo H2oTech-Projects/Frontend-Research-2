@@ -1,238 +1,26 @@
-import $ from "jquery";
-import LeafletMap from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Filter, Search } from "lucide-react";
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { Popup } from "react-leaflet";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { AccountDetails, AccountDetails2, dummyGroundWaterDataTypes, dummyGroundWaterDataTypes2, FarmUnit, ParcelData } from "@/types/tableTypes";
+import { ParcelData } from "@/types/tableTypes";
 import MapTable from "@/components/Table/mapTable";
 import InsightTitle from "@/components/InsightTitle";
-import RtGeoJson from "@/components/RtGeoJson";
 import RtSelect from "@/components/RtSelect";
-import { buildPopupMessage } from "@/utils/map";
 import CollapseBtn from "@/components/CollapseBtn";
-import RtPolygon from "@/components/RtPolygon";
-import StackedBarChart from "@/components/charts/stackedBarChart";
 import { useGetAccountAllocationChart, useGetAccountDetails, useGetAccountsList,useGetAccountFarmUnits,useGetAccountParcels, useGetAllAccountData, useGetParcelList } from "@/services/insight";
 import { Skeleton } from "@/components/ui/skeleton";
 import { farmUnitColumnProperties, parcelColumnProperties } from "@/utils/constant";
-import { boolean } from "yup";
-import { AccountFarmUnitDataType, AllocationChartDataType } from "@/types/apiResponseType";
+import { AccountFarmUnitDataType } from "@/types/apiResponseType";
 import InsightMap from "@/components/insightPageComponent/insightMap";
+import AccountDetailTable from "@/components/insightPageComponent/accountDetailTable";
+import ChartContainer from "@/components/insightPageComponent/chartContainer";
 interface EmailProps {
   value: string;
   label: string;
 }
 
-// const Map =React.memo(({position,viewBoundFarmGeoJson,accountDetail,collapse,LeafletMapConfig,selectedEmailValue,geoJsonLayerEvents,geoJsonStyle,selectedFarmGeoJson,selectedFarm,geoFarmJsonStyle,selectedParcel,selectedParcelGeom,polygonEventHandlers}:any)=>{
-
-//   return (<LeafletMap
-//               position={position}
-//               zoom={14}
-//               // viewBound={ accountDetail?.data?.view_bounds }
-//               viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.data?.view_bounds}
-//               collapse={collapse}
-//               configurations={LeafletMapConfig}
-//             >
-       
-//               {accountDetail?.data?.geojson_parcels && <RtGeoJson
-//                 key={selectedEmailValue as string}
-//                 layerEvents={geoJsonLayerEvents}
-//                 style={geoJsonStyle}
-//                 data={JSON.parse(accountDetail?.data?.geojson_parcels)}
-//                 color={"#16599a"}
-//               />
-//               }
-//               {
-//                 !!selectedFarmGeoJson && <RtGeoJson
-//                 key={selectedFarm}
-//                 layerEvents={geoJsonLayerEvents}
-//                 style={geoFarmJsonStyle}
-//                 data={JSON.parse(selectedFarmGeoJson)}
-//                 color={"red"}
-//               />
-//               }
-
-//               {
-//                 !!selectedParcel &&
-//                 <RtPolygon
-//                   pathOptions={{ id: selectedParcel } as Object}
-//                   positions={selectedParcelGeom}
-//                   color={"red"}
-//                   eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-//                 >
-//                   <Popup>
-//                     <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
-//                   </Popup>
-//                 </RtPolygon>
-//               }
-//             </LeafletMap>)
-
-// })
-
-const ChartContent = React.memo(({loading,data,setSelectedFarm}:{loading:boolean,data:AllocationChartDataType[],setSelectedFarm:Function})=>{
-if(loading)
-  return (
-    <div
-            className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
-            style={{ height: 70 * data?.length + 80 }}
-           >
-             <div className="flex justify-center items-center h-full"> Data is Loading.. </div> 
-          </div>
-)
-const ChartBars =()=> data?.length > 0 ?
-      <StackedBarChart
-        data={ data }
-        config={{margin: { top: 20, right: 30, left: 40, bottom: 5 }}}
-        layout={'vertical'}
-        stack1={'remaining'}
-        stack2={'allocation_used'}
-        setSelectedFarm={setSelectedFarm}
-      /> : <div className="flex justify-center items-center h-full">No Data Available</div>
-    return <div
-            className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
-            style={{ height: 70 * data?.length + 80 }}
-           >
-          <ChartBars/>
-          </div>
-})
-
- const IntroTable = React.memo(({accountDetailLoading,accountDetail}:any) => {
-    if (accountDetailLoading)
-      return <Table>
-              <TableHeader >
-                <TableRow >
-                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
-                  <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableCell className="!text-left">
-                  <Skeleton className="h-[300px] w-full rounded-[8px]" />
-                </TableCell>
-                <TableCell className="!text-left">
-                  <Skeleton className="h-[300px] w-full rounded-[8px]" />
-                </TableCell>
-              </TableBody>
-            </Table>
-    return (
-      <Table>
-        <TableHeader >
-          <TableRow >
-            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left w-64">Description</TableHead>
-            <TableHead className="bg-royalBlue !text-slate-50 hover:bg-none text-left">Value</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell className="!text-left">
-              Account ID:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.account_id}
-            </TableCell>
-          </TableRow>
-
-          <TableRow >
-            <TableCell className="!text-left">
-              Account Name:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.account_name}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Mailing Address:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.mailing_address}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left w-auto">
-              Start Date (YYYY-MM-DD):
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.start_date}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left w-auto">
-              End Date (YYYY-MM-DD):
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.end_date}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Measurement Method:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.msmt_method}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Report Creation Date:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.report_creation_date}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="!text-left">
-              Report Revision Date:
-            </TableCell>
-            <TableCell className="!text-left">
-              {accountDetail?.data?.report_revision_date}
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    )
-  })
-
-
 const Insight = () => {
-  const geoJsonLayerEvents = useCallback((feature: any, layer: any) => {
-
-    // layer.bindPopup(buildPopupMessage(feature.properties));
-    // layer.bindPopup(buildPopupMessage(accountParcels?.data?.parcel_table_data?.find((parcel:any) => parcel['parcel_id'] == feature.properties.apn)));
-    layer.on({
-      mouseover: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
-        showInfo(auxLayer.feature.properties.apn);
-      },
-      mouseout: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2.5,
-          //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
-          opacity: 1,
-        });
-        removeInfo(auxLayer.feature.properties.apn);
-      },
-    });
-  },[]);
-
-  const geoJsonStyle = useMemo (()=>{ return {
-      color: "#16599A", // Border color
-      fillColor: "lightblue", // Fill color for normal areas
-      fillOpacity: 0.5,
-      weight: 2,
-    }},[])
-  
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
   const [selectedFarm, setSelectedFarm] = useState<string>("");
@@ -241,7 +29,6 @@ const Insight = () => {
   const [selectedParcel, setSelectedParcel] = useState<string>("");
   const [viewBoundFarmGeoJson, setViewBound] = useState<[number,number][]>([]);
   const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit Summary");
-  const [position, setPosition] = useState<any>({ center: [36.96830684650072, -120.26398612842706], polygon: [], fieldId: "", viewBound: [] });
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   const [collapse, setCollapse] = useState("default");
@@ -254,7 +41,6 @@ const Insight = () => {
   };
 
   const {data: accountList, isLoading, isFetched} = useGetAccountsList();
-  // const {data: parcelList,isLoading:parcelLoading} = useGetParcelList();
   const {data:accountDetail ,isLoading:accountDetailLoading} = useGetAccountDetails(selectedEmailValue);
   const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(selectedEmailValue);
   const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(selectedEmailValue);
@@ -301,33 +87,6 @@ useEffect(() => {
     }
   }, [selectedParcel])
 
-  const polygonEventHandlers :{
-  mouseover: (e: L.LeafletMouseEvent) => void;
-  mouseout: (e: L.LeafletMouseEvent) => void;
-  click: (e: L.LeafletMouseEvent) => void;
-} = useMemo(
-    () => ({
-      mouseover(e: any) {
-        const { id } = e.target.options;
-        showInfo(id);
-      },
-      mouseout(e: any) {
-        const { id } = e.target.options;
-        removeInfo(id);
-      },
-      click: (e: any) => {
-        //e.target.openPopup(); // Opens popup when clicked
-      }
-    }),
-    [],
-  );
-
-  //   for (let key in objectKeys.sort()) {
-
-  //     emailList.push({
-  //       value: key,
-  //       label:key
-  // })}
 
 
   const yearList: EmailProps[] = [
@@ -522,40 +281,7 @@ useEffect(() => {
     },
 
   ];
-
-  const showInfo = (Id: String) => {
-    var popup = $("<div></div>", {
-      id: "popup-" + Id,
-      class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-[#16599a] text-slate-50 bg-opacity-65",
-    });
-    // Insert a headline into that popup
-    var hed = $("<div></div>", {
-      text: "Parcel: " + Id,
-      css: { fontSize: "16px", marginBottom: "3px" },
-    }).appendTo(popup);
-    // Add the popup to the map
-    popup.appendTo("#map2");
-  };
-
-  const removeInfo = (Id: String) => {
-    $("#popup-" + Id).remove();
-  };
-
-  
-
-  const geoFarmJsonStyle = useMemo(() => {
-    return {
-      color: "#16599A", // Border color
-      fillColor: "red", // Fill color for normal areas
-      fillOpacity: 0.5,
-      weight: 2,
-    };
-  },[])
-
-
- const LeafletMapConfig =  useMemo(()=>{return  {'minZoom': 4, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}},[]) 
-
-
+ 
  if(isLoading){
    return <div className="flex flex-col px-3 py-2 gap-3">
         <Skeleton className="h-6 w-[250px]" />
@@ -583,22 +309,17 @@ else {
       <div className="flex flex-grow mt-2">
         <div className={cn("relative  w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
           <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
-
             <div className="pb-2 px-3 overflow-auto h-full">
-
               <InsightTitle
                 title="Account Summary"
                 note="Note: For additional information about Account information,
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
-              />
- 
-          
-                <ChartContent data={accountAllocationChart?.data || []} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
+              />        
+                <ChartContainer data={accountAllocationChart?.data || []} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
-                <IntroTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail} />
+                <AccountDetailTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail?.data!} />
               </div>
-
               <InsightTitle
                 title="Farm Unit Summary"
                 note=" Note: For additional information about Allocations, ETAW, Remaining Allocation, and Carryover Water, contact the Madera County Water and Natural
@@ -688,9 +409,7 @@ else {
             className={cn("relative flex h-[calc(100vh-232px)] w-full")}
             id="map2"
           >
-            <InsightMap position={position} viewBoundFarmGeoJson={viewBoundFarmGeoJson} accountDetail={accountDetail?.data!} collapse={collapse} LeafletMapConfig={LeafletMapConfig} selectedEmailValue={selectedEmailValue} geoJsonLayerEvents={geoJsonLayerEvents} geoJsonStyle={geoJsonStyle} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm} geoFarmJsonStyle={geoFarmJsonStyle} selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom} polygonEventHandlers={polygonEventHandlers}/>
-            
-
+            <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson} accountDetail={accountDetail?.data!} collapse={collapse}  selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm}  selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom} />           
             <CollapseBtn
               className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
               onClick={tableCollapseBtn}
@@ -705,6 +424,5 @@ else {
   )}
 
 }
-
 
 export default Insight;
