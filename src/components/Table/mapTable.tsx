@@ -44,7 +44,7 @@ const MapTable = <T,>({
     isLoading = false,
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [data, setDate] = useState(defaultData.length > 0 ?  [...defaultData] : []);
+    const [data, setData] = useState(defaultData.length > 0 ?  [...defaultData] : []);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>([]);
     const [searchText, setSearchText] = useState<any>("");
@@ -53,7 +53,7 @@ const MapTable = <T,>({
         pageSize: 10,
     });
     useEffect(() => {
-        setDate(defaultData);
+        setData(defaultData);
     }, [defaultData]);
     const table = useReactTable({
         data,
@@ -147,14 +147,16 @@ const MapTable = <T,>({
                         ))}
                     </TableHeader>
             {isLoading ? (
-                              <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
-                                    Data Loading
-                                </TableCell>
-                            </TableRow>) : ( <TableBody>
+                      <TableBody> 
+                        <TableRow>
+                          <TableCell
+                            colSpan={columns.length}
+                            className="h-24 text-center"
+                            >
+                               Data Loading
+                          </TableCell>
+                          </TableRow>
+                      </TableBody>) : ( <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) =>
                                 // @ts-ignore it is to check whether there is center property in Data element object}
