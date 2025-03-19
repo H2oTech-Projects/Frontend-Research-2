@@ -52,9 +52,9 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
         }}>
           <span>{`${payload[0].payload.full_label}`}</span>
             {
-              payload.map((subBar: any) => {
+              payload.map((subBar: any,index:number) => {
                 const num = subBar.dataKey == 'remaining' ? subBar.payload.fu_remain_af : subBar.payload.fu_etaw_af
-                return ( <p style={{color: subBar.color}}>{`${subBar.name}: ${subBar.value}% (${num} AF)`}</p> )
+                return ( <p key={index} style={{color: subBar.color}}>{`${subBar.name}: ${subBar.value}% (${num} AF)`}</p> )
               })
             }
         </div>
@@ -108,4 +108,4 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
   );
 };
 
-export default React.memo(StackedBarChart);
+export default StackedBarChart;
