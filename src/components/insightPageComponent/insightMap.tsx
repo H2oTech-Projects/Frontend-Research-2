@@ -8,14 +8,14 @@ import { AccountDetailType } from '@/types/apiResponseType'
 import { geoFarmJsonStyle, geoJsonStyle, InsightMapPosition, LeafletMapConfig } from '@/utils/mapConstant'
 
 interface InsightMapProps {
-  viewBoundFarmGeoJson:[number,number][];
+  viewBoundFarmGeoJson:[number,number][] | null;
   accountDetail:AccountDetailType;
   collapse:string;
   selectedEmailValue:string | null;
-  selectedFarmGeoJson:string;
-  selectedFarm:string;
-  selectedParcel:string;
-  selectedParcelGeom:[];
+  selectedFarmGeoJson:string | null;
+  selectedFarm:string | null | null;
+  selectedParcel:string | null;
+  selectedParcelGeom:[] | null;
 }
 
 const InsightMap =({
@@ -28,6 +28,14 @@ const InsightMap =({
   selectedParcel,
   selectedParcelGeom,
 }:InsightMapProps)=>{
+function hasOnlyZeroPairs(arr: any[]): boolean {
+    return Array.isArray(arr) && arr.every(subArr => 
+        Array.isArray(subArr) && 
+        subArr.length === 2 && 
+        subArr[0] === 0 && 
+        subArr[1] === 0
+    );
+}
    const showInfo = (Id: String) => {
     var popup = $("<div></div>", {
       id: "popup-" + Id,
@@ -87,13 +95,24 @@ const InsightMap =({
     // e.target.openPopup(); // Opens popup when clicked
   },
 };
+  if(hasOnlyZeroPairs(viewBoundFarmGeoJson!))
+    {
+return (<LeafletMap
+              position={InsightMapPosition}
+              zoom={14}
+              // viewBound={ accountDetail?.data?.view_bounds }
+          
+              collapse={collapse}
+              configurations={LeafletMapConfig}
+            ></LeafletMap>)
 
+}
 
   return (<LeafletMap
               position={InsightMapPosition}
               zoom={14}
               // viewBound={ accountDetail?.data?.view_bounds }
-              viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds}
+              viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds }
               collapse={collapse}
               configurations={LeafletMapConfig}
             >
@@ -108,7 +127,7 @@ const InsightMap =({
               }
               {
                 !!selectedFarmGeoJson && <RtGeoJson
-                key={selectedFarm}
+                key={selectedFarm as string}
                 layerEvents={geoJsonLayerEvents}
                 style={geoFarmJsonStyle}
                 data={JSON.parse(selectedFarmGeoJson)}
