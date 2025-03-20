@@ -23,7 +23,7 @@ const ChartContainer = ({ loading, data, setSelectedFarm }: { loading: boolean, 
     /> : <div className="flex justify-center items-center h-full">No Data Available</div>
   return <div
     className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
-    style={{ height: 70 * data?.length + 80 }}
+    style={{ height: 70 * (data?.length || 1)  + 80 }}
   >
     <ChartBars />
   </div>
