@@ -15,6 +15,8 @@ import { AccountFarmUnitDataType } from "@/types/apiResponseType";
 import InsightMap from "@/components/insightPageComponent/insightMap";
 import AccountDetailTable from "@/components/insightPageComponent/accountDetailTable";
 import ChartContainer from "@/components/insightPageComponent/chartContainer";
+import LeafletMap from "@/components/LeafletMap";
+import { InsightMapPosition, LeafletMapConfig } from "@/utils/mapConstant";
 interface EmailProps {
   value: string;
   label: string;
@@ -23,11 +25,11 @@ interface EmailProps {
 const Insight = () => {
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
   const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
-  const [selectedFarm, setSelectedFarm] = useState<string>("");
-  const [selectedFarmGeoJson, setselectedFarmGeoJson] = useState<string>("");
-  const [selectedParcelGeom, setSelectedParcelGeom] = useState<[]>([]);
-  const [selectedParcel, setSelectedParcel] = useState<string>("");
-  const [viewBoundFarmGeoJson, setViewBound] = useState<[number,number][]>([]);
+  const [selectedFarm, setSelectedFarm] = useState<string | null>(null);
+  const [selectedFarmGeoJson, setSelectedFarmGeoJson] = useState<string | null>(null);
+  const [selectedParcelGeom, setSelectedParcelGeom] = useState<[] | null>(null);
+  const [selectedParcel, setSelectedParcel] = useState<string | null>(null);
+  const [viewBoundFarmGeoJson, setViewBound] = useState<[number,number][] | null>(null);
   const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit Summary");
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
@@ -56,7 +58,7 @@ useEffect(() => {
     // setPosition((prev: any) => ({ ...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds }))
     accountDetail?.data?.view_bounds && setViewBound(accountDetail?.data?.view_bounds)
     setSelectedFarm("")
-    setselectedFarmGeoJson("")
+    setSelectedFarmGeoJson("")
 
     setSelectedParcel("")
     setSelectedParcelGeom([])
@@ -68,7 +70,7 @@ useEffect(() => {
       let selectFarm = accountFarmUnits?.data?.find((farm_unit:any) => farm_unit['farm_unit_zone'] == selectedFarm)
 
       // @ts-ignore
-      selectFarm['farm_parcel_geojson'] && setselectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
+      selectFarm['farm_parcel_geojson'] && setSelectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
       // @ts-ignore
       selectFarm['view_bounds'] && setViewBound(selectFarm['view_bounds'])
       setSelectedParcel("")
@@ -83,7 +85,8 @@ useEffect(() => {
       selectParcel['coords'] && setSelectedParcelGeom(selectParcel['coords'])
       // @ts-ignore
       selectParcel['view_bounds'] && setViewBound(selectParcel['view_bounds'])
-      setselectedFarmGeoJson("")
+      setSelectedFarmGeoJson("")
+      setSelectedFarm(null)
     }
   }, [selectedParcel])
 
@@ -316,7 +319,7 @@ else {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />        
-                <ChartContainer data={accountAllocationChart?.data || []} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
+                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <AccountDetailTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail?.data!} />
               </div>
@@ -409,7 +412,15 @@ else {
             className={cn("relative flex h-[calc(100vh-232px)] w-full")}
             id="map2"
           >
-            <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson} accountDetail={accountDetail?.data!} collapse={collapse}  selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm}  selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom} />           
+            {
+                accountDetail?.data ?  <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson!} accountDetail={accountDetail?.data} collapse={collapse} selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm}  selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom!} /> : <LeafletMap
+              position={InsightMapPosition}
+              zoom={14}
+              // viewBound={ accountDetail?.data?.view_bounds }
+              collapse={collapse}
+              configurations={LeafletMapConfig}
+            ></LeafletMap>
+            }           
             <CollapseBtn
               className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
               onClick={tableCollapseBtn}
