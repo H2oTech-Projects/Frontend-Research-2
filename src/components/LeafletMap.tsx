@@ -35,17 +35,17 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
     const map = useMap();
 
     useEffect(() => {
-      map.invalidateSize(); // Force the map to resize
-      map.setView(center); // Force the map to recenter
+      map?.invalidateSize(); // Force the map to resize
+      map?.setView(center); // Force the map to recenter
       if (!!viewBound){
-        map.fitBounds(viewBound);
+        map?.fitBounds(viewBound);
       }
       //map.setZoom(zoom);
     }, [collapse, center, zoom, viewBound]);
 
     useEffect(() => {
         setTimeout(() => {
-            map.invalidateSize();
+            map?.invalidateSize();
         }, 300)
 
 
