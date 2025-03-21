@@ -32,10 +32,10 @@ const InsightMap =({
   parcelInfo
 }:InsightMapProps)=>{
 function hasOnlyZeroPairs(arr: any[]): boolean {
-    return Array.isArray(arr) && arr.every(subArr => 
-        Array.isArray(subArr) && 
-        subArr.length === 2 && 
-        subArr[0] === 0 && 
+    return Array.isArray(arr) && arr.every(subArr =>
+        Array.isArray(subArr) &&
+        subArr.length === 2 &&
+        subArr[0] === 0 &&
         subArr[1] === 0
     );
 }
@@ -56,9 +56,9 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
   const removeInfo = (Id: String) => {
     $("#popup-" + Id).remove();
   };
+
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
-    // layer.bindPopup(buildPopupMessage(accountParcels?.data?.parcel_table_data?.find((parcel:any) => parcel['parcel_id'] == feature.properties.apn)));
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -80,78 +80,83 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
         removeInfo(auxLayer.feature.properties.apn);
       },
     })};
-  
+
   const polygonEventHandlers: {
-  mouseover: (e: L.LeafletMouseEvent) => void;
-  mouseout: (e: L.LeafletMouseEvent) => void;
-  click: (e: L.LeafletMouseEvent) => void;
-} = {
-  mouseover(e: L.LeafletMouseEvent) {
-    const { id } = e.target.options;
-    showInfo(id);
-  },
-  mouseout(e: L.LeafletMouseEvent) {
-    const { id } = e.target.options;
-    removeInfo(id);
-  },
-  click(e: L.LeafletMouseEvent) {
-    // e.target.openPopup(); // Opens popup when clicked
-  },
-};
+    mouseover: (e: L.LeafletMouseEvent) => void;
+    mouseout: (e: L.LeafletMouseEvent) => void;
+    click: (e: L.LeafletMouseEvent) => void;
+  } = {
+    mouseover(e: L.LeafletMouseEvent) {
+      const { id } = e.target.options;
+      showInfo(id);
+    },
+    mouseout(e: L.LeafletMouseEvent) {
+      const { id } = e.target.options;
+      removeInfo(id);
+    },
+    click(e: L.LeafletMouseEvent) {
+      // e.target.openPopup(); // Opens popup when clicked
+    },
+  };
+
   if(hasOnlyZeroPairs(viewBoundFarmGeoJson!))
     {
-return (<LeafletMap
-              position={InsightMapPosition}
-              zoom={14}
-              // viewBound={ accountDetail?.data?.view_bounds }
-          
-              collapse={collapse}
-              configurations={LeafletMapConfig}
-            ></LeafletMap>)
+      return (<LeafletMap
+            position={InsightMapPosition}
+            zoom={14}
+            // viewBound={ accountDetail?.data?.view_bounds }
 
-}
+            collapse={collapse}
+            configurations={LeafletMapConfig}
+          ></LeafletMap>)
+
+    }
 
   return (<LeafletMap
-              position={InsightMapPosition}
-              zoom={14}
-              // viewBound={ accountDetail?.data?.view_bounds }
-              viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds }
-              collapse={collapse}
-              configurations={LeafletMapConfig}
-            >
-       
-              {accountDetail?.geojson_parcels && <RtGeoJson
-                key={selectedEmailValue as string}
-                layerEvents={geoJsonLayerEvents}
-                style={geoJsonStyle}
-                data={JSON.parse(accountDetail?.geojson_parcels)}
-                color={"#16599a"}
-              />
-              }
-              {
-                !!selectedFarmGeoJson && <RtGeoJson
+            position={InsightMapPosition}
+            zoom={14}
+            // viewBound={ accountDetail?.data?.view_bounds }
+            viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds }
+            collapse={collapse}
+            configurations={LeafletMapConfig}
+          >
+
+            {
+              accountDetail?.geojson_parcels &&
+                <RtGeoJson
+                  key={selectedEmailValue as string}
+                  layerEvents={geoJsonLayerEvents}
+                  style={geoJsonStyle}
+                  data={JSON.parse(accountDetail?.geojson_parcels)}
+                  color={"#16599a"}
+                />
+            }
+            {
+              !!selectedFarmGeoJson &&
+              <RtGeoJson
                 key={selectedFarm as string}
                 layerEvents={geoJsonLayerEvents}
                 style={geoFarmJsonStyle}
                 data={JSON.parse(selectedFarmGeoJson)}
                 color={"red"}
               />
-              }
+            }
 
-              {
-                !!selectedParcel &&
-                <RtPolygon
-                  pathOptions={{ id: selectedParcel } as Object}
-                  positions={selectedParcelGeom}
-                  color={"red"}
-                  eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-                >
-                  <Popup>
-                    <div dangerouslySetInnerHTML={{ __html: "test" }} />
-                  </Popup>
-                </RtPolygon>
-              }
-            </LeafletMap>)
+            {
+              !!selectedParcel &&
+              <RtPolygon
+                pathOptions={{ id: selectedParcel } as Object}
+                positions={selectedParcelGeom}
+                color={"red"}
+                eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+              >
+                <Popup>
+                  <div dangerouslySetInnerHTML={{ __html: "test" }} />
+                </Popup>
+              </RtPolygon>
+            }
+    </LeafletMap>
+  )
 
 }
 
