@@ -31,7 +31,6 @@ const InsightMap =({
   selectedParcelGeom,
   parcelInfo
 }:InsightMapProps)=>{
-console.log("test")
 function hasOnlyZeroPairs(arr: any[]): boolean {
     return Array.isArray(arr) && arr.every(subArr => 
         Array.isArray(subArr) && 
