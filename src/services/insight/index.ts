@@ -20,11 +20,11 @@ export const useGetAccountDetails = (accountName:string | null):UseQueryResult<A
   return useQuery({
     queryKey: [GET_ACCOUNT_DETAILS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountDetails(accountName),
-    enabled: accountName !== null,
+    enabled: !!accountName,
      ...queryConfig  });
 }
 export const useGetAccountAllocationChart = (accountName:string | null):UseQueryResult<AccountAllocationChartResponseType> => {
-   
+
   return useQuery({
     queryKey: [GET_ACCOUNT_ALLOCATION_CHART_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountAllocationChart(accountName),
@@ -32,7 +32,7 @@ export const useGetAccountAllocationChart = (accountName:string | null):UseQuery
      ...queryConfig  });
 }
 export const useGetAccountFarmUnits = (accountName:string | null):UseQueryResult<AccountFarmUnitDataResponseType> => {
-   
+
   return useQuery({
     queryKey: [GET_ACCOUNT_FARM_UNITS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountFarmUnits(accountName),
@@ -40,7 +40,7 @@ export const useGetAccountFarmUnits = (accountName:string | null):UseQueryResult
      ...queryConfig  });
 }
 export const useGetAccountParcels = (accountName:string | null):UseQueryResult<ParcelDataListResponseType> => {
-   
+
   return useQuery({
     queryKey: [GET_ACCOUNT_PARCELS_KEY,accountName],
     queryFn:()=> queryInsightService.getAccountParcels(accountName),

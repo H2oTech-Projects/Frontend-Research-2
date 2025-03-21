@@ -13,15 +13,12 @@ import { MapTableTypes } from "@/types/tableTypes";
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
-import { useMediaQuery } from "@uidotdev/usehooks";
 
 interface ColumnFilter {
     id: string;
     value: unknown;
 }
-interface GlobalFilter {
-    globalFilter: any;
-}
+
 type ColumnFiltersState = ColumnFilter[];
 
 const MapTable = <T,>({
@@ -47,41 +44,40 @@ const MapTable = <T,>({
     const [data, setData] = useState(defaultData.length > 0 ?  [...defaultData] : []);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>([]);
-    const [searchText, setSearchText] = useState<any>("");
     const [pagination, setPagination] = useState<PaginationState>({
-        pageIndex: 0,
-        pageSize: 10,
+      pageIndex: 0,
+      pageSize: 10,
     });
     useEffect(() => {
-        setData(defaultData);
+      setData(defaultData);
     }, [defaultData]);
     const table = useReactTable({
-        data,
-        columns,
-        onSortingChange: setSorting,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        onPaginationChange: setPagination,
-        getFilteredRowModel: getFilteredRowModel(),
-        globalFilterFn: "includesString", // built-in filter function
-        //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
-        state: {
-            sorting,
-            globalFilter,
-            pagination,
-            columnFilters,
-        },
-        onGlobalFilterChange: setGlobalFilter,
+      data,
+      columns,
+      onSortingChange: setSorting,
+      getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      onPaginationChange: setPagination,
+      getFilteredRowModel: getFilteredRowModel(),
+      globalFilterFn: "includesString", // built-in filter function
+      //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
+      state: {
+        sorting,
+        globalFilter,
+        pagination,
+        columnFilters,
+      },
+      onGlobalFilterChange: setGlobalFilter,
     });
 
     useEffect(() => {
-        //client side filtering
-        if (!!filterValue) {
-            table.setGlobalFilter(String(filterValue));
-        } else {
-            table.resetGlobalFilter(true);
-        }
+      //client side filtering
+      if (!!filterValue) {
+          table.setGlobalFilter(String(filterValue));
+      } else {
+          table.resetGlobalFilter(true);
+      }
     }, [doFilter]);
 
     const handleOnClick = ((row: any, type: any) => {
@@ -112,152 +108,183 @@ const MapTable = <T,>({
       setClickedField(row.original?.FieldID);
     });
 
-    return (
-        <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-            <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
-                <Table className="relative">
-                    <TableHeader className="sticky top-0">
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead
-                                        // this class code help to differentiate action column
-                                        className={cn(
-                                            `${
-                                            // @ts-ignore  this code helps to ignore types in certain line
-                                            header.column.columnDef.meta?.className ?? ""
-                                            } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
-                                            `!min-w-[${header?.getSize()}px]`,
-                                            ` ${tableCSSConfig?.headerFontSize && tableCSSConfig?.headerFontSize }`,
-                                        )}
-                                        key={header.id}
-                                        // style={{
-                                        //     width: "400px !important", // Dynamically set width
-                                        // }}
-                                        style={{
-                                            minWidth: header.column.columnDef.size,
-                                            maxWidth: header.column.columnDef.size,
-                                            textAlign: columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign
-                                        }}
-                                    >
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-            {isLoading ? (
-                      <TableBody> 
-                        <TableRow>
-                          <TableCell
-                            colSpan={columns.length}
-                            className="h-24 text-center"
-                            >
-                               Data Loading
-                          </TableCell>
-                          </TableRow>
-                      </TableBody>) : ( <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) =>
-                                // @ts-ignore it is to check whether there is center property in Data element object}
-                                setPosition !== null && row?.original?.center ? (
-                                    <TableRow
-                                        key={row.id}
-                                        className="cursor-pointer text-sm hover:bg-slate-500"
-                                    >
-                                        {row.getVisibleCells().map((cell) =>
+    const tableHeader = () => {
+      return (table.getHeaderGroups().map((headerGroup) => (
+        <TableRow key={headerGroup.id}>
+          {headerGroup.headers.map((header) => (
+            <TableHead
+              // this class code help to differentiate action column
+              className={cn(
+                `${
+                // @ts-ignore  this code helps to ignore types in certain line
+                header.column.columnDef.meta?.className ?? ""
+                } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
+                `!min-w-[${header?.getSize()}px]`,
+                ` ${tableCSSConfig?.headerFontSize && tableCSSConfig?.headerFontSize }`,
+              )}
+              key={header.id}
+              style={{
+                minWidth: header.column.columnDef.size,
+                maxWidth: header.column.columnDef.size,
+                textAlign: columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign
+              }}
+            >
+              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+            </TableHead>
+          ))}
+        </TableRow>
+      )));
+    }
+
+    const tableContent = () => {
+      if (table.getRowModel().rows?.length < 1) {
+        return <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+               >
+                No results.
+              </TableCell>
+            </TableRow>
+
+      }
+      if (setPosition !==null) {
+        return fieldTableContent()
+      } else {
+        return insightTableContent()
+      }
+    }
+
+    const emptyTable = () => {
+      return <TableBody>
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                  >
+                  Data Loading
+                </TableCell>
+              </TableRow>
+            </TableBody>
+    }
+
+    const fieldTableContent = () => {
+      return table.getRowModel().rows.map((row) =>
+        fieldTableRow(row)
+      )
+    }
+
+    const insightTableContent = () => {
+      return table.getRowModel().rows.map((row) =>
+        insightTableRow(row)
+      )};
 
 
-                                                <TableCell
-                                                    className={`${
-                                                        // @ts-ignore
-                                                        cell.column.columnDef.meta?.className ?? ""
-                                                        } `}
-                                                    key={cell.id}
-                                                    style={{
-                                                        minWidth: cell.column.columnDef.size,
-                                                        maxWidth: cell.column.columnDef.size,
+    const fieldTableRow = (row: any) => {
+      return <TableRow
+              key={row.id}
+              className="cursor-pointer text-sm hover:bg-slate-500"
+            >
+              {row.getVisibleCells().map((cell: any) =>
+                <TableCell
+                  className={`${
+                    // @ts-ignore
+                    cell.column.columnDef.meta?.className ?? ""
+                    } `}
+                  key={cell.id}
+                  style={{
+                      minWidth: cell.column.columnDef.size,
+                      maxWidth: cell.column.columnDef.size,
 
-                                                    }}
-                                                    onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
+                  }}
+                  // @ts-ignore
+                  onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              )}
+      </TableRow>
+    }
 
-                                        )}
-                                    </TableRow>
-                                ) : (
-                                    <TableRow
-                                        key={row.id}
-                                        className={cn(
-                                            // @ts-ignore
-                                            clickedField === row.original.FieldID ? "bg-slate-400" : "",
-                                            "cursor-pointer",
-                                        )}
-                                        onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                             <TableCell
-                                                className={`${
-                                                    // @ts-ignore
-                                                    cell.column.columnDef.meta?.className ?? ""
-                                                    } ${tableCSSConfig?.bodyFontSize  && tableCSSConfig?.bodyFontSize }`}
-                                                key={cell.id}
-                                            style={{
+    const insightTableRow = (row: any) => {
+      return <TableRow
+              key={row.id}
+              className={cn(
+                // @ts-ignore
+                clickedField === row.original.FieldID ? "bg-slate-400" : "",
+                "cursor-pointer",
+              )}
+              // @ts-ignore
+              onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
+             >
+              {row.getVisibleCells().map((cell: any) => (
+                <TableCell
+                  className={`${
+                    // @ts-ignore
+                    cell.column.columnDef.meta?.className ?? ""
+                    // @ts-ignore
+                    } ${tableCSSConfig?.bodyFontSize  && tableCSSConfig?.bodyFontSize }`}
+                  key={cell.id}
+                  // @ts-ignore
+                  style={{textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign}}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+    }
 
-                                            textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign
-                                        }}
-                                            >
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ),
-                            )
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
-                                    No results.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>)}
-                   
-                </Table>
+    const renderPagination = () => {
+      // @ts-ignore
+      if (!showPagination) return null
+      return <div className="flex-grow p-2">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      // @ts-ignore
+                      onClick={() => table.previousPage()}
+                      // @ts-ignore
+                      disabled={!table?.getCanPreviousPage()}
+                    />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      className="dark:text-white"
+                      isActive
+                      disabled
+                    >
+                      {
+                        // @ts-ignore
+                        pagination?.pageIndex + 1
+                      }
+                    </PaginationLink>
+                  </PaginationItem>
+
+                  <PaginationItem>
+                    <PaginationNext
+                      // @ts-ignore
+                      onClick={() => table.nextPage()}
+                      // @ts-ignore
+                      disabled={!table.getCanNextPage()}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
-            {showPagination && (<div className="flex-grow p-2">
-                <Pagination>
-                    <PaginationContent>
-                        <PaginationItem>
-                            <PaginationPrevious
-                                onClick={() => table.previousPage()}
-                                disabled={!table?.getCanPreviousPage()}
-                            />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink
-                                className="dark:text-white"
-                                isActive
-                                disabled
-                            >
-                                {pagination?.pageIndex + 1}
-                            </PaginationLink>
-                        </PaginationItem>
+    }
 
-                        <PaginationItem>
-                            <PaginationNext
-                                onClick={() => table.nextPage()}
-                                disabled={!table.getCanNextPage()}
-                            />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-            </div>)}
+    return (
+      <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
+        <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
+          <Table className="relative">
+            <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
+              {isLoading ? emptyTable() : tableContent()}
+          </Table>
         </div>
-    );
+          {renderPagination()}
+      </div>
+    )
 };
 
 export default MapTable;

@@ -47,15 +47,12 @@ const Insight = () => {
   const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(selectedEmailValue);
   const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(selectedEmailValue);
   const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(selectedEmailValue);
- 
-useEffect(() => {
-    isFetched && accountList?.data[0]?.value !== undefined &&  setSelectedEmailValue(accountList?.data[0]?.value)
-},[isFetched]);
+
   useEffect(() => {
-    // setGroundWaterAccountData(defaultData[selectedEmailValue])
-    // let parcels = Object.keys(defaultData[selectedEmailValue].parcel_geometries);
-    // let latlong = defaultData[selectedEmailValue].parcel_geometries[parcels[0]][0]
-    // setPosition((prev: any) => ({ ...prev, center: latlong, viewBound: defaultData[selectedEmailValue].view_bounds }))
+      isFetched && !!accountList?.data[0]?.value &&  setSelectedEmailValue(accountList?.data[0]?.value)
+  },[isFetched]);
+
+  useEffect(() => {
     accountDetail?.data?.view_bounds && setViewBound(accountDetail?.data?.view_bounds)
     setSelectedFarm("")
     setSelectedFarmGeoJson("")
@@ -284,7 +281,7 @@ useEffect(() => {
     },
 
   ];
- 
+
  if(isLoading){
    return <div className="flex flex-col px-3 py-2 gap-3">
         <Skeleton className="h-6 w-[250px]" />
@@ -318,8 +315,8 @@ else {
                 note="Note: For additional information about Account information,
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
-              />        
-                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
+              />
+              <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <AccountDetailTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail?.data!} />
               </div>
@@ -420,7 +417,7 @@ else {
               collapse={collapse}
               configurations={LeafletMapConfig}
             ></LeafletMap>
-            }           
+            }
             <CollapseBtn
               className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
               onClick={tableCollapseBtn}
