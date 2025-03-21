@@ -44,8 +44,8 @@ const Insight = () => {
 
   const {data: accountList, isLoading, isFetched} = useGetAccountsList();
   const {data:accountDetail ,isLoading:accountDetailLoading} = useGetAccountDetails(selectedEmailValue);
-  const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(selectedEmailValue);
   const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels(selectedEmailValue);
+  const {data:accountFarmUnits, isLoading:accountFarmUnitsLoading} = useGetAccountFarmUnits(selectedEmailValue);
   const {data:accountAllocationChart , isLoading:chartLoading} = useGetAccountAllocationChart(selectedEmailValue);
  
 useEffect(() => {
@@ -413,7 +413,7 @@ else {
             id="map2"
           >
             {
-                accountDetail?.data ?  <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson!} accountDetail={accountDetail?.data} collapse={collapse} selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm}  selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom!} /> : <LeafletMap
+                accountDetail?.data && accountParcels?.data?.parcel_id_mapper ?  <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson!} accountDetail={accountDetail?.data} collapse={collapse} selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm}  selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom!} parcelInfo={accountParcels?.data?.parcel_id_mapper} /> : <LeafletMap
               position={InsightMapPosition}
               zoom={14}
               // viewBound={ accountDetail?.data?.view_bounds }

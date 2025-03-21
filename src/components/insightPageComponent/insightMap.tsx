@@ -4,8 +4,9 @@ import LeafletMap from '../LeafletMap'
 import RtGeoJson from '../RtGeoJson'
 import RtPolygon from '../RtPolygon'
 import { Popup } from 'react-leaflet'
-import { AccountDetailType } from '@/types/apiResponseType'
+import { AccountDetailType, parcel_id_mapperType } from '@/types/apiResponseType'
 import { geoFarmJsonStyle, geoJsonStyle, InsightMapPosition, LeafletMapConfig } from '@/utils/mapConstant'
+import { buildPopupMessage } from "@/utils/map";
 
 interface InsightMapProps {
   viewBoundFarmGeoJson:[number,number][] | null;
@@ -16,6 +17,7 @@ interface InsightMapProps {
   selectedFarm:string | null | null;
   selectedParcel:string | null;
   selectedParcelGeom:[] | null;
+  parcelInfo: parcel_id_mapperType;
 }
 
 const InsightMap =({
@@ -27,7 +29,9 @@ const InsightMap =({
   selectedFarm,
   selectedParcel,
   selectedParcelGeom,
+  parcelInfo
 }:InsightMapProps)=>{
+console.log("test")
 function hasOnlyZeroPairs(arr: any[]): boolean {
     return Array.isArray(arr) && arr.every(subArr => 
         Array.isArray(subArr) && 
@@ -54,7 +58,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
     $("#popup-" + Id).remove();
   };
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    // layer.bindPopup(buildPopupMessage(feature.properties));
+    layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
     // layer.bindPopup(buildPopupMessage(accountParcels?.data?.parcel_table_data?.find((parcel:any) => parcel['parcel_id'] == feature.properties.apn)));
     layer.on({
       mouseover: function (e: any) {
