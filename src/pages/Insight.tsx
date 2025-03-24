@@ -17,6 +17,7 @@ import AccountDetailTable from "@/components/insightPageComponent/accountDetailT
 import ChartContainer from "@/components/insightPageComponent/chartContainer";
 import LeafletMap from "@/components/LeafletMap";
 import { InsightMapPosition, LeafletMapConfig } from "@/utils/mapConstant";
+import Spinner from "@/components/Spinner";
 interface EmailProps {
   value: string;
   label: string;
@@ -416,7 +417,11 @@ else {
               // viewBound={ accountDetail?.data?.view_bounds }
               collapse={collapse}
               configurations={LeafletMapConfig}
-            ></LeafletMap>
+            >
+              <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+                <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner/></div>          
+              </div>
+            </LeafletMap>
             }
             <CollapseBtn
               className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
