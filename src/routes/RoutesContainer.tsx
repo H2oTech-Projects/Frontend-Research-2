@@ -10,74 +10,79 @@ const Login = lazy(async () => await import("./../pages/auth/Login"));
 const ResetPassword = lazy(async () => await import("./../pages/auth/ResetPassword"));
 const ForgotPassword = lazy(async () => await import("./../pages/auth/ForgotPassword"));
 interface RoutesContainerProps {
-    isLoadingData: boolean;
+  isLoadingData: boolean;
 }
 
 const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
-    const isAuthenticated = useSelector((state: any) => state.auth.isLoggedIn);
+  const isAuthenticated = useSelector((state: any) => state.auth.isLoggedIn);
 
-    return (
-        <Suspense
-            fallback={
-                <div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">
-                    Loading <Loader size={20} />
-                </div>
+  if (isLoadingData)
+    return (<div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">
+      Loading <Loader size={20} />
+    </div>)
+
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">
+          Loading <Loader size={20} />
+        </div>
+      }
+    >
+      <Routes>
+        <>
+          <Route
+            path="/auth/login"
+            element={isAuthenticated ? <Navigate to={"/map"} /> : <Login />}
+          />
+          <Route
+            path="/auth/forgotPassword"
+            element={<ForgotPassword />}
+          />
+          <Route
+            path="/auth/reset-password"
+            element={<ResetPassword />}
+          />
+        </>
+
+        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+          {!isLoadingData && (
+            <>
+              {RouteList?.map((route) => (
+                <Route
+                  path={route.path}
+                  element={<route.Component />}
+                  key={route.path}
+                />
+              ))}
+              <Route
+                path="*"
+                element={
+                  <Navigate
+                    to="/page-not-found"
+                    replace
+                  />
+                }
+              />
+            </>
+          )}
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to="/map"
+                replace
+              />
             }
-        >
-            <Routes>
-                <>
-                    <Route
-                        path="/auth/login"
-                        element={isAuthenticated ? <Navigate to={"/map"} /> : <Login />}
-                    />
-                    <Route
-                        path="/auth/forgotPassword"
-                        element={<ForgotPassword />}
-                    />
-                    <Route
-                        path="/auth/reset-password"
-                        element={<ResetPassword />}
-                    />
-                </>
-
-                <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-                    {!isLoadingData && (
-                        <>
-                            {RouteList?.map((route) => (
-                                <Route
-                                    path={route.path}
-                                    element={<route.Component />}
-                                    key={route.path}
-                                />
-                            ))}
-                            <Route
-                                path="*"
-                                element={
-                                    <Navigate
-                                        to="/page-not-found"
-                                        replace
-                                    />
-                                }
-                            />
-                        </>
-                    )}
-                    <Route
-                        path="/"
-                        element={
-                            <Navigate
-                                to="/map"
-                                replace
-                            />
-                        }
-                    />
-                </Route>
-            </Routes>
-            <ToastContainer
-                position="top-right"
-                autoClose={3000}
-            />
-        </Suspense>
-    );
+          />
+        </Route>
+      </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+      />
+    </Suspense>
+  );
 };
 
 export default RoutesContainer;
