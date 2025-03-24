@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import $ from "jquery";
 import { Popup } from "react-leaflet";
 import { cn } from "../../../../utils/cn";
@@ -26,7 +26,23 @@ import {
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
 
+interface initialTableDataTypes {
+  search:string | undefined ;
+  page_no:number,
+  page_size:number,
+  sort: string | undefined,
+  sort_order: string | undefined
+}
+const initialTableData = {
+  search: undefined,
+  page_no:1,
+  page_size:50,
+  sort:undefined,
+  sort_order:undefined
+}
+
 const Field = () => {
+  const [tableInfo,setTableInfo] = useState<initialTableDataTypes>({...initialTableData})
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
@@ -39,7 +55,7 @@ const Field = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-
+  useEffect(()=>{console.log(tableInfo)},[tableInfo])
   const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
   const columns: ColumnDef<DummyDataType>[] = [
@@ -415,6 +431,9 @@ const Field = () => {
                                 setZoomLevel={setZoomLevel as Function}
                                 setClickedField={setClickedField}
                                 clickedField={clickedField}
+                                tableInfo={tableInfo}
+                                setTableInfo={setTableInfo}
+                                totalData={defaultData?.length}
                             />
                           <CollapseBtn
                             className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

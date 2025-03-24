@@ -13,6 +13,7 @@ import { MapTableTypes } from "@/types/tableTypes";
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
+import { MapTablePagination } from "./mapTablePagination";
 
 interface ColumnFilter {
     id: string;
@@ -39,6 +40,9 @@ const MapTable = <T,>({
     setSelectedFarm=null,
     setSelectedParcel=null,
     isLoading = false,
+    totalData,
+    tableInfo,
+    setTableInfo
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setData] = useState(defaultData.length > 0 ?  [...defaultData] : []);
@@ -46,7 +50,7 @@ const MapTable = <T,>({
     const [globalFilter, setGlobalFilter] = useState<any>([]);
     const [pagination, setPagination] = useState<PaginationState>({
       pageIndex: 0,
-      pageSize: 10,
+      pageSize: 50,
     });
     useEffect(() => {
       setData(defaultData);
@@ -237,40 +241,8 @@ const MapTable = <T,>({
     const renderPagination = () => {
       // @ts-ignore
       if (!showPagination) return null
-      return <div className="flex-grow p-2">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      // @ts-ignore
-                      onClick={() => table.previousPage()}
-                      // @ts-ignore
-                      disabled={!table?.getCanPreviousPage()}
-                    />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink
-                      className="dark:text-white"
-                      isActive
-                      disabled
-                    >
-                      {
-                        // @ts-ignore
-                        pagination?.pageIndex + 1
-                      }
-                    </PaginationLink>
-                  </PaginationItem>
-
-                  <PaginationItem>
-                    <PaginationNext
-                      // @ts-ignore
-                      onClick={() => table.nextPage()}
-                      // @ts-ignore
-                      disabled={!table.getCanNextPage()}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+      return <div className="flex flex-grow p-2  justify-center items-center">
+                <MapTablePagination table={table} totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!}/>
             </div>
     }
 

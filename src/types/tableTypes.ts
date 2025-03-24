@@ -36,6 +36,9 @@ export type MapTableTypes<T> = {
     setSelectedFarm?: null | Function;
     setSelectedParcel?: null | Function;
     isLoading?: boolean;
+    tableInfo?: initialTableDataTypes;
+    setTableInfo?: Function;
+    totalData?: number | undefined;
 };
 export type DummyDataType = {
     district?: string;
@@ -109,4 +112,11 @@ export type dummyGroundWaterDataTypes={
 
 export type dummyGroundWaterDataTypes2={
     [key: string]: AccountDetails2
+}
+export interface initialTableDataTypes {
+  search:string | undefined ;
+  page_no:number,
+  page_size:number,
+  sort: string | undefined,
+  sort_order: string | undefined
 }
