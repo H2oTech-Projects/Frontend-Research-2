@@ -1,6 +1,7 @@
 import React from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 import { AccountDetailType } from '@/types/apiResponseType';
+import Spinner from '../Spinner';
 
 interface AccountDetailTableProps {
   accountDetailLoading: boolean;
@@ -22,7 +23,7 @@ const AccountDetailTable = ({ accountDetailLoading, accountDetail }: AccountDeta
             colSpan={2}
             className="h-auto text-center"
           >
-            Loading...
+          <Spinner/>
           </TableCell>
         </TableRow>
       </TableBody>
