@@ -42,7 +42,8 @@ const MapTable = <T,>({
     isLoading = false,
     totalData,
     tableInfo,
-    setTableInfo
+    setTableInfo,
+    collapse
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setData] = useState(defaultData.length > 0 ?  [...defaultData] : []);
@@ -242,7 +243,7 @@ const MapTable = <T,>({
       // @ts-ignore
       if (!showPagination) return null
       return <div className="flex flex-grow p-2  justify-center items-center">
-                <MapTablePagination table={table} totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!}/>
+                <MapTablePagination table={table} totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>
             </div>
     }
 

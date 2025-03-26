@@ -21,17 +21,17 @@ interface MapTablePaginationProps<TData> {
   tableInfo: initialTableDataTypes;
   setTableInfo:Function;
   totalData:number;
+  collapse:string;
 }
 
 export function MapTablePagination<TData>({
-  table,tableInfo,totalData,setTableInfo
+  table,tableInfo,totalData,setTableInfo,collapse
 }: MapTablePaginationProps<TData>) {
-  console.log(totalData,Math.ceil(totalData/tableInfo?.page_size))
   return (
     <div className="flex items-center justify-between px-2 dark:text-white">
       <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+        <div className="flex items-center space-x-1">
+          {collapse === "map" && <p className="text-xs font-medium">Rows per page</p>}
           <Select
             value={`${tableInfo.page_size}`}
             onValueChange={(value) => {
@@ -39,10 +39,10 @@ export function MapTablePagination<TData>({
               setTableInfo({...tableInfo,page_size:Number(value)})
             }}
           >
-            <SelectTrigger className="h-8 w-[70px] bg-royalBlue text-white dark:bg-royalBlue">
+            <SelectTrigger className="h-8 w-[65px] bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={tableInfo.page_size} />
             </SelectTrigger>
-            <SelectContent side="top">
+            <SelectContent side="top" className="min-w-[65px]">
               {[50, 100, 150, 200, 250].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
@@ -51,22 +51,22 @@ export function MapTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        {collapse === "map" &&  <div className="flex w-[100px] items-center justify-center text-xs font-medium">
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {Math.ceil(totalData/tableInfo?.page_size)}
-        </div>
-   <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Go to page</p>
+        </div>}
+         <div className="flex items-center space-x-2">
+          {collapse === 'map' && <p className="text-xs font-medium">Go to page</p>}
           <Select
             value={`${table.getState().pagination.pageIndex }`}
             onValueChange={(value) => {
               table.setPageIndex(Number(value))
             }}
           >
-            <SelectTrigger className="h-8 w-[60px]  bg-royalBlue text-white dark:bg-royalBlue">
+            <SelectTrigger className="h-8 w-[50px]  bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
-            <SelectContent side="top" className="min-w-[60px]">
+            <SelectContent side="top" className="min-w-[50px]">
              
               {[...Array(Math.ceil(totalData/tableInfo?.page_size)).keys()].map((pageIndex) => (
                 <SelectItem key={pageIndex} value={`${pageIndex}`}>
