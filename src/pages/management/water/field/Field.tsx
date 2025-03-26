@@ -27,18 +27,18 @@ import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
 
 interface initialTableDataTypes {
-  search:string | undefined ;
+  search:string   ;
   page_no:number,
   page_size:number,
-  sort: string | undefined,
-  sort_order: string | undefined
+  sort: string  ,
+  sort_order: string 
 }
 const initialTableData = {
-  search: undefined,
+  search: "",
   page_no:1,
   page_size:50,
-  sort:undefined,
-  sort_order:undefined
+  sort: '',
+  sort_order:''
 }
 
 const Field = () => {
@@ -55,8 +55,8 @@ const Field = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  useEffect(()=>{console.log(tableInfo)},[tableInfo])
-  const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
+
+const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
   const columns: ColumnDef<DummyDataType>[] = [
       {
@@ -66,10 +66,9 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"FieldID",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
-                      Field ID {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
-
+                      Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -87,10 +86,9 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"FieldDesc",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
-                      Field Description
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                      Field Description {tableInfo?.sort !== "FieldDesc" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -103,10 +101,9 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"FieldAcres",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
-                      Field Acres
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                       Field Acres {tableInfo?.sort !== "FieldAcres" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -119,31 +116,24 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"IrrigAcres",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
-                      Irrig Acres
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                       Irrig Acres {tableInfo?.sort !== "IrrigAcres" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
           size: 150,
           cell: ({ row }) => <div className="capitalize">{row.getValue("IrrigAcres")}</div>,
       },
-      // {
-      //     accessorKey: "status",
-      //     header: "status",
-      //     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
-      // },
       {
           accessorKey: "StandbyAcr",
           header: ({ column }) => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"StandbyAcr",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
-                      Stand by Acres
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                      Stand by Acres {tableInfo?.sort !== "StandbyAcr" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -156,10 +146,10 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                        onClick={() => {setTableInfo({...tableInfo,sort:"ParcelID",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                       ParcelID
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                     {tableInfo?.sort !== "ParcelID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -172,10 +162,10 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                       onClick={() => {setTableInfo({...tableInfo,sort:"VolRateAdj",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                       VolRateAdj
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                      {tableInfo?.sort !== "VolRateAdj" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -188,10 +178,10 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"ActiveDate",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                       Active Date
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                       {tableInfo?.sort !== "ActiveDate" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -204,10 +194,10 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                       onClick={() => {setTableInfo({...tableInfo,sort:"InactiveDa",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                       Inactive Date
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                      {tableInfo?.sort !== "InactiveDa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -220,10 +210,10 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"ActiveFlag",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                       Active Status
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                      {tableInfo?.sort !== "ActiveFlag" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -235,10 +225,10 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"unq_fld_id",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                       Unique Flag ID
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                      {tableInfo?.sort !== "unq_fld_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -250,10 +240,10 @@ const Field = () => {
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                     onClick={() => {setTableInfo({...tableInfo,sort:"AreaAC",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                       Area Acres
-                      {!column.getIsSorted() ? <ArrowUpDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ArrowDown />}
+                     {tableInfo?.sort !== "AreaAC" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
               );
           },
@@ -434,6 +424,7 @@ const Field = () => {
                                 tableInfo={tableInfo}
                                 setTableInfo={setTableInfo}
                                 totalData={defaultData?.length}
+                                collapse={collapse}
                             />
                           <CollapseBtn
                             className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

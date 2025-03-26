@@ -387,6 +387,7 @@ else {
                       tableType={"parcel"}
                       setSelectedParcel={setSelectedParcel}
                       isLoading={accountParcelsLoading}
+                      showPagination={false}
                     />
                   </div>
                 </div>

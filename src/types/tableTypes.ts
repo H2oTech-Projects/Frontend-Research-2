@@ -39,6 +39,7 @@ export type MapTableTypes<T> = {
     tableInfo?: initialTableDataTypes;
     setTableInfo?: Function;
     totalData?: number | undefined;
+    collapse?: string;
 };
 export type DummyDataType = {
     district?: string;
