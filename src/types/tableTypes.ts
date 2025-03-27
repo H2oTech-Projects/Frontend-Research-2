@@ -21,8 +21,8 @@ export type tableCSSConfig = {
 export type MapTableTypes<T> = {
     defaultData: T[];
     columns: ColumnDef<T>[];
-    doFilter: Boolean;
-    filterValue: String;
+    doFilter?: Boolean;
+    filterValue?: String;
     setPosition?: null | Function;
     setZoomLevel?: null | Function;
     setClickedField?: null | Function;
