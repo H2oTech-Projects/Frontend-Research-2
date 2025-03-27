@@ -1,7 +1,7 @@
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, Filter, MoreVertical, Plus, Search, Trash2 } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import $ from "jquery";
-import { Popup } from "react-leaflet";
+import { Circle, Popup } from "react-leaflet";
 import { cn } from "../../../../utils/cn";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
+import { useGetFieldList, useGetFieldMapList } from "@/services/water/field";
+import { debounce } from "@/utils";
+import Spinner from "@/components/Spinner";
 
 interface initialTableDataTypes {
   search:string   ;
@@ -47,14 +50,23 @@ const Field = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
-  const [searchText, setSearchText] = useState<String>("");
-  const [doFilter, setDoFilter] = useState<Boolean>(false);
+  const [searchText, setSearchText] = useState("");
+  // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
   };
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
+const {data: fieldData,isLoading} = useGetFieldList(tableInfo);
+const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
+
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setTableInfo((prev) => ({ ...prev, search: value }));
+    }, 500),
+    []
+  );
 
 const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
@@ -380,26 +392,23 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                                 className="text-slate-300"
                             />
                             <input
-                                type="text"
                                 name="search"
                                 id="search"
                                 placeholder="Search..."
+                                value={searchText} 
                                 className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                                value={String(searchText)}
                                 onChange={(e) => {
-                                    setSearchText(String(e.target.value));
-                                    setDoFilter(!doFilter);
-
-                                }}
+                                    setSearchText(e.target.value);
+                                    debouncedSearch(e.target.value);}}
                             />
                         </div>
-                        <Button
+                       {tableInfo.search &&  <Button
                             variant={"default"}
                             className="h-7 w-7"
-                            onClick={() => setDoFilter(!doFilter)}
+                            onClick={() => {setSearchText(""); setTableInfo({...tableInfo,search:""})}}
                         >
-                            <Filter />
-                        </Button>
+                         <X />
+                        </Button>}
                     </div>
                     <Button
                         variant={"default"}
@@ -413,18 +422,17 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
                         <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
                             <MapTable
-                                defaultData={defaultData}
+                                defaultData={fieldData?.data || []} 
                                 columns={columns}
-                                doFilter={doFilter}
-                                filterValue={searchText}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
                                 setClickedField={setClickedField}
                                 clickedField={clickedField}
                                 tableInfo={tableInfo}
                                 setTableInfo={setTableInfo}
-                                totalData={defaultData?.length}
+                                totalData={fieldData?.total_records || 1}
                                 collapse={collapse}
+                                isLoading={isLoading}
                             />
                           <CollapseBtn
                             className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
@@ -441,7 +449,7 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                             className={cn("relative flex h-[calc(100vh-160px)] w-full")}
                             id="map"
                         >
-                            <LeafletMap
+                            {!mapLoading ? (<LeafletMap
                                 position={position}
                                 zoom={zoomLevel}
                                 collapse={collapse}
@@ -452,7 +460,7 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                                   key={"fields"}
                                   layerEvents={geoJsonLayerEvents}
                                   style={geoJsonStyle}
-                                  data={swmcFields}
+                                  data={JSON.parse(mapData['data'])}
                                   color={"#16599a"}
                               />
                               {!!position.polygon ? (
@@ -467,7 +475,17 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                                   </Popup>
                                 </RtPolygon>
                               ) : null}
-                            </LeafletMap>
+                            </LeafletMap>)  : (<LeafletMap
+                                position={position}
+                                zoom={zoomLevel}
+                                collapse={collapse}
+                                clickedField={clickedField}
+                                configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
+                            >
+                                <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+                                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner/></div>          
+                                </div>
+                        </LeafletMap>)}
                         <CollapseBtn
                             className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
                             onClick={tableCollapseBtn}
