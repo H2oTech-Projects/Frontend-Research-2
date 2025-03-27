@@ -1,0 +1,2 @@
+export const GET_FIELD_LIST_KEY = 'GET_FIELD_LIST_KEY';
+export const GET_FIELD_MAP_KEY = 'GET_FIELD_MAP_KEY';
