@@ -31,13 +31,12 @@ function MapTablePagination<TData>({
 }, [tableInfo?.page_size])
   return (
     <div className="flex items-center justify-between px-2 dark:text-white">
-      <div className="flex items-center space-x-6 lg:space-x-8">
+      <div className="flex items-center space-x-8 lg:space-x-8 " >
         <div className="flex items-center space-x-1">
           {collapse === "map" && <p className="text-xs font-medium">Rows per page</p>}
           <Select
             value={`${tableInfo.page_size}`}
-            onValueChange={(value) => {
-       
+            onValueChange={(value) => {      
               setTableInfo({...tableInfo,page_size:Number(value)})
             }}
           >
@@ -53,11 +52,11 @@ function MapTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        {collapse === "map" &&  <div className="flex w-[100px] items-center justify-center text-xs font-medium">
+        {collapse === "map" &&  <div className="flex w-[60px] items-center justify-center text-xs font-medium">
           Page {tableInfo?.page_no  } of{" "}
           {Math.ceil(totalData/tableInfo?.page_size)}
         </div>}
-         <div className="flex items-center space-x-2">
+         <div className="flex items-center space-x-1">
           {collapse === 'map' && <p className="text-xs font-medium">Go to page</p>}
           <Select
             value={`${tableInfo?.page_no }`}
@@ -83,7 +82,7 @@ function MapTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center space-x-1 min-w-11">
+        <div className="flex items-center space-x-1 ]">
           <Button
             variant="default"
             className="hidden h-8 w-8 p-0 lg:flex  bg-royalBlue text-white dark:bg-royalBlue"

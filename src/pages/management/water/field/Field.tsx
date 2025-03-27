@@ -264,7 +264,7 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
       {
           id: "actions",
           header: "",
-          size: 40,
+          size: 60,
           cell: ({ row }) => (
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
