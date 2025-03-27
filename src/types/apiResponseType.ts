@@ -93,3 +93,34 @@ export interface AccountFarmUnitDataType {
 export type AccountFarmUnitDataResponseType = {
   data: AccountFarmUnitDataType[]
 }
+
+export type FieldDataType = {
+    district?: string;
+    FieldID?: string;
+    FieldDesc?: string;
+    FieldAcres?: number;
+    IrrigAcres?: number;
+    StandbyAcr?: number;
+    ParcelID?: string;
+    VolRateAdj?: number;
+    ActiveDate?: string; 
+    InactiveDa?: string;
+    ActiveFlag?: string;
+    unq_fld_id?: number;
+    center_latitude?: number;
+    center_longitude?: number;
+    AreaAC?: number;
+    view_bounds: [number, number][];
+    coords: [number, number][],
+    Comment: string;
+    CITY: string;
+    ZIP: string;
+
+}
+
+export type FieldListResponseType = {
+  data: FieldDataType[];
+  page_no: number;
+  page_size: number;
+  total_records: number;
+}

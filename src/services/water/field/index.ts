@@ -3,8 +3,9 @@ import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryFieldService } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
 import { GET_FIELD_LIST_KEY, GET_FIELD_MAP_KEY } from "./constant";
+import { FieldListResponseType } from "@/types/apiResponseType";
 
-export const useGetFieldList = (tableInfo:initialTableDataTypes) => {
+export const useGetFieldList = (tableInfo:initialTableDataTypes):UseQueryResult<FieldListResponseType> => {
   return useQuery({
     queryKey: [GET_FIELD_LIST_KEY,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
     queryFn: ()=> queryFieldService.getFieldList(tableInfo),
