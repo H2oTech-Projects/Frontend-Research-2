@@ -1,4 +1,3 @@
-import { Table } from "@tanstack/react-table"
 import {
   ChevronLeft,
   ChevronRight,
@@ -15,18 +14,21 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { initialTableDataTypes } from "@/types/tableTypes"
+import React, { useEffect } from "react"
 
 interface MapTablePaginationProps<TData> {
-  table: Table<TData>
   tableInfo: initialTableDataTypes;
   setTableInfo:Function;
   totalData:number;
   collapse:string;
 }
 
-export function MapTablePagination<TData>({
-  table,tableInfo,totalData,setTableInfo,collapse
+function MapTablePagination<TData>({
+  tableInfo,totalData,setTableInfo,collapse
 }: MapTablePaginationProps<TData>) {
+  useEffect(() => {
+      setTableInfo({...tableInfo,page_no: 1})
+}, [tableInfo?.page_size])
   return (
     <div className="flex items-center justify-between px-2 dark:text-white">
       <div className="flex items-center space-x-6 lg:space-x-8">
@@ -35,7 +37,7 @@ export function MapTablePagination<TData>({
           <Select
             value={`${tableInfo.page_size}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value))
+       
               setTableInfo({...tableInfo,page_size:Number(value)})
             }}
           >
@@ -52,24 +54,24 @@ export function MapTablePagination<TData>({
           </Select>
         </div>
         {collapse === "map" &&  <div className="flex w-[100px] items-center justify-center text-xs font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          Page {tableInfo?.page_no  } of{" "}
           {Math.ceil(totalData/tableInfo?.page_size)}
         </div>}
          <div className="flex items-center space-x-2">
           {collapse === 'map' && <p className="text-xs font-medium">Go to page</p>}
           <Select
-            value={`${table.getState().pagination.pageIndex }`}
+            value={`${tableInfo?.page_no }`}
             onValueChange={(value) => {
-              table.setPageIndex(Number(value))
+              setTableInfo({...tableInfo,page_no:Number(value)})
             }}
           >
             <SelectTrigger className="h-8 w-[50px]  bg-royalBlue text-white dark:bg-royalBlue">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue placeholder={tableInfo?.page_no} />
             </SelectTrigger>
             <SelectContent side="top" className="min-w-[50px]">
              
               {[...Array(Math.ceil(totalData/tableInfo?.page_size)).keys()].map((pageIndex) => (
-                <SelectItem key={pageIndex} value={`${pageIndex}`}>
+                <SelectItem key={pageIndex} value={`${pageIndex + 1}`}>
                   {pageIndex + 1}
                 </SelectItem>
               ))}
@@ -81,12 +83,12 @@ export function MapTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 min-w-11">
           <Button
             variant="default"
             className="hidden h-8 w-8 p-0 lg:flex  bg-royalBlue text-white dark:bg-royalBlue"
-            onClick={() =>{ table.setPageIndex(0); setTableInfo({...tableInfo,page_no:1})}}
-            disabled={!table.getCanPreviousPage() }
+            onClick={() =>{  setTableInfo({...tableInfo,page_no:1})}}
+            disabled={tableInfo?.page_no === 1}
           >
             <span className="sr-only">Go to first page</span>
             <ChevronsLeft />
@@ -94,8 +96,8 @@ export function MapTablePagination<TData>({
           <Button
             variant="default"
             className="h-8 w-8 p-0  bg-royalBlue text-white dark:bg-royalBlue"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            disabled={tableInfo?.page_no === 1}
+            onClick={() => { setTableInfo({...tableInfo,page_no:tableInfo?.page_no - 1})}}  
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeft />
@@ -103,8 +105,8 @@ export function MapTablePagination<TData>({
           <Button
             variant="default"
             className="h-8 w-8 p-0  bg-royalBlue text-white dark:bg-royalBlue"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => { setTableInfo({...tableInfo,page_no:tableInfo?.page_no + 1})}} 
+            disabled={tableInfo?.page_no === Math.ceil(totalData/tableInfo?.page_size)}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRight />
@@ -112,8 +114,8 @@ export function MapTablePagination<TData>({
           <Button
             variant="default"
             className="hidden h-8 w-8 p-0 lg:flex  bg-royalBlue text-white dark:bg-royalBlue"
-            onClick={() => {table.setPageIndex(table.getPageCount() - 1); setTableInfo({...tableInfo,page_no:Number(Math.ceil(totalData/tableInfo?.page_size))})}}
-            disabled={!table.getCanNextPage()}
+            onClick={() => { setTableInfo({...tableInfo,page_no:Number(Math.ceil(totalData/tableInfo?.page_size))})}}
+            disabled={tableInfo?.page_no === Math.ceil(totalData/tableInfo?.page_size)}
           >
             <span className="sr-only">Go to last page</span>
             <ChevronsRight />
@@ -123,3 +125,5 @@ export function MapTablePagination<TData>({
     </div>
   )
 }
+
+export default React.memo(MapTablePagination)
