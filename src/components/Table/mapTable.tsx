@@ -13,7 +13,7 @@ import { MapTableTypes } from "@/types/tableTypes";
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
-import { MapTablePagination } from "./mapTablePagination";
+import  MapTablePagination  from "./mapTablePagination";
 
 interface ColumnFilter {
     id: string;
@@ -46,7 +46,7 @@ const MapTable = <T,>({
     collapse
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [data, setData] = useState(defaultData.length > 0 ?  [...defaultData] : []);
+    const [data, setData] = useState(defaultData?.length > 0 ?  [...defaultData] : []);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>([]);
     const [pagination, setPagination] = useState<PaginationState>({
@@ -56,6 +56,10 @@ const MapTable = <T,>({
     useEffect(() => {
       setData(defaultData);
     }, [defaultData]);
+
+    useEffect(() => {
+    tableInfo?.page_size && setPagination({...pagination, pageSize: tableInfo?.page_size})
+    }, [tableInfo?.page_size])
     const table = useReactTable({
       data,
       columns,
@@ -142,7 +146,7 @@ const MapTable = <T,>({
     }
 
     const tableContent = () => {
-      if (table.getRowModel().rows?.length < 1) {
+      if (table?.getRowModel()?.rows?.length < 1 && !isLoading) {
         return <TableRow>
                   <TableCell
                     colSpan={columns.length}
@@ -241,9 +245,9 @@ const MapTable = <T,>({
 
     const renderPagination = () => {
       // @ts-ignore
-      if (!showPagination) return null
+      if (!showPagination ) return null
       return <div className="flex flex-grow p-2  justify-center items-center">
-                <MapTablePagination table={table} totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>
+                <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>
             </div>
     }
 
