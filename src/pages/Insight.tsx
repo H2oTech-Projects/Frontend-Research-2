@@ -308,8 +308,8 @@ else {
         <RtSelect selectedValue={selectedYearValue} dropdownList={yearList} label="Year" setSelectedValue={setSelectedYearValue} showSearch={false} />
       </div>
       <div className="flex flex-grow mt-2">
-        <div className={cn("relative  w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-          <div className={cn("h-[calc(100vh-232px)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
+        <div className={cn("relative  w-1/2 overflow-y-hidden", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
+          <div className={cn("h-[calc(100vh-14.5rem)] w-full bg-white dark:bg-slate-900 rounded-[8px]  ")}>
             <div className="pb-2 px-3 overflow-auto h-full">
               <InsightTitle
                 title="Account Summary"
@@ -347,7 +347,7 @@ else {
                 note="Note: The following information is based on records from the Madera County Assessor's Office. Contact the Madera County Assessor's Office at (559)
                                         675-7710 or assessor@maderacounty.com for information."
               />
-              <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] px-3">
+              <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] px-3 py-2">
                 <div className='flex flex-col gap-2 '>
                   <div className="flex gap-2 mt-2">
                     <div className="input h-7 w-52">
@@ -376,7 +376,7 @@ else {
                       <Filter />
                     </Button>
                   </div>
-                  <div>
+              
                     <MapTable
                       defaultData={accountParcels?.data?.parcel_table_data || []}
                       columns={columns2}
@@ -387,9 +387,10 @@ else {
                       tableType={"parcel"}
                       setSelectedParcel={setSelectedParcel}
                       isLoading={accountParcelsLoading}
-                      showPagination={false}
+                      useClientPagination={true}
+                      showPagination={true}
                     />
-                  </div>
+               
                 </div>
 
               </div>
@@ -412,7 +413,7 @@ else {
             id="map2"
           >
             {
-                accountDetail?.data && accountParcels?.data?.parcel_id_mapper ?  <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson!} accountDetail={accountDetail?.data} collapse={collapse} selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm}  selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom!} parcelInfo={accountParcels?.data?.parcel_id_mapper} /> : <LeafletMap
+              accountDetail?.data && accountParcels?.data?.parcel_id_mapper ?  <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson!} accountDetail={accountDetail?.data} collapse={collapse} selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm}  selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom!} parcelInfo={accountParcels?.data?.parcel_id_mapper} /> : <LeafletMap
               position={InsightMapPosition}
               zoom={14}
               // viewBound={ accountDetail?.data?.view_bounds }

@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
 import  MapTablePagination  from "./mapTablePagination";
+import { DataTablePagination } from "./clientSidePagination";
 
 interface ColumnFilter {
     id: string;
@@ -43,7 +44,8 @@ const MapTable = <T,>({
     totalData,
     tableInfo,
     setTableInfo,
-    collapse
+    collapse,
+    useClientPagination = false,
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setData] = useState(defaultData?.length > 0 ?  [...defaultData] : []);
@@ -247,13 +249,13 @@ const MapTable = <T,>({
       // @ts-ignore
       if (!showPagination ) return null
       return <div className="flex flex-grow p-2  justify-center items-center">
-                <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>
+                {useClientPagination ?  <DataTablePagination table={table} collapse={collapse!}/> : <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>}
             </div>
     }
 
     return (
       <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-        <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
+        <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto ")}>
           <Table className="relative">
             <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
               {isLoading ? emptyTable() : tableContent()}
