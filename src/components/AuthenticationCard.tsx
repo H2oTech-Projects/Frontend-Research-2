@@ -3,7 +3,7 @@ import FlowLogoDark from "../assets/Circular-Light-Gray.png";
 import H2OLogo from "../assets/logo.png";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { cn } from "../utils/cn";
-const AuthenticationCard = ({ Form, title }: { Form: React.ReactNode; title: string }) => {
+const AuthenticationCard = ({ children }: { children: React.ReactNode; }) => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
     return (
         <div
@@ -37,11 +37,12 @@ const AuthenticationCard = ({ Form, title }: { Form: React.ReactNode; title: str
                     </div>
                 </div>
                 <div className={cn(isDesktopDevice ? "w-1/2 p-2" : "h-1/2 p-1")}>
-                    <div className={cn("flex flex-col items-center gap-4", isDesktopDevice ? "p-11" : "px-3 pt-5")}>
+                    {/* <div className={cn("flex flex-col items-center gap-4", isDesktopDevice ? "p-11" : "px-3 pt-5")}>
                         <h1 className="border-b border-solid border-royalBlue p-0.5 pt-0 text-2xl font-semibold text-royalBlue">{title}</h1>
 
                         {Form}
-                    </div>
+                    </div> */}
+                    {children}
                 </div>
                 <div className="icon absolute left-1/2 top-1/2 z-10 h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white p-1 dark:bg-slateLight-800">
                     <div className="circle h-full w-full rounded-full bg-white dark:bg-slateLight-800">
