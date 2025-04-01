@@ -10,6 +10,7 @@ const Login = lazy(async () => await import("./../pages/auth/Login"));
 const ResetPassword = lazy(async () => await import("./../pages/auth/ResetPassword"));
 const ForgotPassword = lazy(async () => await import("./../pages/auth/ForgotPassword"));
 const Register = lazy(async () => await import("./../pages/auth/Register"));
+const SetPassword = lazy(async () => await import("./../pages/auth/SetPassword"));
 interface RoutesContainerProps {
   isLoadingData: boolean;
 }
@@ -45,12 +46,12 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
             element={<ResetPassword />}
           />
           <Route
-            path="/auth/reset-password"
-            element={<ResetPassword />}
-          />
-          <Route
             path="/auth/register"
             element={<Register />}
+          />
+           <Route
+            path="/auth/setPassword/:token"
+            element={<SetPassword />}
           />
         </>
 
