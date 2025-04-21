@@ -9,7 +9,8 @@ import { toast } from "react-toastify";
 import { usePostRegisterUser } from "@/services/registration";
 import { useEffect, useState } from "react";
 import { Mail, Lock, User, ChevronLeft, Info } from "lucide-react";
-import RegisterImage from "../../assets/registerImage.jpg";
+import RegisterImage from "../../assets/RIGB.png";
+import NightRegisterImage from "../../assets/NRIGB.png";
 import FlowLogo from "../../assets/Circular-Light-Gray.png";
 // const Register = () => {
 //   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
@@ -181,7 +182,7 @@ const Register = () => {
   return (
     <>
       <div className="flex min-h-screen w-full">
-        <div className="w-[470px] max-w-[500px] text-white relative ">
+        <div className="w-[440px] text-white relative ">
           <div className="z-10 flex flex-col justify-between h-full px-6 py-10">
 
             <div className="flex justify-center items-center align-center mb-4 gap-3">
@@ -200,29 +201,32 @@ const Register = () => {
           <img
             src={RegisterImage}
             alt="H2O Logo"
-            className="w-full h-full object-cover -z-10 absolute top-0 left-0"
+            className="w-full h-full object-cover -z-10 absolute top-0 left-0 dark:hidden"
+          />
+          <img
+            src={NightRegisterImage}
+            alt="H2O Logo"
+            className="w-full h-full object-cover -z-10 absolute top-0 left-0 hidden dark:block"
           />
         </div>
 
         {/* Right Form Section */}
-        <div className="flex flex-col flex-grow overflow-y-auto">
-          <div className="flex flex-col justify-between min-h-full">
-
+        <div className="flex flex-col flex-grow dark:bg-sky-950">
             {/* Top Navigation */}
-            <div className="flex justify-between items-center px-4 py-3 text-sm text-gray-600">
+            <div className="flex justify-between items-center px-4 py-3 text-sm text-gray-600 dark:text-white">
               <div className="flex items-center gap-1 cursor-pointer hover:underline">
                 <ChevronLeft size={16} />
                 <span>Return Home</span>
               </div>
               <div className="text-right text-sm">
                 Already have an account?{" "}
-                <span className="font-semibold underline cursor-pointer">
+                <Link to="/auth/login" className="font-semibold underline cursor-pointer">
                   LOG IN NOW
-                </span>
+                </Link >
               </div>
             </div>
 
-            <div className="flex-grow flex flex-col items-center justify-center -mt-20">
+            <div className="flex-grow flex flex-col items-center justify-center dark:text-white ">
               {/* Title Section */}
               <div className="flex flex-col gap-1 justify-center items-center mt-5">
                 <h1 className="font-semibold text-2xl">
@@ -240,7 +244,7 @@ const Register = () => {
                       <input
                         type="text"
                         placeholder="Username"
-                        className="w-full outline-none"
+                        className="w-full outline-none dark:bg-sky-950"
                         name="username"
                         value={formik.values.username}
                         onChange={formik.handleChange}
@@ -257,7 +261,7 @@ const Register = () => {
                       <input
                         type="text"
                         placeholder="Enter Your First Name"
-                        className="w-full outline-none"
+                        className="w-full outline-none dark:bg-sky-950"
                         name="firstName"
                         value={formik.values.firstName}
                         onChange={formik.handleChange}
@@ -273,7 +277,7 @@ const Register = () => {
                       <input
                         type="text"
                         placeholder="Enter Your Last Name"
-                        className="w-full outline-none"
+                        className="w-full outline-none dark:bg-sky-950"
                         name="lastName"
                         value={formik.values.lastName}
                         onChange={formik.handleChange}
@@ -290,7 +294,7 @@ const Register = () => {
                       <input
                         type="email"
                         placeholder="example@email.com"
-                        className="w-full outline-none"
+                        className="w-full outline-none dark:bg-sky-950"
                         name="email"
                         value={formik.values.email}
                         onChange={formik.handleChange}
@@ -306,7 +310,7 @@ const Register = () => {
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your password"
-                        className="w-full outline-none"
+                        className="w-full outline-none dark:bg-sky-950"
                         name="password"
                         value={formik.values.password}
                         onChange={formik.handleChange}
@@ -330,7 +334,7 @@ const Register = () => {
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Re-enter your password"
-                        className="w-full outline-none"
+                        className="w-full outline-none dark:bg-sky-950"
                         name="confirmPassword"
                         value={formik.values.confirmPassword}
                         onChange={formik.handleChange}
@@ -350,7 +354,7 @@ const Register = () => {
                       <div className="text-xs text-red-500 pl-3">{formik.errors.confirmPassword}</div>
                     )}
                   </div>
-                  <button type="submit" disabled={isPending} className="w-full bg-green-700 text-white rounded-md py-3 font-medium flex items-center justify-between gap-2 hover:bg-green-800 px-3">
+                  <button type="submit" disabled={isPending} className="w-full bg-royalBlue text-white rounded-md py-3 font-medium flex items-center justify-between gap-2 hover:bg-green-800 px-3">
                     Register an Account
                     <span className="ml-2">→</span>
                   </button>
@@ -369,7 +373,6 @@ const Register = () => {
 
           </div>
         </div>
-      </div>
     </>
 
   )
