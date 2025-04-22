@@ -79,7 +79,7 @@ const Register = () => {
               <input
                 type="text"
                 placeholder="Username"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="username"
                 value={formik.values.username}
                 onChange={formik.handleChange}
@@ -96,7 +96,7 @@ const Register = () => {
               <input
                 type="text"
                 placeholder="Enter Your First Name"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="firstName"
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
@@ -112,7 +112,7 @@ const Register = () => {
               <input
                 type="text"
                 placeholder="Enter Your Last Name"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="lastName"
                 value={formik.values.lastName}
                 onChange={formik.handleChange}
@@ -129,7 +129,7 @@ const Register = () => {
               <input
                 type="email"
                 placeholder="example@email.com"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -145,7 +145,7 @@ const Register = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
@@ -169,7 +169,7 @@ const Register = () => {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Re-enter your password"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="confirmPassword"
                 value={formik.values.confirmPassword}
                 onChange={formik.handleChange}

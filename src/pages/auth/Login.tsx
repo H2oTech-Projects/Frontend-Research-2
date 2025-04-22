@@ -42,7 +42,7 @@ const Login = () => {
         </Link >
       </>
     }
-      title="Login to your account"
+      title="Login to your FLOW water account"
       titleDescription="Welcome back! Please enter your credentials."
       children={
         <form onSubmit={formik.handleSubmit} className="w-[374px] mx-auto py-4 space-y-4 px-0">
@@ -52,7 +52,7 @@ const Login = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -68,7 +68,7 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className="w-full outline-none dark:bg-sky-950"
+                className="auth-input"
                 name="password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
