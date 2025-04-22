@@ -31,11 +31,11 @@ const SetPassword = () => {
       toast.success("Password set successfully!");
     },
   });
-  useEffect(() => {
-    if (token) {
-      mutate({ key: token });
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   if (token) {
+  //     mutate({ key: token });
+  //   }
+  // }, [token]);
 
   if(isPending) return <div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">Loading...</div>;
 
