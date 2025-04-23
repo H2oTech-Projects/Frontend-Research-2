@@ -5,7 +5,7 @@ import { AxiosError } from 'axios';
 
 type ErrorResponse = {
   success: string;
-  msg: string;
+  message: string;
 }
 
 export const usePostRegisterUser = () => {

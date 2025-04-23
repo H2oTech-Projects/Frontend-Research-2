@@ -37,7 +37,7 @@ const onSubmit = (values: FormData) => {
       toast.success("Login successful!");
     },
     onError: (err) => {
-      toast.error(err?.response?.data?.msg|| "Login failed.");
+      toast.error(err?.response?.data?.message|| "Login failed.");
     },
   });
 };
@@ -97,6 +97,9 @@ const onSubmit = (values: FormData) => {
             {isPending ? "Logging in..." : "LOG IN"}
             <span className="ml-2">→</span>
           </button>
+          <Link
+            to="/auth/forgotPassword"
+            className="mt-2 flex items-center justify-center text-blue-500 hover:underline">Forgot password ?</Link>
         </form>
       }
     />
