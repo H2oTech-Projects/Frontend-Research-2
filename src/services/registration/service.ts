@@ -8,7 +8,6 @@ const CHECK_TOKEN_URL = BASE_API_URL + '/auth/registration/verify-registration/'
 const LOGIN_URL = BASE_API_URL + '/auth/login/';
 export interface RegisterData {
   email: string;
-  username: string;
   password: string;
   password_confirm: string;
   first_name: string;

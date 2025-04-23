@@ -30,7 +30,6 @@ const Login = () => {
   });
 
   const onSubmit = (values: FormData) => {
-    console.log("Form Submitted:", values);
     const loginStatus = true;
     sessionStorage.setItem("isLoggedIn", JSON.stringify(loginStatus));
     dispatch(login());
