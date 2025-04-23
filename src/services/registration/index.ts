@@ -18,7 +18,7 @@ export const usePostRegisterUser = () => {
 export const usePostCheckToken = () => {
   return useMutation<RegisterResponse, Error, PostToken>({
     mutationKey: [POST_VALIDATE_TOKEN],
-    mutationFn: queryRegisterUser.postCheckToken,
+    mutationFn: queryRegisterUser.verifyUser,
   });
 }
 

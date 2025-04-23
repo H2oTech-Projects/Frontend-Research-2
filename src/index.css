@@ -62,7 +62,6 @@
     }
 
     .auth-input{
-
         @apply w-full outline-none bg-transparent placeholder:text-black placeholder:text-opacity-60 dark:placeholder:text-gray-400 text-black dark:text-white
 }
 
