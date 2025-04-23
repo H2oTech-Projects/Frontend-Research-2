@@ -49,18 +49,18 @@ const Register = () => {
       password_confirm: values.confirmPassword,
       first_name: values.firstName,
       last_name: values.lastName,
-    });
+    },{
+      onSuccess: (data) => {
+        toast.success(data.msg);
+        reset(); // Reset the form after successful registration
+      },
+ onError: (err) => {
+      toast.error(err?.response?.data?.msg || "Login failed.");
+    },
+});
   };
 
-  useEffect(() => {
-    if (error) {
-      toast.error("Registration failed: " + error?.response?.data?.msg as any);
-    }
-    if (isSuccess) {
-      toast.success(data?.msg);
-      reset();
-    }
-  }, [error, isSuccess]);
+ 
 
   return (
     <AuthLayout
@@ -118,7 +118,7 @@ const Register = () => {
             {errors.confirmPassword && <div className="text-xs text-red-500 pl-3">{errors.confirmPassword.message}</div>}
           </div>
           <button type="submit" disabled={isPending} className="w-full bg-royalBlue text-white rounded-md py-3 font-medium flex items-center justify-between gap-2 hover:bg-blue-800 px-3">
-            Register an Account
+            {isPending ? "Registering..." : "Register an Account"}
             <span className="ml-2">→</span>
           </button>
         </form>
