@@ -55,7 +55,7 @@ const Register = () => {
         reset(); // Reset the form after successful registration
       },
  onError: (err) => {
-      toast.error(err?.response?.data?.msg || "Login failed.");
+      toast.error(err?.response?.data?.message || "Login failed.");
     },
 });
   };
