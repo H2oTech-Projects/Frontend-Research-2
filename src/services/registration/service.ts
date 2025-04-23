@@ -49,7 +49,6 @@ export const queryRegisterUser = {
         "Content-Type": "application/json",
       },
     });
-    console.log(response,"test")
     return response.data;
   },
 

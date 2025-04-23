@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePostLoginUser } from "@/services/registration";
 
 const schema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
@@ -20,7 +21,7 @@ type FormData = z.infer<typeof schema>;
 const Login = () => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-
+  const { mutate, isPending, isError, error, isSuccess, data } = usePostLoginUser();
   const {
     register,
     handleSubmit,
@@ -29,12 +30,17 @@ const Login = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (values: FormData) => {
-    const loginStatus = true;
-    sessionStorage.setItem("isLoggedIn", JSON.stringify(loginStatus));
-    dispatch(login());
-    toast.success("Login successful!");
-  };
+const onSubmit = (values: FormData) => {
+  mutate(values, {
+    onSuccess: (data) => {
+      dispatch(login(data)); // Dispatch Redux action with full response
+      toast.success("Login successful!");
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.msg|| "Login failed.");
+    },
+  });
+};
 
   return (
     <AuthLayout
@@ -87,8 +93,8 @@ const Login = () => {
             )}
           </div>
 
-          <button type="submit" className="w-full bg-royalBlue text-white rounded-md py-3 font-medium flex items-center justify-between gap-2 hover:bg-blue-800 px-3">
-            Login
+          <button type="submit" disabled={isPending} className="w-full bg-royalBlue text-white rounded-md py-3 font-medium flex items-center justify-between gap-2 hover:bg-blue-800 px-3">
+            {isPending ? "Logging in..." : "LOG IN"}
             <span className="ml-2">→</span>
           </button>
         </form>

@@ -23,7 +23,7 @@ export const usePostCheckToken = () => {
 }
 
 export const usePostLoginUser = () => {
-  return useMutation<AuthResponse, Error, LoginData>({
+  return useMutation<AuthResponse, AxiosError<ErrorResponse>, LoginData>({
     mutationKey: [POST_LOGIN],
     mutationFn: queryRegisterUser?.loginUser,
   });

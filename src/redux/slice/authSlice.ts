@@ -1,22 +1,31 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 // Retrieve the initial login state from session storage
-const initialLoginState = JSON.parse(sessionStorage.getItem("isLoggedIn") as string) || false;
+const initialAuthData = JSON.parse(localStorage.getItem("auth") || "null");
 
 const authSlice = createSlice({
     name: "auth",
-    initialState: {
-        isLoggedIn: initialLoginState,
-    },
+   initialState: {
+    isLoggedIn: !!initialAuthData,
+    user: initialAuthData?.user || null,
+    access: initialAuthData?.access || null,
+    refresh: initialAuthData?.refresh || null,
+  },
     reducers: {
-        login(state) {
-            state.isLoggedIn = true;
-            sessionStorage.setItem("isLoggedIn", JSON.stringify(true));
-        },
-        logout(state) {
-            state.isLoggedIn = false;
-            sessionStorage.setItem("isLoggedIn", JSON.stringify(false));
-        },
+         login(state, action) {
+      state.isLoggedIn = true;
+      state.user = action.payload.user;
+      state.access = action.payload.access;
+      state.refresh = action.payload.refresh;
+      localStorage.setItem("auth", JSON.stringify(action.payload));
+    },
+    logout(state) {
+      state.isLoggedIn = false;
+      state.user = null;
+      state.access = null;
+      state.refresh = null;
+      localStorage.removeItem("auth");
+    },
     },
 });
 
