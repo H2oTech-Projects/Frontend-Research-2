@@ -1,11 +1,9 @@
 // src/api/registerUser.ts
 import axios from "axios";
 import { BASE_API_URL } from "@/utils/constant";
-import { toast } from "react-toastify";
-import { verify } from "crypto";
 
 const REGISTER_URL = BASE_API_URL + '/auth/register/';
-const CHECK_TOKEN_URL = BASE_API_URL + '/auth/registration/verify-registration/';
+const CHECK_TOKEN_URL = BASE_API_URL + '/auth/verify-registration/';
 const LOGIN_URL = BASE_API_URL + '/auth/login/';
 export interface RegisterData {
   email: string;
@@ -15,7 +13,7 @@ export interface RegisterData {
   last_name: string;
 }
 
-export interface PostToken 
+export interface PostToken
  {
    user_id: string,
    timestamp:string,
@@ -29,7 +27,7 @@ export interface LoginData {
 
 export interface RegisterResponse {
   success: string;
-  msg: string;
+  message: { [key: string]: any };
 }
 
 export type AuthResponse = {
@@ -54,12 +52,12 @@ export const queryRegisterUser = {
   },
 
   verifyUser : async (data: PostToken) => {
-    const response = await axios.post<RegisterResponse>(CHECK_TOKEN_URL, data, { 
+    const response = await axios.post<RegisterResponse>(CHECK_TOKEN_URL, data, {
       headers: {
         "Content-Type": "application/json",
       },
     });
-    return response.data;   
+    return response.data;
 },
 
   loginUser : async (data: LoginData) => {

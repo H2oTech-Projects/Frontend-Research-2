@@ -8,6 +8,7 @@ import AuthLayout from "@/layout/authLayout";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {showErrorToast, showSuccessToast} from "../../utils/tools";
 
 const schema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -51,16 +52,17 @@ const Register = () => {
       last_name: values.lastName,
     },{
       onSuccess: (data) => {
-        toast.success(data.msg);
+        showSuccessToast(data.message);
         reset(); // Reset the form after successful registration
       },
  onError: (err) => {
-      toast.error(err?.response?.data?.message || "Login failed.");
+  showErrorToast(err?.response?.data.message)
+      //toast.error(err?.response?.data?.message || "Login failed.");
     },
 });
   };
 
- 
+
 
   return (
     <AuthLayout
@@ -77,28 +79,28 @@ const Register = () => {
       children={
         <form onSubmit={handleSubmit(onSubmit)} className="w-[374px] mx-auto py-4 space-y-4 px-0">
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.firstName ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.firstName ? "border-red-500" : "")}>
               <User className="mr-2" />
               <input type="text" placeholder="Enter Your First Name" className="auth-input" {...register("firstName")} autoComplete="off" />
             </div>
             {errors.firstName && <div className="text-xs text-red-500 pl-3">{errors.firstName.message}</div>}
           </div>
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.lastName ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.lastName ? "border-red-500" : "")}>
               <User className="mr-2" />
               <input type="text" placeholder="Enter Your Last Name" className="auth-input" {...register("lastName")} autoComplete="off" />
             </div>
             {errors.lastName && <div className="text-xs text-red-500 pl-3">{errors.lastName.message}</div>}
           </div>
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>
               <Mail className="mr-2" />
               <input type="email" placeholder="example@email.com" className="auth-input" {...register("email")} autoComplete="off" />
             </div>
             {errors.email && <div className="text-xs text-red-500 pl-3">{errors.email.message}</div>}
           </div>
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.password ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.password ? "border-red-500" : "")}>
               <Lock className="mr-2" />
               <input type={showPassword ? "text" : "password"} placeholder="Enter your password" className="auth-input" {...register("password")} />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs text-gray-500">
@@ -108,7 +110,7 @@ const Register = () => {
             {errors.password && <div className="text-xs text-red-500 pl-3">{errors.password.message}</div>}
           </div>
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.confirmPassword ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.confirmPassword ? "border-red-500" : "")}>
               <Lock className="mr-2" />
               <input type={showConfirmPassword ? "text" : "password"} placeholder="Re-enter your password" className="auth-input" {...register("confirmPassword")} />
               <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="text-xs text-gray-500">
