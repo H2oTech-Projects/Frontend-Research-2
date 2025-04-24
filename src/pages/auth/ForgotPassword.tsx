@@ -46,7 +46,8 @@ const onSubmit = (values: FormData) => {
                 type="email"
                 placeholder="Enter your email"
                 className="auth-input"
-                {...register("email")}
+                {...register("email")} 
+                autoComplete="off"
               />
             </div>
             {errors.email && (

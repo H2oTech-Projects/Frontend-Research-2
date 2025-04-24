@@ -79,21 +79,21 @@ const Register = () => {
           <div>
             <div className={cn("flex items-center border rounded-md px-3 py-2", errors.firstName ? "border-red-500" : "")}>              
               <User className="mr-2" />
-              <input type="text" placeholder="Enter Your First Name" className="auth-input" {...register("firstName")} />
+              <input type="text" placeholder="Enter Your First Name" className="auth-input" {...register("firstName")} autoComplete="off" />
             </div>
             {errors.firstName && <div className="text-xs text-red-500 pl-3">{errors.firstName.message}</div>}
           </div>
           <div>
             <div className={cn("flex items-center border rounded-md px-3 py-2", errors.lastName ? "border-red-500" : "")}>              
               <User className="mr-2" />
-              <input type="text" placeholder="Enter Your Last Name" className="auth-input" {...register("lastName")} />
+              <input type="text" placeholder="Enter Your Last Name" className="auth-input" {...register("lastName")} autoComplete="off" />
             </div>
             {errors.lastName && <div className="text-xs text-red-500 pl-3">{errors.lastName.message}</div>}
           </div>
           <div>
             <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>              
               <Mail className="mr-2" />
-              <input type="email" placeholder="example@email.com" className="auth-input" {...register("email")} />
+              <input type="email" placeholder="example@email.com" className="auth-input" {...register("email")} autoComplete="off" />
             </div>
             {errors.email && <div className="text-xs text-red-500 pl-3">{errors.email.message}</div>}
           </div>

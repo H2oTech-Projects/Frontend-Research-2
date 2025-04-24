@@ -79,6 +79,7 @@ const onSubmit = (values: FormData) => {
                 placeholder="Enter your password"
                 className="auth-input"
                 {...register("password")}
+                autoComplete="off"
               />
               <button
                 type="button"
