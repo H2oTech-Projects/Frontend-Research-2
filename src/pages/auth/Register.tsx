@@ -11,8 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {showErrorToast, showSuccessToast} from "../../utils/tools";
 
 const schema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z.string().min(1, "First name is required").min(3, "First name must be at least 3 characters").regex(/^[A-Za-z\s'-]+$/, "First name cannot contain numbers or special characters"),
+  lastName: z.string().min(1, "Last name is required").min(3, "Last name must be at least 3 characters").regex(/^[A-Za-z\s'-]+$/, "Last name cannot contain numbers or special characters"),
   email: z.string().min(1, "Email is required").email("Invalid email"),
   password: z
     .string()
@@ -25,7 +25,7 @@ const schema = z.object({
   }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
     path: ["confirmPassword"],
-});
+  });
 
 type FormData = z.infer<typeof schema>;
 
@@ -57,7 +57,7 @@ const Register = () => {
       },
       onError: (err) => {
         showErrorToast(err?.response?.data.message)
-        //toast.error(err?.response?.data?.message || "Login failed.");
+            //toast.error(err?.response?.data?.message || "Login failed.");
       },
     });
   };
