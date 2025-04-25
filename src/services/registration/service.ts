@@ -5,6 +5,7 @@ import { BASE_API_URL } from "@/utils/constant";
 const REGISTER_URL = BASE_API_URL + '/auth/register/';
 const CHECK_TOKEN_URL = BASE_API_URL + '/auth/verify-registration/';
 const LOGIN_URL = BASE_API_URL + '/auth/login/';
+const LOGOUT_URL = BASE_API_URL + '/auth/logout/';
 export interface RegisterData {
   email: string;
   password: string;
@@ -13,11 +14,10 @@ export interface RegisterData {
   last_name: string;
 }
 
-export interface PostToken
- {
-   user_id: string,
-   timestamp:string,
-   signature: string
+export interface PostToken {
+  user_id: string,
+  timestamp: string,
+  signature: string
 }
 
 export interface LoginData {
@@ -41,6 +41,11 @@ export type AuthResponse = {
     last_name: string;
   };
 };
+
+export type LogoutData = {
+  refresh_token: string
+}
+
 export const queryRegisterUser = {
   postRegisterUser: async (data: RegisterData) => {
     const response = await axios.post<RegisterResponse>(REGISTER_URL, data, {
@@ -51,20 +56,29 @@ export const queryRegisterUser = {
     return response.data;
   },
 
-  verifyUser : async (data: PostToken) => {
+  verifyUser: async (data: PostToken) => {
     const response = await axios.post<RegisterResponse>(CHECK_TOKEN_URL, data, {
       headers: {
         "Content-Type": "application/json",
       },
     });
     return response.data;
-},
+  },
 
-  loginUser : async (data: LoginData) => {
+  loginUser: async (data: LoginData) => {
     const response = await axios.post<AuthResponse>(LOGIN_URL, data, {
       headers: {
         "Content-Type": "application/json",
       },
+    });
+    return response.data;
+  },
+
+  logoutUser: async (data: LogoutData) => {
+    const response = await axios.post<AuthResponse>(LOGOUT_URL, data, {
+      headers: {
+        "Content-Type": "application/json",
+      }
     });
     return response.data;
   }

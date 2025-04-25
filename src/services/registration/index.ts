@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { POST_LOGIN, POST_REGISTRATION ,POST_VALIDATE_TOKEN} from "./constants";
-import { AuthResponse, LoginData, PostToken, queryRegisterUser, RegisterData, RegisterResponse } from "./service";
+import { POST_LOGIN, POST_LOGOUT, POST_REGISTRATION ,POST_VALIDATE_TOKEN} from "./constants";
+import { AuthResponse, LoginData, LogoutData, PostToken, queryRegisterUser, RegisterData, RegisterResponse } from "./service";
 import { AxiosError } from 'axios';
 
 type ErrorResponse = {
@@ -26,5 +26,12 @@ export const usePostLoginUser = () => {
   return useMutation<AuthResponse, AxiosError<ErrorResponse>, LoginData>({
     mutationKey: [POST_LOGIN],
     mutationFn: queryRegisterUser?.loginUser,
+  });
+}
+
+export const usePostLogoutUser = () => {
+  return useMutation<AuthResponse, AxiosError<ErrorResponse>, LogoutData>({
+    mutationKey: [POST_LOGOUT],
+    mutationFn: queryRegisterUser?.logoutUser,
   });
 }

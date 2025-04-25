@@ -5,7 +5,7 @@ import L from "leaflet";
 import * as Icon from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 import profileImg from "../assets/profile-image.jpg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slice/authSlice";
 import { toast } from "react-toastify";
 import irrigatedFields from "../geojson/Irrigated_Fields.json";
@@ -17,15 +17,30 @@ import $ from "jquery";
 import { Button } from "@/components/ui/button";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
+import { usePostLogoutUser } from "@/services/registration";
+import { showErrorToast } from "@/utils/tools";
 
 const Map = () => {
+    const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
+    const refreshToken = useSelector((state: any) => state.auth.refresh);
     const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
     const parcels: any = parcelsData as any;
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
-
+    const handleLogout = () => {
+          mutate({refresh_token: refreshToken},{
+            onSuccess: (data) => {  
+              dispatch(logout());
+              setIsModalOpen(false);
+              toast.success("Logout successful");
+            },
+            onError: (err) => {     
+               showErrorToast(err?.response?.data.message)
+            },
+    
+    })}
     const showInfo = (label: String, Id: String) => {
       var popup = $("<div></div>", {
         id: "popup-" + Id,
@@ -164,15 +179,12 @@ const Map = () => {
       {isModalOpen && (
         <div
           ref={modalRef}
-          className="absolute right-3 top-14 z-[800] mt-2 flex w-52 flex-col gap-1 rounded-xl border-slate-900 bg-white p-1 shadow-lg dark:bg-slate-900 dark:text-slate-50"
+          className="absolute right-3 top-14 z-[9000] mt-2 flex w-52 flex-col gap-1 rounded-xl border-slate-900 bg-white p-1 shadow-lg dark:bg-slate-900 dark:text-slate-50"
         >
         <button
             className="flex w-full items-center gap-2 rounded-xl px-4 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-950"
-            onClick={() => {
-                dispatch(logout());
-                setIsModalOpen(false);
-                toast.success("Logout successful");
-            }}
+            disabled={isPending}
+            onClick={handleLogout}
         >
           <Icon.LogOut size={20} />
           Logout

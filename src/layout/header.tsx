@@ -3,22 +3,41 @@ import profileImg from "../assets/profile-image.jpg";
 import { logout } from "../redux/slice/authSlice";
 import { useTheme } from "../hooks/useTheme";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
+import { usePostLogoutUser } from "@/services/registration";
+import { showErrorToast } from "@/utils/tools";
 interface HeaderProps {
     collapsed: Boolean;
     setCollapsed: (collapsed: Boolean) => void;
 }
 export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
-       const handleCollapse = ()=> {
-      setCollapsed(!collapsed);
-      localStorage.setItem("isMenuCollapsed",JSON.stringify(!collapsed))
-};
+    const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
+     const refreshToken = useSelector((state: any) => state.auth.refresh);
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
+    
+    const handleCollapse = ()=> {
+      setCollapsed(!collapsed);
+      localStorage.setItem("isMenuCollapsed",JSON.stringify(!collapsed))
+    };
+
+    const handleLogout = () => {
+      mutate({refresh_token: refreshToken},{
+        onSuccess: (data) => {  
+          dispatch(logout());
+          setIsModalOpen(false);
+          toast.success("Logout successful");
+        },
+        onError: (err) => {     
+           showErrorToast(err?.response?.data.message)
+        },
+
+})
+    }
     // Close modal when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -99,11 +118,8 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                 >
                     <button
                         className="flex w-full items-center gap-2 rounded-xl px-4 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-950"
-                        onClick={() => {
-                            dispatch(logout());
-                            setIsModalOpen(false);
-                            toast.success("Logout successful");
-                        }}
+                        disabled={isPending}
+                        onClick={handleLogout}
                     >
                         <LogOut size={20} />
                         Logout
