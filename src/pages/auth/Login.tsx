@@ -30,17 +30,17 @@ const Login = () => {
     resolver: zodResolver(schema),
   });
 
-const onSubmit = (values: FormData) => {
-  mutate(values, {
-    onSuccess: (data) => {
-      dispatch(login(data)); // Dispatch Redux action with full response
-      toast.success("Login successful!");
-    },
-    onError: (err) => {
-      toast.error(err?.response?.data?.message|| "Login failed.");
-    },
-  });
-};
+  const onSubmit = (values: FormData) => {
+    mutate(values, {
+      onSuccess: (data) => {
+        dispatch(login(data)); // Dispatch Redux action with full response
+        toast.success("Login successful!");
+      },
+      onError: (err) => {
+        toast.error(err?.response?.data?.message|| "Login failed.");
+      },
+    });
+  };
 
   return (
     <AuthLayout
@@ -57,7 +57,7 @@ const onSubmit = (values: FormData) => {
       children={
         <form onSubmit={handleSubmit(onSubmit)} className="w-[374px] mx-auto py-4 space-y-4 px-0">
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>
               <Mail className="mr-2" />
               <input
                 type="email"
@@ -72,7 +72,7 @@ const onSubmit = (values: FormData) => {
           </div>
 
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.password ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.password ? "border-red-500" : "")}>
               <Lock className="mr-2" />
               <input
                 type={showPassword ? "text" : "password"}
@@ -100,7 +100,10 @@ const onSubmit = (values: FormData) => {
           </button>
           <Link
             to="/auth/forgotPassword"
-            className="mt-2 flex items-center justify-center text-blue-500 hover:underline">Forgot password ?</Link>
+            className="mt-2 flex items-center justify-center text-blue-500 hover:underline"
+          >
+            Forgot password ?
+          </Link>
         </form>
       }
     />

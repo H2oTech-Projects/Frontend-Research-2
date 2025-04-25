@@ -13,7 +13,6 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const ResetPassword = () => {
-
   const {
     register,
     handleSubmit,
@@ -22,9 +21,9 @@ const ResetPassword = () => {
     resolver: zodResolver(schema),
   });
 
-const onSubmit = (values: FormData) => {
-  console.log("Form submitted:", values); 
-};
+  const onSubmit = (values: FormData) => {
+    console.log("Form submitted:", values);
+  };
   return (
     <AuthLayout
       header={
@@ -36,17 +35,17 @@ const onSubmit = (values: FormData) => {
         </>
       }
       title="Forgot your FLOW water account?"
-      titleDescription=" Please enter your email."
+      titleDescription="Please enter your email."
       children={
         <form onSubmit={handleSubmit(onSubmit)} className="w-[374px] mx-auto py-4 space-y-4 px-0">
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>              
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>
               <Mail className="mr-2" />
               <input
                 type="email"
                 placeholder="Enter your email"
                 className="auth-input"
-                {...register("email")} 
+                {...register("email")}
                 autoComplete="off"
               />
             </div>

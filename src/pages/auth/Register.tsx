@@ -22,9 +22,9 @@ const schema = z.object({
     .regex(/\d/, "Password must contain at least one number")
     .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
   confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords must match",
-  path: ["confirmPassword"],
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
 });
 
 type FormData = z.infer<typeof schema>;
@@ -55,14 +55,12 @@ const Register = () => {
         showSuccessToast(data.message);
         reset(); // Reset the form after successful registration
       },
- onError: (err) => {
-  showErrorToast(err?.response?.data.message)
-      //toast.error(err?.response?.data?.message || "Login failed.");
-    },
-});
+      onError: (err) => {
+        showErrorToast(err?.response?.data.message)
+        //toast.error(err?.response?.data?.message || "Login failed.");
+      },
+    });
   };
-
-
 
   return (
     <AuthLayout

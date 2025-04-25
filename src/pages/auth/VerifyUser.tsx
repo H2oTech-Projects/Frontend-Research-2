@@ -3,6 +3,7 @@ import Spinner from "@/components/Spinner";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePostCheckToken } from '@/services/registration';
 import { toast } from 'react-toastify';
+
 const VerifyUser = () => {
   const { mutate, isPending, isError, error, isSuccess, data } = usePostCheckToken();
   const navigate = useNavigate();
@@ -10,27 +11,29 @@ const VerifyUser = () => {
   const userId = searchParams.get("user_id");
   const timestamp = searchParams.get("timestamp");
   const signature = searchParams.get("signature");
-    useEffect(() => {
-      if (userId && timestamp && signature) {
-        mutate({ user_id: userId, timestamp, signature });
+
+  useEffect(() => {
+    if (userId && timestamp && signature) {
+      mutate({ user_id: userId, timestamp, signature });
+    } else {
+      toast.error("Invalid verification link. Please try again.");
+      navigate("/page-not-found")
+    }
+
+  }, [userId, timestamp, signature]);
+
+  useEffect(() => {
+    if (data) {
+      if (isSuccess) {
+        navigate("/auth/login");
+        toast.success("User verified successfully! Please login to your account.");
+
       } else {
-        toast.error("Invalid verification link. Please try again.");
-        navigate("/page-not-found")
+        navigate("/auth/register");
+        toast.error("User verification failed. Please try again.");
       }
-
-    }, [userId, timestamp, signature]);
-    useEffect(() => {
-      if (data) {
-        if (isSuccess) {
-          navigate("/auth/login");
-          toast.success("User verified successfully! Please login to your account.");
-
-        } else {
-          navigate("/auth/register");
-          toast.error("User verification failed. Please try again.");
-        }
-      }
-    }, [data])
+    }
+  }, [data])
 
     useEffect(() => {
       if (error) {

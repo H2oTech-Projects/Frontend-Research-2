@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { RouteList } from "./RouteList";
 import ProtectedRoute from "./ProtectedRoute";
@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Loader } from "lucide-react";
+
 const Login = lazy(async () => await import("./../pages/auth/Login"));
 const ResetPassword = lazy(async () => await import("./../pages/auth/ResetPassword"));
 const ForgotPassword = lazy(async () => await import("./../pages/auth/ForgotPassword"));
@@ -50,7 +51,7 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
             path="/auth/register"
             element={<Register />}
           />
-           <Route
+            <Route
             path="/auth/setPassword/:token"
             element={<SetPassword />}
           />
@@ -69,7 +70,8 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
                   element={<route.Component />}
                   key={route.path}
                 />
-              ))}
+                ))
+              }
               <Route
                 path="*"
                 element={
