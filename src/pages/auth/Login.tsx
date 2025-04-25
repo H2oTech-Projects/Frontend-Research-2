@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePostLoginUser } from "@/services/registration";
+import { showErrorToast } from "@/utils/tools";
 
 const schema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
@@ -37,7 +38,7 @@ const Login = () => {
         toast.success("Login successful!");
       },
       onError: (err) => {
-        toast.error(err?.response?.data?.message|| "Login failed.");
+        showErrorToast(err?.response?.data.message)
       },
     });
   };
@@ -57,7 +58,7 @@ const Login = () => {
       children={
         <form onSubmit={handleSubmit(onSubmit)} className="w-[374px] mx-auto py-4 space-y-4 px-0">
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.email ? "border-red-500" : "")}>              
               <Mail className="mr-2" />
               <input
                 type="email"
@@ -72,7 +73,7 @@ const Login = () => {
           </div>
 
           <div>
-            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.password ? "border-red-500" : "")}>
+            <div className={cn("flex items-center border rounded-md px-3 py-2", errors.password ? "border-red-500" : "")}>              
               <Lock className="mr-2" />
               <input
                 type={showPassword ? "text" : "password"}
@@ -93,17 +94,13 @@ const Login = () => {
               <div className="text-xs text-red-500 pl-3">{errors.password.message}</div>
             )}
           </div>
-
           <button type="submit" disabled={isPending} className="w-full bg-royalBlue text-white rounded-md py-3 font-medium flex items-center justify-between gap-2 hover:bg-blue-800 px-3">
             {isPending ? "Logging in..." : "LOG IN"}
             <span className="ml-2">→</span>
           </button>
           <Link
             to="/auth/forgotPassword"
-            className="mt-2 flex items-center justify-center text-blue-500 hover:underline"
-          >
-            Forgot password ?
-          </Link>
+            className="mt-2 flex items-center justify-center text-blue-500 hover:underline">Forgot password ?</Link>
         </form>
       }
     />
