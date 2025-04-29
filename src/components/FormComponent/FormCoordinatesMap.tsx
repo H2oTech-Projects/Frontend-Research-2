@@ -18,13 +18,14 @@ type FormCoordinatesMapProps = {
 const FormCoordinatesMap = ({control,name,label,onCreated,onEdited,onDeleted,type, refLayer, layerCounts = "multiple"}:FormCoordinatesMapProps) => {
   return (
          <FormField 
-          control={control}
+            control={control}
             name={name}  
             render={({ field }) => (
             
             <FormItem>
             <FormLabel>{label}</FormLabel>
-            <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "400px", width: "100%" }} >
+            <div className="w-full h-[calc(100vh-228px)] ">
+            <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100%", width: "100%" }} >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               <FeatureGroup ref={refLayer} >
                 <EditControl
@@ -43,6 +44,7 @@ const FormCoordinatesMap = ({control,name,label,onCreated,onEdited,onDeleted,typ
                 />
               </FeatureGroup>
             </MapContainer>
+            </div>
             
             {layerCounts === "single" && field.value?.length > 1 ? <FormMessage>Only one {type} is allowed</FormMessage> : null}
             <FormMessage/>
