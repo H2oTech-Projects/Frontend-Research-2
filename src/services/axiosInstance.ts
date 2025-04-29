@@ -15,8 +15,17 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-  },
+  }
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response, // Let valid responses pass through
   (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn("Unauthorized: Token expired or invalid, logging out...");
+      localStorage.removeItem("auth");
+      window.location.href = "/auth/login";
+    }
     return Promise.reject(error);
   }
 );
