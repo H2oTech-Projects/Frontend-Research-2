@@ -99,6 +99,16 @@ const Help = {
     name: "Help",
 };
 
+const Canals = {
+    url: "/canals",
+    name: "Canals",
+};
+
+const CanalsForm ={
+    url:"/canals/canalsForm",
+    name:"Canals Form",
+};
+
 export {
     Map,
     Insight,
@@ -121,4 +131,6 @@ export {
     Settings,
     Profile,
     Help,
+    Canals,
+    CanalsForm,
 };

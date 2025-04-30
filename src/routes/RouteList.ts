@@ -121,4 +121,13 @@ export const RouteList = [
     path: routeUrl.Profile?.url,
     Component: lazy(async () => await import("./../pages/others/Profile")),
   },
+  {
+    path:routeUrl.Canals?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/Canals")),
+  },
+  {
+    path:routeUrl.CanalsForm?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
+  }
+
 ];
