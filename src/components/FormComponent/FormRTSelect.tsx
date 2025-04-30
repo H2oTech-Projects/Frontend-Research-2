@@ -20,7 +20,7 @@ export function FormComboBox({ control, name, label, options, placeholder = "Sel
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col w-full">
+        <FormItem className="flex flex-col w-full gap-1.5 mt-1">
           <FormLabel>{label}</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
@@ -28,7 +28,7 @@ export function FormComboBox({ control, name, label, options, placeholder = "Sel
                 <Button
                   variant="outline"
                   role="combobox"
-                  className={cn("w-auto justify-between font-medium", !field.value && "text-muted-foreground")}
+                  className={cn("w-full h-10 justify-between font-normal px-3 py-2", !field.value && "text-muted-foreground")}
                 >
                   {field.value ? options.find((option) => option.value === field.value)?.label : placeholder}
                   <ChevronsUpDown className="opacity-50" />
