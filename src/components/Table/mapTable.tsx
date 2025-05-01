@@ -33,9 +33,12 @@ const MapTable = <T,>({
     setZoomLevel = null,
     setClickedField = null,
     clickedField = null,
+    fullHeight = true,
+    showPagination = true,
+    textAlign = "center",
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [data, _setDate] = useState([...defaultData]);
+    const [data, setDate] = useState([...defaultData]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>([]);
     const [searchText, setSearchText] = useState<any>("");
@@ -43,6 +46,9 @@ const MapTable = <T,>({
         pageIndex: 0,
         pageSize: 10,
     });
+    useEffect(() => {
+        setDate(defaultData);
+    }, [defaultData]);
     const table = useReactTable({
         data,
         columns,
@@ -74,7 +80,7 @@ const MapTable = <T,>({
 
     return (
         <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-            <div className="h-[calc(100vh-218px)]">
+            <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto")}>
                 <Table className="relative">
                     <TableHeader className="sticky top-0">
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -88,6 +94,7 @@ const MapTable = <T,>({
                                             header.column.columnDef.meta?.className ?? ""
                                             } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
                                             `!min-w-[${header?.getSize()}px]`,
+                                            `text-${textAlign}`,
                                         )}
                                         key={header.id}
                                         // style={{
@@ -115,8 +122,8 @@ const MapTable = <T,>({
                                         className="cursor-pointer text-sm hover:bg-slate-500"
                                     >
                                         {row.getVisibleCells().map((cell) =>
-                                            // @ts-ignore  Below condition check is to determine where rows are from action column or not
-                                            cell.column.columnDef.meta?.className ? (
+                                          
+                                          
                                                 <TableCell
                                                     className={`${
                                                         // @ts-ignore
@@ -126,6 +133,7 @@ const MapTable = <T,>({
                                                     style={{
                                                         minWidth: cell.column.columnDef.size,
                                                         maxWidth: cell.column.columnDef.size,
+                                                        
                                                     }}
                                                     onClick={() => {
                                                         setPosition({
@@ -141,29 +149,7 @@ const MapTable = <T,>({
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
-                                            ) : (
-                                                <TableCell // this TableCell is not from Action column
-                                                    // @ts-ignore
-                                                    onClick={() => {
-                                                        // @ts-ignore
-                                                        setPosition({
-                                                            // @ts-ignore
-                                                            center: [row.original.center_latitude, row.original.center_longitude],
-                                                            // @ts-ignore
-                                                            polygon: row.original.coords,
-                                                            // @ts-ignore
-                                                            fieldId: row.original.FieldID,
-                                                        });
-                                                    }} //  we added this on click event to set center in map
-                                                    key={cell.id}
-                                                    style={{
-                                                        minWidth: cell.column.columnDef.size,
-                                                        maxWidth: cell.column.columnDef.size,
-                                                    }}
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ),
+                                            
                                         )}
                                     </TableRow>
                                 ) : (
@@ -195,7 +181,7 @@ const MapTable = <T,>({
                                                 className={`${
                                                     // @ts-ignore
                                                     cell.column.columnDef.meta?.className ?? ""
-                                                    } `}
+                                                    } text-${textAlign}`}
                                                 key={cell.id}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -217,7 +203,7 @@ const MapTable = <T,>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex-grow p-2">
+            {showPagination && (<div className="flex-grow p-2">
                 <Pagination>
                     <PaginationContent>
                         <PaginationItem>
@@ -244,7 +230,7 @@ const MapTable = <T,>({
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>
-            </div>
+            </div>)}
         </div>
     );
 };

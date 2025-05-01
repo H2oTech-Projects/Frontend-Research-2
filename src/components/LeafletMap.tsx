@@ -1,162 +1,70 @@
-import { MapContainer, TileLayer, useMap, Polygon, Popup, GeoJSON, LayersControl } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, LayersControl } from "react-leaflet";
 import CustomZoomControl from "./MapController";
-import { useEffect, useMemo } from "react";
-import L, { divIcon } from "leaflet";
-import $ from "jquery";
+import { useEffect } from "react";
+
+type mapConfiguration = {
+  minZoom: number;
+  containerStyle: {};
+};
 
 type LeafletMapTypes = {
     zoom: number;
     position: any;
-    collapse: string;
-    geojson: any;
+    collapse?: string;
     clickedField?: string | null;
+    configurations?: mapConfiguration;
+    children?: any;
+    viewBound?: any;
 };
 
-const LeafletMap = ({ zoom, position, collapse, geojson, clickedField = null }: LeafletMapTypes) => {
-    const { center } = position;
-    const MapHandler = () => {
-        const map = useMap();
+const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}}, children }: LeafletMapTypes) => {
+  const { center } = position;
+  const MapHandler = () => {
+    const map = useMap();
 
-        useEffect(() => {
-            map.invalidateSize(); // Force the map to resize
-            map.setView(center); // Force the map to recenter
-            //map.setZoom(zoom);
-        }, [collapse, center, zoom]);
+    useEffect(() => {
+      map.invalidateSize(); // Force the map to resize
+      map.setView(center); // Force the map to recenter
+      if (!!viewBound){
+        map.fitBounds(viewBound);
+      }
+      //map.setZoom(zoom);
+    }, [collapse, center, zoom, viewBound]);
 
-        return null;
-    };
-
-    const polygonEventHandlers = useMemo(
-        () => ({
-            mouseover(e: any) {
-                const { id } = e.target.options;
-                showInfo(id);
-            },
-            mouseout(e: any) {
-                const { id } = e.target.options;
-                removeInfo(id);
-            },
-        }),
-        [],
-    );
-
-    const showInfo = (Id: String) => {
-        var popup = $("<div></div>", {
-            id: "popup-" + Id,
-            css: {
-                position: "absolute",
-                height: "50px",
-                width: "150px",
-                top: "0px",
-                left: "0px",
-                zIndex: 1002,
-                backgroundColor: "white",
-                //padding: "200px",
-                border: "1px solid #ccc",
-            },
-        });
-        // Insert a headline into that popup
-        var hed = $("<div></div>", {
-            text: "FieldID: " + Id,
-            css: { fontSize: "16px", marginBottom: "3px" },
-        }).appendTo(popup);
-        // Add the popup to the map
-        popup.appendTo("#map");
-    };
-
-    const removeInfo = (Id: String) => {
-        $("#popup-" + Id).remove();
-    };
+    return null;
+  };
 
     return (
-        <MapContainer
-            center={center}
-            zoom={14}
-            scrollWheelZoom={true}
-            zoomControl={false} // Disable default zoom control
-            minZoom={6}
-            style={{ height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
-        >
-            <LayersControl position="bottomleft">
-                <LayersControl.BaseLayer
-                    checked
-                    name="Satellite"
-                >
-                    <TileLayer
-                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                        attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
-                    />
-                </LayersControl.BaseLayer>
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        scrollWheelZoom={true}
+        zoomControl={false} // Disable default zoom control
+        minZoom={configurations.minZoom || 6}
+        style={configurations.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
+      >
+        <LayersControl position="bottomleft">
+          <LayersControl.BaseLayer
+              checked
+              name="Satellite"
+          >
+            <TileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
+            />
+          </LayersControl.BaseLayer>
 
-                <LayersControl.BaseLayer name="Street Map">
-                    <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                </LayersControl.BaseLayer>
-            </LayersControl>
-            {
-                <GeoJSON
-                    pathOptions={{
-                        //color: "#9370DB",
-                        //fillColor: "lightblue",
-                        fillOpacity: 0,
-                        opacity: 1,
-                        weight: 2.5,
-                    }}
-                    onEachFeature={(feature, layer) => {
-                        layer.on({
-                            mouseover: function (e) {
-                                const auxLayer = e.target;
-                                auxLayer.setStyle({
-                                    weight: 4,
-                                    //color: "#800080"
-                                });
-                                showInfo(auxLayer.feature.properties.FieldID);
-                            },
-                            mouseout: function (e) {
-                                const auxLayer = e.target;
-                                auxLayer.setStyle({
-                                    weight: 2.5,
-                                    //color: "#9370DB",
-                                    //fillColor: "lightblue",
-                                    fillOpacity: 0,
-                                    opacity: 1,
-                                });
-                                removeInfo(auxLayer.feature.properties.FieldID);
-                            },
-                        });
-                    }}
-                    style={(features) => {
-                        if (features?.properties?.FieldID === clickedField) {
-                            return {
-                                color: "red", // Border color
-                                fillColor: "#16599A", // Fill color for the highlighted area
-                                fillOpacity: 0.5,
-                                weight: 2,
-                            };
-                        }
-                        return {
-                            color: "#16599A", // Border color
-                            fillColor: "lightblue", // Fill color for normal areas
-                            fillOpacity: 0.5,
-                            weight: 2,
-                        };
-                    }}
-                    data={geojson}
-                />
-            }
-            {!!position.polygon ? (
-                <Polygon
-                    pathOptions={{ id: position.fieldId } as Object}
-                    positions={position.polygon}
-                    color={"red"}
-                    eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-                />
-            ) : null}
-            <CustomZoomControl />
-            <MapHandler />
-        </MapContainer>
+          <LayersControl.BaseLayer name="Street Map">
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
+        { children }
+        <CustomZoomControl />
+        <MapHandler />
+      </MapContainer>
     );
 };
 
