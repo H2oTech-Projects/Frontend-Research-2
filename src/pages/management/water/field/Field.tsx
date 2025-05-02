@@ -28,6 +28,7 @@ import CollapseBtn from "@/components/CollapseBtn";
 import { useGetFieldList, useGetFieldMapList } from "@/services/water/field";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
+import { useNavigate } from "react-router-dom";
 
 interface initialTableDataTypes {
   search:string   ;
@@ -45,6 +46,7 @@ const initialTableData = {
 }
 
 const Field = () => {
+  const navigate = useNavigate();
   const [tableInfo,setTableInfo] = useState<initialTableDataTypes>({...initialTableData})
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
@@ -411,8 +413,11 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                         </Button>}
                     </div>
                     <Button
-                        variant={"default"}
-                        className="h-7 w-auto px-2 text-sm"
+                      variant={"default"}
+                      className="h-7 w-auto px-2 text-sm"
+                      onClick={() => {
+                                      navigate("/field/addField")
+                                     }}
                     >
                         <Plus size={4} />
                         Add Field
