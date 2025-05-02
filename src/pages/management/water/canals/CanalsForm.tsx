@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect';
 import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap';
-import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup  } from "leaflet";
+
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 const canalSchema = z.object({
@@ -51,45 +51,12 @@ const CanalsForm = () => {
   const onSubmit = (data: CanalFormType) => {
     console.log("Form Data:", data);
   };
-    const polyline = form.watch("canalCoordinates") || [];
-    const featureGroupPolygonRef = React.useRef<any>(null);
-    // const { fields, append, remove } = useFieldArray({
-    //   control: form.control,
-    //   name: "coordinates",
-    // });
-  
-    // Helper function to extract coordinates from a polygon layer
-   const getCoordinates = (layer: Layer): [number, number][] => {
-  const latlngs = (layer as any).getLatLngs();
-
-  const flattened = latlngs.flat(Infinity) as LatLng[];
-
-  return flattened.map((latlng) => [latlng.lat, latlng.lng]);
-};
-  
-    // Handle polygon creation event
-    const onPolygonCreated = (e: LeafletEvent) => {
-      const layer = (e as any).layer;
-      const formattedCoords = getCoordinates(layer);
-      form.setValue("canalCoordinates", [...polyline, formattedCoords]);
-      form.clearErrors("canalCoordinates");
-    };
-
-        // Handle polygon edit event
-        const onPolygonEdited = (e: LeafletEvent) => {
-          const updatedPolygons: [number, number][][] = [];
-          featureGroupPolygonRef.current?.eachLayer((layer: Layer) => {
-            updatedPolygons.push(getCoordinates(layer));});
-          form.setValue("canalCoordinates", updatedPolygons);
-        };
-      
-        // Handle polygon deletion event
-      const onPolygonDeleted = (e: LeafletEvent) => {
-          const remainingPolygons: [number, number][][] = [];
-          featureGroupPolygonRef.current?.eachLayer((layer: Layer) => {
-            remainingPolygons.push(getCoordinates(layer));});
-          form.setValue("canalCoordinates", remainingPolygons);
-        };
+  //const polyline = form.watch("canalCoordinates") || [];
+  const featureGroupPolygonRef = React.useRef<any>(null);
+  // const { fields, append, remove } = useFieldArray({
+  //   control: form.control,
+  //   name: "coordinates",
+  // });
 
   return (
     <div className='h-w-full px-4 pt-2'>
@@ -153,15 +120,13 @@ const CanalsForm = () => {
             />
             </div>
              <FormCoordinatesMap
-                control={form.control} 
-                name="canalCoordinates" label="Canal Coordinates" 
-                onCreated={onPolygonCreated} 
-                onEdited={onPolygonEdited} 
-                onDeleted={onPolygonDeleted} 
-                type="polyline" 
-                refLayer={featureGroupPolygonRef} 
-                layerCounts='multiple'/>
-
+                form = {form}
+                name="canalCoordinates" label="Canal Coordinates"
+                type="polyline"
+                refLayer={featureGroupPolygonRef}
+                param="canalCoordinates"
+                layerCounts='multiple'
+            />
           </div>
           <Button className='w-24' type="submit">Submit</Button>
         </form>

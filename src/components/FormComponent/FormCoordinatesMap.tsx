@@ -1,56 +1,92 @@
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet"
 import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
-import {  LeafletEvent,FeatureGroup as LeafletFeatureGroup } from "leaflet"
+import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup } from "leaflet"
 import { EditControl } from "react-leaflet-draw"
-import { Control } from "react-hook-form";
+
 type FormCoordinatesMapProps = {
-  control: Control<any>;
+  form: any;
   name: string;
   label: string;
-  onCreated: (e:LeafletEvent)=>void;
-  onEdited: (e:LeafletEvent)=>void;
-  onDeleted: (e:LeafletEvent)=>void;
-  type:"marker"|"polygon"|"polyline";
+  type: "marker"|"polygon"|"polyline";
+  param: string;
   refLayer: React.RefObject<LeafletFeatureGroup<any>>;
   layerCounts?: "single" | "multiple";
 }
 
-const FormCoordinatesMap = ({control,name,label,onCreated,onEdited,onDeleted,type, refLayer, layerCounts = "multiple"}:FormCoordinatesMapProps) => {
+const FormCoordinatesMap = ({
+  form,
+  name,
+  label,
+  type,
+  refLayer,
+  param,
+  layerCounts = "multiple"
+  }:FormCoordinatesMapProps) => {
+  const polyline = form.watch("canalCoordinates") || [];
+  // Helper function to extract coordinates from a polygon layer
+  const getCoordinates = (layer: Layer): [number, number][] => {
+    const latlngs = (layer as any).getLatLngs();
+    const flattened = latlngs.flat(Infinity) as LatLng[];
+    return flattened.map((latlng) => [latlng.lat, latlng.lng]);
+  };
+
+  // Handle polygon creation event
+  const onPolygonCreated = (e: LeafletEvent) => {
+    const layer = (e as any).layer;
+    const formattedCoords = getCoordinates(layer);
+    form.setValue(param, [...polyline, formattedCoords]);
+    form.clearErrors(param);
+  };
+
+  // Handle polygon edit event
+  const onPolygonEdited = (e: LeafletEvent) => {
+    const updatedPolygons: [number, number][][] = [];
+    refLayer.current?.eachLayer((layer: Layer) => {
+      updatedPolygons.push(getCoordinates(layer));});
+    form.setValue(param, updatedPolygons);
+  };
+
+  // Handle polygon deletion event
+  const onPolygonDeleted = (e: LeafletEvent) => {
+    const remainingPolygons: [number, number][][] = [];
+    refLayer.current?.eachLayer((layer: Layer) => {
+      remainingPolygons.push(getCoordinates(layer));});
+    form.setValue(param, remainingPolygons);
+  };
+
   return (
-         <FormField 
-            control={control}
-            name={name}  
-            render={({ field }) => (
-            
-            <FormItem>
-            <FormLabel>{label}</FormLabel>
-            <div className="w-full h-[calc(100vh-228px)] ">
-            <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100%", width: "100%" }} >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <FeatureGroup ref={refLayer} >
-                <EditControl
-                  position="topright"
-                  onCreated={onCreated}
-                  onEdited={onEdited} 
-                  onDeleted={onDeleted} 
-                  draw={{
-                    rectangle: false,
-                    circle: false,
-                    circlemarker: false,
-                    polyline: type==="polyline" ? true : false,
-                    polygon: type==="polygon" ? true : false,
-                    marker: type==="marker" ? true : false, 
-                  }}
-                />
-              </FeatureGroup>
-            </MapContainer>
-            </div>
-            
-            {layerCounts === "single" && field.value?.length > 1 ? <FormMessage>Only one {type} is allowed</FormMessage> : null}
-            <FormMessage/>
-          </FormItem>
-)}
-/>
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+        <FormLabel>{label}</FormLabel>
+        <div className="w-full h-[calc(100vh-228px)] ">
+        <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100%", width: "100%" }} >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <FeatureGroup ref={refLayer} >
+            <EditControl
+              position="topright"
+              onCreated={onPolygonCreated}
+              onEdited={onPolygonEdited}
+              onDeleted={onPolygonDeleted}
+              draw={{
+                rectangle: false,
+                circle: false,
+                circlemarker: false,
+                polyline: type==="polyline",
+                polygon: type==="polygon",
+                marker: type==="marker"
+              }}
+            />
+          </FeatureGroup>
+        </MapContainer>
+        </div>
+        {layerCounts === "single" && field.value?.length > 1 ? <FormMessage>Only one {type} is allowed</FormMessage> : null}
+        <FormMessage/>
+        </FormItem>
+      )}
+    />
   )
 }
 
