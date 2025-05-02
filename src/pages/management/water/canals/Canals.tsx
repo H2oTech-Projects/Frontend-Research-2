@@ -66,45 +66,45 @@ const Canals = () => {
           </Button>
         </div>
         <div className="flex flex-grow">
-                            <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-                                <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
-                                  table
-                                  <CollapseBtn
-                                    className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
-                                    onClick={mapCollapseBtn}
-                                    note={collapse === 'default' ? 'View Full Table' : "Show Map"}
-                                >
-                                  <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
-                              </CollapseBtn>
-                                </div>
-                            </div>
-        
-                            <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-                                <div
-                                    className={cn("relative flex h-[calc(100vh-160px)] w-full")}
-                                    id="map"
-                                >
-                                   <LeafletMap
-                                        position={position}
-                                        zoom={zoomLevel}
-                                        collapse={collapse}
-                                      
-                                        configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
-                                    >
-                                        <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                                          <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner/></div>          
-                                        </div>
-                                </LeafletMap>
-                                <CollapseBtn
-                                    className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
-                                    onClick={tableCollapseBtn}
-                                    note={collapse === 'default' ? 'View Full Map' : "Show Table"}
-                                >
-                                    <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-                                </CollapseBtn>
-                                </div>
-                            </div>
-                        </div>
+          <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
+            <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
+              table
+              <CollapseBtn
+                className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
+                onClick={mapCollapseBtn}
+                note={collapse === 'default' ? 'View Full Table' : "Show Map"}
+              >
+                <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
+              </CollapseBtn>
+            </div>
+          </div>
+
+          <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
+            <div
+              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+              id="map"
+            >
+              <LeafletMap
+                position={position}
+                zoom={zoomLevel}
+                collapse={collapse}
+
+                configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
+              >
+                <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
+                </div>
+              </LeafletMap>
+              <CollapseBtn
+                className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
+                onClick={tableCollapseBtn}
+                note={collapse === 'default' ? 'View Full Map' : "Show Table"}
+              >
+                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
+              </CollapseBtn>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
