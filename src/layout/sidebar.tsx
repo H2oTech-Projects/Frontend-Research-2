@@ -70,6 +70,12 @@ const menuLinks = [
                 Children: [],
             },
             {
+                label: "Clients",
+                icon: Icon.Users,
+                path:"/clients",
+                type: "link",
+            },
+            {
                 label: "Customers",
                 icon: Icon.Users,
                 path: "/customers",

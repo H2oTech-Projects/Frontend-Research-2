@@ -69,9 +69,9 @@ const CanalsForm = () => {
       />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
           <div className='grid grid-cols-2 gap-4 mb-4'>
-            <div>
+            <div className='flex flex-col gap-2'>
              <FormInput
               control={form.control}
               name='canal_id'
