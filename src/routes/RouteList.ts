@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import * as routeUrl from "./RouteUrl";
+import path from "path";
 
 export const RouteList = [
   {
@@ -128,6 +129,14 @@ export const RouteList = [
   {
     path:routeUrl.CanalsForm?.url,
     Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
+  },
+  {
+    path:routeUrl.Clients?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/Clients")),
+  },
+  {
+    path:routeUrl.ClientsForm?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
   }
 
 ];

@@ -109,6 +109,15 @@ const CanalsForm ={
     name:"Canals Form",
 };
 
+const Clients = {
+    url: "/clients",  
+    name: "Clients",
+};
+
+const ClientsForm = {
+    url: "/clients/clientsForm",
+    name: "Clients Form",
+};
 export {
     Map,
     Insight,
@@ -133,4 +142,6 @@ export {
     Help,
     Canals,
     CanalsForm,
+    Clients,
+    ClientsForm,
 };
