@@ -124,7 +124,6 @@ const CanalsForm = () => {
                 name="canalCoordinates" label="Canal Coordinates"
                 type="polyline"
                 refLayer={featureGroupPolygonRef}
-                param="canalCoordinates"
                 layerCounts='multiple'
             />
           </div>

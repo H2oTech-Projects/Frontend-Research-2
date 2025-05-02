@@ -2,13 +2,12 @@ import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet"
 import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup } from "leaflet"
 import { EditControl } from "react-leaflet-draw"
-
+import { UseFormReturn } from "react-hook-form";
 type FormCoordinatesMapProps = {
-  form: any;
+  form: UseFormReturn<any>;
   name: string;
   label: string;
   type: "marker"|"polygon"|"polyline";
-  param: string;
   refLayer: React.RefObject<LeafletFeatureGroup<any>>;
   layerCounts?: "single" | "multiple";
 }
@@ -19,10 +18,9 @@ const FormCoordinatesMap = ({
   label,
   type,
   refLayer,
-  param,
   layerCounts = "multiple"
   }:FormCoordinatesMapProps) => {
-  const polyline = form.watch("canalCoordinates") || [];
+  const polyline = form.watch(`${name}`) || [];
   // Helper function to extract coordinates from a polygon layer
   const getCoordinates = (layer: Layer): [number, number][] => {
     const latlngs = (layer as any).getLatLngs();
@@ -34,8 +32,8 @@ const FormCoordinatesMap = ({
   const onPolygonCreated = (e: LeafletEvent) => {
     const layer = (e as any).layer;
     const formattedCoords = getCoordinates(layer);
-    form.setValue(param, [...polyline, formattedCoords]);
-    form.clearErrors(param);
+    form.setValue(name, [...polyline, formattedCoords]);
+    form.clearErrors(name);
   };
 
   // Handle polygon edit event
@@ -43,7 +41,7 @@ const FormCoordinatesMap = ({
     const updatedPolygons: [number, number][][] = [];
     refLayer.current?.eachLayer((layer: Layer) => {
       updatedPolygons.push(getCoordinates(layer));});
-    form.setValue(param, updatedPolygons);
+    form.setValue(name, updatedPolygons);
   };
 
   // Handle polygon deletion event
@@ -51,12 +49,12 @@ const FormCoordinatesMap = ({
     const remainingPolygons: [number, number][][] = [];
     refLayer.current?.eachLayer((layer: Layer) => {
       remainingPolygons.push(getCoordinates(layer));});
-    form.setValue(param, remainingPolygons);
+    form.setValue(name, remainingPolygons);
   };
 
   return (
     <FormField
-      control={form.control}
+      control={form?.control}
       name={name}
       render={({ field }) => (
         <FormItem>

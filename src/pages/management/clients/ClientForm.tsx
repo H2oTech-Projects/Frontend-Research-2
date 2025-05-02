@@ -200,7 +200,7 @@ const ClientForm = () => {
             </div>
           </div>
           <div> 
-             <FormCoordinatesMap control={form.control} name="client_geom" label="Client Fields Coordinates" onCreated={onPolygonCreated} onEdited={onPolygonEdited} onDeleted={onPolygonDeleted} type="polygon" refLayer={featureGroupPolygonRef} layerCounts='multiple'/>
+             <FormCoordinatesMap form={form} name="client_geom" label="Client Fields Coordinates"   type="polygon" refLayer={featureGroupPolygonRef} layerCounts='multiple'/>
           </div>
           <Button className='w-24 mt-4' type="submit">Submit</Button>
         </form>

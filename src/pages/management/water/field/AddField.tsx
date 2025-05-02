@@ -133,7 +133,7 @@ const onPolygonDeleted = (e: LeafletEvent) => {
  {/* <FormComboBox control={form.control} name = "year" label= 'Year' options={[{ label:"2022",value:"2022"},{ label:"2023",value:"2023"},{ label:"2024",value:"2024"}]}/> */}      
           </div>
           <div> 
-             <FormCoordinatesMap control={form.control} name="coordinates" label="Polygon Coordinates" onCreated={onPolygonCreated} onEdited={onPolygonEdited} onDeleted={onPolygonDeleted} type="polygon" refLayer={featureGroupPolygonRef} layerCounts='multiple'/>
+             <FormCoordinatesMap form={form} name="coordinates" label="Polygon Coordinates"  type="polygon" refLayer={featureGroupPolygonRef} layerCounts='multiple'/>
           </div>
          </div>
          
