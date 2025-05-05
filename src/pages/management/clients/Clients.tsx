@@ -18,6 +18,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, File
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import MapTable from '@/components/Table/mapTable';
+import { useGetClientList } from '@/services/client';
 
 const initialTableData = {
   search: "",
@@ -35,6 +36,8 @@ const Clients = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
+  const {data: clientData,isLoading} = useGetClientList(tableInfo);
+  console.log(clientData)
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
   };
@@ -44,7 +47,7 @@ const Clients = () => {
 
   const columns: ColumnDef<ClientTableDataTypes>[] = [
     {
-        accessorKey: "client_id",        // header: "Field ID",
+        accessorKey: "client_id", 
         header: ({ column }) => {
             return (
                 <Button
@@ -59,7 +62,7 @@ const Clients = () => {
         cell: ({ row }) => <div className="capitalize">{row.getValue("client_id")}</div>,
     },
     {
-        accessorKey: "client_name",        // header: "Field ID",
+        accessorKey: "client_name", 
         header: ({ column }) => {
             return (
                 <Button
@@ -74,19 +77,19 @@ const Clients = () => {
         cell: ({ row }) => <div className="capitalize">{row.getValue("client_name")}</div>,
     },
     {
-        accessorKey: " client_ha",        // header: "Field ID",
+        accessorKey: "client_ha",        // header: "Field ID",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:" client_ha",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"client_ha",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client Acres{tableInfo?.sort !== " client_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client Acres{tableInfo?.sort !== "client_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
         size: 150, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue(" client_ha")}</div>,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("client_ha")}</div>,
     },
     {
         accessorKey: "client_country",        // header: "Field ID",
@@ -119,7 +122,7 @@ const Clients = () => {
         cell: ({ row }) => <div className="capitalize">{row.getValue("client_email")}</div>,
     },
     {
-        accessorKey: "client_phone",        // header: "Field ID",
+        accessorKey: "client_phone", 
         header: ({ column }) => {
             return (
                 <Button
@@ -134,7 +137,7 @@ const Clients = () => {
         cell: ({ row }) => <div className="capitalize">{row.getValue("client_phone")}</div>,
     },
     {
-        accessorKey: "client_website",        // header: "Field ID",
+        accessorKey: "client_website", 
         header: ({ column }) => {
             return (
                 <Button
@@ -228,17 +231,17 @@ const Clients = () => {
           <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
             <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
                 <MapTable
-                  defaultData={ []} 
+                  defaultData={clientData?.data || []} 
                   columns={columns}
-                  setPosition={setPosition as Function}
+                  // setPosition={setPosition as Function}
                   setZoomLevel={setZoomLevel as Function}
-                  setClickedField={setClickedField}
-                  clickedField={clickedField}
+                  // setClickedField={setClickedField}
+                  // clickedField={clickedField}
                   tableInfo={tableInfo}
                   setTableInfo={setTableInfo}
-                  totalData={1}
+                  totalData={clientData?.total_records || 1}
                   collapse={collapse}
-                  isLoading={true }
+                  isLoading={isLoading }
                 />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
