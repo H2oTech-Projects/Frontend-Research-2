@@ -35,28 +35,28 @@ const clientSchema = z.object({
   )).min(1, "At least  coordinate is required"),
 
   // Board members and staff
-  boardMembers: z
-    .array(
-      z.object({
-        name: z
-          .string()
-          .min(2, "Name must be at least 2 characters")
-          .max(50, "Name must be at most 50 characters")
-          .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
-      })
-    )
-    .min(1, "At least one board member is required"),
-  BoardPresident: z.string().optional(),
-  GM: z.string().optional(),
-  GMEmail: z.string().email().optional(),
-  GMPhone: z.string().optional(),
-  GMPhoneExt: z.string().optional(),
-  OA: z.string().optional(),
-  OAEmail: z.string().email().optional(),
-  OAPhone: z.string().optional(),
-  OM: z.string().optional(),
-  OMEmail: z.string().email().optional(),
-  OMPhone: z.string().optional(),
+  // boardMembers: z
+  //   .array(
+  //     z.object({
+  //       name: z
+  //         .string()
+  //         .min(2, "Name must be at least 2 characters")
+  //         .max(50, "Name must be at most 50 characters")
+  //         .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
+  //     })
+  //   )
+  //   .min(1, "At least one board member is required"),
+  // BoardPresident: z.string().optional(),
+  // GM: z.string().optional(),
+  // GMEmail: z.string().email().optional(),
+  // GMPhone: z.string().optional(),
+  // GMPhoneExt: z.string().optional(),
+  // OA: z.string().optional(),
+  // OAEmail: z.string().email().optional(),
+  // OAPhone: z.string().optional(),
+  // OM: z.string().optional(),
+  // OMEmail: z.string().email().optional(),
+  // OMPhone: z.string().optional(),
   ClientName: z.string().optional(),
 
 })
@@ -83,25 +83,25 @@ const ClientForm = () => {
       client_phone: "",
       client_website: "",
       client_geom: [],
-      boardMembers: [{ name: "" }],
-      BoardPresident: "",
-      GM: "",
-      GMEmail: "",
-      GMPhone: "",
-      GMPhoneExt: "",
-      OA: "",
-      OAEmail: "",
-      OAPhone: "",
-      OM: "",
-      OMEmail: "",
-      OMPhone: "",
+      // boardMembers: [{ name: "" }],
+      // BoardPresident: "",
+      // GM: "",
+      // GMEmail: "",
+      // GMPhone: "",
+      // GMPhoneExt: "",
+      // OA: "",
+      // OAEmail: "",
+      // OAPhone: "",
+      // OM: "",
+      // OMEmail: "",
+      // OMPhone: "",
       ClientName: "",
     },
   });
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "boardMembers"
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   control: form.control,
+  //   name: "boardMembers"
+  // });
   const onSubmit = (data: ClientFormType) => {
     console.log("Board Members:", data);
   };
@@ -168,8 +168,8 @@ const ClientForm = () => {
               <FormInput control={form.control} name='client_po_box' label='Client PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
             </div>
           </div>
-          <div className='w-1/2'><FormInput control={form.control} name='BoardPresident' label='Board President' placeholder='Enter Board President Name' type='text' showLabel={true} /></div>
-          <div className='w-full'>
+          {/* <div className='w-1/2'><FormInput control={form.control} name='BoardPresident' label='Board President' placeholder='Enter Board President Name' type='text' showLabel={true} /></div> */}
+          {/* <div className='w-full'>
             Board Members
             {fields.map((field, index) => (
               <div key={field.id} className='flex gap-2 items-center my-3 w-full'>
@@ -182,8 +182,8 @@ const ClientForm = () => {
                 )}
               </div>
             ))}
-          </div>
-          <div className='grid grid-cols-2 gap-4 mb-4'>
+          </div> */}
+          {/* <div className='grid grid-cols-2 gap-4 mb-4'>
             <div className='flex flex-col gap-2'>
               <FormInput control={form.control} name='GM' label='General Manager' placeholder='Enter General Manager Name' type='text' showLabel={true} />
               <FormInput control={form.control} name='GMPhone' label='General Manager Phone' placeholder='Enter General Manager Phone Number' type='text' showLabel={true} />
@@ -198,7 +198,7 @@ const ClientForm = () => {
               <FormInput control={form.control} name='OM' label='Operations Manager' placeholder='Enter Operations Manager Name' type='text' showLabel={true} />
               <FormInput control={form.control} name='OMPhone' label='Operations Manager Phone' placeholder='Enter Operations Manager Phone Number' type='text' showLabel={true} />
             </div>
-          </div>
+          </div> */}
           <div> 
              <FormCoordinatesMap form={form} name="client_geom" label="Client Fields Coordinates"   type="polygon" refLayer={featureGroupPolygonRef} layerCounts='multiple'/>
           </div>
