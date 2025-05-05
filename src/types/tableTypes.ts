@@ -1,5 +1,4 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { string } from "yup";
 
 export type ParcelData = {
   parcel_id: string;
@@ -122,3 +121,27 @@ export interface initialTableDataTypes {
   sort: string | undefined,
   sort_order: string | undefined
 }
+
+export type ClientTableDataTypes = {
+  client_id: string;
+  client_name: string;
+  client_ha: number;
+  client_country: string;
+  client_admin_area: string;
+  client_subadmin_area: string;
+  client_locality: string;
+  client_postal_code: string;
+  client_po_box: string;
+  client_street: string;
+  client_premise: string;
+  client_subpremise: string;
+  client_email: string;
+  client_established: string; // or Date if parsed
+  client_fax: string;
+  client_phone: string;
+  client_website: string;
+  client_geom: {
+    type: "MultiPolygon";
+    coordinates: any;
+  };
+};
