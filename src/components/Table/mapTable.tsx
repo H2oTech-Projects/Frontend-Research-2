@@ -103,7 +103,7 @@ const MapTable = <T,>({
         return;
       }
       // @ts-ignore
-      setPosition({
+      setPosition &&  setPosition({
         // @ts-ignore
         center: [row.original?.center_latitude, row.original?.center_longitude],
         // @ts-ignore
@@ -116,7 +116,7 @@ const MapTable = <T,>({
       // @ts-ignore
       setZoomLevel(13);
       // @ts-ignore
-      setClickedField(row.original?.FieldID);
+     setClickedField && setClickedField(row.original?.FieldID);
     });
 
     const tableHeader = () => {
@@ -222,7 +222,7 @@ const MapTable = <T,>({
               key={row.id}
               className={cn(
                 // @ts-ignore
-                clickedField === row.original.FieldID ? "bg-slate-400" : "",
+               clickedField && clickedField === row.original.FieldID ? "bg-slate-400" : "",
                 "cursor-pointer",
               )}
               // @ts-ignore
