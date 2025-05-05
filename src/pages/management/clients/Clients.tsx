@@ -174,7 +174,7 @@ const Clients = () => {
                         <FilePenLine /> Edit
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={()=>{ console.log(row.original.id)}}>
                         <Trash2 />
                         Delete
                     </DropdownMenuItem>

@@ -1,1 +1,2 @@
 export const GET_CLIENT_LIST_KEY = 'GET_CLIENT_LIST_KEY';
+export const POST_CLIENT_KEY = 'POST_CLIENT_KEY';

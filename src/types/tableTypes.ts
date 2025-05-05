@@ -123,6 +123,7 @@ export interface initialTableDataTypes {
 }
 
 export type ClientTableDataTypes = {
+  id:string
   client_id: string;
   client_name: string;
   client_ha: number;

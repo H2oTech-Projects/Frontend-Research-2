@@ -18,6 +18,13 @@ export const queryClientService = {
       }).catch((err) => console.log(err));
     return toJson(response?.data);
   },
-
+    postClient: async (data: any) => {
+      const response = await axiosInstance.post<any>(GET_CLIENT_LIST, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    },
 
 };
