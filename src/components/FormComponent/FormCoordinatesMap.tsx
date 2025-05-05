@@ -3,6 +3,8 @@ import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup } from "leaflet"
 import { EditControl } from "react-leaflet-draw"
 import { UseFormReturn } from "react-hook-form";
+import "leaflet/dist/leaflet.css"
+import "leaflet-draw/dist/leaflet.draw.css"
 type FormCoordinatesMapProps = {
   form: UseFormReturn<any>;
   name: string;
@@ -32,6 +34,7 @@ const FormCoordinatesMap = ({
   const onPolygonCreated = (e: LeafletEvent) => {
     const layer = (e as any).layer;
     const formattedCoords = getCoordinates(layer);
+    console.log("formattedCoords", formattedCoords);
     form.setValue(name, [...polyline, formattedCoords]);
     form.clearErrors(name);
   };

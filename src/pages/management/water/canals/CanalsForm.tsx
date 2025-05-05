@@ -11,8 +11,6 @@ import { Form } from '@/components/ui/form';
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect';
 import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap';
 
-import "leaflet/dist/leaflet.css";
-import "leaflet-draw/dist/leaflet.draw.css";
 const canalSchema = z.object({
   client: z.string().min(1, "Client is required"),
   canal_id: z.string()

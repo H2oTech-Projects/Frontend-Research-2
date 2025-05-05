@@ -8,8 +8,6 @@ import {
 } from "@/components/ui/form"
 import { FormInput } from '@/components/FormComponent/FormInput'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
-import "leaflet/dist/leaflet.css"
-import "leaflet-draw/dist/leaflet.draw.css"
 import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup  } from "leaflet"
 import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap'
 import { useRef } from 'react'
