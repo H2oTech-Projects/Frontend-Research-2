@@ -15,6 +15,15 @@ export const useGetClientList = (tableInfo:initialTableDataTypes):UseQueryResult
   });
 }
 
+export const useGetClientDetails = (id:string | null):UseQueryResult<ClientListResponseType> => {
+  return useQuery({
+    queryKey: [GET_CLIENT_LIST_KEY,id],
+    queryFn: ()=> queryClientService.getClientDetails(id),
+    enabled: id !== null,
+    ...queryConfig,
+  });
+}
+
 export const usePostClient = () => {
   return useMutation({
     mutationKey: [POST_CLIENT_KEY],

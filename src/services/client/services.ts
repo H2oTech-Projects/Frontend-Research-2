@@ -13,14 +13,18 @@ export const queryClientService = {
   getClientList: async (tableInfo:initialTableDataTypes) => {
     const response = await axiosInstance.get(GET_CLIENT_LIST,{
       params:{  
-                page_no:tableInfo?.page_no,
-                page_size:tableInfo?.page_size,
-                search:tableInfo?.search,
-                sort:tableInfo?.sort,
-                sort_order:tableInfo?.sort_order}
+              page_no:tableInfo?.page_no,
+              page_size:tableInfo?.page_size,
+              search:tableInfo?.search,
+              sort:tableInfo?.sort,
+              sort_order:tableInfo?.sort_order}
       }).catch((err) => console.log(err));
     return toJson(response?.data);
   },
+  getClientDetails:async(id:string | null ) =>{
+    const response = await axiosInstance.get(GET_CLIENT_LIST + id + "/").catch((err) => console.log(err));
+    return toJson(response?.data);
+},
   postClient: async (data: any) => {
     const response = await axiosInstance.post<any>(GET_CLIENT_LIST, data, {
       headers: {
