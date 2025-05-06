@@ -1,4 +1,4 @@
-import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet"
+import { FeatureGroup, MapContainer, Marker, Polygon, Polyline, TileLayer } from "react-leaflet"
 import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup } from "leaflet"
 import { EditControl } from "react-leaflet-draw"
@@ -22,7 +22,7 @@ const FormCoordinatesMap = ({
   refLayer,
   layerCounts = "multiple"
   }:FormCoordinatesMapProps) => {
-  const polyline = form.watch(`${name}`) || [];
+  const vector = form.watch(`${name}`) || [];
   // Helper function to extract coordinates from a polygon layer
   const getCoordinates = (layer: Layer): [number, number][] => {
     const latlngs = (layer as any).getLatLngs();
@@ -34,8 +34,7 @@ const FormCoordinatesMap = ({
   const onPolygonCreated = (e: LeafletEvent) => {
     const layer = (e as any).layer;
     const formattedCoords = getCoordinates(layer);
-    console.log("formattedCoords", formattedCoords);
-    form.setValue(name, [...polyline, formattedCoords]);
+    form.setValue(name, [...vector, formattedCoords]);
     form.clearErrors(name);
   };
 
@@ -80,6 +79,16 @@ const FormCoordinatesMap = ({
                 marker: type==="marker"
               }}
             />
+            {vector && vector.map((coords: [number, number][], index: number) => {
+              if (type === "marker") {
+                return <Marker key={index} position={coords[0]} />;
+              } else if (type === "polygon") {
+                return <Polygon key={index} positions={coords} />;
+              } else if (type === "polyline") {
+                return <Polyline key={index} positions={coords} />;
+              }
+              return null;
+            })}
           </FeatureGroup>
         </MapContainer>
         </div>
