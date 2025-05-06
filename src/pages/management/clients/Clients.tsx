@@ -18,7 +18,13 @@ import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, File
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import MapTable from '@/components/Table/mapTable';
-import { useGetClientList } from '@/services/client';
+import { useDeleteClient, useGetClientList } from '@/services/client';
+import { toast } from 'react-toastify';
+import { showErrorToast } from '@/utils/tools';
+import { GET_CLIENT_LIST_KEY } from '@/services/client/constant';
+import { useQueryClient } from '@tanstack/react-query';
+import CustomModal from '@/components/modal/ConfirmModal';
+import { set } from 'date-fns';
 
 const initialTableData = {
   search: "",
@@ -31,18 +37,32 @@ const initialTableData = {
 
 const Clients = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient()
   const [tableInfo,setTableInfo] = useState<initialTableDataTypes>({...initialTableData})
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
   const {data: clientData,isLoading} = useGetClientList(tableInfo);
-  console.log(clientData)
+  const {mutate:deleteClient,isPending} =  useDeleteClient();
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState<string>("");
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
   };
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
+  };
+  const handleDelete = () => {
+    deleteClient(id,{
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: [GET_CLIENT_LIST_KEY]})
+        toast.success("Client deleted successfully");
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data.message);
+      },
+     });
   };
 
   const columns: ColumnDef<ClientTableDataTypes>[] = [
@@ -157,6 +177,7 @@ const Clients = () => {
         header: "",
         size: 60,
         cell: ({ row }) => (
+
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
@@ -173,8 +194,7 @@ const Clients = () => {
                     <DropdownMenuItem>
                         <FilePenLine /> Edit
                     </DropdownMenuItem>
-
-                    <DropdownMenuItem onClick={()=>{ console.log(row.original.id)}}>
+                      <DropdownMenuItem onClick={()=>{ setId(row.original.id); setOpen(true)}}>
                         <Trash2 />
                         Delete
                     </DropdownMenuItem>
@@ -193,6 +213,13 @@ const Clients = () => {
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
+      <CustomModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Delete Client"
+        description="Are you sure you want to delete this client? This action cannot be undone."
+        onConfirm={handleDelete}
+      />
       <PageHeader
         pageHeaderTitle="Clients"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
@@ -270,7 +297,7 @@ const Clients = () => {
                 </div>
               </LeafletMap>
               <CollapseBtn
-                className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
+                className="absolute -left-4 top-1/2 z-[9998] m-2 flex size-8 items-center justify-center"
                 onClick={tableCollapseBtn}
                 note={collapse === 'default' ? 'View Full Map' : "Show Table"}
               >
