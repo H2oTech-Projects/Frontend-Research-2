@@ -171,7 +171,7 @@ const ClientForm = () => {
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
-        pageHeaderTitle={`${location.state?.mode === 'edit' ? 'Edit' : 'Add'} Client`}
+        pageHeaderTitle={`${location.state?.mode === 'Edit' ? 'Edit' : 'Add'} Client`}
         breadcrumbPathList={[
           { menuName: "Management", menuPath: "" },
           { menuName: "Clients", menuPath: "/clients" }

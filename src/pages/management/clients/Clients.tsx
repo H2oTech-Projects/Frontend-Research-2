@@ -191,7 +191,7 @@ const Clients = () => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() =>{ navigate("/clients/clientsForm", { state: { mode: "Edit", id: row.original.id } })}}>
                         <FilePenLine /> Edit
                     </DropdownMenuItem>
                       <DropdownMenuItem onClick={()=>{ setId(row.original.id); setOpen(true)}}>
