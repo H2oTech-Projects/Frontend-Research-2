@@ -5,9 +5,12 @@ import { initialTableDataTypes } from "@/types/tableTypes";
 import axiosInstance from "@/services/axiosInstance";
 
 const GET_CLIENT_LIST = BASE_API_URL + "/client/";
-
+export interface RegisterResponse {
+  success?: string;
+  message: { [key: string]: any };
+}
 export const queryClientService = {
-  getFieldList: async (tableInfo:initialTableDataTypes) => {
+  getClientList: async (tableInfo:initialTableDataTypes) => {
     const response = await axiosInstance.get(GET_CLIENT_LIST,{
       params:{  
                 page_no:tableInfo?.page_no,
@@ -18,13 +21,21 @@ export const queryClientService = {
       }).catch((err) => console.log(err));
     return toJson(response?.data);
   },
-    postClient: async (data: any) => {
-      const response = await axiosInstance.post<any>(GET_CLIENT_LIST, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return response.data;
-    },
+  postClient: async (data: any) => {
+    const response = await axiosInstance.post<any>(GET_CLIENT_LIST, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  },
+  deleteClient: async (id: string) => {
+    const response = await axiosInstance.delete<RegisterResponse>(GET_CLIENT_LIST + id + "/", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  }
 
 };
