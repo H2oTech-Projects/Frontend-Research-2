@@ -1,10 +1,12 @@
-import AuthLayout from '@/layout/authLayout'
 import { Link } from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from '@/lib/utils';
 import { Mail } from 'lucide-react';
+import { lazy } from 'react';
+
+const AuthLayout = lazy(async()=>await import("@/layout/authLayout"))
 
 const schema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),

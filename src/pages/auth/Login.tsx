@@ -4,14 +4,14 @@ import { cn } from "../../utils/cn";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/slice/authSlice";
-import AuthLayout from "@/layout/authLayout";
-import { useState } from "react";
+// import AuthLayout from "@/layout/authLayout";
+import { lazy, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePostLoginUser } from "@/services/registration";
 import { showErrorToast } from "@/utils/tools";
-
+const AuthLayout = lazy(async()=>await import("@/layout/authLayout"));
 const schema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
   password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),

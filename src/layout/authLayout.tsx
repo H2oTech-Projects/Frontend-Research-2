@@ -1,8 +1,6 @@
 import React from 'react'
-import RegisterImage from "../assets/RIGB.png";
-import NightRegisterImage from "../assets/NRIGB.png";
+import RegisterImage from "../assets/LoginImage.jpg";
 import FlowLogo from "../assets/Circular-Light-Gray.png";
-import BlackFlowLogo from "../assets/Circular-Black.png";
 import { ChevronLeft, Info } from 'lucide-react';
 import { useMediaQuery } from '@uidotdev/usehooks';
 import { cn } from '@/utils/cn';
@@ -20,38 +18,38 @@ const AuthLayout = ({header,title,titleDescription,children}:AuthLayoutProps) =>
    <>
       <div className="flex min-h-screen w-full">
         <div className={cn("w-[440px] text-white relative",!isDesktopDevice ? "hidden" : "")}>
-          <div className="z-10 flex flex-col justify-between h-full px-6 py-10">
+          <div className="z-10 flex flex-col justify-between h-full px-6 py-20">
             <div className="flex justify-center items-center align-center mb-4 gap-3">
               <img src={FlowLogo} alt="Flow Logo" className="w-16 h-16 mb-2" />
-              <span className="text-3xl font-semibold ">FLOW</span>
+              <span className="text-3xl font-bold antialiased text-white ">FLOW</span>
             </div>
 
             {/* Bottom Text */}
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-semibold">Water Accounts for Your Fields</h2>
-              <p className="text-sm">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
+            <div className="text-center text-white space-y-2">
+              <h2 className="text-2xl font-semibold antialiased">Water Accounts for Your Fields</h2>
+              <p className="text-sm antialiased">
+                Allocation management, ET data, surface water, and groundwater for your fields in one easy to use platform.
               </p>
             </div>
           </div>
           <img
             src={RegisterImage}
             alt="H2O Logo"
-            className="w-full h-full object-cover -z-10 absolute top-0 left-0 dark:hidden"
+            className="w-full h-full object-cover -z-10 absolute top-0 left-0"
           />
-          <img
+          {/* <img
             src={NightRegisterImage}
             alt="H2O Logo"
             className="w-full h-full object-cover -z-10 absolute top-0 left-0 hidden dark:block"
-          />
+          /> */}
         </div>
 
-        <div className={cn("flex flex-col flex-grow ", !isDesktopDevice ? "relative" : " dark:bg-sky-950")}>
+        <div className={cn("flex flex-col flex-grow ", !isDesktopDevice ? "relative text-white" : " dark:bg-sky-950  text-gray-900 dark:text-slate-50 ")}>
             {/* Mobile Image Section */}
-          {!isDesktopDevice && <img src={RegisterImage} alt="H2O Logo" className="w-full h-full object-cover -z-10 absolute top-0 left-0 dark:hidden" />}
-          {!isDesktopDevice && <img src={NightRegisterImage} alt="H2O Logo" className="w-full h-full object-cover -z-10 absolute top-0 left-0 hidden dark:block" />}
+          {!isDesktopDevice && <img src={RegisterImage} alt="H2O Logo" className="w-full h-full object-cover -z-10 absolute top-0 left-0" />}
+          {/* {!isDesktopDevice && <img src={NightRegisterImage} alt="H2O Logo" className="w-full h-full object-cover -z-10 absolute top-0 left-0 hidden dark:block" />} */}
           {/* Top Navigation */}
-          <div className="flex justify-between items-center px-4 py-3 text-sm text-gray-600 dark:text-white">
+          <div className={cn("flex justify-between items-center px-4 py-3 text-sm  ",!isDesktopDevice ? "text-white" : "text-gray-900 dark:text-slate-50")}>
             <div className="flex items-center gap-1 cursor-pointer hover:underline">
               <ChevronLeft size={16} />
               <span>Return Home</span>
@@ -61,12 +59,12 @@ const AuthLayout = ({header,title,titleDescription,children}:AuthLayoutProps) =>
             </div>}
           </div>
 
-            <div className="flex-grow flex flex-col items-center justify-center dark:text-white h-auto">
+            <div className="flex-grow flex flex-col items-center justify-center  h-auto">
               {/* Mobile  Logo Section */}
               {!isDesktopDevice &&  <div className="flex justify-center items-center align-center gap-3">
-                <img src={FlowLogo} alt="Flow Logo" className="w-16 h-16 mb-2 hidden dark:block" />
-                <img src={BlackFlowLogo} alt="Flow Logo" className="w-16 h-16 mb-2 dark:hidden" />
-                <span className="text-3xl font-semibold ">FLOW</span>
+                <img src={FlowLogo} alt="Flow Logo" className="w-16 h-16 mb-2 " />
+                {/* <img src={BlackFlowLogo} alt="Flow Logo" className="w-16 h-16 mb-2 dark:hidden" /> */}
+                <span className="text-3xl font-semibold antialiased">FLOW</span>
                 </div>}
               {/* Title Section */}
               <div className={cn("flex flex-col  justify-center items-center mt-5",isDesktopDevice ? "gap-1 mt-5" : "gap-3 mt-2")}>
@@ -85,7 +83,7 @@ const AuthLayout = ({header,title,titleDescription,children}:AuthLayoutProps) =>
                 {header}
                 </div>
               }
-               {!isDesktopDevice &&   <div className="flex items-center gap-1 cursor-pointer hover:underline mt-4">
+               {!isDesktopDevice &&   <div className="flex items-center gap-1 cursor-pointer hover:underline mt-4 text-white">
                 <Info size={14} />
                 <span>Need help?</span>
               </div>
@@ -93,7 +91,7 @@ const AuthLayout = ({header,title,titleDescription,children}:AuthLayoutProps) =>
             </div>
 
             {/* Footer */}
-            <div className={cn("flex  items-center px-4 py-3 text-xs dark:text-gray-400", isDesktopDevice ? "justify-between" : "justify-center")}>
+            <div className={cn("flex  items-center px-4 py-3 text-xs ", isDesktopDevice ? "justify-between" : "justify-center text-white")}>
               <div>Copyright 2025 - 2022 H2oTech All rights Reserved</div>
               {isDesktopDevice &&   <div className="flex items-center gap-1 cursor-pointer hover:underline">
                 <Info size={14} />
