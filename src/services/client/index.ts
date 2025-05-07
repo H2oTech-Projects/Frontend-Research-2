@@ -2,7 +2,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient, UseQueryResult } fr
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { initialTableDataTypes } from "@/types/tableTypes";
 import { ClientListResponseType } from "@/types/apiResponseType";
-import { DELETE_CLIENT_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY } from "./constant";
+import { DELETE_CLIENT_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from "./constant";
 import { queryClientService, RegisterResponse } from "./services";
 import { AxiosError } from "axios";
 
@@ -15,7 +15,7 @@ export const useGetClientList = (tableInfo:initialTableDataTypes):UseQueryResult
   });
 }
 
-export const useGetClientDetails = (id:string | null):UseQueryResult<ClientListResponseType> => {
+export const useGetClientDetails = (id:string | null):UseQueryResult<any> => {
   return useQuery({
     queryKey: [GET_CLIENT_LIST_KEY,id],
     queryFn: ()=> queryClientService.getClientDetails(id),
@@ -25,9 +25,16 @@ export const useGetClientDetails = (id:string | null):UseQueryResult<ClientListR
 }
 
 export const usePostClient = () => {
-  return useMutation({
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [POST_CLIENT_KEY],
     mutationFn:queryClientService.postClient,
+ 
+  });
+}
+export const usePutClient = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [PUT_CLIENT_KEY],
+    mutationFn:queryClientService.putClient,
  
   });
 }

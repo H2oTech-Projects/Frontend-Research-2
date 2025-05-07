@@ -33,6 +33,14 @@ export const queryClientService = {
     });
     return response.data;
   },
+  putClient: async (data: any) => {
+    const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  },
   deleteClient: async (id: string) => {
     const response = await axiosInstance.delete<RegisterResponse>(GET_CLIENT_LIST + id + "/", {
       headers: {
