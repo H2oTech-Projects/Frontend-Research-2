@@ -135,7 +135,15 @@ export const RouteList = [
     Component: lazy(async () => await import("./../pages/management/clients/Clients")),
   },
   {
-    path:routeUrl.ClientsForm?.url,
+    path:routeUrl.AddClient?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
+  },
+  {
+    path:routeUrl.EditClient?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
+  },
+  {
+    path:routeUrl.ViewClient?.url,
     Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
   }
 

@@ -114,9 +114,17 @@ const Clients = {
     name: "Clients",
 };
 
-const ClientsForm = {
-    url: "/clients/clientsForm",
-    name: "Clients Form",
+const AddClient = {
+    url: "/clients/addClient",
+    name: "Add Client",
+};
+const EditClient = {
+    url: "/clients/:id/editClient",
+    name: "Edit Client",
+};
+const ViewClient = {
+    url: "/clients/:id/viewClient",
+    name: "View Client",
 };
 export {
     Map,
@@ -143,5 +151,7 @@ export {
     Canals,
     CanalsForm,
     Clients,
-    ClientsForm,
+    AddClient,
+    EditClient,
+    ViewClient
 };
