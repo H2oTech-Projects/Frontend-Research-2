@@ -191,7 +191,7 @@ const Clients = () => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>{ navigate("/clients/clientsForm", { state: { mode: "Edit", id: row.original.id } })}}>
+                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/editClient`, { state: { mode: "Edit", id: row.original.id } })}}>
                         <FilePenLine /> Edit
                     </DropdownMenuItem>
                       <DropdownMenuItem onClick={()=>{ setId(row.original.id); setOpen(true)}}>
@@ -245,7 +245,7 @@ const Clients = () => {
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={() => {
-              navigate("/clients/clientsForm", {
+              navigate("/clients/addClient", {
                 state: { mode: "Add" },
               });
             }}
