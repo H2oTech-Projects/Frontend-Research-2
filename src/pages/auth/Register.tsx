@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { toast } from "react-toastify";
 import { usePostRegisterUser } from "@/services/registration";
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { Mail, Lock, User } from "lucide-react";
-import AuthLayout from "@/layout/authLayout";
+const AuthLayout = lazy(async()=>await import("@/layout/authLayout"))
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
