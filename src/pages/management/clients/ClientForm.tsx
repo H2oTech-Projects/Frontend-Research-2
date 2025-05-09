@@ -14,27 +14,27 @@ import { useQueryClient } from '@tanstack/react-query';
 import { GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
 import { toast } from 'react-toastify';
 import { FormDatePicker } from '@/components/FormComponent/FormDatePicker';
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 import { showErrorToast } from '@/utils/tools';
 
 const clientSchema = z.object({
-  client_id: z.string().optional(),
-  client_ha: z.coerce.number().optional(),
-  client_country: z.string().optional(),
-  client_admin_area: z.string().optional(),
-  client_subadmin_area: z.string().optional(),
-  client_locality: z.string().optional(),
-  client_postal_code: z.string().optional(),
-  client_po_box: z.string().optional(),
-  client_street: z.string().optional(),
-  client_premise: z.string().optional(),
-  client_subpremise: z.string().optional(),
-  client_email: z.string().email().optional(),
-  client_established: z.coerce.date().optional(),
-  client_fax: z.string().optional(),
-  client_phone: z.string().optional(),
-  client_website: z.string().url().optional(),
-  client_geom: z.array(z.array(
+  clientId: z.string().optional(),
+  clientHa: z.coerce.number().optional(),
+  clientCountry: z.string().optional(),
+  clientAdminArea: z.string().optional(),
+  clientSubadminArea: z.string().optional(),
+  clientLocality: z.string().optional(),
+  clientPostalCode: z.string().optional(),
+  clientPoBox: z.string().optional(),
+  clientStreet: z.string().optional(),
+  clientPremise: z.string().optional(),
+  clientSubpremise: z.string().optional(),
+  clientEmail: z.string().email().optional(),
+  clientEstablished: z.coerce.date().optional(),
+  clientFax: z.string().optional(),
+  clientPhone: z.string().optional(),
+  clientWebsite: z.string().url().optional(),
+  clientGeom: z.array(z.array(
     z.tuple([
       z.coerce.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90"),
       z.coerce.number().min(-180, "Longitude must be between -180 and 180").max(180, "Longitude must be between -180 and 180"),
@@ -45,23 +45,23 @@ const clientSchema = z.object({
 })
 export type ClientFormType = z.infer<typeof clientSchema>;
 const initialValues: ClientFormType = {
-      client_id:undefined,
-      client_ha: undefined,
-      client_country: "",
-      client_admin_area: "",
-      client_subadmin_area: "",
-      client_locality: "",
-      client_postal_code: "",
-      client_po_box: "",
-      client_street: "",
-      client_premise: "",
-      client_subpremise: "",
-      client_email: "",
-      client_established: undefined,
-      client_fax: "",
-      client_phone: "",
-      client_website: "",
-      client_geom: [],
+      clientId:undefined,
+      clientHa: undefined,
+      clientCountry: "",
+      clientAdminArea: "",
+      clientSubadminArea: "",
+      clientLocality: "",
+      clientPostalCode: "",
+      clientPoBox: "",
+      clientStreet: "",
+      clientPremise: "",
+      clientSubpremise: "",
+      clientEmail: "",
+      clientEstablished: undefined,
+      clientFax: "",
+      clientPhone: "",
+      clientWebsite: "",
+      clientGeom: [],
       client_name: "",
     }
 const ClientForm = () => {
@@ -71,7 +71,7 @@ const ClientForm = () => {
   const { id } = useParams();
   const [clientFormData, setClientFormData] = useState<ClientFormType>(initialValues);
   const{data:clientDetail,isLoading} = useGetClientDetails(id ? id : null);
-  // 
+  //
   const featureGroupPolygonRef = useRef<LeafletFeatureGroup>(null);
   const {mutate:createClient, isPending:isClientCreating} = usePostClient()
   const {mutate:editClient, isPending:isClientUpdating} = usePutClient()
@@ -81,10 +81,10 @@ const ClientForm = () => {
   });
 
   const handleCreateClient =(data:ClientFormType) =>{
-      const FormValue = {...data,client_geom:{
+      const FormValue = {...data,clientGeom:{
       type:"MultiPolygon",
-      coordinates:[data.client_geom],},
-      client_established: dayjs(data.client_established).format("YYYY-MM-DD")
+      coordinates:[data.clientGeom],},
+      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
   }
       createClient(FormValue, {
       onSuccess: (data) => {
@@ -101,14 +101,14 @@ const ClientForm = () => {
     });
   }
   const handleUpdateClient =(data:ClientFormType) =>{
-      const FormValue = {...data,client_geom:{
+      const FormValue = {...data,clientGeom:{
       type:"MultiPolygon",
-      coordinates:[data.client_geom]   
+      coordinates:[data.clientGeom]
     },
-     client_established: dayjs(data.client_established).format("YYYY-MM-DD"),
+     clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
      id:id
   }
-  console.log(FormValue)  
+  console.log(FormValue)
       editClient(FormValue, {
       onSuccess: (data) => {
       // Invalidate and refetch
@@ -135,13 +135,13 @@ const ClientForm = () => {
 
   useEffect(()=>{
   if(clientDetail && id && !isLoading){
-    const clientFormData= {...clientDetail, client_geom: clientDetail?.client_geom?.coordinates[0]}
+    const clientFormData= {...clientDetail, clientGeom: clientDetail?.clientGeom?.coordinates[0]}
     setClientFormData(clientFormData)
     form.reset(clientFormData); // Reset the form with the fetched data
   }
 
 },[clientDetail,isLoading])
-  
+
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
@@ -156,32 +156,32 @@ const ClientForm = () => {
 
          <div className='grid grid-cols-2 gap-4 mb-4'>
             <div className='flex flex-col gap-2'>
-              <FormInput control={form.control} name='client_id' label='Client ID' placeholder='Enter Client ID ' type='number' showLabel={true} />
-              <FormInput control={form.control} name='client_ha' label='Client Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} />
+              <FormInput control={form.control} name='clientId' label='Client ID' placeholder='Enter Client ID ' type='number' showLabel={true} />
+              <FormInput control={form.control} name='clientHa' label='Client Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} />
               <FormInput control={form.control} name='client_name' label='Client Name' placeholder='Enter Client Name' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_email' label='Client Email' placeholder='Enter Client Email' type='email' showLabel={true} />
-              <FormInput control={form.control} name='client_phone' label='Client Phone' placeholder='Enter Client Phone Number' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_website' label='Client Website' placeholder='Enter Client Website URL' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_fax' label='Client Fax' placeholder='Enter Client Fax Number' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_street' label='Client Street' placeholder='Enter Client street' type='text' showLabel={true} />
-               <FormDatePicker control={form.control} name='client_established' label='Established Date'  />
+              <FormInput control={form.control} name='clientEmail' label='Client Email' placeholder='Enter Client Email' type='email' showLabel={true} />
+              <FormInput control={form.control} name='clientPhone' label='Client Phone' placeholder='Enter Client Phone Number' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientWebsite' label='Client Website' placeholder='Enter Client Website URL' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientFax' label='Client Fax' placeholder='Enter Client Fax Number' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter Client street' type='text' showLabel={true} />
+               <FormDatePicker control={form.control} name='clientEstablished' label='Established Date'  />
             </div>
             <div className='flex flex-col gap-2'>
-             
-              <FormInput control={form.control} name='client_country' label='Client Country' placeholder='Enter Client Country' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_admin_area' label='Client Admin Area' placeholder='Enter Client Admin Area' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_subadmin_area' label='Client Subadmin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_premise' label='Client Premise' placeholder='Enter  Client Premise' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_subpremise' label='Client Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_locality' label='Client Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_postal_code' label='Client Postal Code' placeholder='Enter Client Postal Code' type='text' showLabel={true} />
-              <FormInput control={form.control} name='client_po_box' label='Client PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
+
+              <FormInput control={form.control} name='clientCountry' label='Client Country' placeholder='Enter Client Country' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientAdminArea' label='Client Admin Area' placeholder='Enter Client Admin Area' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientSubadminArea' label='Client Subadmin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientPremise' label='Client Premise' placeholder='Enter  Client Premise' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientSubpremise' label='Client Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientLocality' label='Client Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientPostalCode' label='Client Postal Code' placeholder='Enter Client Postal Code' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientPoBox' label='Client PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
             </div>
           </div>
-              <div> 
+              <div>
                <FormCoordinatesMap
                 form = {form}
-                name="client_geom" 
+                name="clientGeom"
                 label="Client Coordinates"
                 type="polygon"
                 refLayer={featureGroupPolygonRef}

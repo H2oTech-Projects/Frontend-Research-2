@@ -67,109 +67,109 @@ const Clients = () => {
 
   const columns: ColumnDef<ClientTableDataTypes>[] = [
     {
-        accessorKey: "client_id", 
+        accessorKey: "clientId",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"client_id",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientId",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client ID{tableInfo?.sort !== "client_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client ID{tableInfo?.sort !== "clientId" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
-        size: 100, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue("client_id")}</div>,
+        size: 100,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientId")}</div>,
     },
     {
-        accessorKey: "client_name", 
+        accessorKey: "clientName",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"client_name",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientName",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client Name{tableInfo?.sort !== "client_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client Name{tableInfo?.sort !== "clientName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
-        size: 150, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue("client_name")}</div>,
+        size: 150,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientName")}</div>,
     },
     {
-        accessorKey: "client_ha",        // header: "Field ID",
+        accessorKey: "clientHa",        // header: "Field ID",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"client_ha",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientHa",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client Acres{tableInfo?.sort !== "client_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client Acres{tableInfo?.sort !== "clientHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
-        size: 150, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue("client_ha")}</div>,
+        size: 150,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientHa")}</div>,
     },
     {
-        accessorKey: "client_country",        // header: "Field ID",
+        accessorKey: "clientCountry",        // header: "Field ID",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"client_country",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientCountry",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Country{tableInfo?.sort !== "client_country" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Country{tableInfo?.sort !== "clientCountry" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
-        size: 150, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue("client_country")}</div>,
+        size: 150,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientCountry")}</div>,
     },
     {
-        accessorKey: "client_email",        // header: "Field ID",
+        accessorKey: "clientEmail",        // header: "Field ID",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"client_email",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientEmail",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client Email{tableInfo?.sort !== "client_email" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client Email{tableInfo?.sort !== "clientEmail" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
-        size: 150, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue("client_email")}</div>,
+        size: 150,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientEmail")}</div>,
     },
     {
-        accessorKey: "client_phone", 
+        accessorKey: "clientPhone",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"client_phone",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientPhone",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client Phone{tableInfo?.sort !== "client_phone" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client Phone{tableInfo?.sort !== "clientPhone" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
-        size: 200, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue("client_phone")}</div>,
+        size: 200,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientPhone")}</div>,
     },
     {
-        accessorKey: "client_website", 
+        accessorKey: "clientWebsite",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"client_website",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientWebsite",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Website{tableInfo?.sort !== "client_website" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Website{tableInfo?.sort !== "clientWebsite" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
-        size: 200, 
-        cell: ({ row }) => <div className="capitalize">{row.getValue("client_website")}</div>,
+        size: 200,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientWebsite")}</div>,
     },
 
     {
@@ -236,7 +236,7 @@ const Clients = () => {
                 name="search"
                 id="search"
                 placeholder="Search..."
-                // value={searchText} 
+                // value={searchText}
                 className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
               />
             </div>
@@ -258,7 +258,7 @@ const Clients = () => {
           <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
             <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
                 <MapTable
-                  defaultData={clientData?.data || []} 
+                  defaultData={clientData?.data || []}
                   columns={columns}
                   // setPosition={setPosition as Function}
                   setZoomLevel={setZoomLevel as Function}

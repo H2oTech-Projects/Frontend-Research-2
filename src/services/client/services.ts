@@ -4,6 +4,8 @@ import { toJson} from "@/utils/reactQueryConfig";
 import { initialTableDataTypes } from "@/types/tableTypes";
 import axiosInstance from "@/services/axiosInstance";
 
+import {convertKeysToCamelCase, convertKeysToSnakeCase} from "@/utils/stringConversion";
+
 const GET_CLIENT_LIST = BASE_API_URL + "/client/";
 export interface RegisterResponse {
   success?: string;
@@ -12,18 +14,19 @@ export interface RegisterResponse {
 export const queryClientService = {
   getClientList: async (tableInfo:initialTableDataTypes) => {
     const response = await axiosInstance.get(GET_CLIENT_LIST,{
-      params:{  
+      params:{
               page_no:tableInfo?.page_no,
               page_size:tableInfo?.page_size,
               search:tableInfo?.search,
               sort:tableInfo?.sort,
               sort_order:tableInfo?.sort_order}
       }).catch((err) => console.log(err));
-    return toJson(response?.data);
+
+    return convertKeysToCamelCase(toJson(response?.data));
   },
   getClientDetails:async(id:string | null ) =>{
     const response = await axiosInstance.get(GET_CLIENT_LIST + id + "/").catch((err) => console.log(err));
-    return toJson(response?.data);
+    return convertKeysToCamelCase(toJson(response?.data));
 },
   postClient: async (data: any) => {
     const response = await axiosInstance.post<any>(GET_CLIENT_LIST, data, {
@@ -34,7 +37,7 @@ export const queryClientService = {
     return response.data;
   },
   putClient: async (data: any) => {
-    const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", data, {
+    const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", convertKeysToSnakeCase(data), {
       headers: {
         "Content-Type": "application/json",
       },
