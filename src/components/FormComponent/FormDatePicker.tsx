@@ -27,7 +27,7 @@ export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent className="z-[9999]">
               <Calendar
                 mode="single"
                 selected={field.value}
