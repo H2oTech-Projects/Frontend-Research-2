@@ -17,15 +17,14 @@ export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
+        <FormItem className="flex flex-col gap-1">
+          <FormLabel className="mt-1">{label}</FormLabel>
+          <FormControl>
           <Popover>
             <PopoverTrigger asChild>
-              <FormControl>
                 <Button variant="outline">
                   {field.value ? dayjs(field.value).format("DD MMM YYYY") : "Pick a date"}
                 </Button>
-              </FormControl>
             </PopoverTrigger>
             <PopoverContent className="z-[9999]">
               <Calendar
@@ -36,6 +35,7 @@ export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
               />
             </PopoverContent>
           </Popover>
+          </FormControl>
           <FormMessage />
         </FormItem>
       )}

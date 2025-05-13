@@ -11,7 +11,7 @@ interface FormInputProps {
   type: "text" | "password" | "email" | "number";
 }
 
-export function FormInput({ control, name, label, placeholder,type,showLabel=true }: FormInputProps) {
+export function FormInput({ control, name, label, placeholder, type, showLabel = true }: FormInputProps) {
   return (
     <FormField
       control={control}
@@ -20,7 +20,13 @@ export function FormInput({ control, name, label, placeholder,type,showLabel=tru
         <FormItem>
           {showLabel && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <Input placeholder={placeholder} {...field} type={type}/>
+            <Input
+              placeholder={placeholder}
+              {...field}
+              type={type}
+              autoComplete="off"
+              className={type === "number" ? "appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
