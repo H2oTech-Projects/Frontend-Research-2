@@ -40,7 +40,7 @@ const clientSchema = z.object({
       z.coerce.number().min(-180, "Longitude must be between -180 and 180").max(180, "Longitude must be between -180 and 180"),
     ])
   )).min(1, "At least  coordinate is required"),
-  client_name: z.string().optional(),
+  clientName: z.string().optional(),
 
 })
 export type ClientFormType = z.infer<typeof clientSchema>;
@@ -62,7 +62,7 @@ const initialValues: ClientFormType = {
       clientPhone: "",
       clientWebsite: "",
       clientGeom: [],
-      client_name: "",
+      clientName: "",
     }
 const ClientForm = () => {
   const location = useLocation();
@@ -108,7 +108,6 @@ const ClientForm = () => {
      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
      id:id
   }
-  console.log(FormValue)
       editClient(FormValue, {
       onSuccess: (data) => {
       // Invalidate and refetch
@@ -126,7 +125,6 @@ const ClientForm = () => {
 
   const onSubmit = (data: ClientFormType) => {
    if(!id) {
-    console.log("here")
     handleCreateClient(data)
    }else{
     handleUpdateClient(data)
@@ -158,7 +156,7 @@ const ClientForm = () => {
             <div className='flex flex-col gap-2'>
               <FormInput control={form.control} name='clientId' label='Client ID' placeholder='Enter Client ID ' type='number' showLabel={true} />
               <FormInput control={form.control} name='clientHa' label='Client Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} />
-              <FormInput control={form.control} name='client_name' label='Client Name' placeholder='Enter Client Name' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientName' label='Client Name' placeholder='Enter Client Name' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientEmail' label='Client Email' placeholder='Enter Client Email' type='email' showLabel={true} />
               <FormInput control={form.control} name='clientPhone' label='Client Phone' placeholder='Enter Client Phone Number' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientWebsite' label='Client Website' placeholder='Enter Client Website URL' type='text' showLabel={true} />
