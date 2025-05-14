@@ -56,7 +56,7 @@ const Canals = () => {
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={() => {
-              navigate("/canals/canalsForm", {
+              navigate("/canals/addCanal", {
                 state: { mode: "Add" },
               });
             }}

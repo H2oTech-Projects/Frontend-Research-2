@@ -127,7 +127,15 @@ export const RouteList = [
     Component: lazy(async () => await import("./../pages/management/water/canals/Canals")),
   },
   {
-    path:routeUrl.CanalsForm?.url,
+    path:routeUrl.AddCanal?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
+  },
+  {
+    path:routeUrl.EditCanal?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
+  },
+  {
+    path:routeUrl.ViewCanal?.url,
     Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
   },
   {

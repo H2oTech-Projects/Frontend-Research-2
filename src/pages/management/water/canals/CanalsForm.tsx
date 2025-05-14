@@ -2,7 +2,7 @@ import React from 'react';
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import { FormInput } from '@/components/FormComponent/FormInput';
 import { FormTextbox } from '@/components/FormComponent/FormTextbox';
@@ -34,6 +34,7 @@ export type CanalFormType = z.infer<typeof canalSchema>;
 
 const CanalsForm = () => {
   const location = useLocation();
+    const { id } = useParams();
   const form = useForm<CanalFormType>({
     resolver: zodResolver(canalSchema),
     defaultValues: {
@@ -58,11 +59,11 @@ const CanalsForm = () => {
 
   return (
     <div className='h-w-full px-4 pt-2'>
-      <PageHeader
-        pageHeaderTitle={`${location.state?.mode === 'edit' ? 'Edit' : 'Add'} Canal`}
+  <PageHeader
+        pageHeaderTitle={`${!id  ? 'Add' : (location.pathname.includes("editCanal") ? "Edit" : "View")} Canal`}
         breadcrumbPathList={[
           { menuName: "Management", menuPath: "" },
-          { menuName: "Canals", menuPath: "/canals" }
+          { menuName: "Clients", menuPath: "/clients" }
         ]}
       />
 

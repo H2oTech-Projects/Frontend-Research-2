@@ -104,9 +104,19 @@ const Canals = {
     name: "Canals",
 };
 
-const CanalsForm ={
-    url:"/canals/canalsForm",
-    name:"Canals Form",
+const AddCanal = {
+    url: "/canals/addCanals",
+    name: "Add Canal"
+};
+
+const EditCanal = {
+    url: "/canals/:id/editCanal",
+    name: "Edit Canal"
+};
+
+const ViewCanal = {
+    url: "/canals/:id/viewCanal",
+    name: "View Canal"
 };
 
 const Clients = {
@@ -149,7 +159,9 @@ export {
     Profile,
     Help,
     Canals,
-    CanalsForm,
+    AddCanal,
+    EditCanal,
+    ViewCanal,
     Clients,
     AddClient,
     EditClient,
