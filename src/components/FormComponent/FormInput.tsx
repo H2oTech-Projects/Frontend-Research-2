@@ -25,7 +25,7 @@ export function FormInput({ control, name, label, placeholder, type, showLabel =
               {...field}
               type={type}
               autoComplete="off"
-              className={type === "number" ? "appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
+              className={type === "number" ? " [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
             />
           </FormControl>
           <FormMessage />

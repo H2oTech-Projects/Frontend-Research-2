@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useRef, useState } from "react";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Control } from "react-hook-form";
@@ -8,13 +14,20 @@ interface FormFileReaderProps {
   control: Control<any>;
   name: string;
   label: string;
-  accept?: string; // Optional: Specify accepted file types (e.g., ".zip,.shp")
+  accept?: string;
+  placeholder: string;
 }
 
-export function FormFileReader({ control, name, label, accept = "*/*" }: FormFileReaderProps) {
+export function FormFileReader({
+  control,
+  name,
+  label,
+  accept = "*/*",
+  placeholder,
+}: FormFileReaderProps) {
   const [fileContent, setFileContent] = useState<string | ArrayBuffer | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Handle file upload and read
   const handleFileRead = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -24,8 +37,7 @@ export function FormFileReader({ control, name, label, accept = "*/*" }: FormFil
       const content = e.target?.result;
       setFileContent(content!);
     };
-    // Read as ArrayBuffer for binary files (e.g., shapefiles)
-    reader.readAsArrayBuffer(file); // Use readAsText() for text files if needed
+    reader.readAsArrayBuffer(file);
   };
 
   return (
@@ -36,23 +48,33 @@ export function FormFileReader({ control, name, label, accept = "*/*" }: FormFil
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <div className="flex flex-col gap-2 items-center space-x-2">
+            <div className="flex items-center space-x-2">
+              {/* Display selected file name */}
               <Input
+                value={field.value?.name || ""}
+                readOnly
+                placeholder={placeholder}
+                className="cursor-default"
+              />
+              {/* Hidden input */}
+              <input
                 type="file"
                 accept={accept}
+                ref={fileInputRef}
                 onChange={(e) => {
                   handleFileRead(e);
-                  field.onChange(e.target.files?.[0]); // Store the file object in RHF
+                  field.onChange(e.target.files?.[0] || null);
                 }}
-                className="cursor-pointer"
-                id={`${name}-file-input`}
+                className="hidden"
               />
-              {fileContent && (
-                <span className="text-sm text-gray-500">
-                  File selected: {field.value?.name || "Unknown"}
-                </span>
-              )}
-            
+              {/* Trigger button */}
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                Choose File
+              </Button>
             </div>
           </FormControl>
           <FormMessage />
