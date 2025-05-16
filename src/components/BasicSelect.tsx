@@ -7,10 +7,10 @@ type BasicSelectPropsType = {
 }
 const BasicSelect = ({ itemList, label,Value ,setValue}: BasicSelectPropsType) => {
   return (
-    <div className="flex items-center gap-2 ">
-      <label className="w-[6rem] flex justify-between"><span>{label}</span> <span>:</span> </label>
+    <div className="flex flex-col gap-1  space-y-2 ">
+      <label className="font-medium text-sm">{label} </label>
       <Select value={Value }  onValueChange={(value) => setValue(value)}>
-        <SelectTrigger className="w-64 h-8 transition-colors" >
+        <SelectTrigger className="w-full h-10 border  rounded-md transition-colors" >
           <SelectValue placeholder={`Select a ${label}`} />
         </SelectTrigger>
         <SelectContent className="!z-[800]">

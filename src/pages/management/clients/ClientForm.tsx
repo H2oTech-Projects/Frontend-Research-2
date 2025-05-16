@@ -22,6 +22,7 @@ import { set } from 'date-fns';
 import { data } from 'jquery';
 import MapPreview from '@/components/MapPreview';
 import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant';
+import BasicSelect from '@/components/BasicSelect';
 
 const clientSchema = z.object({
   clientId: z.string().optional(),
@@ -79,6 +80,7 @@ const ClientForm = () => {
   const { id } = useParams();
   const [clientFormData, setClientFormData] = useState<ClientFormType>(initialValues);
   const [previewMapData, setPreviewMapData] = useState<any>(null);
+  const [shapeType, setShapeType] = useState<string >("shape")
   const{data:clientDetail,isLoading} = useGetClientDetails(id ? id : null);
   const {mutate:previewMap} = usePostMapPreview()
   const featureGroupPolygonRef = useRef<LeafletFeatureGroup>(null);
@@ -187,9 +189,8 @@ const ClientForm = () => {
               <FormInput control={form.control} name='clientWebsite' label='Website' placeholder='Enter Client Website URL' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientFax' label='Fax' placeholder='Enter Client Fax Number' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter street' type='text' showLabel={true} />             
-              <FormFileReader control={form.control} name="clientShapeFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg,.geojson"/>
-               {previewMapData && <MapPreview data={previewMapData} />}
-           </div>
+              <FormDatePicker control={form.control} name='clientEstablished' label='Established Date'  />    
+            </div>
             <div className='flex flex-col gap-2'>
 
               <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='text' showLabel={true} />
@@ -200,8 +201,17 @@ const ClientForm = () => {
               <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientPostalCode' label='Postal Code' placeholder='Enter Client Postal Code' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientPoBox' label='PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
-              <FormDatePicker control={form.control} name='clientEstablished' label='Established Date'  />
+               <BasicSelect
+                itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
+                label="Choose File Type"
+                Value={shapeType}
+                setValue={setShapeType}/>
             </div>
+          </div>
+          <div className='flex flex-col gap-2 w-full'>
+                 {shapeType === "geojson" ? <FormFileReader control={form.control} name="clientShapeFile" label="Upload GeoJSON file" placeholder='Choose GeoJSON File' multiple={true} accept=".geojson"/> :  <FormFileReader control={form.control} name="clientShapeFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg,.geojson"/>}
+               
+               {previewMapData && <MapPreview data={previewMapData} />}
           </div>
               <div>
                <FormCoordinatesMap
