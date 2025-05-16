@@ -67,7 +67,8 @@ const MapPreview = (data: any) => {
         zoomControl={false} // Disable default zoom control
         minZoom={2}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <GeoJSON
+          {data?.data?.data &&   
+          <GeoJSON
           ref={geoJsonLayerRef}
           pathOptions={{
             //color: "#9370DB",
@@ -77,8 +78,8 @@ const MapPreview = (data: any) => {
             weight: 2.5,
           }}
           onEachFeature={geoJsonLayerEvents}
-          data={JSON.parse(data?.data?.data)}
-        />
+          data={JSON.parse(data?.data?.data) }
+        />}
         <MapSizeHandler />
         <CustomZoomControl />
       </MapContainer>

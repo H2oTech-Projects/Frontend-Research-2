@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/FormComponent/FormInput';
 import { Form } from '@/components/ui/form';
 import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap';
-import { FeatureGroup as LeafletFeatureGroup  } from 'leaflet';
+import { FeatureGroup as LeafletFeatureGroup } from 'leaflet';
 import { useGetClientDetails, usePostClient, usePutClient } from '@/services/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
@@ -53,26 +53,26 @@ const clientSchema = z.object({
 })
 export type ClientFormType = z.infer<typeof clientSchema>;
 const initialValues: ClientFormType = {
-      clientId:undefined,
-      clientHa: undefined,
-      clientCountry: "",
-      clientAdminArea: "",
-      clientSubadminArea: "",
-      clientLocality: "",
-      clientPostalCode: "",
-      clientPoBox: "",
-      clientStreet: "",
-      clientPremise: "",
-      clientSubpremise: "",
-      clientEmail: "",
-      clientEstablished: undefined,
-      clientFax: "",
-      clientPhone: "",
-      clientWebsite: "",
-      clientGeom: [],
-      clientName: "",
-      clientShapeFile: undefined,
-    }
+  clientId: undefined,
+  clientHa: undefined,
+  clientCountry: "",
+  clientAdminArea: "",
+  clientSubadminArea: "",
+  clientLocality: "",
+  clientPostalCode: "",
+  clientPoBox: "",
+  clientStreet: "",
+  clientPremise: "",
+  clientSubpremise: "",
+  clientEmail: "",
+  clientEstablished: undefined,
+  clientFax: "",
+  clientPhone: "",
+  clientWebsite: "",
+  clientGeom: [],
+  clientName: "",
+  clientShapeFile: undefined,
+}
 const ClientForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,29 +80,31 @@ const ClientForm = () => {
   const { id } = useParams();
   const [clientFormData, setClientFormData] = useState<ClientFormType>(initialValues);
   const [previewMapData, setPreviewMapData] = useState<any>(null);
-  const [shapeType, setShapeType] = useState<string >("shape")
-  const{data:clientDetail,isLoading} = useGetClientDetails(id ? id : null);
-  const {mutate:previewMap} = usePostMapPreview()
+  const [shapeType, setShapeType] = useState<string>("shape")
+  const { data: clientDetail, isLoading } = useGetClientDetails(id ? id : null);
+  const { mutate: previewMap } = usePostMapPreview()
   const featureGroupPolygonRef = useRef<LeafletFeatureGroup>(null);
-  const {mutate:createClient, isPending:isClientCreating} = usePostClient()
-  const {mutate:editClient, isPending:isClientUpdating} = usePutClient()
+  const { mutate: createClient, isPending: isClientCreating } = usePostClient()
+  const { mutate: editClient, isPending: isClientUpdating } = usePutClient()
   const form = useForm<ClientFormType>({
     resolver: zodResolver(clientSchema),
     defaultValues: id ? clientFormData : initialValues,
   });
 
-  const handleCreateClient =(data:ClientFormType) =>{
-      const FormValue = {...data,clientGeom:{
-      type:"MultiPolygon",
-      coordinates:[data.clientGeom],},
+  const handleCreateClient = (data: ClientFormType) => {
+    const FormValue = {
+      ...data, clientGeom: {
+        type: "MultiPolygon",
+        coordinates: [data.clientGeom],
+      },
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
-  }
-   
-      createClient(FormValue, {
+    }
+
+    createClient(FormValue, {
       onSuccess: (data) => {
-      // Invalidate and refetch
-        queryClient.invalidateQueries({queryKey: [GET_CLIENT_LIST_KEY]})
-        queryClient.invalidateQueries({queryKey: [POST_CLIENT_KEY]});
+        // Invalidate and refetch
+        queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
+        queryClient.invalidateQueries({ queryKey: [POST_CLIENT_KEY] });
         toast.success("Client created successfully!");
         navigate("/clients");
         form.reset(); // Reset the form after successful submission
@@ -112,74 +114,81 @@ const ClientForm = () => {
       },
     });
   }
-  const handleUpdateClient =(data:ClientFormType) =>{
-      const FormValue = {...data,clientGeom:{
-      type:"MultiPolygon",
-      coordinates:[data.clientGeom]
-    },
-     clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
-     id:id
-  }
-      editClient(FormValue, {
+  const handleUpdateClient = (data: ClientFormType) => {
+    const FormValue = {
+      ...data, clientGeom: {
+        type: "MultiPolygon",
+        coordinates: [data.clientGeom]
+      },
+      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
+      id: id
+    }
+    editClient(FormValue, {
       onSuccess: (data) => {
-      // Invalidate and refetch
-        queryClient.invalidateQueries({queryKey: [GET_CLIENT_LIST_KEY]})
-        queryClient.invalidateQueries({queryKey: [PUT_CLIENT_KEY]});
+        // Invalidate and refetch
+        queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
+        queryClient.invalidateQueries({ queryKey: [PUT_CLIENT_KEY] });
         toast.success("Client updated successfully!");
         navigate("/clients");
         form.reset(); // Reset the form after successful submission
       },
       onError: (error) => {
-           showErrorToast(error?.response?.data.message);
+        showErrorToast(error?.response?.data.message);
       },
     });
   }
 
   const onSubmit = (data: ClientFormType) => {
-   if(!id) {
-    handleCreateClient(data)
-   }else{
-    handleUpdateClient(data)
+    if (!id) {
+      handleCreateClient(data)
+    } else {
+      handleUpdateClient(data)
     }
   };
 
-  useEffect(()=>{
-  if(clientDetail && id && !isLoading){
-    const clientFormData= {...clientDetail, clientGeom: clientDetail?.clientGeom?.coordinates[0]}
-    setClientFormData(clientFormData)
-    form.reset(clientFormData); // Reset the form with the fetched data
-  }
+  useEffect(() => {
+    if (clientDetail && id && !isLoading) {
+      const clientFormData = { ...clientDetail, clientGeom: clientDetail?.clientGeom?.coordinates[0] }
+      setClientFormData(clientFormData)
+      form.reset(clientFormData); // Reset the form with the fetched data
+    }
 
-},[clientDetail,isLoading])
+  }, [clientDetail, isLoading])
 
-  useEffect(() =>{
+  useEffect(() => {
     if (form.watch("clientShapeFile") !== undefined) {
       const file = form.watch("clientShapeFile");
       previewMap(file, {
         onSuccess: (data) => {
           setPreviewMapData(data || null);
-          queryClient.invalidateQueries({queryKey: [POST_MAP_PREVIEW]})
+          queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
         },
-        onError: (error) => {
-          console.log(error)
+        onError: (error:any) => {
+queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
+        toast.error(error?.response?.data.message?.APIException[0]);
         },
       });
     }
-},[form.watch("clientShapeFile")])
+  }, [form.watch("clientShapeFile")])
+
+  useEffect(()=>{
+    setPreviewMapData(null);
+    form.setValue("clientShapeFile", undefined);
+}, [shapeType])
 
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
-        pageHeaderTitle={`${!id  ? 'Add' : (location.pathname.includes("editClient") ? "Edit" : "View")} Client`}
+        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("editClient") ? "Edit" : "View")} Client`}
         breadcrumbPathList={[
           { menuName: "Management", menuPath: "" },
           { menuName: "Clients", menuPath: "/clients" }
         ]}
       />
-      {isLoading  ? (<>Fetching Client Detail</>) : (<Form {...form}>
+      {isLoading ? (<>Fetching Client Detail</>) : (<Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
 
-         <div className='grid grid-cols-2 gap-4 mb-4'>
+          <div className='grid grid-cols-2 gap-4 mb-4'>
             <div className='flex flex-col gap-2'>
               <FormInput control={form.control} name='clientId' label='ID' placeholder='Enter Client ID ' type='number' showLabel={true} />
               <FormInput control={form.control} name='clientHa' label='Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} />
@@ -188,8 +197,19 @@ const ClientForm = () => {
               <FormInput control={form.control} name='clientPhone' label='Phone' placeholder='Enter Client Phone Number' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientWebsite' label='Website' placeholder='Enter Client Website URL' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientFax' label='Fax' placeholder='Enter Client Fax Number' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter street' type='text' showLabel={true} />             
-              <FormDatePicker control={form.control} name='clientEstablished' label='Established Date'  />    
+              <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter street' type='text' showLabel={true} />
+              <FormDatePicker control={form.control} name='clientEstablished' label='Established Date' />
+              <BasicSelect
+                itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
+                label="Choose Geometric File Type"
+                Value={shapeType}
+                setValue={setShapeType} />
+              <div className='flex flex-col gap-2 w-full'>
+                {shapeType === "geojson" ? <FormFileReader control={form.control} name="clientShapeFile" label="Upload GeoJSON file" placeholder='Choose GeoJSON File' multiple={false} accept=".geojson" /> : <FormFileReader control={form.control} name="clientShapeFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
+
+
+              </div>
+
             </div>
             <div className='flex flex-col gap-2'>
 
@@ -201,31 +221,24 @@ const ClientForm = () => {
               <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientPostalCode' label='Postal Code' placeholder='Enter Client Postal Code' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientPoBox' label='PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
-               <BasicSelect
-                itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
-                label="Choose File Type"
-                Value={shapeType}
-                setValue={setShapeType}/>
+
             </div>
           </div>
-          <div className='flex flex-col gap-2 w-full'>
-                 {shapeType === "geojson" ? <FormFileReader control={form.control} name="clientShapeFile" label="Upload GeoJSON file" placeholder='Choose GeoJSON File' multiple={true} accept=".geojson"/> :  <FormFileReader control={form.control} name="clientShapeFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg,.geojson"/>}
-               
-               {previewMapData && <MapPreview data={previewMapData} />}
-          </div>
-              <div>
-               <FormCoordinatesMap
-                form = {form}
-                name="clientGeom"
-                label="Client Coordinates"
-                type="polygon"
-                refLayer={featureGroupPolygonRef}
-                layerCounts='multiple'
+      
+         <MapPreview data={previewMapData} />   
+          <div>
+            <FormCoordinatesMap
+              form={form}
+              name="clientGeom"
+              label="Client Coordinates"
+              type="polygon"
+              refLayer={featureGroupPolygonRef}
+              layerCounts='multiple'
             />
           </div>
           <Button className='w-24 mt-4' type="submit">{location.pathname.includes("editClient") ? "Update" : "Add"}</Button>
         </form>
-      </Form>) }
+      </Form>)}
     </div>
   )
 }
