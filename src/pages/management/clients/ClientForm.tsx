@@ -16,6 +16,12 @@ import { toast } from 'react-toastify';
 import { FormDatePicker } from '@/components/FormComponent/FormDatePicker';
 import dayjs from "dayjs";
 import { showErrorToast } from '@/utils/tools';
+import { FormFileReader } from '@/components/FormComponent/FormFileReader';
+import { usePostMapPreview } from '@/services/mapPreview';
+import { set } from 'date-fns';
+import { data } from 'jquery';
+import MapPreview from '@/components/MapPreview';
+import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant';
 
 const clientSchema = z.object({
   clientId: z.string().optional(),
@@ -41,6 +47,7 @@ const clientSchema = z.object({
     ])
   )).min(1, "At least  coordinate is required"),
   clientName: z.string().optional(),
+  clientShapeFile: z.array(z.instanceof(File)).optional(),
 
 })
 export type ClientFormType = z.infer<typeof clientSchema>;
@@ -63,6 +70,7 @@ const initialValues: ClientFormType = {
       clientWebsite: "",
       clientGeom: [],
       clientName: "",
+      clientShapeFile: undefined,
     }
 const ClientForm = () => {
   const location = useLocation();
@@ -70,8 +78,9 @@ const ClientForm = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const [clientFormData, setClientFormData] = useState<ClientFormType>(initialValues);
+  const [previewMapData, setPreviewMapData] = useState<any>(null);
   const{data:clientDetail,isLoading} = useGetClientDetails(id ? id : null);
-  //
+  const {mutate:previewMap} = usePostMapPreview()
   const featureGroupPolygonRef = useRef<LeafletFeatureGroup>(null);
   const {mutate:createClient, isPending:isClientCreating} = usePostClient()
   const {mutate:editClient, isPending:isClientUpdating} = usePutClient()
@@ -86,6 +95,7 @@ const ClientForm = () => {
       coordinates:[data.clientGeom],},
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
   }
+   
       createClient(FormValue, {
       onSuccess: (data) => {
       // Invalidate and refetch
@@ -140,6 +150,21 @@ const ClientForm = () => {
 
 },[clientDetail,isLoading])
 
+  useEffect(() =>{
+    if (form.watch("clientShapeFile") !== undefined) {
+      const file = form.watch("clientShapeFile");
+      previewMap(file, {
+        onSuccess: (data) => {
+          setPreviewMapData(data || null);
+          queryClient.invalidateQueries({queryKey: [POST_MAP_PREVIEW]})
+        },
+        onError: (error) => {
+          console.log(error)
+        },
+      });
+    }
+},[form.watch("clientShapeFile")])
+
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
@@ -154,26 +179,28 @@ const ClientForm = () => {
 
          <div className='grid grid-cols-2 gap-4 mb-4'>
             <div className='flex flex-col gap-2'>
-              <FormInput control={form.control} name='clientId' label='ID' placeholder='Enter ID ' type='number' showLabel={true} />
-              <FormInput control={form.control} name='clientHa' label='Acreage' placeholder='Enter Acreage ' type='number' showLabel={true} />
-              <FormInput control={form.control} name='clientName' label='Name' placeholder='Enter Name' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientEmail' label='Email' placeholder='Enter Email' type='email' showLabel={true} />
-              <FormInput control={form.control} name='clientPhone' label='Phone' placeholder='Enter Phone Number' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientWebsite' label='Website' placeholder='Enter Website URL' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientFax' label='Fax' placeholder='Enter Fax Number' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter street' type='text' showLabel={true} />
-               <FormDatePicker control={form.control} name='clientEstablished' label='Established Date'  />
-            </div>
+              <FormInput control={form.control} name='clientId' label='ID' placeholder='Enter Client ID ' type='number' showLabel={true} />
+              <FormInput control={form.control} name='clientHa' label='Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} />
+              <FormInput control={form.control} name='clientName' label='Name' placeholder='Enter Client Name' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientEmail' label='Email' placeholder='Enter Client Email' type='email' showLabel={true} />
+              <FormInput control={form.control} name='clientPhone' label='Phone' placeholder='Enter Client Phone Number' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientWebsite' label='Website' placeholder='Enter Client Website URL' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientFax' label='Fax' placeholder='Enter Client Fax Number' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter street' type='text' showLabel={true} />             
+              <FormFileReader control={form.control} name="clientShapeFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg,.geojson"/>
+               {previewMapData && <MapPreview data={previewMapData} />}
+           </div>
             <div className='flex flex-col gap-2'>
 
-              <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Country' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientAdminArea' label='Admin Area' placeholder='Enter Admin Area' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Subadmin Area' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Premise' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter sub Premise' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Locality' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientPostalCode' label='Postal Code' placeholder='Enter Postal Code' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientPoBox' label='PO Box' placeholder='Enter PO Box Number' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Client Premise' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientPostalCode' label='Postal Code' placeholder='Enter Client Postal Code' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientPoBox' label='PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
+              <FormDatePicker control={form.control} name='clientEstablished' label='Established Date'  />
             </div>
           </div>
               <div>

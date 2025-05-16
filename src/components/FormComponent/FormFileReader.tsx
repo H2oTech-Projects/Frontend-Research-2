@@ -16,6 +16,7 @@ interface FormFileReaderProps {
   label: string;
   accept?: string;
   placeholder: string;
+  multiple?: boolean;
 }
 
 export function FormFileReader({
@@ -24,22 +25,9 @@ export function FormFileReader({
   label,
   accept = "*/*",
   placeholder,
+  multiple = false,
 }: FormFileReaderProps) {
-  const [fileContent, setFileContent] = useState<string | ArrayBuffer | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleFileRead = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result;
-      setFileContent(content!);
-    };
-    reader.readAsArrayBuffer(file);
-  };
-
   return (
     <FormField
       control={control}
@@ -48,33 +36,40 @@ export function FormFileReader({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <div className="flex items-center space-x-2">
-              {/* Display selected file name */}
-              <Input
-                value={field.value?.name || ""}
-                readOnly
-                placeholder={placeholder}
-                className="cursor-default"
-              />
-              {/* Hidden input */}
+            <div className="flex flex-col  w-full">
               <input
                 type="file"
+                multiple={multiple}
                 accept={accept}
                 ref={fileInputRef}
                 onChange={(e) => {
-                  handleFileRead(e);
-                  field.onChange(e.target.files?.[0] || null);
+                  if (e.target.files && e.target.files.length > 0) {
+                    field.onChange(e.target.files);
+                  }
                 }}
                 className="hidden"
               />
-              {/* Trigger button */}
               <Button
+                className="w-full"
                 variant="outline"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
               >
-                Choose File
+                {placeholder}
               </Button>
+              {/* Display selected file names */}
+              {field.value && (
+                <div className="mt-2">
+                  <span className="font-medium">List of selected files:</span>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    {Array.from(field.value instanceof FileList ? field.value : [field.value]).map(
+                      (file: File, idx: number) => (
+                        <li key={idx}>{file.name}</li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
           </FormControl>
           <FormMessage />
