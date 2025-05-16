@@ -11,12 +11,9 @@ const MapPreview = (data: any) => {
     // This component is used to handle the map size when the side menu is collapsed or expanded
     const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
     const map = useMap();
-   
-    useEffect(() => {
-        
-         map?.invalidateSize(); // Force the map to resize
-        map?.setView(data?.data?.view_bounds[0]); // Force the map to recenter
-      if (data?.view_bounds) {
+    useEffect(() => { 
+      map?.invalidateSize(); // Force the map to resize
+      if (data?.data?.view_bounds) {
         map?.fitBounds(data?.data?.view_bounds);
       }
     }, [data])
