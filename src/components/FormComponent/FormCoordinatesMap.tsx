@@ -1,10 +1,12 @@
-import { FeatureGroup, MapContainer, Marker, Polygon, Polyline, TileLayer } from "react-leaflet"
+import { FeatureGroup, MapContainer, Marker, Polygon, Polyline, TileLayer, useMap } from "react-leaflet"
 import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup } from "leaflet"
 import { EditControl } from "react-leaflet-draw"
 import { UseFormReturn } from "react-hook-form";
 import "leaflet/dist/leaflet.css"
 import "leaflet-draw/dist/leaflet.draw.css"
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 type FormCoordinatesMapProps = {
   form: UseFormReturn<any>;
   name: string;
@@ -53,6 +55,19 @@ const FormCoordinatesMap = ({
       remainingPolygons.push(getCoordinates(layer));});
     form.setValue(name, remainingPolygons);
   };
+    const MapSizeHandler = () => {
+    // This component is used to handle the map size when the side menu is collapsed or expanded
+    const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
+    const map = useMap();
+
+    useEffect(() => {
+      setTimeout(() => {
+        map?.invalidateSize();
+      }, 300)
+    }, [isMenuCollapsed]);
+
+    return null;
+  }
 
   return (
     <FormField
@@ -90,6 +105,7 @@ const FormCoordinatesMap = ({
               return null;
             })}
           </FeatureGroup>
+          <MapSizeHandler />
         </MapContainer>
         </div>
         {layerCounts === "single" && field.value?.length > 1 ? <FormMessage>Only one {type} is allowed</FormMessage> : null}
