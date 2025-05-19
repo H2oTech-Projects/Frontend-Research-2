@@ -30,7 +30,7 @@ export function FormFileReader({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const watchedFiles = useWatch({
     control: control,
-    name: "clientShapeFile",
+    name: name,
   });
 
   // Normalize watchedFiles into a consistent array
