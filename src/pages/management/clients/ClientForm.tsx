@@ -163,18 +163,13 @@ const ClientForm = () => {
           setPreviewMapData(data || null);
           queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
         },
-        onError: (error:any) => {
-queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
-        toast.error(error?.response?.data.message?.APIException[0]);
+        onError: (error: any) => {
+          queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
+          toast.error(error?.response?.data.message?.APIException[0]);
         },
       });
     }
   }, [form.watch("clientShapeFile")])
-
-  useEffect(()=>{
-    setPreviewMapData(null);
-    form.setValue("clientShapeFile", undefined);
-}, [shapeType])
 
   return (
     <div className='h-w-full px-4 pt-2'>
@@ -203,16 +198,17 @@ queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
                 itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
                 label="Choose Geometric File Type"
                 Value={shapeType}
-                setValue={setShapeType} />
+                setValue={(newValue) => {
+                  // Clear the selected files **before** changing shapeType
+                  form.setValue("clientShapeFile", undefined);
+                  setPreviewMapData(null);
+                  setShapeType(newValue);
+                }} />
               <div className='flex flex-col gap-2 w-full'>
                 {shapeType === "geojson" ? <FormFileReader control={form.control} name="clientShapeFile" label="Upload GeoJSON file" placeholder='Choose GeoJSON File' multiple={false} accept=".geojson" /> : <FormFileReader control={form.control} name="clientShapeFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
-
-
               </div>
-
             </div>
             <div className='flex flex-col gap-2'>
-
               <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
@@ -224,8 +220,8 @@ queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
 
             </div>
           </div>
-      
-         <MapPreview data={previewMapData} />   
+
+          <MapPreview data={previewMapData} />
           <div>
             <FormCoordinatesMap
               form={form}

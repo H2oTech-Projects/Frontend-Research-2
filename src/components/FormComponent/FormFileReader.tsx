@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Control } from "react-hook-form";
+import { Control, useWatch } from "react-hook-form";
 
 interface FormFileReaderProps {
   control: Control<any>;
@@ -28,6 +28,18 @@ export function FormFileReader({
   multiple = false,
 }: FormFileReaderProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const watchedFiles = useWatch({
+    control: control,
+    name: "clientShapeFile",
+  });
+
+  // Normalize watchedFiles into a consistent array
+  const normalizedFiles: File[] = (() => {
+    if (!watchedFiles) return [];
+    if (watchedFiles instanceof FileList) return Array.from(watchedFiles);
+    if (Array.isArray(watchedFiles)) return watchedFiles; // already an array
+    return [watchedFiles]; // single file
+  })();
   return (
     <FormField
       control={control}
@@ -58,15 +70,13 @@ export function FormFileReader({
                 {placeholder}
               </Button>
               {/* Display selected file names */}
-              {field.value && (
-                <div className="mt-2">
-                  <span className="font-medium">List of selected files:</span>
-                  <ul className="list-disc list-inside text-sm text-muted-foreground">
-                    {Array.from(field.value instanceof FileList ? field.value : [field.value]).map(
-                      (file: File, idx: number) => (
-                        <li key={idx}>{file.name}</li>
-                      )
-                    )}
+              {normalizedFiles.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="font-semibold">Selected Files:</h3>
+                  <ul className="list-disc ml-6">
+                    {normalizedFiles.map((file, index) => (
+                      <li key={index}>{file.name}</li>
+                    ))}
                   </ul>
                 </div>
               )}
