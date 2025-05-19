@@ -1,0 +1,1 @@
+export const POST_MAP_PREVIEW = 'POST_MAP_PREVIEW';

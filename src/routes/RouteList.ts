@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import * as routeUrl from "./RouteUrl";
+import path from "path";
 
 export const RouteList = [
   {
@@ -121,4 +122,37 @@ export const RouteList = [
     path: routeUrl.Profile?.url,
     Component: lazy(async () => await import("./../pages/others/Profile")),
   },
+  {
+    path:routeUrl.Canals?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/Canals")),
+  },
+  {
+    path:routeUrl.AddCanal?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
+  },
+  {
+    path:routeUrl.EditCanal?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
+  },
+  {
+    path:routeUrl.ViewCanal?.url,
+    Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
+  },
+  {
+    path:routeUrl.Clients?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/Clients")),
+  },
+  {
+    path:routeUrl.AddClient?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
+  },
+  {
+    path:routeUrl.EditClient?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
+  },
+  {
+    path:routeUrl.ViewClient?.url,
+    Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
+  }
+
 ];

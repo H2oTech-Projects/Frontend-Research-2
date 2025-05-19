@@ -99,6 +99,43 @@ const Help = {
     name: "Help",
 };
 
+const Canals = {
+    url: "/canals",
+    name: "Canals",
+};
+
+const AddCanal = {
+    url: "/canals/addCanals",
+    name: "Add Canal"
+};
+
+const EditCanal = {
+    url: "/canals/:id/editCanal",
+    name: "Edit Canal"
+};
+
+const ViewCanal = {
+    url: "/canals/:id/viewCanal",
+    name: "View Canal"
+};
+
+const Clients = {
+    url: "/clients",  
+    name: "Clients",
+};
+
+const AddClient = {
+    url: "/clients/addClient",
+    name: "Add Client",
+};
+const EditClient = {
+    url: "/clients/:id/editClient",
+    name: "Edit Client",
+};
+const ViewClient = {
+    url: "/clients/:id/viewClient",
+    name: "View Client",
+};
 export {
     Map,
     Insight,
@@ -121,4 +158,12 @@ export {
     Settings,
     Profile,
     Help,
+    Canals,
+    AddCanal,
+    EditCanal,
+    ViewCanal,
+    Clients,
+    AddClient,
+    EditClient,
+    ViewClient
 };

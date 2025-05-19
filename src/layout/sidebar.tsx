@@ -45,6 +45,7 @@ const menuLinks = [
                 Children: [
                     { label: "Measurement Points", path: "/measurementPoint" },
                     { label: "Fields", path: "/field" },
+                    {label: "Canals", path: "/canals"},
                     { label: "Districts", path: "/district" },
                 ],
             },
@@ -67,6 +68,12 @@ const menuLinks = [
                 path: "/crops",
                 type: "link",
                 Children: [],
+            },
+            {
+                label: "Clients",
+                icon: Icon.Users,
+                path:"/clients",
+                type: "link",
             },
             {
                 label: "Customers",
