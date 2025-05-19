@@ -1,12 +1,10 @@
 import { MapContainer, Marker, Polygon, Polyline, TileLayer, GeoJSON, useMap } from "react-leaflet"
 import CustomZoomControl from './MapController'
-import { buildPopupMessage } from '@/utils/map';
+
 import { useSelector } from 'react-redux';
-import React, { useEffect, useRef } from 'react';
-import { set } from 'date-fns';
-import { GeoJSON as LeafletGeoJSON } from "leaflet";
+import React, { useEffect } from 'react';
+import RtGeoJson from "./RtGeoJson";
 const MapPreview = (data: any) => {
- const geoJsonLayerRef = useRef<LeafletGeoJSON | null>(null);
   const MapSizeHandler = () => {
     // This component is used to handle the map size when the side menu is collapsed or expanded
     const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
@@ -27,12 +25,6 @@ const MapPreview = (data: any) => {
     return null;
   }
 
-  useEffect(() => {
-  if (geoJsonLayerRef.current) {
-    geoJsonLayerRef.current.clearLayers(); // Clear existing
-    geoJsonLayerRef.current.addData(JSON.parse(data?.data?.data)); // Add new
-  }
-}, [data?.data?.data]);
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
     layer.on({
@@ -68,18 +60,13 @@ const MapPreview = (data: any) => {
         minZoom={2}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {data?.data?.data &&   
-          <GeoJSON
-          ref={geoJsonLayerRef}
-          pathOptions={{
-            //color: "#9370DB",
-            //fillColor: "lightblue",
-            fillOpacity: 0,
-            opacity: 1,
-            weight: 2.5,
-          }}
-          onEachFeature={geoJsonLayerEvents}
-          data={JSON.parse(data?.data?.data) }
-        />}
+          <RtGeoJson
+            layerEvents={geoJsonLayerEvents}
+            data={JSON.parse(data?.data?.data)}
+            style={{ fillColor: "transparent", color: "#9370DB", weight: 1.5 }}
+            key={"map-preview"}
+            color="red"/>
+}
         <MapSizeHandler />
         <CustomZoomControl />
       </MapContainer>

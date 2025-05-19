@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { z } from "zod";
+import { useEffect, useRef, useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -7,7 +6,6 @@ import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/FormComponent/FormInput';
 import { Form } from '@/components/ui/form';
-import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap';
 import { FeatureGroup as LeafletFeatureGroup } from 'leaflet';
 import { useGetClientDetails, usePostClient, usePutClient } from '@/services/client';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,67 +16,20 @@ import dayjs from "dayjs";
 import { showErrorToast } from '@/utils/tools';
 import { FormFileReader } from '@/components/FormComponent/FormFileReader';
 import { usePostMapPreview } from '@/services/mapPreview';
-import { set } from 'date-fns';
-import { data } from 'jquery';
 import MapPreview from '@/components/MapPreview';
 import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant';
 import BasicSelect from '@/components/BasicSelect';
+import { clientSchema } from '@/utils/schemaValidations/formSchema';
+import { clientInitialValues } from '@/utils/initialFormValues';
+import { ClientFormType } from '@/types/formTypes';
 
-const clientSchema = z.object({
-  clientId: z.string().optional(),
-  clientHa: z.coerce.number().optional(),
-  clientCountry: z.string().optional(),
-  clientAdminArea: z.string().optional(),
-  clientSubadminArea: z.string().optional(),
-  clientLocality: z.string().optional(),
-  clientPostalCode: z.string().optional(),
-  clientPoBox: z.string().optional(),
-  clientStreet: z.string().optional(),
-  clientPremise: z.string().optional(),
-  clientSubpremise: z.string().optional(),
-  clientEmail: z.string().email().optional(),
-  clientEstablished: z.coerce.date().optional(),
-  clientFax: z.string().optional(),
-  clientPhone: z.string().optional(),
-  clientWebsite: z.string().url().optional(),
-  clientGeom: z.array(z.array(
-    z.tuple([
-      z.coerce.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90"),
-      z.coerce.number().min(-180, "Longitude must be between -180 and 180").max(180, "Longitude must be between -180 and 180"),
-    ])
-  )).min(1, "At least  coordinate is required"),
-  clientName: z.string().optional(),
-  clientShapeFile: z.array(z.instanceof(File)).optional(),
 
-})
-export type ClientFormType = z.infer<typeof clientSchema>;
-const initialValues: ClientFormType = {
-  clientId: undefined,
-  clientHa: undefined,
-  clientCountry: "",
-  clientAdminArea: "",
-  clientSubadminArea: "",
-  clientLocality: "",
-  clientPostalCode: "",
-  clientPoBox: "",
-  clientStreet: "",
-  clientPremise: "",
-  clientSubpremise: "",
-  clientEmail: "",
-  clientEstablished: undefined,
-  clientFax: "",
-  clientPhone: "",
-  clientWebsite: "",
-  clientGeom: [],
-  clientName: "",
-  clientShapeFile: undefined,
-}
 const ClientForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id } = useParams();
-  const [clientFormData, setClientFormData] = useState<ClientFormType>(initialValues);
+  // const [clientFormData, setClientFormData] = useState<ClientFormType>(initialValues);
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape")
   const { data: clientDetail, isLoading } = useGetClientDetails(id ? id : null);
@@ -88,15 +39,12 @@ const ClientForm = () => {
   const { mutate: editClient, isPending: isClientUpdating } = usePutClient()
   const form = useForm<ClientFormType>({
     resolver: zodResolver(clientSchema),
-    defaultValues: id ? clientFormData : initialValues,
+    defaultValues: clientInitialValues,
   });
 
   const handleCreateClient = (data: ClientFormType) => {
     const FormValue = {
-      ...data, clientGeom: {
-        type: "MultiPolygon",
-        coordinates: [data.clientGeom],
-      },
+      ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
     }
 
@@ -116,10 +64,7 @@ const ClientForm = () => {
   }
   const handleUpdateClient = (data: ClientFormType) => {
     const FormValue = {
-      ...data, clientGeom: {
-        type: "MultiPolygon",
-        coordinates: [data.clientGeom]
-      },
+      ...data, 
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
       id: id
     }
@@ -148,15 +93,12 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (clientDetail && id && !isLoading) {
-      const clientFormData = { ...clientDetail, clientGeom: clientDetail?.clientGeom?.coordinates[0] }
-      setClientFormData(clientFormData)
-      form.reset(clientFormData); // Reset the form with the fetched data
+      form.reset(clientDetail); // Reset the form with the fetched data
     }
-
   }, [clientDetail, isLoading])
 
   useEffect(() => {
-    if (form.watch("clientShapeFile") !== undefined) {
+    if (!!form.watch("clientShapeFile") ) {
       const file = form.watch("clientShapeFile");
       previewMap(file, {
         onSuccess: (data) => {
@@ -217,21 +159,9 @@ const ClientForm = () => {
               <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientPostalCode' label='Postal Code' placeholder='Enter Client Postal Code' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientPoBox' label='PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
-
             </div>
           </div>
-
           <MapPreview data={previewMapData} />
-          <div>
-            <FormCoordinatesMap
-              form={form}
-              name="clientGeom"
-              label="Client Coordinates"
-              type="polygon"
-              refLayer={featureGroupPolygonRef}
-              layerCounts='multiple'
-            />
-          </div>
           <Button className='w-24 mt-4' type="submit">{location.pathname.includes("editClient") ? "Update" : "Add"}</Button>
         </form>
       </Form>)}
