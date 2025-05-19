@@ -65,7 +65,7 @@ const MapPreview = (data: any) => {
             data={JSON.parse(data?.data?.data)}
             style={{ fillColor: "transparent", color: "#9370DB", weight: 1.5 }}
             key={"map-preview"}
-            color="red"/>
+            color="#9370DB"/>
 }
         <MapSizeHandler />
         <CustomZoomControl />
