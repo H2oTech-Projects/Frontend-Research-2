@@ -22,6 +22,7 @@ import BasicSelect from '@/components/BasicSelect';
 import { clientSchema } from '@/utils/schemaValidations/formSchema';
 import { clientInitialValues } from '@/utils/initialFormValues';
 import { ClientFormType } from '@/types/formTypes';
+import { convertKeysToSnakeCase } from '@/utils/stringConversion';
 
 
 const ClientForm = () => {
@@ -43,17 +44,16 @@ const ClientForm = () => {
   });
 
   const handleCreateClient = (data: ClientFormType) => {
-    const FormValue = {
+    const FormValue = convertKeysToSnakeCase({
       ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
-    }
-
+    })
     createClient(FormValue, {
-      onSuccess: (data) => {
+      onSuccess: (data:any) => {
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
         queryClient.invalidateQueries({ queryKey: [POST_CLIENT_KEY] });
-        toast.success("Client created successfully!");
+        toast.success(data?.message);
         navigate("/clients");
         form.reset(); // Reset the form after successful submission
       },
@@ -98,8 +98,8 @@ const ClientForm = () => {
   }, [clientDetail, isLoading])
 
   useEffect(() => {
-    if (!!form.watch("clientShapeFile") ) {
-      const file = form.watch("clientShapeFile");
+    if (!!form.watch("uploadFile") ) {
+      const file = form.watch("uploadFile");
       previewMap(file, {
         onSuccess: (data) => {
           setPreviewMapData(data || null);
@@ -111,7 +111,7 @@ const ClientForm = () => {
         },
       });
     }
-  }, [form.watch("clientShapeFile")])
+  }, [form.watch("uploadFile")])
 
   return (
     <div className='h-w-full px-4 pt-2'>
@@ -128,7 +128,7 @@ const ClientForm = () => {
           <div className='grid grid-cols-2 gap-4 mb-4'>
             <div className='flex flex-col gap-2'>
               <FormInput control={form.control} name='clientId' label='ID' placeholder='Enter Client ID ' type='number' showLabel={true} />
-              <FormInput control={form.control} name='clientHa' label='Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} />
+              <FormInput control={form.control} name='clientLegalHa' label='Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} />
               <FormInput control={form.control} name='clientName' label='Name' placeholder='Enter Client Name' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientEmail' label='Email' placeholder='Enter Client Email' type='email' showLabel={true} />
               <FormInput control={form.control} name='clientPhone' label='Phone' placeholder='Enter Client Phone Number' type='text' showLabel={true} />
@@ -142,18 +142,20 @@ const ClientForm = () => {
                 Value={shapeType}
                 setValue={(newValue) => {
                   // Clear the selected files **before** changing shapeType
-                  form.setValue("clientShapeFile", undefined);
+                  form.setValue("uploadFile", undefined);
                   setPreviewMapData(null);
                   setShapeType(newValue);
                 }} />
               <div className='flex flex-col gap-2 w-full'>
-                {shapeType === "geojson" ? <FormFileReader control={form.control} name="clientShapeFile" label="Upload GeoJSON file" placeholder='Choose GeoJSON File' multiple={false} accept=".geojson" /> : <FormFileReader control={form.control} name="clientShapeFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
+                {shapeType === "geojson" ? <FormFileReader control={form.control} name="uploadFile" label="Upload GeoJSON file" placeholder='Choose GeoJSON File' multiple={false} accept=".geojson" /> : <FormFileReader control={form.control} name="uploadFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
               </div>
             </div>
             <div className='flex flex-col gap-2'>
               <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientSubsubadminArea' label='Subsub Admin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
+              <FormInput control={form.control} name='clientSubsubsubadminArea' label='Subsubsub Admin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Client Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />

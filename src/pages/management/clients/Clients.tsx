@@ -97,7 +97,7 @@ const Clients = () => {
         cell: ({ row }) => <div className="capitalize">{row.getValue("clientName")}</div>,
     },
     {
-        accessorKey: "clientHa",        // header: "Field ID",
+        accessorKey: "clientLegalHa",        // header: "Field ID",
         header: ({ column }) => {
             return (
                 <Button
@@ -109,7 +109,7 @@ const Clients = () => {
             );
         },
         size: 150,
-        cell: ({ row }) => <div className="capitalize">{row.getValue("clientHa")}</div>,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientLegalHa")}</div>,
     },
     {
         accessorKey: "clientCountry",        // header: "Field ID",
