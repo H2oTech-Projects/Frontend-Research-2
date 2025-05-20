@@ -34,7 +34,7 @@ const ClientForm = () => {
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape")
   const { data: clientDetail, isLoading } = useGetClientDetails(id ? id : null);
-  const { mutate: previewMap } = usePostMapPreview()
+  const { mutate: previewMap, isPending:mapLoading } = usePostMapPreview()
   const featureGroupPolygonRef = useRef<LeafletFeatureGroup>(null);
   const { mutate: createClient, isPending: isClientCreating } = usePostClient()
   const { mutate: editClient, isPending: isClientUpdating } = usePutClient()
@@ -163,7 +163,7 @@ const ClientForm = () => {
               <FormInput control={form.control} name='clientPoBox' label='PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} />
             </div>
           </div>
-          <MapPreview data={previewMapData} />
+          <MapPreview data={previewMapData} isLoading={mapLoading} />
           <Button className='w-24 mt-4' type="submit">{location.pathname.includes("editClient") ? "Update" : "Add"}</Button>
         </form>
       </Form>)}
