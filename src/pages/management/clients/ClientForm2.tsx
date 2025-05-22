@@ -43,7 +43,6 @@ const ClientForm = () => {
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape")
   const { data: clientDetail, isLoading } = useGetClientDetails(id ? id : null);
-  const [isEdit,setIsEdit] = useState(false) 
   const { mutate: previewMap, isPending:mapLoading } = usePostMapPreview()
   const { mutate: createClient, isPending: isClientCreating } = usePostClient()
   const { mutate: editClient, isPending: isClientUpdating } = usePutClient()
@@ -57,105 +56,68 @@ const ClientForm = () => {
   const {data:subSubAdminAreaData} = useGetSubSubAdminAreaList(locationState.clientSubadminArea);
   const {data:subSubSubAdminAreaData} = useGetSubSubSubAdminAreaList(locationState.clientSubsubadminArea);
 
-  useEffect(()=>{
-        if(locationData  ) {
-      setLocationState((prevState:any) => ({
-        ...prevState,
-        clientCountry: locationData?.data[0]?.value 
-      }))
-      form.setValue("clientCountry", locationData?.data[0]?.value)
+  useEffect(() => {
+    if(form.watch("clientCountry")) {
+      setLocationState({...initialLocationState, clientCountry: form.watch("clientCountry")})
     }
+  form.resetField("clientAdminArea", { defaultValue: undefined });
+  form.resetField("clientSubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
 
-},[locationData])
-
-useEffect(()=>{
-  if(!isEdit){
-    setLocationState((prevState:any) => ({
-        ...prevState,
-        clientCountry: form.watch("clientCountry")
-      }))
-}
-},[form.watch("clientCountry")])
-
-useEffect(()=>{
- if(!isEdit){
-    setLocationState((prevState:any) => ({
-        ...prevState,
-        clientAdminArea: form.watch("clientAdminArea")
-      }))
-}
-},[form.watch("clientAdminArea")])
-
-useEffect(()=>{
- if(!isEdit){
+}, [form.watch("clientCountry")])
+ 
+ useEffect(() => {
+    if(form.watch("clientAdminArea")) {
       setLocationState((prevState:any) => ({
         ...prevState,
-        clientSubadminArea: form.watch("clientSubadminArea")
+        clientAdminArea: form.watch("clientAdminArea"),
+        clientSubadminArea: undefined,
+        clientSubsubadminArea: undefined,
+        clientSubsubsubadminArea: undefined,
       }))
-}
-},[form.watch("clientSubadminArea")])
+    }
+  form.resetField("clientSubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
 
-useEffect(()=>{
-  if(!isEdit){
+}, [form.watch("clientAdminArea")])
+  useEffect(() => {
+
+    if(form.watch("clientSubadminArea")) {
+ 
       setLocationState((prevState:any) => ({
         ...prevState,
-        clientSubsubadminArea: form.watch("clientSubsubadminArea")
+        clientSubadminArea: form.watch("clientSubadminArea"),
+        clientSubsubadminArea: undefined,
+        clientSubsubsubadminArea: undefined,
       }))
-}
-},[form.watch("clientSubsubadminArea")])
+    }
+  form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
 
-useEffect(()=> {
-if(adminAreaData?.data && !isEdit){
-  setLocationState((prevState:any) => ({
+}, [form.watch("clientSubadminArea")])
+  
+
+useEffect(() => {
+ 
+    if(form.watch("clientSubsubadminArea")) {
+      setLocationState((prevState:any) => ({
         ...prevState,
-        clientAdminArea: adminAreaData?.data[0]?.value 
+        clientSubsubadminArea: form.watch("clientSubsubadminArea"),
+        clientSubsubsubadminArea: undefined,
       }))
-  form.setValue("clientAdminArea",adminAreaData?.data[0]?.value)
-  form.setValue("clientSubadminArea",undefined)
-  form.setValue("clientSubsubadminArea",undefined)
-  form.setValue("clientSubsubsubadminArea",undefined)
-}
+    }
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
 
-},[adminAreaData])
-
-useEffect(()=>{
-  if(subAdminAreaData?.data && !isEdit){
-  setLocationState((prevState:any) => ({
-        ...prevState,
-        clientSubadminArea: subAdminAreaData?.data[0]?.value 
-      }))
-  form.setValue("clientSubadminArea",subAdminAreaData?.data[0]?.value)
-  form.setValue("clientSubsubadminArea",undefined)
-  form.setValue("clientSubsubsubadminArea",undefined)
-}
-},[subAdminAreaData])
-
-useEffect(()=>{
-  if(subSubAdminAreaData?.data && !isEdit){
-  setLocationState((prevState:any) => ({
-        ...prevState,
-        clientSubsubadminArea: subSubAdminAreaData?.data[0]?.value 
-      }))
-  form.setValue("clientSubsubadminArea",subSubAdminAreaData?.data[0]?.value)
-}
-},[subSubAdminAreaData])
-
-useEffect(()=>{
-  if(subSubSubAdminAreaData?.data && !isEdit){
-  form.setValue("clientSubsubsubadminArea",subSubSubAdminAreaData?.data[0]?.value)
-}
-},[subSubSubAdminAreaData])
-
+}, [form.watch("clientSubsubadminArea")])
 
   const handleCreateClient = (data: ClientFormType) => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
     })
-    const cleaned = Object.fromEntries(
-      Object.entries(FormValue).filter(([_, value]) => value !== undefined)
-    );
-    createClient(cleaned, {
+    createClient(FormValue, {
       onSuccess: (data:any) => {
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
@@ -174,12 +136,8 @@ useEffect(()=>{
       ...data, 
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
       id: id
-      
     }
-   const cleaned = Object.fromEntries(
-      Object.entries(FormValue).filter(([_, value]) => value !== undefined)
-    );
-    editClient(cleaned, {
+    editClient(FormValue, {
       onSuccess: (data) => {
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
@@ -203,26 +161,15 @@ useEffect(()=>{
   };
 
   useEffect(() => {
-  
     if (clientDetail && id && !isLoading) {
-      setIsEdit(true);
-      form.reset({...clientDetail?.data[0],uploadFile: [], clientCountry:clientDetail?.data[0]?.clientCountryId, clientAdminArea:clientDetail?.data[0]?.clientAdminAreaId,clientSubadminArea:clientDetail?.data[0]?.clientSubadminAreaId,clientSubsubadminArea:clientDetail?.data[0]?.clientSubsubadminAreaId,clientSubsubsubadminArea:clientDetail?.data[0]?.clientSubsubsubadminAreaId}); // Reset the form with the fetched data
-      setLocationState({
-            clientCountry:clientDetail?.data[0]?.clientCountryId,
-            clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId,
-            clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined,
-            clientSubsubadminArea: clientDetail?.data[0]?.clientSubsubadminAreaId ?? undefined,
-            clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubsubsubadminAreaId ?? undefined,
-      })
-      setPreviewMapData({data:clientDetail?.clientGeojson, view_bounds:clientDetail?.viewBounds})
+      form.reset(clientDetail); // Reset the form with the fetched data
     }
   }, [clientDetail, isLoading])
 
   useEffect(() => {
     if (!!form.watch("uploadFile") ) {
       const file = form.watch("uploadFile");
-      if(file?.length !== 0){
-       previewMap(file, {
+      previewMap(file, {
         onSuccess: (data) => {
           setPreviewMapData(data || null);
           queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
@@ -232,11 +179,8 @@ useEffect(()=>{
           toast.error(error?.response?.data.message?.APIException[0]);
         },
       });
-}
     }
   }, [form.watch("uploadFile")])
-
-
 
   return (
     <div className='h-w-full px-4 pt-2'>
@@ -277,11 +221,11 @@ useEffect(()=>{
             </div>
             <div className='flex flex-col gap-2'>
               {/* <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='number' showLabel={true} /> */}
-              <FormComboBox control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' options={locationData?.data || []} setIsEdit={setIsEdit}/>
-              <FormComboBox control={form.control}  name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' options={adminAreaData?.data || []} setIsEdit={setIsEdit}/>
-              <FormComboBox control={form.control}  name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []} setIsEdit={setIsEdit} />
-              <FormComboBox control={form.control}  name='clientSubsubadminArea' label='Subsub Admin Area' placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />
-              <FormComboBox control={form.control}  name='clientSubsubsubadminArea' label='Sub sub sub Admin Area' placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />
+              <FormComboBox control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' options={locationData?.data || []} />
+              <FormComboBox control={form.control}  name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' options={adminAreaData?.data || []} />
+              <FormComboBox control={form.control}  name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []} />
+              <FormComboBox control={form.control}  name='clientSubsubadminArea' label='Subsub Admin Area' placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []} />
+              <FormComboBox control={form.control}  name='clientSubsubsubadminArea' label='Sub sub sub Admin Area' placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []} />
               <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Client Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
