@@ -23,32 +23,228 @@ import { clientSchema } from '@/utils/schemaValidations/formSchema';
 import { clientInitialValues } from '@/utils/initialFormValues';
 import { ClientFormType } from '@/types/formTypes';
 import { convertKeysToSnakeCase } from '@/utils/stringConversion';
+import { useGetAdminAreaList, useGetLocationList, useGetSubAdminAreaList, useGetSubSubAdminAreaList, useGetSubSubSubAdminAreaList } from '@/services/location';
+import { FormComboBox } from '@/components/FormComponent/FormRTSelect';
 
 
 const ClientForm = () => {
+  const initialLocationState = {
+  clientCountry:undefined,
+  clientAdminArea: undefined,
+  clientSubadminArea: undefined,
+  clientSubsubadminArea: undefined,
+  clientSubsubsubadminArea: undefined
+}
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id } = useParams();
-  // const [clientFormData, setClientFormData] = useState<ClientFormType>(initialValues);
+  const [locationState, setLocationState] = useState<any>(initialLocationState)
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape")
   const { data: clientDetail, isLoading } = useGetClientDetails(id ? id : null);
   const { mutate: previewMap, isPending:mapLoading } = usePostMapPreview()
-  const featureGroupPolygonRef = useRef<LeafletFeatureGroup>(null);
   const { mutate: createClient, isPending: isClientCreating } = usePostClient()
   const { mutate: editClient, isPending: isClientUpdating } = usePutClient()
   const form = useForm<ClientFormType>({
     resolver: zodResolver(clientSchema),
     defaultValues: clientInitialValues,
   });
+  const {data:locationData, isLoading:locationLoading} = useGetLocationList();
+  const {data:adminAreaData} = useGetAdminAreaList(locationState.clientCountry);
+  const {data:subAdminAreaData} = useGetSubAdminAreaList(locationState.clientAdminArea);
+  const {data:subSubAdminAreaData} = useGetSubSubAdminAreaList(locationState.clientSubadminArea);
+  const {data:subSubSubAdminAreaData} = useGetSubSubSubAdminAreaList(locationState.clientSubsubadminArea);
+
+  useEffect(()=>{
+        if(locationData  ) {
+      setLocationState((prevState:any) => ({
+        ...prevState,
+        clientCountry: locationData?.data[0]?.value 
+      }))
+      form.setValue("clientCountry", locationData?.data[0]?.value)
+    }
+},[locationData])
+
+useEffect(()=>{
+  setLocationState((prevState:any) => ({
+        ...prevState,
+        clientCountry: form.watch("clientCountry")
+      }))
+  form.resetField("clientAdminArea", { defaultValue: undefined });
+  form.resetField("clientSubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+},[form.watch("clientCountry")])
+
+useEffect(()=>{
+  setLocationState((prevState:any) => ({
+        ...prevState,
+        clientAdminArea: form.watch("clientAdminArea")
+      }))
+  form.resetField("clientSubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+},[form.watch("clientAdminArea")])
+
+useEffect(()=>{
+  setLocationState((prevState:any) => ({
+        ...prevState,
+        clientSubadminArea: form.watch("clientSubadminArea")
+      }))
+  form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+},[form.watch("clientSubadminArea")])
+
+useEffect(()=>{
+  setLocationState((prevState:any) => ({
+        ...prevState,
+        clientSubsubadminArea: form.watch("clientSubsubadminArea")
+      }))
+  form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+},[form.watch("clientSubsubadminArea")])
+
+useEffect(()=> {
+if(adminAreaData?.data){
+  setLocationState((prevState:any) => ({
+        ...prevState,
+        clientAdminArea: adminAreaData?.data[0]?.value 
+      }))
+  form.setValue("clientAdminArea",adminAreaData?.data[0]?.value)
+}
+
+},[adminAreaData])
+
+useEffect(()=>{
+  if(subAdminAreaData?.data){
+  setLocationState((prevState:any) => ({
+        ...prevState,
+        clientSubadminArea: subAdminAreaData?.data[0]?.value 
+      }))
+  form.setValue("clientSubadminArea",subAdminAreaData?.data[0]?.value)
+}
+},[subAdminAreaData])
+
+useEffect(()=>{
+  if(subSubAdminAreaData?.data){
+  setLocationState((prevState:any) => ({
+        ...prevState,
+        clientSubsubadminArea: subSubAdminAreaData?.data[0]?.value 
+      }))
+  form.setValue("clientSubsubadminArea",subSubAdminAreaData?.data[0]?.value)
+}
+},[subSubAdminAreaData])
+
+useEffect(()=>{
+  if(subSubSubAdminAreaData?.data){
+  form.setValue("clientSubsubsubadminArea",subSubSubAdminAreaData?.data[0]?.value)
+}
+},[subSubSubAdminAreaData])
+
+
+
+//   useEffect(() =>{
+    
+//       if( !adminAreaData && !locationState.clientAdminArea) {
+     
+//       setLocationState((prevState:any) => ({
+//         ...prevState,
+//         clientAdminArea: adminAreaData?.data[0]?.value
+//       }))
+//        form.setValue("clientAdminArea", adminAreaData?.data[0]?.value)
+//     }
+//       if(adminAreaData?.hasNextLevel && subAdminAreaData && !locationState.clientSubadminArea) { 
+//        console.log("here")
+//       setLocationState((prevState:any) => ({
+//         ...prevState,
+//         clientSubadminArea: subAdminAreaData?.data[0]?.value
+//       }))
+//       form.setValue("clientSubadminArea", subAdminAreaData?.data[0]?.value)
+//     }
+//       if(subAdminAreaData?.hasNextLevel && subSubAdminAreaData && !locationState.clientSubsubadminArea) { 
+//       setLocationState((prevState:any) => ({
+//         ...prevState,
+//         clientSubsubadminArea: subSubAdminAreaData?.data[0]?.value
+//       }))
+//       form.setValue("clientSubsubadminArea", subAdminAreaData?.data[0]?.value)
+//     }
+// },[locationData,adminAreaData,subAdminAreaData,subSubAdminAreaData])
+
+// useEffect(()=>{
+//    if(locationData?.hasNextLevel && adminAreaData) {
+//       setLocationState((prevState:any) => ({
+//         ...prevState,
+//         clientAdminArea: adminAreaData?.data[0]?.value
+//       }))
+//       form.setValue("clientAdminArea", adminAreaData?.data[0]?.value)
+//     }
+// },[adminAreaData])
+
+//   useEffect(() => {
+//     if(form.watch("clientCountry")) {
+//       setLocationState({...initialLocationState, clientCountry: form.watch("clientCountry")})
+//     }
+//   form.resetField("clientAdminArea", { defaultValue: undefined });
+//   form.resetField("clientSubadminArea", { defaultValue: undefined });
+//   form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+//   form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+
+// }, [form.watch("clientCountry")])
+ 
+//  useEffect(() => {
+//     if(form.watch("clientAdminArea")) {
+//       setLocationState((prevState:any) => ({
+//         ...prevState,
+//         clientAdminArea: form.watch("clientAdminArea"),
+//         clientSubadminArea: undefined,
+//         clientSubsubadminArea: undefined,
+//         clientSubsubsubadminArea: undefined,
+//       }))
+//     }
+//   form.resetField("clientSubadminArea", { defaultValue: undefined });
+//   form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+//   form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+
+// }, [form.watch("clientAdminArea")])
+//   useEffect(() => {
+
+//     if(form.watch("clientSubadminArea")) {
+ 
+//       setLocationState((prevState:any) => ({
+//         ...prevState,
+//         clientSubadminArea: form.watch("clientSubadminArea"),
+//         clientSubsubadminArea: undefined,
+//         clientSubsubsubadminArea: undefined,
+//       }))
+//     }
+//   form.resetField("clientSubsubadminArea", { defaultValue: undefined });
+//   form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+
+// }, [form.watch("clientSubadminArea")])
+  
+
+// useEffect(() => {
+ 
+//     if(form.watch("clientSubsubadminArea")) {
+//       setLocationState((prevState:any) => ({
+//         ...prevState,
+//         clientSubsubadminArea: form.watch("clientSubsubadminArea"),
+//         clientSubsubsubadminArea: undefined,
+//       }))
+//     }
+//   form.resetField("clientSubsubsubadminArea", { defaultValue: undefined });
+
+// }, [form.watch("clientSubsubadminArea")])
 
   const handleCreateClient = (data: ClientFormType) => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
     })
-    createClient(FormValue, {
+    const cleaned = Object.fromEntries(
+      Object.entries(FormValue).filter(([_, value]) => value !== undefined)
+    );
+    createClient(cleaned, {
       onSuccess: (data:any) => {
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
@@ -68,7 +264,10 @@ const ClientForm = () => {
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
       id: id
     }
-    editClient(FormValue, {
+   const cleaned = Object.fromEntries(
+      Object.entries(FormValue).filter(([_, value]) => value !== undefined)
+    );
+    editClient(cleaned, {
       onSuccess: (data) => {
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
@@ -151,11 +350,12 @@ const ClientForm = () => {
               </div>
             </div>
             <div className='flex flex-col gap-2'>
-              <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientSubsubadminArea' label='Subsub Admin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
-              <FormInput control={form.control} name='clientSubsubsubadminArea' label='Subsubsub Admin Area' placeholder='Enter Client Subadmin Area' type='text' showLabel={true} />
+              {/* <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='number' showLabel={true} /> */}
+              <FormComboBox control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' options={locationData?.data || []} />
+              <FormComboBox control={form.control}  name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' options={adminAreaData?.data || []} />
+              <FormComboBox control={form.control}  name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []} />
+              <FormComboBox control={form.control}  name='clientSubsubadminArea' label='Subsub Admin Area' placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []} />
+              <FormComboBox control={form.control}  name='clientSubsubsubadminArea' label='Sub sub sub Admin Area' placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []} />
               <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Client Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
