@@ -279,9 +279,9 @@ useEffect(()=>{
               {/* <FormInput control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' type='number' showLabel={true} /> */}
               <FormComboBox control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' options={locationData?.data || []} setIsEdit={setIsEdit}/>
               <FormComboBox control={form.control}  name='clientAdminArea' label='Admin Area' placeholder='Enter Client Admin Area' options={adminAreaData?.data || []} setIsEdit={setIsEdit}/>
-              <FormComboBox control={form.control}  name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []} setIsEdit={setIsEdit} />
-              <FormComboBox control={form.control}  name='clientSubsubadminArea' label='Subsub Admin Area' placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />
-              <FormComboBox control={form.control}  name='clientSubsubsubadminArea' label='Sub sub sub Admin Area' placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />
+              {adminAreaData?.hasNextLevel &&<FormComboBox control={form.control}  name='clientSubadminArea' label='Subadmin Area' placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []} setIsEdit={setIsEdit} />}
+              {subAdminAreaData?.hasNextLevel && <FormComboBox control={form.control}  name='clientSubsubadminArea' label='Subsub Admin Area' placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />}
+              {subSubAdminAreaData?.hasNextLevel && <FormComboBox control={form.control}  name='clientSubsubsubadminArea' label='Sub sub sub Admin Area' placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />}
               <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Client Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} />
