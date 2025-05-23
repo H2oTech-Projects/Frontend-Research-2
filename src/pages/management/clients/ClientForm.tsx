@@ -179,6 +179,7 @@ useEffect(()=>{
    const cleaned = Object.fromEntries(
       Object.entries(FormValue).filter(([_, value]) => value !== undefined)
     );
+
     editClient(cleaned, {
       onSuccess: (data) => {
         // Invalidate and refetch
@@ -206,7 +207,7 @@ useEffect(()=>{
   
     if (clientDetail && id && !isLoading) {
       setIsEdit(true);
-      form.reset({...clientDetail?.data[0],uploadFile: [], clientCountry:clientDetail?.data[0]?.clientCountryId, clientAdminArea:clientDetail?.data[0]?.clientAdminAreaId,clientSubadminArea:clientDetail?.data[0]?.clientSubadminAreaId,clientSubsubadminArea:clientDetail?.data[0]?.clientSubsubadminAreaId,clientSubsubsubadminArea:clientDetail?.data[0]?.clientSubsubsubadminAreaId}); // Reset the form with the fetched data
+      form.reset({...clientDetail?.data[0],uploadFile: [], clientCountry:clientDetail?.data[0]?.clientCountryId, clientAdminArea:clientDetail?.data[0]?.clientAdminAreaId,clientSubadminArea:clientDetail?.data[0]?.clientSubadminAreaId ?? undefined,clientSubsubadminArea:clientDetail?.data[0]?.clientSubsubadminAreaId ?? undefined,clientSubsubsubadminArea:clientDetail?.data[0]?.clientSubsubsubadminAreaId ?? undefined}); // Reset the form with the fetched data
       setLocationState({
             clientCountry:clientDetail?.data[0]?.clientCountryId,
             clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId,
