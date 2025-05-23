@@ -25,7 +25,7 @@ export const queryClientService = {
 
     return convertKeysToCamelCase(toJson(response?.data));
   },
-  getClientDetails:async(id:string | null ) =>{
+  getClientDetails:async(id:string | undefined ) =>{
     const response = await axiosInstance.get(GET_CLIENT_LIST + id + "/").catch((err) => console.log(err));
 
     const data = convertKeysToCamelCase(toJson(response));

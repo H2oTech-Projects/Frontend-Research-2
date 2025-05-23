@@ -1,9 +1,9 @@
 import { useQuery, useMutation, UseQueryResult, useQueries } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryLocations } from "./service";
-import { GET_ADMIN_AREA_LIST_KEY, GET_COUNTRY_LIST_KEY, GET_SUB_ADMIN_AREA_LIST_KEY, GET_SUB_SUB_ADMIN_AREA_LIST_KEY, GET_SUB_SUB_SUB_ADMIN_AREA_LIST_KEY } from "./constant";
+import { GET_ADMIN_AREA_LIST_KEY, GET_COUNTRY_LIST_KEY, GET_SUB_ADMIN_AREA_LIST_KEY, GET_SUB_SUB_ADMIN_AREA_LIST_KEY, GET_SUB_SUB_SUB_ADMIN_AREA_LIST_KEY, LOCATION_LABEL_KEY } from "./constant";
 
-export const useGetLocationList = ()=> {
+export const useGetCountryList = ()=> {
   return useQuery({
     queryKey: [GET_COUNTRY_LIST_KEY],
     queryFn:()=> queryLocations.getCountryList(),
@@ -39,5 +39,12 @@ export const useGetSubSubSubAdminAreaList = (id:number | undefined):UseQueryResu
     queryKey: [GET_SUB_SUB_SUB_ADMIN_AREA_LIST_KEY, id],
     queryFn:()=> queryLocations.getSubSubSubAdminAreaList(id),
     enabled: !!id,
+     ...queryConfig  });
+}
+
+export const useGetLocationLabels = ()=> {
+  return useQuery({
+    queryKey: [LOCATION_LABEL_KEY],
+    queryFn:()=> queryLocations.getLocationLabelList(),
      ...queryConfig  });
 }
