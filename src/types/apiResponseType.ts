@@ -129,8 +129,9 @@ export type FieldListResponseType = {
 
  export type ClientListResponseType = {
   data: ClientTableDataTypes[];
-  page_no: number;
-  page_size: number;
-  total_records: number;
+  pageNo: number;
+  pageSize: number;
+  totalRecords: number;
+  geojson:string;
 
 }
