@@ -5,6 +5,7 @@ import { initialTableDataTypes } from "@/types/tableTypes";
 import axiosInstance from "@/services/axiosInstance";
 
 import {convertKeysToCamelCase, convertKeysToSnakeCase} from "@/utils/stringConversion";
+import { createFormData } from "@/utils/createFormData";
 
 const GET_CLIENT_LIST = BASE_API_URL + "/client/";
 export interface RegisterResponse {
@@ -24,15 +25,16 @@ export const queryClientService = {
 
     return convertKeysToCamelCase(toJson(response?.data));
   },
-  getClientDetails:async(id:string | null ) =>{
+  getClientDetails:async(id:string | undefined ) =>{
     const response = await axiosInstance.get(GET_CLIENT_LIST + id + "/").catch((err) => console.log(err));
-    const data = convertKeysToCamelCase(toJson(response?.data));
-    return data?.data?.[0];
+
+    const data = convertKeysToCamelCase(toJson(response));
+    return data?.data;
 },
   postClient: async (data: any) => {
-    const response = await axiosInstance.post<any>(GET_CLIENT_LIST, convertKeysToSnakeCase(data), {
+    const response = await axiosInstance.post<any>(GET_CLIENT_LIST, createFormData(data,"upload_file"), {
       headers: {
-        "Content-Type": "application/json",
+         "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
@@ -40,7 +42,7 @@ export const queryClientService = {
   putClient: async (data: any) => {
     const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", convertKeysToSnakeCase(data), {
       headers: {
-        "Content-Type": "application/json",
+         "Content-Type": "multipart/form-data",
       },
     });
     return response.data;

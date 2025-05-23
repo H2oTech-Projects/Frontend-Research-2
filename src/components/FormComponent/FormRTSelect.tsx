@@ -1,21 +1,38 @@
+import React, { useState } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { Control } from "react-hook-form";
+import { Control, useWatch } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
 interface FormComboBoxProps {
   control: Control<any>;
   name: string;
   label: string;
-  options: { label: string; value: string }[];
+  options: { label: string; value: string | number }[];
   className?: string;
   placeholder?: string;
+  setIsEdit?: any;
 }
 
-export function FormComboBox({ control, name, label, options, placeholder = "Select an option", className }: FormComboBoxProps) {
+export function FormComboBox({
+  control,
+  name,
+  label,
+  options,
+  placeholder = "Select an option",
+  className,
+  setIsEdit,
+}: FormComboBoxProps) {
+  const watchedValue = useWatch({
+    control,
+    name,
+  });
+
+  const [open, setOpen] = useState(false); // 🔥 Manage popover open state
+
   return (
     <FormField
       control={control}
@@ -23,15 +40,21 @@ export function FormComboBox({ control, name, label, options, placeholder = "Sel
       render={({ field }) => (
         <FormItem className={cn("w-full", className)}>
           <FormLabel>{label}</FormLabel>
-          <Popover>
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
                   variant="outline"
                   role="combobox"
-                  className={cn("w-full h-10 justify-between font-normal px-3 py-2", !field.value && "text-muted-foreground text-slate-400")}
+                  className={cn(
+                    "w-full h-10 justify-between font-normal px-3 py-2",
+                    !watchedValue && "text-muted-foreground text-slate-400"
+                  )}
+                  disabled={options.length === 0}
                 >
-                  {field.value ? options.find((option) => option.value === field.value)?.label : placeholder}
+                  {watchedValue && options.length !== 0
+                    ? options.find((option) => option.value === field.value)?.label
+                    : placeholder}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
               </FormControl>
@@ -46,10 +69,16 @@ export function FormComboBox({ control, name, label, options, placeholder = "Sel
                       <CommandItem
                         key={option.value}
                         value={option.label}
-                        onSelect={() => field.onChange(option.value)}
+                        onSelect={() => {
+                          field.onChange(option.value);
+                          setIsEdit && setIsEdit(false);
+                          setOpen(false); // ✅ Close the popover
+                        }}
                       >
                         {option.label}
-                        <Check className={cn("ml-auto", option.value === field.value ? "opacity-100" : "opacity-0")} />
+                        <Check
+                          className={cn("ml-auto", option.value === field.value ? "opacity-100" : "opacity-0")}
+                        />
                       </CommandItem>
                     ))}
                   </CommandGroup>

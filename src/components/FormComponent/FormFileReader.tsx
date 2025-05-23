@@ -32,14 +32,14 @@ export function FormFileReader({
     control: control,
     name: name,
   });
-
+  // console.log("watchedFiles", watchedFiles);
   // Normalize watchedFiles into a consistent array
-  const normalizedFiles: File[] = (() => {
-    if (!watchedFiles) return [];
-    if (watchedFiles instanceof FileList) return Array.from(watchedFiles);
-    if (Array.isArray(watchedFiles)) return watchedFiles; // already an array
-    return [watchedFiles]; // single file
-  })();
+  // const normalizedFiles: File[] = (() => {
+  //   if (!watchedFiles) return [];
+  //   if (watchedFiles instanceof FileList) return Array.from(watchedFiles);
+  //   if (Array.isArray(watchedFiles)) return watchedFiles; // already an array
+  //   return [watchedFiles]; // single file
+  // })();
   return (
     <FormField
       control={control}
@@ -56,7 +56,8 @@ export function FormFileReader({
                 ref={fileInputRef}
                 onChange={(e) => {
                   if (e.target.files && e.target.files.length > 0) {
-                    field.onChange(e.target.files);
+                      const filesArray = Array.from(e.target.files); // Convert FileList to File[]
+                      field.onChange(filesArray);
                   }
                 }}
                 className="hidden"
@@ -70,11 +71,11 @@ export function FormFileReader({
                 {placeholder}
               </Button>
               {/* Display selected file names */}
-              {normalizedFiles.length > 0 && (
+              {watchedFiles && watchedFiles?.length > 0 && (
                 <div className="mt-4">
                   <h3 className="font-semibold">Selected Files:</h3>
                   <ul className="list-disc ml-6">
-                    {normalizedFiles.map((file, index) => (
+                    {watchedFiles.map((file:File, index:number) => (
                       <li key={index}>{file.name}</li>
                     ))}
                   </ul>

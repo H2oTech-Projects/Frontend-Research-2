@@ -2,16 +2,18 @@ import { z } from "zod";
 
 export const clientSchema = z.object({
   clientId: z.string().optional(),
-  clientHa: z.coerce.number().optional(),
-  clientCountry: z.string().optional(),
-  clientAdminArea: z.string().optional(),
-  clientSubadminArea: z.string().optional(),
+  clientLegalHa: z.coerce.number().optional(),
+  clientCountry: z.coerce.number().optional(),
+  clientAdminArea: z.coerce.number().optional(),
+  clientSubadminArea: z.coerce.number().optional(),
   clientLocality: z.string().optional(),
   clientPostalCode: z.string().optional(),
   clientPoBox: z.string().optional(),
   clientStreet: z.string().optional(),
   clientPremise: z.string().optional(),
   clientSubpremise: z.string().optional(),
+  clientSubsubadminArea: z.coerce.number().optional(),
+  clientSubsubsubadminArea: z.coerce.number().optional(),
   clientEmail: z.string().email().optional(),
   clientEstablished: z.coerce.date().optional(),
   clientFax: z.string().optional(),
@@ -24,7 +26,7 @@ export const clientSchema = z.object({
   //   ])
   // )).min(1, "At least  coordinate is required"),
   clientName: z.string().optional(),
-  clientShapeFile: z.array(z.instanceof(File)).optional(),
+  uploadFile: z.array(z.instanceof(File)).optional(),
 
 })
 

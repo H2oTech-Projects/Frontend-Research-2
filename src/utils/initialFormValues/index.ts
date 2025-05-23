@@ -2,10 +2,12 @@ import { ClientFormType } from "@/types/formTypes";
 
 export const clientInitialValues: ClientFormType = {
   clientId: undefined,
-  clientHa: undefined,
-  clientCountry: "",
-  clientAdminArea: "",
-  clientSubadminArea: "",
+  clientLegalHa: undefined,
+  clientCountry: undefined,
+  clientAdminArea: undefined,
+  clientSubadminArea: undefined,
+  clientSubsubadminArea: undefined,
+  clientSubsubsubadminArea: undefined,
   clientLocality: "",
   clientPostalCode: "",
   clientPoBox: "",
@@ -19,5 +21,5 @@ export const clientInitialValues: ClientFormType = {
   clientWebsite: "",
   // clientGeom: [],
   clientName: "",
-  clientShapeFile: undefined,
+  uploadFile: undefined,
 }

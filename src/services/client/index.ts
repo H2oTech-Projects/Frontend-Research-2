@@ -15,11 +15,11 @@ export const useGetClientList = (tableInfo:initialTableDataTypes):UseQueryResult
   });
 }
 
-export const useGetClientDetails = (id:string | null):UseQueryResult<any> => {
+export const useGetClientDetails = (id:string | undefined):UseQueryResult<any> => {
   return useQuery({
     queryKey: [GET_CLIENT_LIST_KEY,id],
     queryFn: ()=> queryClientService.getClientDetails(id),
-    enabled: id !== null,
+    enabled: !!id,
     ...queryConfig,
   });
 }
@@ -28,14 +28,14 @@ export const usePostClient = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [POST_CLIENT_KEY],
     mutationFn:queryClientService.postClient,
- 
+
   });
 }
 export const usePutClient = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [PUT_CLIENT_KEY],
     mutationFn:queryClientService.putClient,
- 
+
   });
 }
 

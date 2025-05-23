@@ -25,6 +25,7 @@ import { GET_CLIENT_LIST_KEY } from '@/services/client/constant';
 import { useQueryClient } from '@tanstack/react-query';
 import CustomModal from '@/components/modal/ConfirmModal';
 import { set } from 'date-fns';
+import RtGeoJson from '@/components/RtGeoJson';
 
 const initialTableData = {
   search: "",
@@ -97,7 +98,7 @@ const Clients = () => {
         cell: ({ row }) => <div className="capitalize">{row.getValue("clientName")}</div>,
     },
     {
-        accessorKey: "clientHa",        // header: "Field ID",
+        accessorKey: "clientLegalHa",        // header: "Field ID",
         header: ({ column }) => {
             return (
                 <Button
@@ -109,7 +110,7 @@ const Clients = () => {
             );
         },
         size: 150,
-        cell: ({ row }) => <div className="capitalize">{row.getValue("clientHa")}</div>,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientLegalHa")}</div>,
     },
     {
         accessorKey: "clientCountry",        // header: "Field ID",
@@ -191,7 +192,7 @@ const Clients = () => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/editClient`, { state: { mode: "Edit", id: row.original.id } })}}>
+                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/edit`, { state: { mode: "Edit", id: row.original.id } })}}>
                         <FilePenLine /> Edit
                     </DropdownMenuItem>
                       <DropdownMenuItem onClick={()=>{ setId(row.original.id); setOpen(true)}}>
@@ -210,6 +211,33 @@ const Clients = () => {
         },
     },
   ];
+
+  console.log(clientData)
+
+    const geoJsonLayerEvents = (feature: any, layer: any) => {
+    // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
+    layer.on({
+      mouseover: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 4,
+          //color: "#800080"
+        });
+        // showInfo(auxLayer.feature.properties.apn);
+      },
+      mouseout: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 2.5,
+          //color: "#9370DB",
+          //fillColor: "lightblue",
+          fillOpacity: 0,
+          opacity: 1,
+        });
+        // removeInfo(auxLayer.feature.properties.apn);
+      },
+    })
+  };
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
@@ -266,7 +294,7 @@ const Clients = () => {
                   // clickedField={clickedField}
                   tableInfo={tableInfo}
                   setTableInfo={setTableInfo}
-                  totalData={clientData?.total_records || 1}
+                  totalData={clientData?.totalRecords || 1}
                   collapse={collapse}
                   isLoading={isLoading }
                 />
@@ -292,9 +320,19 @@ const Clients = () => {
 
                 configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
               >
-                <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+               {isLoading ? <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
                   <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
-                </div>
+                </div> :    
+
+                clientData?.geojson && ( <RtGeoJson
+            layerEvents={geoJsonLayerEvents}
+            data={JSON.parse(clientData?.geojson!)}
+            style={{ fillColor: "transparent", color: "#9370DB", weight: 1.5 }}
+            key={"clientData"}
+            color="#9370DB" />)
+
+ } 
+
               </LeafletMap>
               <CollapseBtn
                 className="absolute -left-4 top-1/2 z-[9998] m-2 flex size-8 items-center justify-center"

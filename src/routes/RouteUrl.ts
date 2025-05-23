@@ -120,7 +120,7 @@ const ViewCanal = {
 };
 
 const Clients = {
-    url: "/clients",  
+    url: "/clients",
     name: "Clients",
 };
 
@@ -129,7 +129,7 @@ const AddClient = {
     name: "Add Client",
 };
 const EditClient = {
-    url: "/clients/:id/editClient",
+    url: "/clients/:id/edit",
     name: "Edit Client",
 };
 const ViewClient = {
