@@ -15,7 +15,7 @@ export const useGetClientList = (tableInfo:initialTableDataTypes):UseQueryResult
   });
 }
 
-export const useGetClientDetails = (id:string | undefined):UseQueryResult<any> => {
+export const useGetClientDetails = (id:string | null | undefined):UseQueryResult<any> => {
   return useQuery({
     queryKey: [GET_CLIENT_LIST_KEY,id],
     queryFn: ()=> queryClientService.getClientDetails(id),
