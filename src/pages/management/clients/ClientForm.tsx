@@ -34,7 +34,6 @@ const ClientForm = () => {
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape")
   const { data: clientDetail, isLoading } = useGetClientDetails(id);
-  const [isEdit, setIsEdit] = useState(false)
   const { mutate: previewMap, isPending:mapLoading } = usePostMapPreview()
   const { mutate: createClient, isPending: isClientCreating } = usePostClient()
   const { mutate: updateClient, isPending: isClientUpdating } = usePutClient()
@@ -73,6 +72,7 @@ const ClientForm = () => {
       let value = alreadyExisted && clientDetail['data'][0]['clientSubadminAreaId'] || subAdminAreaData?.data[0]?.value
       form.setValue("clientSubadminArea", value)
     }
+    
   },[subAdminAreaData, clientDetail])
 
   useEffect(()=>{
@@ -96,7 +96,7 @@ const ClientForm = () => {
   },[subSubSubAdminAreaData])
 
   useEffect(()=>{
-    form.watch("clientCountry") && refetchAdminArea()
+    form.watch("clientCountry") && refetchAdminArea() 
   },[form.watch("clientCountry")])
 
   useEffect(()=>{
@@ -111,10 +111,19 @@ const ClientForm = () => {
     form.watch("clientSubsubadminArea") && refetchlevel3Location()
   },[form.watch("clientSubsubadminArea")])
 
+  const enabledadminAreaData = !!adminAreaData?.data && adminAreaData?.data.length > 0
+  const enabledSubadminAreaData = enabledadminAreaData && !!subAdminAreaData?.data && subAdminAreaData?.data.length > 0
+  const enabledSubSubAdminArea = enabledSubadminAreaData  && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 0
+  const enabledSubSubSubAdminArea = enabledSubSubAdminArea && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 0
+
+
   const handleCreateClient = (data: ClientFormType) => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
-      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
+      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
+      clientSubadminArea: enabledSubadminAreaData ? data.clientSubadminArea : undefined,
+      clientSubsubadminArea: enabledSubSubAdminArea ? data.clientSubsubadminArea : undefined,
+      clientSubsubsubadminArea: enabledSubSubSubAdminArea ? data.clientSubsubsubadminArea : undefined,
     })
     const cleaned = Object.fromEntries(
       Object.entries(FormValue).filter(([_, value]) => value !== undefined)
@@ -129,17 +138,22 @@ const ClientForm = () => {
         form.reset(); // Reset the form after successful submission
       },
       onError: (error) => {
-        showErrorToast(error?.response?.data.message);
+        showErrorToast(error?.response?.data?.message || "Failed to create client");
+        queryClient.invalidateQueries({ queryKey: [POST_CLIENT_KEY] });
       },
     });
   }
   const handleUpdateClient = (data: ClientFormType) => {
-    const FormValue = {
+    const FormValue = convertKeysToSnakeCase({
       ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
+      clientSubadminArea: enabledSubadminAreaData ? data.clientSubadminArea : undefined,
+      clientSubsubadminArea: enabledSubSubAdminArea ? data.clientSubsubadminArea : undefined,
+      clientSubsubsubadminArea: enabledSubSubSubAdminArea ? data.clientSubsubsubadminArea : undefined,
       id: id
 
-    }
+    })
+  
    const cleaned = Object.fromEntries(
       Object.entries(FormValue).filter(([_, value]) => value !== undefined)
     );
@@ -169,7 +183,6 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (clientDetail && id) {
-      setIsEdit(true);
       form.reset({...clientDetail?.data[0],uploadFile: [], clientCountry:clientDetail?.data[0]?.clientCountryId, clientAdminArea:clientDetail?.data[0]?.clientAdminAreaId,clientSubadminArea:clientDetail?.data[0]?.clientSubadminAreaId ?? undefined,clientSubsubadminArea:clientDetail?.data[0]?.clientSubsubadminAreaId ?? undefined,clientSubsubsubadminArea:clientDetail?.data[0]?.clientSubsubsubadminAreaId ?? undefined}); // Reset the form with the fetched data
       setPreviewMapData({data:clientDetail?.clientGeojson, view_bounds:clientDetail?.viewBounds})
     }
@@ -192,14 +205,9 @@ const ClientForm = () => {
 }
     }
   }, [form.watch("uploadFile")])
-  const enabledadminAreaData = !!adminAreaData?.data && adminAreaData?.data.length > 1
-  const enabledSubadminAreaData = enabledadminAreaData && !!subAdminAreaData?.data && subAdminAreaData?.data.length > 1
-  const enabledSubSubAdminArea = enabledSubadminAreaData  && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 1
-  const enabledSubSubSubAdminArea = enabledSubSubAdminArea && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 1
+
 
   const locationLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && locationLabels?.data[form.getValues('clientCountry')!]
-  // //const adminAreaLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && !!locationLabels?.data[form.getValues('clientCountry')!]['admin_area']
-  console.log(locationLabel)
 
   return (
     <div className='h-w-full px-4 pt-2'>
@@ -239,15 +247,15 @@ const ClientForm = () => {
               </div>
             </div>
             <div className='flex flex-col gap-2'>
-              <FormComboBox control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' options={countryOptions?.data || []} setIsEdit={setIsEdit}/>
+              <FormComboBox control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' options={countryOptions?.data || []} />
 
-              {enabledadminAreaData && <FormComboBox control={form.control}  name='clientAdminArea' label={locationLabel?.adminArea} placeholder='Enter Client Admin Area' options={adminAreaData?.data || []} setIsEdit={setIsEdit}/>}
+              {enabledadminAreaData && <FormComboBox control={form.control}  name='clientAdminArea' label={locationLabel?.adminArea} placeholder='Enter Client Admin Area' options={adminAreaData?.data || []} />}
 
-              {enabledSubadminAreaData && <FormComboBox control={form.control}  name='clientSubadminArea' label={locationLabel?.subAdminArea} placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []} setIsEdit={setIsEdit} />}
+              {enabledSubadminAreaData && <FormComboBox control={form.control}  name='clientSubadminArea' label={locationLabel?.subAdminArea} placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []}  />}
 
-              {enabledSubSubAdminArea && <FormComboBox control={form.control}  name='clientSubsubadminArea' label={locationLabel?.subAdminAreaLevel2} placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />}
+              {enabledSubSubAdminArea && <FormComboBox control={form.control}  name='clientSubsubadminArea' label={locationLabel?.subAdminAreaLevel2} placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []}  />}
 
-              {enabledSubSubSubAdminArea && <FormComboBox control={form.control}  name='clientSubsubsubadminArea' label={locationLabel?.subAdminAreaLevel3} placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []} setIsEdit={setIsEdit} />}
+              {enabledSubSubSubAdminArea && <FormComboBox control={form.control}  name='clientSubsubsubadminArea' label={locationLabel?.subAdminAreaLevel3} placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []}  />}
 
               <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Client Premise' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} />
@@ -257,7 +265,7 @@ const ClientForm = () => {
             </div>
           </div>
           <MapPreview data={previewMapData} isLoading={mapLoading} />
-          <Button className='w-24 mt-4' type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>
+          <Button className='w-24 mt-4' disabled={isClientCreating || isClientUpdating} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>
         </form>
       </Form>)}
     </div>

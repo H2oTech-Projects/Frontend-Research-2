@@ -113,19 +113,19 @@ const Clients = () => {
         cell: ({ row }) => <div className="capitalize">{row.getValue("clientLegalHa")}</div>,
     },
     {
-        accessorKey: "clientCountry",        // header: "Field ID",
+        accessorKey: "clientCountryName",        // header: "Field ID",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"clientCountry",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientCountryName",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Country{tableInfo?.sort !== "clientCountry" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Country{tableInfo?.sort !== "clientCountryName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
         size: 150,
-        cell: ({ row }) => <div className="capitalize">{row.getValue("clientCountry")}</div>,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientCountryName")}</div>,
     },
     {
         accessorKey: "clientEmail",        // header: "Field ID",
@@ -211,8 +211,6 @@ const Clients = () => {
         },
     },
   ];
-
-  console.log(clientData)
 
     const geoJsonLayerEvents = (feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));

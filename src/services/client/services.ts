@@ -4,7 +4,7 @@ import { toJson} from "@/utils/reactQueryConfig";
 import { initialTableDataTypes } from "@/types/tableTypes";
 import axiosInstance from "@/services/axiosInstance";
 
-import {convertKeysToCamelCase, convertKeysToSnakeCase} from "@/utils/stringConversion";
+import {convertKeysToCamelCase, convertKeysToSnakeCase, snakeCase} from "@/utils/stringConversion";
 import { createFormData } from "@/utils/createFormData";
 
 const GET_CLIENT_LIST = BASE_API_URL + "/client/";
@@ -19,7 +19,7 @@ export const queryClientService = {
               page_no:tableInfo?.page_no,
               page_size:tableInfo?.page_size,
               search:tableInfo?.search,
-              sort:tableInfo?.sort,
+              sort:snakeCase(tableInfo?.sort!),
               sort_order:tableInfo?.sort_order}
       }).catch((err) => console.log(err));
 
@@ -40,7 +40,7 @@ export const queryClientService = {
     return response.data;
   },
   putClient: async (data: any) => {
-    const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", convertKeysToSnakeCase(data), {
+    const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", createFormData(data,"upload_file"), {
       headers: {
          "Content-Type": "multipart/form-data",
       },
