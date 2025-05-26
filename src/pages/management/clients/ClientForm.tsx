@@ -72,6 +72,7 @@ const ClientForm = () => {
       let value = alreadyExisted && clientDetail['data'][0]['clientSubadminAreaId'] || subAdminAreaData?.data[0]?.value
       form.setValue("clientSubadminArea", value)
     }
+    
   },[subAdminAreaData, clientDetail])
 
   useEffect(()=>{
@@ -110,10 +111,19 @@ const ClientForm = () => {
     form.watch("clientSubsubadminArea") && refetchlevel3Location()
   },[form.watch("clientSubsubadminArea")])
 
+  const enabledadminAreaData = !!adminAreaData?.data && adminAreaData?.data.length > 0
+  const enabledSubadminAreaData = enabledadminAreaData && !!subAdminAreaData?.data && subAdminAreaData?.data.length > 0
+  const enabledSubSubAdminArea = enabledSubadminAreaData  && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 0
+  const enabledSubSubSubAdminArea = enabledSubSubAdminArea && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 0
+
+
   const handleCreateClient = (data: ClientFormType) => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
-      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
+      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
+      clientSubadminArea: enabledSubadminAreaData ? data.clientSubadminArea : undefined,
+      clientSubsubadminArea: enabledSubSubAdminArea ? data.clientSubsubadminArea : undefined,
+      clientSubsubsubadminArea: enabledSubSubSubAdminArea ? data.clientSubsubsubadminArea : undefined,
     })
     const cleaned = Object.fromEntries(
       Object.entries(FormValue).filter(([_, value]) => value !== undefined)
@@ -128,7 +138,8 @@ const ClientForm = () => {
         form.reset(); // Reset the form after successful submission
       },
       onError: (error) => {
-        showErrorToast(error?.response?.data.message);
+        showErrorToast(error?.response?.data?.message || "Failed to create client");
+        queryClient.invalidateQueries({ queryKey: [POST_CLIENT_KEY] });
       },
     });
   }
@@ -136,6 +147,9 @@ const ClientForm = () => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
+      clientSubadminArea: enabledSubadminAreaData ? data.clientSubadminArea : undefined,
+      clientSubsubadminArea: enabledSubSubAdminArea ? data.clientSubsubadminArea : undefined,
+      clientSubsubsubadminArea: enabledSubSubSubAdminArea ? data.clientSubsubsubadminArea : undefined,
       id: id
 
     })
@@ -191,10 +205,7 @@ const ClientForm = () => {
 }
     }
   }, [form.watch("uploadFile")])
-  const enabledadminAreaData = !!adminAreaData?.data && adminAreaData?.data.length > 0
-  const enabledSubadminAreaData = enabledadminAreaData && !!subAdminAreaData?.data && subAdminAreaData?.data.length > 0
-  const enabledSubSubAdminArea = enabledSubadminAreaData  && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 0
-  const enabledSubSubSubAdminArea = enabledSubSubAdminArea && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 0
+
 
   const locationLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && locationLabels?.data[form.getValues('clientCountry')!]
 
