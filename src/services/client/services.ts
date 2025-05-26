@@ -40,7 +40,7 @@ export const queryClientService = {
     return response.data;
   },
   putClient: async (data: any) => {
-    const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", convertKeysToSnakeCase(data), {
+    const response = await axiosInstance.put<any>(GET_CLIENT_LIST + data?.id + "/", createFormData(data,"upload_file"), {
       headers: {
          "Content-Type": "multipart/form-data",
       },
