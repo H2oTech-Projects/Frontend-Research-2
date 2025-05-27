@@ -133,7 +133,7 @@ const EditClient = {
     name: "Edit Client",
 };
 const ViewClient = {
-    url: "/clients/:id/viewClient",
+    url: "/clients/:id/view",
     name: "View Client",
 };
 export {

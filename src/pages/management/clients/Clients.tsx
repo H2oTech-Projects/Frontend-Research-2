@@ -192,14 +192,14 @@ const Clients = () => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/edit`, { state: { mode: "Edit", id: row.original.id } })}}>
+                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/edit`)}}>
                         <FilePenLine /> Edit
                     </DropdownMenuItem>
                       <DropdownMenuItem onClick={()=>{ setId(row.original.id); setOpen(true)}}>
                         <Trash2 />
                         Delete
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/view`)}}>
                         <Eye />
                         View
                     </DropdownMenuItem>

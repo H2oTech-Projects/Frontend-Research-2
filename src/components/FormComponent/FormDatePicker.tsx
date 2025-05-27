@@ -80,9 +80,10 @@ interface FormDatePickerProps {
   control: Control<any>;
   name: string;
   label: string;
+  disabled?: boolean;
 }
 
-export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
+export function FormDatePicker({ control, name, label,disabled=false }: FormDatePickerProps) {
   const watchedDate = useWatch({
     control: control,
     name: name,
@@ -103,7 +104,7 @@ export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
           <FormControl>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" disabled={disabled}>
                   {field.value ? dayjs(field.value).format("DD MMM YYYY") : "Pick a date"}
                 </Button>
               </PopoverTrigger>
