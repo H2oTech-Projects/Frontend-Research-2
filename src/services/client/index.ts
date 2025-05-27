@@ -2,7 +2,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient, UseQueryResult } fr
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { initialTableDataTypes } from "@/types/tableTypes";
 import { ClientListResponseType } from "@/types/apiResponseType";
-import { DELETE_CLIENT_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from "./constant";
+import { DELETE_CLIENT_KEY, GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from "./constant";
 import { queryClientService, RegisterResponse } from "./services";
 import { AxiosError } from "axios";
 
@@ -17,7 +17,7 @@ export const useGetClientList = (tableInfo:initialTableDataTypes):UseQueryResult
 
 export const useGetClientDetails = (id:string | null | undefined):UseQueryResult<any> => {
   return useQuery({
-    queryKey: [GET_CLIENT_LIST_KEY,id],
+    queryKey: [GET_CLIENT_DETAILS_KEY,id],
     queryFn: ()=> queryClientService.getClientDetails(id),
     enabled: !!id,
     ...queryConfig,

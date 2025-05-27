@@ -8,7 +8,7 @@ import { FormInput } from '@/components/FormComponent/FormInput';
 import { Form } from '@/components/ui/form';
 import { useGetClientDetails, usePostClient, usePutClient } from '@/services/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
+import { GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
 import { toast } from 'react-toastify';
 import { FormDatePicker } from '@/components/FormComponent/FormDatePicker';
 import dayjs from "dayjs";
@@ -40,6 +40,7 @@ const ClientForm = () => {
   const form = useForm<ClientFormType>({
     resolver: zodResolver(clientSchema),
     defaultValues: clientInitialValues,
+    shouldUnregister: true,
   });
   const {data: locationLabels, isLoading: labelLoading} = useGetLocationLabels();
   const {data:countryOptions, isLoading:countryOptionsLoading} = useGetCountryList();
@@ -120,12 +121,9 @@ const ClientForm = () => {
   const handleCreateClient = (data: ClientFormType) => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
-      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
-      clientSubadminArea: enabledSubadminAreaData ? data.clientSubadminArea : undefined,
-      clientSubsubadminArea: enabledSubSubAdminArea ? data.clientSubsubadminArea : undefined,
-      clientSubsubsubadminArea: enabledSubSubSubAdminArea ? data.clientSubsubsubadminArea : undefined,
+      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
     })
-    const cleaned = Object.fromEntries(
+     const cleaned = Object.fromEntries(
       Object.entries(FormValue).filter(([_, value]) => value !== undefined)
     );
     createClient(cleaned, {
@@ -133,7 +131,7 @@ const ClientForm = () => {
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
         queryClient.invalidateQueries({ queryKey: [POST_CLIENT_KEY] });
-        toast.success(data?.message);
+        toast.success(data?.message );
         navigate("/clients");
         form.reset(); // Reset the form after successful submission
       },
@@ -147,23 +145,19 @@ const ClientForm = () => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
-      clientSubadminArea: enabledSubadminAreaData ? data.clientSubadminArea : undefined,
-      clientSubsubadminArea: enabledSubSubAdminArea ? data.clientSubsubadminArea : undefined,
-      clientSubsubsubadminArea: enabledSubSubSubAdminArea ? data.clientSubsubsubadminArea : undefined,
       id: id
-
     })
-  
-   const cleaned = Object.fromEntries(
+    const cleaned = Object.fromEntries(
       Object.entries(FormValue).filter(([_, value]) => value !== undefined)
     );
-
     updateClient(cleaned, {
-      onSuccess: (data) => {
+      onSuccess: (data:any) => {
+        console.log(data?.message,"edit")
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
+        queryClient.invalidateQueries({ queryKey: [GET_CLIENT_DETAILS_KEY,id] })
         queryClient.invalidateQueries({ queryKey: [PUT_CLIENT_KEY] });
-        toast.success("Client updated successfully!");
+        toast.success(data?.message);
         navigate("/clients");
         form.reset(); // Reset the form after successful submission
       },
@@ -187,6 +181,7 @@ const ClientForm = () => {
       setPreviewMapData({data:clientDetail?.clientGeojson, view_bounds:clientDetail?.viewBounds})
     }
   }, [clientDetail])
+
 
   useEffect(() => {
     if (!!form.watch("uploadFile") ) {
