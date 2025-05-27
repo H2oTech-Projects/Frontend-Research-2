@@ -214,19 +214,230 @@ const ClientForm = () => {
         ]}
       />
       {isLoading ? (<>Fetching Client Detail</>) : (<Form {...form} >
-        <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-2 dark:bg-slate-900 dark:text-white'>
+          <div className='flex flex-col gap-2'>
+            <h2 className='text-lg font-semibold'>Client's Information</h2>
+            <hr />
+          </div>
+          <div className='grid grid-cols-3 gap-4'>
+            <div className='flex flex-col gap-2' >
+              <FormInput
+                control={form.control}
+                name='clientId'
+                label='ID'
+                placeholder='Enter Client ID '
+                type='number'
+                showLabel={true}
+                disabled={location.pathname.includes("view")} />
+
+              <FormInput
+                control={form.control}
+                name='clientWebsite'
+                label='Website'
+                placeholder='Enter Client Website URL'
+                type='text'
+                showLabel={true}
+                disabled={location.pathname.includes("view")} />
+            </div>
+            <div className='flex flex-col gap-2'>
+              <FormInput
+                control={form.control}
+                name='clientLegalHa'
+                label='Acreage'
+                placeholder='Enter Client Acreage '
+                type='number'
+                showLabel={true}
+                disabled={location.pathname.includes("view")} />
+
+              <FormDatePicker
+                control={form.control}
+                name='clientEstablished'
+                label='Established Date'
+                disabled={location.pathname.includes("view")}
+              />
+            </div>
+            <div className='flex flex-col gap-2'>
+              <FormInput
+                control={form.control}
+                name='clientName'
+                label='Name'
+                placeholder='Enter Client Name'
+                type='text'
+                showLabel={true}
+                disabled={location.pathname.includes("view")}
+              />
+              <FormComboBox
+                control={form.control}
+                name='clientDefaultUnitSystem'
+                label='Default Unit System'
+                placeholder='Select Default Unit System'
+                options={unitSystemOptions || []}
+                disabled={location.pathname.includes("view")}
+              />
+            </div>
+          </div>
+          <div className='flex flex-col gap-2 mt-1'>
+            <h2 className='text-lg font-semibold'>Client's Contact</h2>
+            <hr />
+          </div>
+          <div className='grid grid-cols-3 gap-4'>
+            <div className='flex flex-col gap-2'>
+              <FormInput
+                control={form.control}
+                name='clientEmail'
+                label='Email'
+                placeholder='Enter Client Email'
+                type='email' showLabel={true}
+                disabled={location.pathname.includes("view")}
+              />
+
+            </div>
+            <div className='flex flex-col gap-2'>
+              <FormInput
+                control={form.control}
+                name='clientPhone'
+                label='Phone'
+                placeholder='Enter Client Phone Number'
+                type='text'
+                showLabel={true}
+                disabled={location.pathname.includes("view")}
+              />
+            </div>
+            <div className='flex flex-col gap-2'>
+              <FormInput
+                control={form.control}
+                name='clientFax'
+                label='Fax'
+                placeholder='Enter Client Fax Number'
+                type='text'
+                showLabel={true}
+                disabled={location.pathname.includes("view")} />
+            </div>
+          </div>
+          <div className='flex flex-col gap-2 mt-1'>
+            <h2 className='text-lg font-semibold'>Client's Location</h2>
+            <hr />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 auto-rows-auto">
+            <FormComboBox
+              control={form.control}
+              name="clientCountry"
+              label="Country"
+              placeholder="Enter Client Country"
+              options={countryOptions?.data || []}
+              disabled={location.pathname.includes("view")}
+            />
+
+            {enabledadminAreaData && (
+              <FormComboBox
+                control={form.control}
+                name="clientAdminArea"
+                label={locationLabel?.adminArea}
+                placeholder="Enter Client Admin Area"
+                options={adminAreaData?.data || []}
+                disabled={location.pathname.includes("view")}
+              />
+            )}
+
+            {enabledSubadminAreaData && (
+              <FormComboBox
+                control={form.control}
+                name="clientSubadminArea"
+                label={locationLabel?.subAdminArea}
+                placeholder="Enter Client Sub Admin Area"
+                options={subAdminAreaData?.data || []}
+                disabled={location.pathname.includes("view")}
+              />
+            )}
+
+            {enabledSubSubAdminArea && (
+              <FormComboBox
+                control={form.control}
+                name="clientSubsubadminArea"
+                label={locationLabel?.subAdminAreaLevel2}
+                placeholder="Enter Client Sub Sub Admin Area"
+                options={subSubAdminAreaData?.data || []}
+                disabled={location.pathname.includes("view")}
+              />
+            )}
+
+            {enabledSubSubSubAdminArea && (
+              <FormComboBox
+                control={form.control}
+                name="clientSubsubsubadminArea"
+                label={locationLabel?.subAdminAreaLevel3}
+                placeholder="Enter Client Sub Sub Sub Admin Area"
+                options={subSubSubAdminAreaData?.data || []}
+                disabled={location.pathname.includes("view")}
+              />
+            )}
+
+            <FormInput
+              control={form.control}
+              name="clientLocality"
+              label="Locality"
+              placeholder="Enter Client Locality"
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name="clientStreet"
+              label="Street"
+              placeholder="Enter Street"
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name="clientPremise"
+              label="Premise"
+              placeholder="Enter Client Premise"
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name="clientSubpremise"
+              label="Sub Premise"
+              placeholder="Enter Sub Premise"
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name='clientPostalCode'
+              label='Postal Code'
+              placeholder='Enter Client Postal Code'
+              type='text' showLabel={true}
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name="clientPoBox"
+              label="PO Box"
+              placeholder="Enter Client PO Box Number"
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+          </div>
+          <div className='flex flex-col gap-2 mt-1'>
+            <h2 className='text-lg font-semibold'>Client's Geometric Information</h2>
+            <hr />
+          </div>
           <div className='grid grid-cols-2 gap-4 mb-4'>
             <div className='flex flex-col gap-2'>
-              <FormInput control={form.control} name='clientId' label='ID' placeholder='Enter Client ID ' type='number' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientLegalHa' label='Acreage' placeholder='Enter Client Acreage ' type='number' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientName' label='Name' placeholder='Enter Client Name' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientEmail' label='Email' placeholder='Enter Client Email' type='email' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientPhone' label='Phone' placeholder='Enter Client Phone Number' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientWebsite' label='Website' placeholder='Enter Client Website URL' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientFax' label='Fax' placeholder='Enter Client Fax Number' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter street' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormDatePicker control={form.control} name='clientEstablished' label='Established Date' disabled={location.pathname.includes("view")} />
-              <FormComboBox control={form.control} name='clientDefaultUnitSystem' label='Default Unit System' placeholder='Select Default Unit System' options={unitSystemOptions || []} disabled={location.pathname.includes("view")} />
               {!location.pathname.includes("view") && <BasicSelect
                 itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
                 label="Choose Geometric File Type"
@@ -237,21 +448,23 @@ const ClientForm = () => {
                   setPreviewMapData(null);
                   setShapeType(newValue);
                 }} />}
+
               {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
-                {shapeType === "geojson" ? <FormFileReader control={form.control} name="uploadFile" label="Upload GeoJSON file" placeholder='Choose GeoJSON File' multiple={false} accept=".geojson" /> : <FormFileReader control={form.control} name="uploadFile" label="Upload Shape file" placeholder='Choose Shape File' multiple={true} accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
+                {shapeType === "geojson" ? <FormFileReader
+                  control={form.control}
+                  name="uploadFile"
+                  label="Upload GeoJSON file"
+                  placeholder='Choose GeoJSON File'
+                  multiple={false}
+                  accept=".geojson"
+                /> : <FormFileReader
+                  control={form.control}
+                  name="uploadFile"
+                  label="Upload Shape file"
+                  placeholder='Choose Shape File'
+                  multiple={true}
+                  accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
               </div>}
-            </div>
-            <div className='flex flex-col gap-2'>
-              <FormComboBox control={form.control} name='clientCountry' label='Country' placeholder='Enter Client Country' options={countryOptions?.data || []} disabled={location.pathname.includes("view")} />
-              {enabledadminAreaData && <FormComboBox control={form.control} name='clientAdminArea' label={locationLabel?.adminArea} placeholder='Enter Client Admin Area' options={adminAreaData?.data || []} disabled={location.pathname.includes("view")} />}
-              {enabledSubadminAreaData && <FormComboBox control={form.control} name='clientSubadminArea' label={locationLabel?.subAdminArea} placeholder='Enter Client Sub admin Area' options={subAdminAreaData?.data || []} disabled={location.pathname.includes("view")} />}
-              {enabledSubSubAdminArea && <FormComboBox control={form.control} name='clientSubsubadminArea' label={locationLabel?.subAdminAreaLevel2} placeholder='Enter Client Sub Sub admin Area' options={subSubAdminAreaData?.data || []} disabled={location.pathname.includes("view")} />}
-              {enabledSubSubSubAdminArea && <FormComboBox control={form.control} name='clientSubsubsubadminArea' label={locationLabel?.subAdminAreaLevel3} placeholder='Enter Client Sub sub sub admin Area' options={subSubSubAdminAreaData?.data || []} disabled={location.pathname.includes("view")} />}
-              <FormInput control={form.control} name='clientPremise' label=' Premise' placeholder='Enter Client Premise' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientSubpremise' label='Sub Premise' placeholder='Enter Client sub Premise' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientLocality' label='Locality' placeholder='Enter Client Locality' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientPostalCode' label='Postal Code' placeholder='Enter Client Postal Code' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
-              <FormInput control={form.control} name='clientPoBox' label='PO Box' placeholder='Enter Client PO Box Number' type='text' showLabel={true} disabled={location.pathname.includes("view")} />
             </div>
           </div>
           <MapPreview data={previewMapData} isLoading={mapLoading} />
