@@ -6,7 +6,7 @@ import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/FormComponent/FormInput';
 import { Form } from '@/components/ui/form';
-import { useGetClientDetails, usePostClient, usePutClient } from '@/services/client';
+import { useGetClientDetails, useGetClientUnitSystemOptions, usePostClient, usePutClient } from '@/services/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
 import { toast } from 'react-toastify';
@@ -42,6 +42,7 @@ const ClientForm = () => {
     defaultValues: clientInitialValues,
     shouldUnregister: true,
   });
+  const { data: unitSystemOptions } = useGetClientUnitSystemOptions();
   const {data: locationLabels, isLoading: labelLoading} = useGetLocationLabels();
   const {data:countryOptions, isLoading:countryOptionsLoading} = useGetCountryList();
   const {data:adminAreaData, refetch: refetchAdminArea} = useGetAdminAreaList(form.getValues("clientCountry"));
@@ -152,7 +153,6 @@ const ClientForm = () => {
     );
     updateClient(cleaned, {
       onSuccess: (data:any) => {
-        console.log(data?.message,"edit")
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_DETAILS_KEY,id] })
@@ -177,7 +177,7 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (clientDetail && id) {
-      form.reset({...clientDetail?.data[0],uploadFile: [], clientCountry:clientDetail?.data[0]?.clientCountryId, clientAdminArea:clientDetail?.data[0]?.clientAdminAreaId,clientSubadminArea:clientDetail?.data[0]?.clientSubadminAreaId ?? undefined,clientSubsubadminArea:clientDetail?.data[0]?.clientSubsubadminAreaId ?? undefined,clientSubsubsubadminArea:clientDetail?.data[0]?.clientSubsubsubadminAreaId ?? undefined}); // Reset the form with the fetched data
+      form.reset({...clientDetail?.data[0],clientDefaultUnitSystem:clientDetail?.data[0]?.clientDefaultUnitSystemId,uploadFile: [], clientCountry:clientDetail?.data[0]?.clientCountryId, clientAdminArea:clientDetail?.data[0]?.clientAdminAreaId,clientSubadminArea:clientDetail?.data[0]?.clientSubadminAreaId ?? undefined,clientSubsubadminArea:clientDetail?.data[0]?.clientSubsubadminAreaId ?? undefined,clientSubsubsubadminArea:clientDetail?.data[0]?.clientSubsubsubadminAreaId ?? undefined}); // Reset the form with the fetched data
       setPreviewMapData({data:clientDetail?.clientGeojson, view_bounds:clientDetail?.viewBounds})
     }
   }, [clientDetail])
@@ -227,6 +227,7 @@ const ClientForm = () => {
               <FormInput control={form.control} name='clientFax' label='Fax' placeholder='Enter Client Fax Number' type='text' showLabel={true} />
               <FormInput control={form.control} name='clientStreet' label='Client Street' placeholder='Enter street' type='text' showLabel={true} />
               <FormDatePicker control={form.control} name='clientEstablished' label='Established Date' />
+              <FormComboBox control={form.control} name='clientDefaultUnitSystem' label='Default Unit System' placeholder='Select Default Unit System' options={unitSystemOptions || []} />
               <BasicSelect
                 itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
                 label="Choose Geometric File Type"

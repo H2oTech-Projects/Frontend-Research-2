@@ -1,8 +1,8 @@
-import { QueryClient, useMutation, useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
+import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { initialTableDataTypes } from "@/types/tableTypes";
 import { ClientListResponseType } from "@/types/apiResponseType";
-import { DELETE_CLIENT_KEY, GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from "./constant";
+import { DELETE_CLIENT_KEY, GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, GET_CLIENT_UNIT_SYSTEM_OPTIONS_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from "./constant";
 import { queryClientService, RegisterResponse } from "./services";
 import { AxiosError } from "axios";
 
@@ -43,5 +43,13 @@ export const useDeleteClient = () =>{
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [DELETE_CLIENT_KEY],
     mutationFn:queryClientService.deleteClient,
+  });
+}
+
+export const useGetClientUnitSystemOptions = () => {
+    return useQuery({
+    queryKey: [GET_CLIENT_UNIT_SYSTEM_OPTIONS_KEY],
+    queryFn: ()=> queryClientService.getCLientUnitSystemOptions(),
+    ...queryConfig,
   });
 }

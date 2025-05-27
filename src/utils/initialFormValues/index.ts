@@ -19,7 +19,7 @@ export const clientInitialValues: ClientFormType = {
   clientFax: "",
   clientPhone: "",
   clientWebsite: "",
-  // clientGeom: [],
   clientName: "",
   uploadFile: undefined,
+  clientDefaultUnitSystem: undefined,
 }

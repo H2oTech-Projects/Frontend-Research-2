@@ -27,6 +27,7 @@ export const clientSchema = z.object({
   // )).min(1, "At least  coordinate is required"),
   clientName: z.string().optional(),
   uploadFile: z.array(z.instanceof(File)).optional(),
+  clientDefaultUnitSystem:z.coerce.number().optional(),
 
 })
 
