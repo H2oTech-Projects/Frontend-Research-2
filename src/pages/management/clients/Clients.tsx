@@ -113,12 +113,27 @@ const Clients = () => {
                     variant="ghost"
                     onClick={() => {setTableInfo({...tableInfo,sort:"clientLegalHa",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client Acres{tableInfo?.sort !== "clientLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client Legal Ha{tableInfo?.sort !== "clientLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
         size: 150,
         cell: ({ row }) => <div className="capitalize">{row.getValue("clientLegalHa")}</div>,
+    },
+    {
+        accessorKey: "clientGeomHa",        // header: "Field ID",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientGeomHa",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                >
+                    Client Geometric Ha{tableInfo?.sort !== "clientGeomHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                </Button>
+            );
+        },
+        size: 200,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientGeomHa")}</div>,
     },
     {
         accessorKey: "clientCountryName",        // header: "Field ID",
