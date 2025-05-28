@@ -123,36 +123,48 @@ export const RouteList = [
     Component: lazy(async () => await import("./../pages/others/Profile")),
   },
   {
-    path:routeUrl.Canals?.url,
+    path: routeUrl.Canals?.url,
     Component: lazy(async () => await import("./../pages/management/water/canals/Canals")),
   },
   {
-    path:routeUrl.AddCanal?.url,
+    path: routeUrl.AddCanal?.url,
     Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
   },
   {
-    path:routeUrl.EditCanal?.url,
+    path: routeUrl.EditCanal?.url,
     Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
   },
   {
-    path:routeUrl.ViewCanal?.url,
+    path: routeUrl.ViewCanal?.url,
     Component: lazy(async () => await import("./../pages/management/water/canals/CanalsForm")),
   },
   {
-    path:routeUrl.Clients?.url,
+    path: routeUrl.Clients?.url,
     Component: lazy(async () => await import("./../pages/management/clients/Clients")),
   },
   {
-    path:routeUrl.AddClient?.url,
+    path: routeUrl.AddClient?.url,
     Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
   },
   {
-    path:routeUrl.EditClient?.url,
+    path: routeUrl.EditClient?.url,
     Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
   },
   {
-    path:routeUrl.ViewClient?.url,
+    path: routeUrl.ViewClient?.url,
     Component: lazy(async () => await import("./../pages/management/clients/ClientForm")),
-  }
+  },
+  {
+    path: routeUrl.AgencyInfo?.url,
+    Component: lazy(async () => import("./../pages/configuration/AgencyInfo")),
+  },
+  {
+    path: routeUrl.DistrictInfo?.url,
+    Component: lazy(async () => import("./../pages/configuration/DistrictInfo")),
+  },
+  {
+    path: routeUrl.CompanyInfo?.url,
+    Component: lazy(async () => import("./../pages/configuration/CompanyInfo")),
+  },
 
 ];
