@@ -226,7 +226,7 @@ const ClientForm = () => {
                 name='clientId'
                 label='ID'
                 placeholder='Enter Client ID '
-                type='number'
+                type='text'
                 showLabel={true}
                 disabled={location.pathname.includes("view")} />
 
