@@ -1,5 +1,5 @@
 import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
-import { queryConfig } from "@/utils/reactQueryConfig";
+import { noCacheQueryConfig, queryConfig } from "@/utils/reactQueryConfig";
 import { initialTableDataTypes } from "@/types/tableTypes";
 import { ClientListResponseType } from "@/types/apiResponseType";
 import { DELETE_CLIENT_KEY, GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, GET_CLIENT_UNIT_SYSTEM_OPTIONS_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from "./constant";
@@ -11,7 +11,8 @@ export const useGetClientList = (tableInfo:initialTableDataTypes):UseQueryResult
   return useQuery({
     queryKey: [GET_CLIENT_LIST_KEY,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
     queryFn: ()=> queryClientService.getClientList(tableInfo),
-    ...queryConfig,
+    ...noCacheQueryConfig,
+
   });
 }
 
