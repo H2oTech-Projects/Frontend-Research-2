@@ -19,7 +19,7 @@ export const queryClientService = {
               page_no:tableInfo?.page_no,
               page_size:tableInfo?.page_size,
               search:tableInfo?.search,
-              sort:snakeCase(tableInfo?.sort!),
+              sort_by:snakeCase(tableInfo?.sort!),
               sort_order:tableInfo?.sort_order}
       }).catch((err) => console.log(err));
 
@@ -28,6 +28,12 @@ export const queryClientService = {
   getClientDetails:async(id:string | undefined | null ) =>{
     const response = await axiosInstance.get(GET_CLIENT_LIST + id + "/").catch((err) => console.log(err));
 
+    const data = convertKeysToCamelCase(toJson(response));
+    return data?.data;
+},
+
+  getCLientUnitSystemOptions:async () => {
+    const response = await axiosInstance.get(BASE_API_URL + "/unit_system_detail/").catch((err) => console.log(err));
     const data = convertKeysToCamelCase(toJson(response));
     return data?.data;
 },

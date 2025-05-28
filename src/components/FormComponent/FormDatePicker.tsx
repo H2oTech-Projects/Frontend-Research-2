@@ -80,16 +80,18 @@ interface FormDatePickerProps {
   control: Control<any>;
   name: string;
   label: string;
+  disabled?: boolean;
 }
 
-export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
+export function FormDatePicker({ control, name, label,disabled=false }: FormDatePickerProps) {
   const watchedDate = useWatch({
     control: control,
     name: name,
   });
  const fromYear = 1900;
   const toYear = 2100;
-  const [month, setMonth] = React.useState<Date | undefined>(undefined);
+  const [month, setMonth] = React.useState<Date | undefined>(new Date());
+  const [open, setOpen] = React.useState(false); 
   React.useEffect(() => {
   setMonth(watchedDate ? new Date(watchedDate) : new Date());
 },[watchedDate])
@@ -101,10 +103,10 @@ export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
         <FormItem className="flex flex-col gap-1">
           <FormLabel className="mt-1">{label}</FormLabel>
           <FormControl>
-            <Popover>
+             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline">
-                  {field.value ? dayjs(field.value).format("DD MMM YYYY") : "Pick a date"}
+                <Button variant="outline" disabled={disabled}>
+                  {field.value ? dayjs(field.value).format("DD MMM YYYY") : dayjs().format("DD MMM YYYY")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="z-[9999] p-0">
@@ -114,6 +116,7 @@ export function FormDatePicker({ control, name, label }: FormDatePickerProps) {
                   onSelect={(date) => {
                     field.onChange(date);
                     setMonth(date); // update visible month
+                    setOpen(false); // close the popover
                   }}
                   month={month}
                   onMonthChange={(newMonth) => setMonth(newMonth)}

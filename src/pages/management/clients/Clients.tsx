@@ -14,8 +14,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2 } from 'lucide-react';
-import React, { useState } from 'react'
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from 'lucide-react';
+import React, { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import MapTable from '@/components/Table/mapTable';
 import { useDeleteClient, useGetClientList } from '@/services/client';
@@ -26,6 +26,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import CustomModal from '@/components/modal/ConfirmModal';
 import { set } from 'date-fns';
 import RtGeoJson from '@/components/RtGeoJson';
+import { debounce } from '@/utils';
 
 const initialTableData = {
   search: "",
@@ -44,10 +45,17 @@ const Clients = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const {data: clientData,isLoading} = useGetClientList(tableInfo);
   const {mutate:deleteClient,isPending} =  useDeleteClient();
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
+    const debouncedSearch = useCallback(
+      debounce((value: string) => {
+        setTableInfo((prev) => ({ ...prev, search: value }));
+      }, 500),
+      []
+    );
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
   };
@@ -103,14 +111,29 @@ const Clients = () => {
             return (
                 <Button
                     variant="ghost"
-                    onClick={() => {setTableInfo({...tableInfo,sort:"clientHa",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientLegalHa",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                 >
-                    Client Acres{tableInfo?.sort !== "clientHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                    Client Legal Ha{tableInfo?.sort !== "clientLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                 </Button>
             );
         },
         size: 150,
         cell: ({ row }) => <div className="capitalize">{row.getValue("clientLegalHa")}</div>,
+    },
+    {
+        accessorKey: "clientGeomHa",        // header: "Field ID",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => {setTableInfo({...tableInfo,sort:"clientGeomHa",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                >
+                    Client Geometric Ha{tableInfo?.sort !== "clientGeomHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                </Button>
+            );
+        },
+        size: 200,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("clientGeomHa")}</div>,
     },
     {
         accessorKey: "clientCountryName",        // header: "Field ID",
@@ -192,14 +215,14 @@ const Clients = () => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/edit`, { state: { mode: "Edit", id: row.original.id } })}}>
+                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/edit`)}}>
                         <FilePenLine /> Edit
                     </DropdownMenuItem>
                       <DropdownMenuItem onClick={()=>{ setId(row.original.id); setOpen(true)}}>
                         <Trash2 />
                         Delete
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() =>{ navigate(`/clients/${row.original.id}/view`)}}>
                         <Eye />
                         View
                     </DropdownMenuItem>
@@ -253,20 +276,30 @@ const Clients = () => {
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between ">
           <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                // value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-              />
-            </div>
-          </div>
+                        <div className="input h-7 w-52">
+                            <Search
+                                size={16}
+                                className="text-slate-300"
+                            />
+                            <input
+                                name="search"
+                                id="search"
+                                placeholder="Search..."
+                                value={searchText} 
+                                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                                onChange={(e) => {
+                                    setSearchText(e.target.value);
+                                    debouncedSearch(e.target.value);}}
+                            />
+                        </div>
+                       {tableInfo.search &&  <Button
+                            variant={"default"}
+                            className="h-7 w-7"
+                            onClick={() => {setSearchText(""); setTableInfo({...tableInfo,search:""})}}
+                        >
+                         <X />
+                        </Button>}
+                    </div>
           <Button
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"

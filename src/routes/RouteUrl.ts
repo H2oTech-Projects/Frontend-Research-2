@@ -133,9 +133,25 @@ const EditClient = {
     name: "Edit Client",
 };
 const ViewClient = {
-    url: "/clients/:id/viewClient",
+    url: "/clients/:id/view",
     name: "View Client",
 };
+
+const AgencyInfo = {
+    url: "/agencyInfo",
+    name: "Agency Info",
+};
+
+const CompanyInfo = {
+    url: "/companyInfo",
+    name: "Company Info",
+};
+
+const DistrictInfo = {
+    url: "/districtInfo",
+    name: "District Info",
+};
+
 export {
     Map,
     Insight,
@@ -165,5 +181,8 @@ export {
     Clients,
     AddClient,
     EditClient,
-    ViewClient
+    ViewClient,
+    AgencyInfo,
+    CompanyInfo,
+    DistrictInfo
 };

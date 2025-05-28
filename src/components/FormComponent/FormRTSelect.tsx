@@ -14,7 +14,7 @@ interface FormComboBoxProps {
   options: { label: string; value: string | number }[];
   className?: string;
   placeholder?: string;
-  setIsEdit?: any;
+  disabled?: boolean;
 }
 
 export function FormComboBox({
@@ -24,7 +24,8 @@ export function FormComboBox({
   options,
   placeholder = "Select an option",
   className,
-  setIsEdit,
+  disabled = false
+
 }: FormComboBoxProps) {
   const watchedValue = useWatch({
     control,
@@ -50,9 +51,9 @@ export function FormComboBox({
                     "w-full h-10 justify-between font-normal px-3 py-2",
                     !watchedValue && "text-muted-foreground text-slate-400"
                   )}
-                  disabled={options.length === 0}
+                  disabled={disabled}
                 >
-                  {watchedValue && options.length !== 0
+                  {watchedValue && options?.length !== 0
                     ? options.find((option) => option.value === field.value)?.label
                     : placeholder}
                   <ChevronsUpDown className="opacity-50" />
@@ -71,7 +72,6 @@ export function FormComboBox({
                         value={option.label}
                         onSelect={() => {
                           field.onChange(option.value);
-                          setIsEdit && setIsEdit(false);
                           setOpen(false); // ✅ Close the popover
                         }}
                       >

@@ -9,9 +9,10 @@ interface FormInputProps {
   placeholder: string;
   showLabel?: boolean;
   type: "text" | "password" | "email" | "number";
+  disabled?: boolean;
 }
 
-export function FormInput({ control, name, label, placeholder, type, showLabel = true }: FormInputProps) {
+export function FormInput({ control, name, label, placeholder, type, showLabel = true,disabled=false }: FormInputProps) {
   return (
     <FormField
       control={control}
@@ -25,6 +26,7 @@ export function FormInput({ control, name, label, placeholder, type, showLabel =
               {...field}
               type={type}
               autoComplete="off"
+              disabled={disabled}
               className={type === "number" ? " [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
             />
           </FormControl>
