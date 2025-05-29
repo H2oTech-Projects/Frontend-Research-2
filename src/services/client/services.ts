@@ -25,6 +25,13 @@ export const queryClientService = {
 
     return convertKeysToCamelCase(toJson(response?.data));
   },
+
+  getClientMapGeoJson: async()=>{
+    const response = await axiosInstance.get(GET_CLIENT_LIST + "map/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));  
+    return data?.data;
+},
+
   getClientDetails:async(id:string | undefined | null ) =>{
     const response = await axiosInstance.get(GET_CLIENT_LIST + id + "/").catch((err) => console.log(err));
 
