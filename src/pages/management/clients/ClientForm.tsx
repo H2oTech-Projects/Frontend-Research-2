@@ -81,8 +81,8 @@ const ClientForm = () => {
     if (!id && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 0) {
       form.setValue("clientSubsubadminArea", subSubAdminAreaData?.data[0]?.value)
     } else if (!!id && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 0 && !!clientDetail) {
-      let alreadyExisted = subSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubsubadminAreaId'])
-      let value = alreadyExisted && clientDetail['data'][0]['clientSubsubadminAreaId'] || subSubAdminAreaData?.data[0]?.value
+      let alreadyExisted = subSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubadminArea2Id'])
+      let value = alreadyExisted && clientDetail['data'][0]['clientSubadminArea2Id'] || subSubAdminAreaData?.data[0]?.value
       form.setValue("clientSubsubadminArea", value)
     }
   }, [subSubAdminAreaData])
@@ -91,8 +91,8 @@ const ClientForm = () => {
     if (!id && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 0) {
       form.setValue("clientSubsubsubadminArea", subSubSubAdminAreaData?.data[0]?.value)
     } else if (!!id && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 0 && !!clientDetail) {
-      let alreadyExisted = subSubSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubsubsubadminAreaId'])
-      let value = alreadyExisted && clientDetail['data'][0]['clientSubsubsubadminAreaId'] || subSubSubAdminAreaData?.data[0]?.value
+      let alreadyExisted = subSubSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubadminArea3Id'])
+      let value = alreadyExisted && clientDetail['data'][0]['clientSubadminArea3Id'] || subSubSubAdminAreaData?.data[0]?.value
       form.setValue("clientSubsubsubadminArea", value)
     }
   }, [subSubSubAdminAreaData])
@@ -177,7 +177,8 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (clientDetail && id) {
-      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubsubadminAreaId ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubsubsubadminAreaId ?? undefined }); // Reset the form with the fetched data
+      console.log(clientDetail?.data[0]?.clientAdminAreaId,  clientDetail?.data[0]?.clientSubadminAreaId)
+      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubadminArea2Id ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubadminArea3Id ?? undefined }); // Reset the form with the fetched data
       setPreviewMapData({ data: clientDetail?.clientGeojson, view_bounds: clientDetail?.viewBounds })
     }
   }, [clientDetail])
