@@ -111,6 +111,13 @@ const menuLinks = [
         type: "link",
         Children: [],
       },
+      {
+        label: "User Roles",
+        icon: Icon.Users,
+        path: "/userRoles",
+        type: "link",
+        Children: [],
+      },
 
     ]
   },

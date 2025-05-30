@@ -152,6 +152,16 @@ const DistrictInfo = {
     name: "District Info",
 };
 
+const UserRoles ={
+    url: "/userRoles",
+    name: "User Roles"
+}
+
+const AddUserRole = {
+    url: "/userRoles/addUserRole",
+    name: "Add User Role"   
+};
+
 export {
     Map,
     Insight,
@@ -184,5 +194,7 @@ export {
     ViewClient,
     AgencyInfo,
     CompanyInfo,
-    DistrictInfo
+    DistrictInfo,
+    UserRoles,
+    AddUserRole
 };

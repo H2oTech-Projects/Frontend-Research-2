@@ -8,9 +8,10 @@ interface FormTextboxProps {
   label: string;
   placeholder?: string;
   rows?: number;
+  disabled?: boolean;
 }
 
-export function FormTextbox({ control, name, label, placeholder, rows = 4 }: FormTextboxProps) {
+export function FormTextbox({ control, name, label, placeholder, rows = 4,disabled=false }: FormTextboxProps) {
   return (
     <FormField
       control={control}
@@ -19,7 +20,7 @@ export function FormTextbox({ control, name, label, placeholder, rows = 4 }: For
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Textarea placeholder={placeholder} {...field} rows={rows} />
+            <Textarea placeholder={placeholder} {...field} rows={rows} disabled={disabled} />
           </FormControl>
           <FormMessage />
         </FormItem>

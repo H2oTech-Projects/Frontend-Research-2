@@ -166,5 +166,12 @@ export const RouteList = [
     path: routeUrl.CompanyInfo?.url,
     Component: lazy(async () => import("./../pages/configuration/CompanyInfo")),
   },
-
+  {
+    path: routeUrl.UserRoles?.url,
+    Component: lazy(async () => import("./../pages/configuration/userRoles/index")),
+  },
+  {
+    path: routeUrl.AddUserRole?.url,
+    Component: lazy(async () => import("./../pages/configuration/userRoles/userRoleForm")),
+  }
 ];
