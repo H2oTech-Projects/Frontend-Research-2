@@ -5,10 +5,10 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/FormComponent/FormInput';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form';
 import { useGetClientDetails, useGetClientUnitSystemOptions, usePostClient, usePutClient } from '@/services/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
+import { GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, GET_CLIENT_MAP_GEOJSON_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
 import { toast } from 'react-toastify';
 import { FormDatePicker } from '@/components/FormComponent/FormDatePicker';
 import dayjs from "dayjs";
@@ -24,9 +24,13 @@ import { ClientFormType } from '@/types/formTypes';
 import { convertKeysToSnakeCase } from '@/utils/stringConversion';
 import { useGetAdminAreaList, useGetCountryList, useGetSubAdminAreaList, useGetSubSubAdminAreaList, useGetSubSubSubAdminAreaList, useGetLocationLabels } from '@/services/location';
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect';
+import { useMediaQuery } from '@uidotdev/usehooks';
+import { cn } from '@/utils/cn';
+import { Input } from '@/components/ui/input';
 
 
 const ClientForm = () => {
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -81,8 +85,8 @@ const ClientForm = () => {
     if (!id && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 0) {
       form.setValue("clientSubsubadminArea", subSubAdminAreaData?.data[0]?.value)
     } else if (!!id && !!subSubAdminAreaData?.data && subSubAdminAreaData?.data.length > 0 && !!clientDetail) {
-      let alreadyExisted = subSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubsubadminAreaId'])
-      let value = alreadyExisted && clientDetail['data'][0]['clientSubsubadminAreaId'] || subSubAdminAreaData?.data[0]?.value
+      let alreadyExisted = subSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubadminArea2Id'])
+      let value = alreadyExisted && clientDetail['data'][0]['clientSubadminArea2Id'] || subSubAdminAreaData?.data[0]?.value
       form.setValue("clientSubsubadminArea", value)
     }
   }, [subSubAdminAreaData])
@@ -91,8 +95,8 @@ const ClientForm = () => {
     if (!id && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 0) {
       form.setValue("clientSubsubsubadminArea", subSubSubAdminAreaData?.data[0]?.value)
     } else if (!!id && !!subSubSubAdminAreaData?.data && subSubSubAdminAreaData?.data.length > 0 && !!clientDetail) {
-      let alreadyExisted = subSubSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubsubsubadminAreaId'])
-      let value = alreadyExisted && clientDetail['data'][0]['clientSubsubsubadminAreaId'] || subSubSubAdminAreaData?.data[0]?.value
+      let alreadyExisted = subSubSubAdminAreaData.data.some((dic: any) => dic['value'] == clientDetail['data'][0]['clientSubadminArea3Id'])
+      let value = alreadyExisted && clientDetail['data'][0]['clientSubadminArea3Id'] || subSubSubAdminAreaData?.data[0]?.value
       form.setValue("clientSubsubsubadminArea", value)
     }
   }, [subSubSubAdminAreaData])
@@ -132,6 +136,7 @@ const ClientForm = () => {
         // Invalidate and refetch
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
         queryClient.invalidateQueries({ queryKey: [POST_CLIENT_KEY] });
+        queryClient.invalidateQueries({ queryKey: [GET_CLIENT_MAP_GEOJSON_KEY] });
         toast.success(data?.message);
         navigate("/clients");
         form.reset(); // Reset the form after successful submission
@@ -157,6 +162,7 @@ const ClientForm = () => {
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_LIST_KEY] })
         queryClient.invalidateQueries({ queryKey: [GET_CLIENT_DETAILS_KEY, id] })
         queryClient.invalidateQueries({ queryKey: [PUT_CLIENT_KEY] });
+        queryClient.invalidateQueries({ queryKey: [GET_CLIENT_MAP_GEOJSON_KEY] });
         toast.success(data?.message);
         navigate("/clients");
         form.reset(); // Reset the form after successful submission
@@ -177,7 +183,7 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (clientDetail && id) {
-      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubsubadminAreaId ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubsubsubadminAreaId ?? undefined }); // Reset the form with the fetched data
+      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubadminArea2Id ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubadminArea3Id ?? undefined }); // Reset the form with the fetched data
       setPreviewMapData({ data: clientDetail?.clientGeojson, view_bounds: clientDetail?.viewBounds })
     }
   }, [clientDetail])
@@ -219,107 +225,119 @@ const ClientForm = () => {
             <h2 className='text-lg font-semibold'>Client's Information</h2>
             <hr />
           </div>
-          <div className='grid grid-cols-3 gap-4'>
-            <div className='flex flex-col gap-2' >
-              <FormInput
-                control={form.control}
-                name='clientId'
-                label='ID'
-                placeholder='Enter Client ID '
-                type='text'
-                showLabel={true}
-                disabled={location.pathname.includes("view")} />
+          <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
 
-              <FormInput
-                control={form.control}
-                name='clientWebsite'
-                label='Website'
-                placeholder='Enter Client Website URL'
-                type='text'
-                showLabel={true}
-                disabled={location.pathname.includes("view")} />
-            </div>
-            <div className='flex flex-col gap-2'>
-              <FormInput
-                control={form.control}
-                name='clientLegalHa'
-                label='Acreage'
-                placeholder='Enter Client Acreage '
-                type='number'
-                showLabel={true}
-                disabled={location.pathname.includes("view")} />
+            <FormInput
+              control={form.control}
+              name='clientId'
+              label='ID'
+              placeholder='Enter Client ID '
+              type='text'
+              showLabel={true}
+              disabled={location.pathname.includes("view")}
+            />
 
-              <FormDatePicker
-                control={form.control}
-                name='clientEstablished'
-                label='Established Date'
-                disabled={location.pathname.includes("view")}
-              />
-            </div>
-            <div className='flex flex-col gap-2'>
-              <FormInput
-                control={form.control}
-                name='clientName'
-                label='Name'
-                placeholder='Enter Client Name'
-                type='text'
-                showLabel={true}
-                disabled={location.pathname.includes("view")}
-              />
-              <FormComboBox
-                control={form.control}
-                name='clientDefaultUnitSystem'
-                label='Default Unit System'
-                placeholder='Select Default Unit System'
-                options={unitSystemOptions || []}
-                disabled={location.pathname.includes("view")}
-              />
-            </div>
+            <FormInput
+              control={form.control}
+              name='clientName'
+              label='Name'
+              placeholder='Enter Client Name'
+              type='text'
+              showLabel={true}
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name='clientLegalHa'
+              label='Legal Acreage'
+              placeholder='Enter Client Acreage '
+              type='number'
+              showLabel={true}
+              disabled={location.pathname.includes("view")} />
+
+            { location.pathname.includes("view") && <FormItem>
+          <FormLabel>Client Goem Ha </FormLabel>
+          <FormControl>
+            <Input          
+              value={clientDetail?.data[0]?.clientGeomHa || "2"}
+              type={"number"}
+              autoComplete="off"
+              disabled={true}
+              // className={type === "number" ? " [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
+            />
+          </FormControl>
+        </FormItem>}
+       
+
+            <FormInput
+              control={form.control}
+              name='clientWebsite'
+              label='Website'
+              placeholder='Enter Client Website URL'
+              type='text'
+              showLabel={true}
+              disabled={location.pathname.includes("view")} />
+
+
+            <FormDatePicker
+              control={form.control}
+              name='clientEstablished'
+              label='Established Date'
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormComboBox
+              control={form.control}
+              name='clientDefaultUnitSystem'
+              label='Default Unit System'
+              placeholder='Select Default Unit System'
+              options={unitSystemOptions || []}
+              disabled={location.pathname.includes("view")}
+            />
+
           </div>
           <div className='flex flex-col gap-2 mt-1'>
             <h2 className='text-lg font-semibold'>Client's Contact</h2>
             <hr />
           </div>
-          <div className='grid grid-cols-3 gap-4'>
-            <div className='flex flex-col gap-2'>
-              <FormInput
-                control={form.control}
-                name='clientEmail'
-                label='Email'
-                placeholder='Enter Client Email'
-                type='email' showLabel={true}
-                disabled={location.pathname.includes("view")}
-              />
+          <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
 
-            </div>
-            <div className='flex flex-col gap-2'>
-              <FormInput
-                control={form.control}
-                name='clientPhone'
-                label='Phone'
-                placeholder='Enter Client Phone Number'
-                type='text'
-                showLabel={true}
-                disabled={location.pathname.includes("view")}
-              />
-            </div>
-            <div className='flex flex-col gap-2'>
-              <FormInput
-                control={form.control}
-                name='clientFax'
-                label='Fax'
-                placeholder='Enter Client Fax Number'
-                type='text'
-                showLabel={true}
-                disabled={location.pathname.includes("view")} />
-            </div>
+            <FormInput
+              control={form.control}
+              name='clientEmail'
+              label='Email'
+              placeholder='Enter Client Email'
+              type='email' showLabel={true}
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name='clientPhone'
+              label='Phone'
+              placeholder='Enter Client Phone Number'
+              type='text'
+              showLabel={true}
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name='clientFax'
+              label='Fax'
+              placeholder='Enter Client Fax Number'
+              type='text'
+              showLabel={true}
+              disabled={location.pathname.includes("view")} />
+
           </div>
           <div className='flex flex-col gap-2 mt-1'>
             <h2 className='text-lg font-semibold'>Client's Location</h2>
             <hr />
           </div>
 
-          <div className="grid grid-cols-3 gap-4 auto-rows-auto">
+          <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
             <FormComboBox
               control={form.control}
               name="clientCountry"
@@ -436,36 +454,36 @@ const ClientForm = () => {
             <h2 className='text-lg font-semibold'>Client's Geometric Information</h2>
             <hr />
           </div>
-          <div className='grid grid-cols-2 gap-4 mb-4'>
-            <div className='flex flex-col gap-2'>
-              {!location.pathname.includes("view") && <BasicSelect
-                itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
-                label="Choose Geometric File Type"
-                Value={shapeType}
-                setValue={(newValue) => {
-                  // Clear the selected files **before** changing shapeType
-                  form.setValue("uploadFile", undefined);
-                  setPreviewMapData(null);
-                  setShapeType(newValue);
-                }} />}
+          <div className={cn('grid gap-4 auto-rows-auto mb-4', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
 
-              {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
-                {shapeType === "geojson" ? <FormFileReader
-                  control={form.control}
-                  name="uploadFile"
-                  label="Upload GeoJSON file"
-                  placeholder='Choose GeoJSON File'
-                  multiple={false}
-                  accept=".geojson"
-                /> : <FormFileReader
-                  control={form.control}
-                  name="uploadFile"
-                  label="Upload Shape file"
-                  placeholder='Choose Shape File'
-                  multiple={true}
-                  accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
-              </div>}
-            </div>
+            {!location.pathname.includes("view") && <BasicSelect
+              itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
+              label="Choose Geometric File Type"
+              Value={shapeType}
+              setValue={(newValue) => {
+                // Clear the selected files **before** changing shapeType
+                form.setValue("uploadFile", undefined);
+                setPreviewMapData(null);
+                setShapeType(newValue);
+              }} />}
+
+            {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
+              {shapeType === "geojson" ? <FormFileReader
+                control={form.control}
+                name="uploadFile"
+                label="Upload GeoJSON file"
+                placeholder='Choose GeoJSON File'
+                multiple={false}
+                accept=".geojson"
+              /> : <FormFileReader
+                control={form.control}
+                name="uploadFile"
+                label="Upload Shape file"
+                placeholder='Choose Shape File'
+                multiple={true}
+                accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
+            </div>}
+
           </div>
           <MapPreview data={previewMapData} isLoading={mapLoading} />
           {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={isClientCreating || isClientUpdating} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
