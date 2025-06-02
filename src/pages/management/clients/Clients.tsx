@@ -92,7 +92,7 @@ const Clients = () => {
           </Button>
         );
       },
-      size: 100,
+      size: 150,
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientId")}</div>,
     },
     {
@@ -111,19 +111,19 @@ const Clients = () => {
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientName")}</div>,
     },
     {
-      accessorKey: "clientDefaultUnitSystemId",        // header: "Field ID",
+      accessorKey: "clientDefaultUnitSystemName",        // header: "Field ID",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "clientDefaultUnitSystemId", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "clientDefaultUnitSystemName", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-             Unit System{tableInfo?.sort !== "clientDefaultUnitSystemId" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+             Unit System{tableInfo?.sort !== "clientDefaultUnitSystemName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("clientDefaultUnitSystemId") === 1 ? "Ha" : "Ac"}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("clientDefaultUnitSystemName")}</div>,
     },
     {
       accessorKey: "clientLegalHa",        // header: "Field ID",
