@@ -3,7 +3,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsDown, ChevronsUpDown } from "lucide-react";
 import { Control, useWatch } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +56,7 @@ export function FormComboBox({
                   {watchedValue && options?.length !== 0
                     ? options.find((option) => option.value === field.value)?.label
                     : placeholder}
-                  <ChevronsUpDown className="opacity-50" />
+                  <ChevronsDown className="opacity-80" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
