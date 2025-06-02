@@ -218,8 +218,7 @@ useEffect(()=>{
 
 
   const locationLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && locationLabels?.data[form.getValues('clientCountry')!]
-  const UnitSystemLabel = !!clientUnitSystemLabels?.data && !!form.getValues('clientDefaultUnitSystem') && clientUnitSystemLabels?.data[form.getValues('clientDefaultUnitSystem')!]
-
+  const UnitSystemLabel = !!clientUnitSystemLabels?.data && !!form.watch('clientDefaultUnitSystem') && clientUnitSystemLabels?.data[form.watch('clientDefaultUnitSystem')!]
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader

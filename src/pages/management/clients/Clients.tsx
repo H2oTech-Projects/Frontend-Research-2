@@ -352,7 +352,7 @@ const Clients = () => {
                 columnProperties={clientColumnProperties}
               />
               <CollapseBtn
-                className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
+                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
                 onClick={mapCollapseBtn}
                 note={collapse === 'default' ? 'View Full Table' : "Show Map"}
               >
