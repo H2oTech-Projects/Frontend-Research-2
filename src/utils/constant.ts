@@ -34,7 +34,7 @@ export const  parcelColumnProperties =  {
 export const clientColumnProperties = {
   "clientAdminAreaName": "str",
   "clientCountryName": "str",
-  "clientDefaultUnitSystemId": "str",
+  "clientDefaultUnitSystemName": "str",
   "clientEmail": "str",
   "clientEstablished": "str", // ISO date as string
   "clientFax": "str",

@@ -44,6 +44,16 @@ export const queryClientService = {
     const data = convertKeysToCamelCase(toJson(response));
     return data?.data;
 },
+  getClientTypeOptions:async () => {
+    const response = await axiosInstance.get(BASE_API_URL + "/client_type_detail/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return data?.data;
+},
+  getClientUnitSystemLabel:async () => {
+    const response = await axiosInstance.get(BASE_API_URL + "/unit_system_labels/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return data?.data;
+},
   postClient: async (data: any) => {
     const response = await axiosInstance.post<any>(GET_CLIENT_LIST, createFormData(data,"upload_file"), {
       headers: {
