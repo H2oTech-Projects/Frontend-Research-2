@@ -22,4 +22,5 @@ export const clientInitialValues: ClientFormType = {
   clientName: "",
   uploadFile: undefined,
   clientDefaultUnitSystem: undefined,
+  clientType: undefined,
 }

@@ -51,7 +51,7 @@ const MapPreview = ({ data, isLoading }: any) => {
     })
   };
   return (
-    <div className="w-full h-[calc(100vh-228px)]">
+    <div className="w-full h-[calc(100vh-228px)] ">
       {isLoading ? (<><MapContainer
         center={[51.505, -0.09]}
         zoom={13}
@@ -68,7 +68,7 @@ const MapPreview = ({ data, isLoading }: any) => {
       </MapContainer></>) : <MapContainer
         center={[51.505, -0.09]}
         zoom={13}
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "100%", width: "100%",borderRadius: "8px" }}
         scrollWheelZoom={true}
         zoomControl={false} // Disable default zoom control
         minZoom={2}>

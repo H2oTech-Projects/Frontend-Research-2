@@ -6,7 +6,7 @@ import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/FormComponent/FormInput';
 import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form';
-import { useGetClientDetails, useGetClientUnitSystemOptions, usePostClient, usePutClient } from '@/services/client';
+import { useGetClientDetails, useGetClientTypeOptions, useGetClientUnitSystemLabel, useGetClientUnitSystemOptions, usePostClient, usePutClient } from '@/services/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, GET_CLIENT_MAP_GEOJSON_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
 import { toast } from 'react-toastify';
@@ -47,6 +47,8 @@ const ClientForm = () => {
     shouldUnregister: true,
   });
   const { data: unitSystemOptions } = useGetClientUnitSystemOptions();
+  const { data: clientTypeOptions } = useGetClientTypeOptions();
+  const { data: clientUnitSystemLabels } = useGetClientUnitSystemLabel();
   const { data: locationLabels, isLoading: labelLoading } = useGetLocationLabels();
   const { data: countryOptions, isLoading: countryOptionsLoading } = useGetCountryList();
   const { data: adminAreaData, refetch: refetchAdminArea } = useGetAdminAreaList(form.getValues("clientCountry"));
@@ -183,7 +185,7 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (clientDetail && id) {
-      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubadminArea2Id ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubadminArea3Id ?? undefined }); // Reset the form with the fetched data
+      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubadminArea2Id ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubadminArea3Id ?? undefined, clientType: clientDetail?.data[0]?.clientTypeId ?? undefined }); // Reset the form with the fetched data
       setPreviewMapData({ data: clientDetail?.clientGeojson, view_bounds: clientDetail?.viewBounds })
     }
   }, [clientDetail])
@@ -207,9 +209,16 @@ const ClientForm = () => {
     }
   }, [form.watch("uploadFile")])
 
+useEffect(()=>{
+    if (!!unitSystemOptions && unitSystemOptions?.length > 0) {
+      !id && form.setValue("clientDefaultUnitSystem", unitSystemOptions[0]?.value)
+    }
+
+},[unitSystemOptions])
+
 
   const locationLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && locationLabels?.data[form.getValues('clientCountry')!]
-
+  const UnitSystemLabel = !!clientUnitSystemLabels?.data && !!form.watch('clientDefaultUnitSystem') && clientUnitSystemLabels?.data[form.watch('clientDefaultUnitSystem')!]
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
@@ -247,28 +256,47 @@ const ClientForm = () => {
               disabled={location.pathname.includes("view")}
             />
 
+            <FormComboBox
+              control={form.control}
+              name='clientType'
+              label='Client Type'
+              placeholder='Select client Type'
+              options={clientTypeOptions || []}
+              disabled={location.pathname.includes("view")}
+            />
+            <FormComboBox
+              control={form.control}
+              name='clientDefaultUnitSystem'
+              label='Default Unit System'
+              placeholder='Select Default Unit System'
+              options={unitSystemOptions || []}
+              disabled={location.pathname.includes("view")}
+            />
+
+
             <FormInput
               control={form.control}
               name='clientLegalHa'
-              label='Legal Acreage'
-              placeholder='Enter Client Acreage '
+              label={UnitSystemLabel?.clientLegalHa}
+              placeholder='Enter legal Area '
               type='number'
               showLabel={true}
-              disabled={location.pathname.includes("view")} />
+              disabled={location.pathname.includes("view")} 
+/>
 
-            { location.pathname.includes("view") && <FormItem>
-          <FormLabel>Client Goem Ha </FormLabel>
-          <FormControl>
-            <Input          
-              value={clientDetail?.data[0]?.clientGeomHa || "2"}
-              type={"number"}
-              autoComplete="off"
-              disabled={true}
-              // className={type === "number" ? " [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
-            />
-          </FormControl>
-        </FormItem>}
-       
+            {location.pathname.includes("view") && <FormItem>
+              <FormLabel>{UnitSystemLabel?.clientGeomHa} </FormLabel>
+              <FormControl>
+                <Input
+                  value={clientDetail?.data[0]?.clientGeomHa || "2"}
+                  type={"number"}
+                  autoComplete="off"
+                  disabled={true}
+                // className={type === "number" ? " [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
+                />
+              </FormControl>
+            </FormItem>}
+
 
             <FormInput
               control={form.control}
@@ -284,15 +312,6 @@ const ClientForm = () => {
               control={form.control}
               name='clientEstablished'
               label='Established Date'
-              disabled={location.pathname.includes("view")}
-            />
-
-            <FormComboBox
-              control={form.control}
-              name='clientDefaultUnitSystem'
-              label='Default Unit System'
-              placeholder='Select Default Unit System'
-              options={unitSystemOptions || []}
               disabled={location.pathname.includes("view")}
             />
 
@@ -351,7 +370,7 @@ const ClientForm = () => {
               <FormComboBox
                 control={form.control}
                 name="clientAdminArea"
-                label={locationLabel?.adminArea}
+                label={locationLabel?.adminArea || "Admin Area"}
                 placeholder="Enter Client Admin Area"
                 options={adminAreaData?.data || []}
                 disabled={location.pathname.includes("view")}
@@ -362,7 +381,7 @@ const ClientForm = () => {
               <FormComboBox
                 control={form.control}
                 name="clientSubadminArea"
-                label={locationLabel?.subAdminArea}
+                label={locationLabel?.subAdminArea || "Sub Admin Area"}
                 placeholder="Enter Client Sub Admin Area"
                 options={subAdminAreaData?.data || []}
                 disabled={location.pathname.includes("view")}
@@ -373,7 +392,7 @@ const ClientForm = () => {
               <FormComboBox
                 control={form.control}
                 name="clientSubsubadminArea"
-                label={locationLabel?.subAdminAreaLevel2}
+                label={locationLabel?.subAdminAreaLevel2 || "Sub Sub Admin Area"}
                 placeholder="Enter Client Sub Sub Admin Area"
                 options={subSubAdminAreaData?.data || []}
                 disabled={location.pathname.includes("view")}
@@ -384,7 +403,7 @@ const ClientForm = () => {
               <FormComboBox
                 control={form.control}
                 name="clientSubsubsubadminArea"
-                label={locationLabel?.subAdminAreaLevel3}
+                label={locationLabel?.subAdminAreaLevel3 || "Sub Sub Sub Admin Area"}
                 placeholder="Enter Client Sub Sub Sub Admin Area"
                 options={subSubSubAdminAreaData?.data || []}
                 disabled={location.pathname.includes("view")}
@@ -394,38 +413,8 @@ const ClientForm = () => {
             <FormInput
               control={form.control}
               name="clientLocality"
-              label="Locality"
-              placeholder="Enter Client Locality"
-              type="text"
-              showLabel
-              disabled={location.pathname.includes("view")}
-            />
-
-            <FormInput
-              control={form.control}
-              name="clientStreet"
-              label="Street"
-              placeholder="Enter Street"
-              type="text"
-              showLabel
-              disabled={location.pathname.includes("view")}
-            />
-
-            <FormInput
-              control={form.control}
-              name="clientPremise"
-              label="Premise"
-              placeholder="Enter Client Premise"
-              type="text"
-              showLabel
-              disabled={location.pathname.includes("view")}
-            />
-
-            <FormInput
-              control={form.control}
-              name="clientSubpremise"
-              label="Sub Premise"
-              placeholder="Enter Sub Premise"
+              label= { locationLabel?.locality || "Locality"}
+              placeholder={`Enter Client ${locationLabel?.locality || "Locality"}`}
               type="text"
               showLabel
               disabled={location.pathname.includes("view")}
@@ -434,8 +423,8 @@ const ClientForm = () => {
             <FormInput
               control={form.control}
               name='clientPostalCode'
-              label='Postal Code'
-              placeholder='Enter Client Postal Code'
+              label={locationLabel?.postalCode || "Postal Code"}
+              placeholder={`Enter Client ${locationLabel?.postalCode || "Postal Code"}`}
               type='text' showLabel={true}
               disabled={location.pathname.includes("view")}
             />
@@ -443,12 +432,46 @@ const ClientForm = () => {
             <FormInput
               control={form.control}
               name="clientPoBox"
-              label="PO Box"
-              placeholder="Enter Client PO Box Number"
+              label={locationLabel?.poBox || "PO Box"}
+              placeholder={`Enter Client ${locationLabel?.poBox || "PO Box"}`}
               type="text"
               showLabel
               disabled={location.pathname.includes("view")}
             />
+
+            <FormInput
+              control={form.control}
+              name="clientStreet"
+              label={locationLabel?.street || "Street"}
+              placeholder={`Enter Client ${locationLabel?.street || "Street"}`}
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name="clientPremise"
+              label={locationLabel?.premise || "Premise"}
+              placeholder={`Enter Client ${locationLabel?.premise || "Premise"}`}
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+
+            <FormInput
+              control={form.control}
+              name="clientSubpremise"
+              label= {locationLabel?.subpremise || "Sub Premise"}
+              placeholder={`Enter Client ${locationLabel?.subpremise || "Sub Premise"}`}
+              type="text"
+              showLabel
+              disabled={location.pathname.includes("view")}
+            />
+
+
+
+
           </div>
           <div className='flex flex-col gap-2 mt-1'>
             <h2 className='text-lg font-semibold'>Client's Geometric Information</h2>
@@ -457,7 +480,7 @@ const ClientForm = () => {
           <div className={cn('grid gap-4 auto-rows-auto mb-4', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
 
             {!location.pathname.includes("view") && <BasicSelect
-              itemList={[{ label: "Shape", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
+              itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
               label="Choose Geometric File Type"
               Value={shapeType}
               setValue={(newValue) => {
@@ -478,8 +501,8 @@ const ClientForm = () => {
               /> : <FormFileReader
                 control={form.control}
                 name="uploadFile"
-                label="Upload Shape file"
-                placeholder='Choose Shape File'
+                label="Upload Shapefile"
+                placeholder='Choose Shapefile'
                 multiple={true}
                 accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
             </div>}
