@@ -28,6 +28,7 @@ import { set } from 'date-fns';
 import RtGeoJson from '@/components/RtGeoJson';
 import { debounce } from '@/utils';
 import { data, map } from 'jquery';
+import { clientColumnProperties } from '@/utils/constant';
 
 const initialTableData = {
   search: "",
@@ -77,6 +78,7 @@ const Clients = () => {
     });
   };
 
+  
   const columns: ColumnDef<ClientTableDataTypes>[] = [
     {
       accessorKey: "clientId",
@@ -109,6 +111,21 @@ const Clients = () => {
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientName")}</div>,
     },
     {
+      accessorKey: "clientDefaultUnitSystemId",        // header: "Field ID",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "clientDefaultUnitSystemId", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+             Unit System{tableInfo?.sort !== "clientDefaultUnitSystemId" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+      size: 150,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("clientDefaultUnitSystemId") === 1 ? "Ha" : "Ac"}</div>,
+    },
+    {
       accessorKey: "clientLegalHa",        // header: "Field ID",
       header: ({ column }) => {
         return (
@@ -116,7 +133,7 @@ const Clients = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "clientLegalHa", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Client Legal Ha{tableInfo?.sort !== "clientLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+             Legal Area{tableInfo?.sort !== "clientLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -131,11 +148,11 @@ const Clients = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "clientGeomHa", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Client Geometric Ha{tableInfo?.sort !== "clientGeomHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Geometric Area{tableInfo?.sort !== "clientGeomHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      size: 200,
+      size: 150,
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientGeomHa")}</div>,
     },
     {
@@ -150,7 +167,7 @@ const Clients = () => {
           </Button>
         );
       },
-      size: 150,
+      size: 200,
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientCountryName")}</div>,
     },
     {
@@ -332,6 +349,7 @@ const Clients = () => {
                 totalData={clientData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
+                columnProperties={clientColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
