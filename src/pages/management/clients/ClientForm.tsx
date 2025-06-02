@@ -6,7 +6,7 @@ import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/FormComponent/FormInput';
 import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form';
-import { useGetClientDetails, useGetClientUnitSystemOptions, usePostClient, usePutClient } from '@/services/client';
+import { useGetClientDetails, useGetClientTypeOptions, useGetClientUnitSystemLabel, useGetClientUnitSystemOptions, usePostClient, usePutClient } from '@/services/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, GET_CLIENT_MAP_GEOJSON_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from '@/services/client/constant';
 import { toast } from 'react-toastify';
@@ -47,6 +47,8 @@ const ClientForm = () => {
     shouldUnregister: true,
   });
   const { data: unitSystemOptions } = useGetClientUnitSystemOptions();
+  const { data: clientTypeOptions } = useGetClientTypeOptions();
+  const { data: clientUnitSystemLabels } = useGetClientUnitSystemLabel();
   const { data: locationLabels, isLoading: labelLoading } = useGetLocationLabels();
   const { data: countryOptions, isLoading: countryOptionsLoading } = useGetCountryList();
   const { data: adminAreaData, refetch: refetchAdminArea } = useGetAdminAreaList(form.getValues("clientCountry"));
@@ -183,7 +185,7 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (clientDetail && id) {
-      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubadminArea2Id ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubadminArea3Id ?? undefined }); // Reset the form with the fetched data
+      form.reset({ ...clientDetail?.data[0], clientDefaultUnitSystem: clientDetail?.data[0]?.clientDefaultUnitSystemId, uploadFile: [], clientCountry: clientDetail?.data[0]?.clientCountryId, clientAdminArea: clientDetail?.data[0]?.clientAdminAreaId, clientSubadminArea: clientDetail?.data[0]?.clientSubadminAreaId ?? undefined, clientSubsubadminArea: clientDetail?.data[0]?.clientSubadminArea2Id ?? undefined, clientSubsubsubadminArea: clientDetail?.data[0]?.clientSubadminArea3Id ?? undefined, clientType: clientDetail?.data[0]?.clientTypeId ?? undefined }); // Reset the form with the fetched data
       setPreviewMapData({ data: clientDetail?.clientGeojson, view_bounds: clientDetail?.viewBounds })
     }
   }, [clientDetail])
@@ -216,6 +218,7 @@ useEffect(()=>{
 
 
   const locationLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && locationLabels?.data[form.getValues('clientCountry')!]
+  const UnitSystemLabel = !!clientUnitSystemLabels?.data && !!form.getValues('clientDefaultUnitSystem') && clientUnitSystemLabels?.data[form.getValues('clientDefaultUnitSystem')!]
 
   return (
     <div className='h-w-full px-4 pt-2'>
@@ -256,6 +259,14 @@ useEffect(()=>{
 
             <FormComboBox
               control={form.control}
+              name='clientType'
+              label='Client Type'
+              placeholder='Select client Type'
+              options={clientTypeOptions || []}
+              disabled={location.pathname.includes("view")}
+            />
+            <FormComboBox
+              control={form.control}
               name='clientDefaultUnitSystem'
               label='Default Unit System'
               placeholder='Select Default Unit System'
@@ -267,7 +278,7 @@ useEffect(()=>{
             <FormInput
               control={form.control}
               name='clientLegalHa'
-              label={`Legal Area ${form.getValues('clientDefaultUnitSystem') === 1 ? '(Ha)' : '(Ac)'}`}
+              label={UnitSystemLabel?.clientLegalHa}
               placeholder='Enter legal Area '
               type='number'
               showLabel={true}
@@ -275,7 +286,7 @@ useEffect(()=>{
 />
 
             {location.pathname.includes("view") && <FormItem>
-              <FormLabel>{`Geometric Area ${form.getValues('clientDefaultUnitSystem') === 1 ? '(Ha)' : '(Ac)'}`} </FormLabel>
+              <FormLabel>{UnitSystemLabel?.clientGeomHa} </FormLabel>
               <FormControl>
                 <Input
                   value={clientDetail?.data[0]?.clientGeomHa || "2"}

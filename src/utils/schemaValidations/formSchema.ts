@@ -28,6 +28,6 @@ export const clientSchema = z.object({
   clientName: z.string().optional(),
   uploadFile: z.array(z.instanceof(File)).optional(),
   clientDefaultUnitSystem:z.coerce.number().optional(),
-
+  clientType: z.coerce.number().min(1, "Client type is required").optional(),
 })
 
