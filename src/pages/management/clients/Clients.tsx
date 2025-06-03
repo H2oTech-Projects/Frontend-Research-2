@@ -92,7 +92,7 @@ const Clients = () => {
           </Button>
         );
       },
-      size: 150,
+      size: 120,
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientId")}</div>,
     },
     {
@@ -107,7 +107,7 @@ const Clients = () => {
           </Button>
         );
       },
-      size: 150,
+      size: 180,
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientName")}</div>,
     },
     {
@@ -279,7 +279,7 @@ const Clients = () => {
       },
     })
   };
-
+  
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
       <CustomModal
@@ -370,7 +370,7 @@ const Clients = () => {
                 position={position}
                 zoom={zoomLevel}
                 collapse={collapse}
-
+                viewBound={mapGeoJson?.data?.viewBounds}
                 configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
               >
                 {isMapLoading ? <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
