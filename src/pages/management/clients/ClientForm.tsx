@@ -216,6 +216,13 @@ useEffect(()=>{
 
 },[unitSystemOptions])
 
+useEffect(() => {
+  if (!!clientTypeOptions && clientTypeOptions?.length > 0) {
+    !id && form.setValue("clientType", clientTypeOptions[0]?.value)
+  }
+}
+, [clientTypeOptions])
+
 
   const locationLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && locationLabels?.data[form.getValues('clientCountry')!]
   const UnitSystemLabel = !!clientUnitSystemLabels?.data && !!form.watch('clientDefaultUnitSystem') && clientUnitSystemLabels?.data[form.watch('clientDefaultUnitSystem')!]
