@@ -19,7 +19,7 @@ const Field = {
 
 const AddField = {
     url: "/field/addField",
-    name: "Add Field",
+    name: "AddField",
 };
 
 const EditField = {
@@ -34,12 +34,12 @@ const MeasurementPoint = {
 
 const AddMeasurementPoint = {
     url: "/measurementPoint/addMeasurementPoint",
-    name: "Add MeasurementPoint",
+    name: "AddMeasurementPoint",
 };
 
 const EditMeasurementPoint = {
     url: "/measurementPoint/editMeasurementPoint",
-    name: "Edit MeasurementPoint",
+    name: "EditMeasurementPoint",
 };
 
 const District = {
@@ -49,12 +49,12 @@ const District = {
 
 const AddDistrict = {
     url: "/district/addDistrict",
-    name: "Add District",
+    name: "AddDistrict",
 };
 
 const EditDistrict = {
     url: "/district/editDistrict",
-    name: "Edit District",
+    name: "EditDistrict",
 };
 
 const Customers = {
@@ -76,12 +76,12 @@ const Crops = {
 
 const CustomReport = {
     url: "/customReport",
-    name: "Custom Report",
+    name: "CustomReport",
 };
 
 const DailyReport = {
     url: "/dailyReport",
-    name: "Daily Report",
+    name: "DailyReport",
 };
 
 const Settings = {
@@ -106,17 +106,17 @@ const Canals = {
 
 const AddCanal = {
     url: "/canals/addCanals",
-    name: "Add Canal"
+    name: "AddCanal"
 };
 
 const EditCanal = {
     url: "/canals/:id/editCanal",
-    name: "Edit Canal"
+    name: "EditCanal"
 };
 
 const ViewCanal = {
     url: "/canals/:id/viewCanal",
-    name: "View Canal"
+    name: "ViewCanal"
 };
 
 const Clients = {
@@ -126,30 +126,30 @@ const Clients = {
 
 const AddClient = {
     url: "/clients/addClient",
-    name: "Add Client",
+    name: "AddClient",
 };
 const EditClient = {
     url: "/clients/:id/edit",
-    name: "Edit Client",
+    name: "EditClient",
 };
 const ViewClient = {
     url: "/clients/:id/view",
-    name: "View Client",
+    name: "ViewClient",
 };
 
 const AgencyInfo = {
     url: "/agencyInfo",
-    name: "Agency Info",
+    name: "AgencyInfo",
 };
 
 const CompanyInfo = {
     url: "/companyInfo",
-    name: "Company Info",
+    name: "CompanyInfo",
 };
 
 const DistrictInfo = {
     url: "/districtInfo",
-    name: "District Info",
+    name: "DistrictInfo",
 };
 
 export {

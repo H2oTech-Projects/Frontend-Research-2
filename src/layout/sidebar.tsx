@@ -5,9 +5,9 @@ import { NavLink } from "react-router-dom";
 import * as Icon from "lucide-react";
 import LightLogo from "../assets/Circular-Black.png";
 import DarkLogo from "../assets/Circular-Light-Gray.png";
-
+import * as routeUrl from "../routes/RouteUrl";
 import { cn } from "../utils/cn";
-import path from "path";
+
 const menuLinks = [
   {
     title: "Dashboard",
@@ -15,24 +15,19 @@ const menuLinks = [
       {
         label: "Map",
         icon: Icon.Map,
-        path: "/map",
+        name:routeUrl?.Map?.name,
+        path: routeUrl?.Map?.url,
         type: "link",
         Children: [],
       },
       {
         label: "Insights",
         icon: Icon.LayoutDashboard,
-        path: "/insight",
+        name:routeUrl?.Insight?.name,
+        path: routeUrl?.Insight?.url,
         type: "link",
         Children: [],
-      },
-      // {
-      //     label: "Dashboard",
-      //     icon: Icon.LayoutDashboard,
-      //     path: "/dashboard",
-      //     type: "link",
-      //     Children: [],
-      // },
+      }
     ],
   },
   {
@@ -44,42 +39,47 @@ const menuLinks = [
         path: null,
         type: "group",
         Children: [
-          { label: "Measurement Points", path: "/measurementPoint" },
-          { label: "Fields", path: "/field" },
-          { label: "Canals", path: "/canals" },
-          { label: "Districts", path: "/district" },
+          { label: "Measurement Points", path: routeUrl?.MeasurementPoint?.url ,name:routeUrl?.MeasurementPoint?.name },
+          { label: "Fields", path:routeUrl?.Field?.url, name:routeUrl?.Field?.name },
+          { label: "Canals", path:routeUrl?.Canals?.url, name:routeUrl?.Canals?.name },
+          { label: "Districts", path: routeUrl?.District?.url, name:routeUrl?.District?.name },
         ],
       },
       {
         label: "Allocations",
         icon: Icon.ChartColumnBig,
-        path: "/allocations",
+        name:routeUrl?.Allocations?.name,
+        path: routeUrl?.Allocations?.url,
         type: "link",
       },
       {
         label: "Billings",
         icon: Icon.ReceiptText,
-        path: "/billings",
+        name:routeUrl?.Billings?.name,
+        path: routeUrl?.Billings?.url,
         type: "link",
         Children: [],
       },
       {
         label: "Crops",
         icon: Icon.Sprout,
-        path: "/crops",
+        name:routeUrl?.Crops?.name,
+        path: routeUrl?.Crops?.url,
         type: "link",
         Children: [],
       },
       {
         label: "Clients",
         icon: Icon.Users,
-        path: "/clients",
+        name:routeUrl?.Clients?.name,
+        path: routeUrl?.Clients?.url,
         type: "link",
       },
       {
         label: "Customers",
         icon: Icon.Users,
-        path: "/customers",
+        path: routeUrl?.Customers?.url,
+        name:routeUrl?.Customers?.name,
         type: "link",
         Children: [],
       },
@@ -93,24 +93,25 @@ const menuLinks = [
       {
         label: "Agency Information",
         icon: Icon.Building,
-        path: "/agencyInfo",
+        path: routeUrl?.AgencyInfo?.url,
+        name:routeUrl?.AgencyInfo?.name,
         type: "link",
         Children: [],
       },
-      {
-        label: "Company Information",
-        icon: Icon.Building2,
-        path: "/companyInfo",
-        type: "link",
-        Children: [],
-      },
-      {
-        label: "Districts Information",
-        icon: Icon.LandPlot,
-        path: "/districtInfo",
-        type: "link",
-        Children: [],
-      },
+      // {
+      //   label: "Company Information",
+      //   icon: Icon.Building2,
+      //   path: "/companyInfo",
+      //   type: "link",
+      //   Children: [],
+      // },
+      // {
+      //   label: "Districts Information",
+      //   icon: Icon.LandPlot,
+      //   path: "/districtInfo",
+      //   type: "link",
+      //   Children: [],
+      // },
 
     ]
   },
@@ -121,14 +122,16 @@ const menuLinks = [
       {
         label: "Custom Reports",
         icon: Icon.BookOpenText,
-        path: "/customReport",
+        name:routeUrl?.CustomReport?.name,
+        path: routeUrl?.CustomReport?.url,
         type: "link",
         Children: [],
       },
       {
         label: "Daily Reports",
         icon: Icon.BookText,
-        path: "/dailyReport",
+        name:routeUrl?.DailyReport?.name,
+        path: routeUrl?.DailyReport?.url,
         type: "link",
         Children: [],
       },
@@ -140,14 +143,16 @@ const menuLinks = [
       {
         label: "Settings",
         icon: Icon.Settings,
-        path: "/settings",
+        name:routeUrl?.Settings?.name,
+        path: routeUrl?.Settings?.url,
         type: "link",
         Children: [],
       },
       {
         label: "Profile",
         icon: Icon.User,
-        path: "/profile",
+        name:routeUrl?.Profile?.name,
+        path: routeUrl?.Profile?.url,
         type: "link",
         Children: [],
       },

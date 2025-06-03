@@ -105,11 +105,11 @@ const MapTable = <T,>({
       // @ts-ignore
       setPosition &&  setPosition({
         // @ts-ignore
-        center: [row.original?.center_latitude, row.original?.center_longitude],
+        center: [row.original?.center_latitude || 0, row.original?.center_longitude || 0],
         // @ts-ignore
-        polygon: row.original?.coords,
+        polygon: row.original?.coords || null,
         // @ts-ignore
-        fieldId: row.original?.FieldID,
+        fieldId: row.original?.FieldID || null,
         // @ts-ignore
         features: row.original
       });
