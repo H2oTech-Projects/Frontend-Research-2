@@ -21,14 +21,13 @@ type LeafletMapTypes = {
     zoom: number;
     position: any;
     collapse?: string;
-    clickedField?: string | null;
     configurations?: mapConfiguration;
     children?: any;
     viewBound?: any;
 };
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
-const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
-  const { center } = position;
+const LeafletMap = ({ position,zoom, collapse,viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false},children }: LeafletMapTypes) => {
+  const {center} = position;
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
   const MapHandler = () => {
@@ -42,7 +41,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
         map.fitBounds(viewBound);
       }
     });
-  }, [collapse, center, zoom, viewBound, map]);
+  }, [collapse, center, zoom, map,viewBound]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -187,7 +186,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
             scrollWheelZoom={true}
             zoomControl={false} // Disable default zoom control
             minZoom={2}
-            style={configurations.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
+            style={configurations?.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
         >
             <LayersControl position="bottomleft">
 
@@ -217,4 +216,4 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
     );
 };
 
-export default LeafletMap;
+export default React.memo(LeafletMap);

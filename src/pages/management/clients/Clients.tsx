@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from 'lucide-react';
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import MapTable from '@/components/Table/mapTable';
 import { useDeleteClient, useGetClientList, useGetClientMapGeoJson } from '@/services/client';
@@ -278,6 +278,30 @@ const Clients = () => {
       },
     })
   };
+
+  const ReturnChildren = useMemo(() => {
+    return (
+      <>
+        {isMapLoading ? (
+          <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+            <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
+          </div>
+        ) : (
+          mapGeoJson?.data?.geojson && (
+            <RtGeoJson
+              layerEvents={geoJsonLayerEvents}
+              data={JSON.parse(mapGeoJson?.data?.geojson)}
+              style={{ fillColor: "transparent", color: "#9370DB", weight: 1.5 }}
+              key={"clientData"}
+              color="#9370DB" />
+          )
+        )}
+      </>
+    )
+
+},[isMapLoading])
+
+  const mapConfiguration = useMemo(() => {return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }} , []);
   
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
@@ -370,20 +394,10 @@ const Clients = () => {
                 zoom={zoomLevel}
                 collapse={collapse}
                 viewBound={position?.features?.viewbounds ?? mapGeoJson?.data?.viewBounds }
-                configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
+                configurations={mapConfiguration}
               >
-                {isMapLoading ? <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
-                </div> :
-                  mapGeoJson?.data?.geojson && (<RtGeoJson
-                    layerEvents={geoJsonLayerEvents}
-                    data={JSON.parse(mapGeoJson?.data?.geojson)}
-                    style={{ fillColor: "transparent", color: "#9370DB", weight: 1.5 }}
-                    key={"clientData"}
-                    color="#9370DB" />)
-
-                }
-
+                {ReturnChildren}
+        
               </LeafletMap>
               <CollapseBtn
                 className="absolute -left-4 top-1/2 z-[9998] m-2 flex size-8 items-center justify-center"
