@@ -181,7 +181,7 @@ const Clients = () => {
           </Button>
         );
       },
-      size: 150,
+      size: 200,
       cell: ({ row }) => <div className="capitalize">{row.getValue("clientEmail")}</div>,
     },
     {
