@@ -382,13 +382,13 @@ const Field = () => {
   const ReturnChildren = useMemo(() => {
     return (
       <>
-        <RtGeoJson
+        {mapData && <RtGeoJson
           key={"fields"}
           layerEvents={geoJsonLayerEvents}
           style={geoJsonStyle}
           data={JSON.parse(mapData['data'])}
           color={"#16599a"}
-        />
+        />}
         {!!position.polygon ? (
           <RtPolygon
             pathOptions={{ id: position.fieldId } as Object}
