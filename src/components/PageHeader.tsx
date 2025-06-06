@@ -11,9 +11,10 @@ interface PathType {
 type PageHeaderProps = {
     breadcrumbPathList: PathType[];
     pageHeaderTitle: string;
+    pageHeaderAction?: any 
 };
 
-const PageHeader = ({ breadcrumbPathList, pageHeaderTitle }: PageHeaderProps) => {
+const PageHeader = ({ breadcrumbPathList, pageHeaderTitle,pageHeaderAction }: PageHeaderProps) => {
     const navigate = useNavigate();
     return (
         <div className="flex flex-col gap-1">
@@ -31,11 +32,14 @@ const PageHeader = ({ breadcrumbPathList, pageHeaderTitle }: PageHeaderProps) =>
                     })}
 
                     <BreadcrumbItem>
-                        <BreadcrumbPage>{pageHeaderTitle}</BreadcrumbPage>
+                        <BreadcrumbPage className="capitalize">{pageHeaderTitle}</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="text-xl font-medium text-royalBlue dark:text-white">{pageHeaderTitle}</div>
+            <div className="flex justify-between ">
+            <div className="text-xl font-medium text-royalBlue dark:text-white capitalize">{pageHeaderTitle}</div>
+            {pageHeaderAction && pageHeaderAction}
+</div>
         </div>
     );
 };
