@@ -16,7 +16,7 @@ const authSlice = createSlice({
   reducers: {
     login(state, action) {
       state.isLoggedIn = true;
-      state.user = action.payload.user;
+      state.user = {email:action.payload.user,userType:"client",userRole:"clientAdmin",clientId:"102",clientType:"agency"};
       state.access = action.payload.access_token;
       state.refresh = action.payload.refresh_token;
 
@@ -25,7 +25,7 @@ const authSlice = createSlice({
       Cookies.set("refresh_token", action.payload.refresh_token, { secure: true });
 
       // Save user info to localStorage
-      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("user", JSON.stringify({email:action.payload.user,userType:"client",userRole:"clientAdmin",clientId:"102",clientType:"agency"}));
     },
     logout(state) {
       state.isLoggedIn = false;
