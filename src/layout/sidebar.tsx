@@ -7,6 +7,7 @@ import LightLogo from "../assets/Circular-Black.png";
 import DarkLogo from "../assets/Circular-Light-Gray.png";
 import * as routeUrl from "../routes/RouteUrl";
 import { cn } from "../utils/cn";
+import { clientAdminPermissionList } from "@/utils/testPermission";
 
 const menuLinks = [
   {
@@ -98,20 +99,22 @@ const menuLinks = [
         type: "link",
         Children: [],
       },
-      // {
-      //   label: "Company Information",
-      //   icon: Icon.Building2,
-      //   path: "/companyInfo",
-      //   type: "link",
-      //   Children: [],
-      // },
-      // {
-      //   label: "Districts Information",
-      //   icon: Icon.LandPlot,
-      //   path: "/districtInfo",
-      //   type: "link",
-      //   Children: [],
-      // },
+      {
+        label: "Company Information",
+        icon: Icon.Building2,
+        path: routeUrl?.CompanyInfo?.url,
+        name: routeUrl?.CompanyInfo?.name,
+        type: "link",
+        Children: [],
+      },
+      {
+        label: "Districts Information",
+        icon: Icon.LandPlot,
+        path: routeUrl?.DistrictInfo?.url,
+        name:routeUrl?.DistrictInfo?.name,
+        type: "link",
+        Children: [],
+      },
 
     ]
   },
@@ -159,6 +162,33 @@ const menuLinks = [
     ],
   },
 ];
+
+const filteredMenuLinks = menuLinks
+  .map((section) => {
+    const filteredLinks = section.links
+      .map((link) => {
+        // If it's a group with Children (nested routes)
+        if (link.type === "group" && Array.isArray(link.Children)) {
+          const filteredChildren = link.Children.filter((child) =>
+            clientAdminPermissionList.includes(child.name)
+          );
+          return filteredChildren.length
+            ? { ...link, Children: filteredChildren }
+            : null;
+        }
+
+        // For normal link items
+        return clientAdminPermissionList.includes(link.name!) ? link : null;
+      })
+      .filter(Boolean); // Remove nulls
+
+    return filteredLinks.length
+      ? { ...section, links: filteredLinks }
+      : null;
+  })
+  .filter(Boolean);
+
+
 export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
   const handleCollapse = () => {
     setCollapsed(false);
@@ -224,15 +254,15 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
         {!collapsed && <p className="animate-slideIn text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">FLOW</p>}
       </div>
       <div className="flex w-full animate-slideIn flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-2 [scrollbar-width:_thin]">
-        {menuLinks.map((navbarLink) => (
-          <nav
+        {filteredMenuLinks.map((navbarLink) => (
+        navbarLink?.title &&  <nav
             key={navbarLink.title}
             className={cn("sidebar-group", collapsed && "md:items-center", "animate-slideIn")}
           >
             <p className={cn("sidebar-group-title", collapsed && "md:w-[45px]")}>{navbarLink.title}</p>
-            {navbarLink.links.map((link) =>
-              link.type === "link" && link.path !== null ? (
-                <NavLink
+            {navbarLink.links.map((link:any) =>
+            link.type === "link" && link.path !== null  ? (
+              <NavLink
                   key={link.label}
                   to={link?.path}
                   className={cn("sidebar-item", collapsed && "md:w-[45px]", "animate-slideIn")}
@@ -284,8 +314,8 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
                   {childMenu.parentName === link.label && childMenu.showChildren && (
                     <div className={cn("menu-dropDown", "animate-fadeIn", collapsed && "hidden")}>
                       {link?.Children &&
-                        link?.Children.map((child) => (
-                          <NavLink
+                        link?.Children.map((child:any) => (
+                        <NavLink
                             onClick={() => SetActiveLinkGroup(link.label, child.path)}
                             key={child?.label}
                             to={child?.path}

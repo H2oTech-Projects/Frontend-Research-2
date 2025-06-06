@@ -185,17 +185,17 @@ export const RouteList = [
   {
     path: routeUrl.AgencyInfo?.url,
     name:routeUrl.AgencyInfo?.name,
-    Component: lazy(async () => import("./../pages/configuration/AgencyInfo")),
+    Component: lazy(async () => import("./../pages/configuration/ClientInfo")),
   },
   {
     path: routeUrl.DistrictInfo?.url,
     name:routeUrl.DistrictInfo?.name,
-    Component: lazy(async () => import("./../pages/configuration/DistrictInfo")),
+    Component: lazy(async () => import("./../pages/configuration/ClientInfo")),
   },
   {
     path: routeUrl.CompanyInfo?.url,
     name:routeUrl.CompanyInfo?.name,
-    Component: lazy(async () => import("./../pages/configuration/CompanyInfo")),
+    Component: lazy(async () => import("./../pages/configuration/ClientInfo")),
   },
 
 ];
