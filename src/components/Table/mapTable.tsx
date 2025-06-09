@@ -180,7 +180,7 @@ const MapTable = <T,>({
 
     const fieldTableContent = () => {
       return table.getRowModel().rows.map((row) =>
-        
+
         fieldTableRow(row)
       )
     }
@@ -252,10 +252,10 @@ const MapTable = <T,>({
                 {useClientPagination ?  <DataTablePagination table={table} collapse={collapse!}/> : <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>}
             </div>
     }
-
+    const tableHeight = tableType == 'wap_types' ? 'h-[300px]' : fullHeight ? "h-[300px]" : "h-auto"
     return (
       <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-        <div className={cn(fullHeight ? "h-[calc(100vh-208px)]" : "h-auto ")}>
+        <div className={tableHeight}>
           <Table className="relative">
             <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
               {isLoading ? emptyTable() : tableContent()}

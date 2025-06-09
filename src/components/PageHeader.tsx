@@ -9,7 +9,7 @@ interface PathType {
 }
 
 type PageHeaderProps = {
-    breadcrumbPathList: PathType[];
+    breadcrumbPathList?: PathType[];
     pageHeaderTitle: string;
 };
 

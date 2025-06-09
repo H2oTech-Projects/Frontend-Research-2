@@ -2,6 +2,7 @@ import React from 'react'
 import { cn } from "@/utils/cn";
 
 import WaterAccountingPeriodType from "./WaterAccountingPeriodType"
+import WaterAccountingYear from "./WaterAccountingYear"
 
 const Timeline = () => {
 
@@ -9,9 +10,13 @@ const Timeline = () => {
     return (<WaterAccountingPeriodType/>)
   }
   const waterAccoutingYear = () => {
-    return (<></>)
+    return (<WaterAccountingYear/>)
   }
-  return (<>{waterAccoutingRatePeriod()}</>)
+  return (<>
+      {waterAccoutingRatePeriod()}
+      {waterAccoutingYear()}
+    </>
+  )
 }
 
 export default Timeline

@@ -2,21 +2,10 @@ import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, File
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { cn } from "../../utils/cn";
 import { Button } from "@/components/ui/button";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import PageHeader from "@/components/PageHeader";
 import { useGetAccountParcels } from "@/services/insight";
 import MapTable from "@/components/Table/mapTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { farmUnitColumnProperties, parcelColumnProperties } from "@/utils/constant";
-import { useNavigate } from "react-router-dom";
 
 interface initialTableDataTypes {
   search: string;
@@ -123,7 +112,7 @@ const columns2: ColumnDef<ParcelData>[] = [
 
 ];
 
-const WaterAccountingPeriodType = () => {
+const WaterAccountingYear = () => {
   const navigate = useNavigate();
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [searchText, setSearchText] = useState("");
@@ -132,8 +121,8 @@ const WaterAccountingPeriodType = () => {
   if (accountParcelsLoading)  return null;
 
   return (
-    <div className="flex flex-col gap-1 px-4 pt-2 mb-10">
-      <div className="text-xl font-medium text-royalBlue dark:text-white">Water Accounting Period Type</div>
+    <div className="flex flex-col gap-1 px-4 pt-4 mb-10">
+      <div className="text-xl font-medium text-royalBlue dark:text-white">Water Accounting Year</div>
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex gap-2">
@@ -170,7 +159,7 @@ const WaterAccountingPeriodType = () => {
             }}
           >
             <Plus size={4} />
-            Add Water Accounting Period Type
+            Add Water Accounting Year
           </Button>
         </div>
         <div className="flex flex-grow">
@@ -196,4 +185,4 @@ const WaterAccountingPeriodType = () => {
   );
 };
 
-export default WaterAccountingPeriodType;
+export default WaterAccountingYear;
