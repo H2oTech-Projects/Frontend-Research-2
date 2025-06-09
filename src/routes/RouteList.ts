@@ -197,5 +197,9 @@ export const RouteList = [
     name:routeUrl.CompanyInfo?.name,
     Component: lazy(async () => import("./../pages/configuration/CompanyInfo")),
   },
-
+  {
+    path: routeUrl.TimeSeries?.url,
+    name:routeUrl.TimeSeries?.name,
+    Component: lazy(async () => import("./../pages/timeline/index")),
+  },
 ];

@@ -88,6 +88,35 @@ const menuLinks = [
   },
   {
 
+    title: "Timeline",
+    links: [
+      {
+        label: "Accounting Timeseries",
+        icon: Icon.Clock11,
+        path: routeUrl?.TimeSeries?.url,
+        name:routeUrl?.TimeSeries?.name,
+        type: "link",
+        Children: [],
+      },
+      // {
+      //   label: "Company Information",
+      //   icon: Icon.Building2,
+      //   path: "/companyInfo",
+      //   type: "link",
+      //   Children: [],
+      // },
+      // {
+      //   label: "Districts Information",
+      //   icon: Icon.LandPlot,
+      //   path: "/districtInfo",
+      //   type: "link",
+      //   Children: [],
+      // },
+
+    ]
+  },
+  {
+
     title: "Configuration",
     links: [
       {
