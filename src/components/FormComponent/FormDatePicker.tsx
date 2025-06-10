@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import * as React from "react"
 import { CaptionProps } from "react-day-picker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { CalendarX } from "lucide-react";
 
 interface DropdownCaptionProps extends CaptionProps {
   fromYear: number
@@ -81,9 +82,10 @@ interface FormDatePickerProps {
   name: string;
   label: string;
   disabled?: boolean;
+  showDateIcon?:boolean
 }
 
-export function FormDatePicker({ control, name, label,disabled=false }: FormDatePickerProps) {
+export function FormDatePicker({ control, name, label,disabled=false,showDateIcon=false }: FormDatePickerProps) {
   const watchedDate = useWatch({
     control: control,
     name: name,
@@ -106,7 +108,7 @@ export function FormDatePicker({ control, name, label,disabled=false }: FormDate
              <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button variant="outline" disabled={disabled}>
-                  {field.value ? dayjs(field.value).format("DD MMM YYYY") : dayjs().format("DD MMM YYYY")}
+                  {field.value ? dayjs(field.value).format("DD MMM YYYY") : showDateIcon ? <CalendarX/> :  dayjs().format("DD MMM YYYY") }
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="z-[9999] p-0">
