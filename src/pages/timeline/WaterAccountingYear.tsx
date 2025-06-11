@@ -113,7 +113,7 @@ const columns2: ColumnDef<ParcelData>[] = [
 ];
 
 const WaterAccountingYear = () => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [searchText, setSearchText] = useState("");
   const {data:accountParcels, isLoading:accountParcelsLoading} = useGetAccountParcels("MAD_MA_50000");
@@ -153,7 +153,7 @@ const WaterAccountingYear = () => {
           </div>
           <Button
             variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
+            className="h-7 w-auto px-2 text-sm mr-2"
             onClick={() => {
               navigate("/field/addField")
             }}

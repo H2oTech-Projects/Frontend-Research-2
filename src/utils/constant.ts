@@ -31,6 +31,12 @@ export const  parcelColumnProperties =  {
     "coords": "str"
   };
 
+export const  waPeriodTypeColumnProperties =  {
+  "client_name": "str",
+  "wa_period_type": "str",
+  "wa_period_type_name": "str",
+};
+
 export const clientColumnProperties = {
   "clientAdminAreaName": "str",
   "clientCountryName": "str",

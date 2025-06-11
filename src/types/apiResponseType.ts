@@ -1,4 +1,4 @@
-import { ClientTableDataTypes } from "./tableTypes";
+import { ClientTableDataTypes, WaterAccountingPeriodTypes } from "./tableTypes";
 
 interface AccountType {
   value: string;
@@ -105,7 +105,7 @@ export type FieldDataType = {
     StandbyAcr?: number;
     ParcelID?: string;
     VolRateAdj?: number;
-    ActiveDate?: string; 
+    ActiveDate?: string;
     InactiveDa?: string;
     ActiveFlag?: string;
     unq_fld_id?: number;
@@ -134,4 +134,12 @@ export type FieldListResponseType = {
   totalRecords: number;
   geojson:string;
 
+}
+
+export type PeriodTypesResponseType = {
+  data: WaterAccountingPeriodTypes[];
+  pageNo: number;
+  pageSize: number;
+  totalRecords: number;
+  geojson:string;
 }

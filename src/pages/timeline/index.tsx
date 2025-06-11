@@ -1,13 +1,13 @@
 import React from 'react'
 import { cn } from "@/utils/cn";
 
-import WaterAccountingPeriodType from "./WaterAccountingPeriodType"
+import WaterAccountingRatePeriod from "./WaterAccountingRatePeriod"
 import WaterAccountingYear from "./WaterAccountingYear"
 
 const Timeline = () => {
 
   const waterAccoutingRatePeriod = () => {
-    return (<WaterAccountingPeriodType/>)
+    return (<WaterAccountingRatePeriod/>)
   }
   const waterAccoutingYear = () => {
     return (<WaterAccountingYear/>)

@@ -146,3 +146,10 @@ export type ClientTableDataTypes = {
     coordinates: any;
   };
 };
+
+export type WaterAccountingPeriodTypes = {
+  id:string
+  wa_period_type: string;
+  wa_period_type_name: string;
+  client_name: string;
+};
