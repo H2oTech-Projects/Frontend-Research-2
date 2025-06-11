@@ -103,7 +103,7 @@ export function FormDatePicker({ control, name, label,disabled=false,showDateIco
       name={name}
       render={({ field }) => (
         <FormItem className="flex flex-col gap-1">
-          <FormLabel className="mt-1">{label}</FormLabel>
+          <FormLabel className="mt-2">{label}</FormLabel>
           <FormControl>
              <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
