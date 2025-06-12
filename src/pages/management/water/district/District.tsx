@@ -10,12 +10,13 @@ import { Form } from '@/components/ui/form';
 import { FormDatePicker } from "@/components/FormComponent/FormDatePicker";
 import { FormInput } from "@/components/FormComponent/FormInput";
 import { FormComboBox } from "@/components/FormComponent/FormRTSelect";
+import dayjs from "dayjs";
 const data = [{ name: "jumir", id: 12 }, { name: "jumir22", id: 21 }, { name: "jumir33", id: 32 }, { name: "jumir44", id: 24 }, { name: "jumir55", id: 54 }, { name: "jumir66", id: 68 }, { name: "jumir gosain", id: 645 }, { name: "jumir88", id: 68676 }, { name: "jumir77", id: 688 }, { name: "jumir99", id: 988 }]
 
-export const NestedChildArray: React.FC<{ control: any; listIndex: number, parentName: string }> = ({ control, listIndex, parentName }) => {
+export const NestedChildArray: React.FC<{ form: any; listIndex: number, parentName: string ,control:any }> = ({ form, listIndex, parentName,control }) => {
   const { fields, append, remove } = useFieldArray({
     control,
-    name: `list.${listIndex}.child`,
+    name: `wapList.${listIndex}.child`,
   });
   const formatNumber = (num: number) => num.toString().padStart(2, '0');
   return <div className="flex flex-col gap-2 items-center w-full">
@@ -23,21 +24,27 @@ export const NestedChildArray: React.FC<{ control: any; listIndex: number, paren
       return (
         <div key={index} className="flex flex-col w-full">
           <div className="flex items-center justify-center w-full gap-3">
-            <FormInput name={`list.${listIndex}.child.${index}.name`} label="Name" type="text" control={control} placeholder="name" disabled={true} />
-            <div onPointerDown={(e) => e.stopPropagation()}>
+            <FormInput name={`wapList.${listIndex}.child.${index}.name`} label="Name" type="text" control={control} placeholder="name" disabled={true} />
+              <div onPointerDown={(e) => e.stopPropagation()}>
               <FormDatePicker
                 control={control}
-                name={`list.${listIndex}.child.${index}.startDate`}
+                name={`wapList.${listIndex}.child.${index}.startDate`}
                 label='Start Date'
                 showDateIcon={true}
+                disabled={index === 0 ? false : form.watch(`wapList.${listIndex}.child[${index-1}].endDate`) ? false : true }
+                minDate={index ==0 ? new Date("2026-01-01") : new Date(form.watch(`wapList.${listIndex}.child[${index-1}].endDate`))}
+                maxDate={new Date("2026-12-31")}
               />
             </div>
             <div onPointerDown={(e) => e.stopPropagation()}>
               <FormDatePicker
                 control={control}
-                name={`list.${listIndex}.child.${index}.endDate`}
-                label='End Date'
+                name={`wapList.${listIndex}.child.${index}.endDate`}
+                label="End date"
                 showDateIcon={true}
+                disabled={form.watch(`wapList.${listIndex}.child.${index}.startDate`) ? false: true}
+                minDate={new Date(form.watch(`wapList.${listIndex}.child.${index}.startDate`) )}
+                maxDate={new Date("2026-12-31")}
               />
             </div>
 
@@ -47,7 +54,7 @@ export const NestedChildArray: React.FC<{ control: any; listIndex: number, paren
       )
     })}
     <div className="flex  w-full justify-center gap-2">
-      <Button variant={'secondary'} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { append({ name: parentName + formatNumber(fields.length + 1), startDate: undefined, endDate: undefined }) }}> <Plus /></Button>
+      <Button variant={'secondary'} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { append({ name: parentName + " " + formatNumber(fields.length + 1), startDate: undefined, endDate: undefined }) }}> <Plus /></Button>
       {fields.length > 1 && <Button variant={'destructive'} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { remove(fields.length - 1) }}> <Trash /></Button>}
     </div>
 
@@ -100,11 +107,11 @@ const District = () => {
       label: "2020"
     }
   ]
-  type ListBFormType = {
-    wayName: string;
+  type WayFormType = {
+
     wayYear: string;
-    list: {
-      itemId: number;
+    wapList: {
+      wapId: number;
       name: string;
       child: {
         name: string;
@@ -114,17 +121,16 @@ const District = () => {
     }[];
   };
 
-  const form = useForm<ListBFormType>({
+  const form = useForm<WayFormType>({
     defaultValues: {
-      wayName: "",
       wayYear: "",
-      list: []
+      wapList: []
     },
   });
 
-  const { fields, move, append } = useFieldArray({
+  const { fields, move, append, replace } = useFieldArray({
     control: form.control,
-    name: "list"
+    name: "wapList"
   });
 
   const handleRightShift = () => {
@@ -132,13 +138,13 @@ const District = () => {
     const transferItem = listA?.filter((item: any) => selectedA.includes(item.id))
     const listForForm = transferItem?.map((item: any) => {
       return {
-        itemId: item?.id,
+        wapId: item?.id,
         name: item?.name,
         child: [{
-          name: item.name + formatNumber(1), startDate: undefined,
+          name: item.name + " " + formatNumber(1), startDate: undefined,
           endDate: undefined
         }]
-      } 
+      }
     })
     append(listForForm)
     setListA(remainingItemA);
@@ -147,10 +153,10 @@ const District = () => {
     setSelectedA([]);
   }
   const handleLeftShift = () => {
-    const remainingItemsFields = fields?.filter((item: any) => !selectedB.includes(item.itemId))
-    const transferItem = fields?.filter((item: any) => selectedB.includes(item.itemId))
+    const remainingItemsFields = fields?.filter((item: any) => !selectedB.includes(item.wapId))
+    const transferItem = fields?.filter((item: any) => selectedB.includes(item.wapId))
     setListA([...listA, ...transferItem]);
-    form.setValue("list", remainingItemsFields)
+    form.setValue("wapList", remainingItemsFields)
     setSelectedB([]);
   }
   const handleClick = (selectedList: any, setSelectedList: any, id: string) => {
@@ -188,18 +194,32 @@ const District = () => {
     if (!e.over) return;
 
     if (e.active.id !== e.over.id) {
-      const list = form.getValues("list");
-      const oldIdx = list.findIndex((item) => item.itemId.toString() === e.active.id.toString());
-      const newIdx = list.findIndex((item) => item.itemId.toString() === e.over!.id.toString());
+      const list = form.getValues("wapList");
+      const oldIdx = list.findIndex((item) => item.wapId.toString() === e.active.id.toString());
+      const newIdx = list.findIndex((item) => item.wapId.toString() === e.over!.id.toString());
       if (oldIdx !== -1 && newIdx !== -1) {
         move(oldIdx, newIdx); // This reorders the form array
       }
     }
   };
 
-  const onSubmit = (data: any) => {
-    console.log(data)
-  }
+
+  const onSubmit = (data: WayFormType) => {
+  console.log(data,"here")
+    const formattedData: WayFormType = {
+      ...data,
+      wapList: data.wapList.map(wap => ({
+        ...wap,
+        child: wap.child.map(child => ({
+          ...child,
+          startDate: child.startDate ? dayjs(child.startDate).format("YYYY-MM-DD") : undefined,
+          endDate: child.endDate ? dayjs(child.endDate).format("YYYY-MM-DD") : undefined,
+        }))
+      }))
+    };
+
+    console.log(formattedData);
+  };
 
 
 
@@ -218,29 +238,28 @@ const District = () => {
         <Form {...form}>
           <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow overflow-y-auto ">
             <div className="h-auto  bg-white p-2  " >
-              <FormInput name='wayName' label="Water Accounting Year (WAY) Name" type="text" control={form.control} placeholder="Enter WAY Name" />
               <FormComboBox
                 control={form.control}
                 name='wayYear'
-                label='Year'
+                label='Water Accounting Year'
                 placeholder='Select Year'
                 options={yearList || []}
 
               />
             </div>
             {/* <div className="flex flex-col flex-grow overflow-y-auto g-2"> */}
-            <DndContext onDragEnd={reorderList} onDragStart={() => setOpenAccordion(fields.map((item: any) => item.itemId))}>
-              <SortableContext items={fields.map((item: any) => item?.itemId?.toString())}>
-                {fields.length > 0 && fields?.map((item: any, index) => <DragItemWrapper key={item.itemId} id={item.itemId.toString()}>
-                  <div className={cn("flex flex-col  w-full gap-2 items-center bg-slate-400 p-2 hover:bg-royalBlue rounded", openAccordion.includes(item.itemId) ? "h-auto" : "h-10")}>
+            <DndContext onDragEnd={reorderList} onDragStart={() => setOpenAccordion(fields.map((item: any) => item.wapId))}>
+              <SortableContext items={fields.map((item: any) => item?.wapId?.toString())}>
+                {fields.length > 0 && fields?.map((item: any, index) => <DragItemWrapper key={item.wapId} id={item.wapId.toString()}>
+                  <div className={cn("flex flex-col  w-full gap-2 items-center bg-slate-400 p-2 hover:bg-royalBlue rounded", openAccordion.includes(item.wapId) ? "h-auto" : "h-10")}>
                     <div className="flex w-full gap-2 items-center">
                       <input className="h-5 w-5" type="checkbox" onPointerDown={(e) => {
                         e.stopPropagation(); // important to prevent DnD taking over
-                        handleClick(selectedB, setSelectedB, item.itemId);
-                      }} /> <div className="flex flex-grow text-xl">{item.name}</div><div className="hover:bg-slate-200"><ChevronDown className={cn(openAccordion.includes(item.itemId) ? "rotate-180" : "")} onPointerDown={(e) => { e.stopPropagation(); handleAccordion(item?.itemId) }} /></div>
+                        handleClick(selectedB, setSelectedB, item.wapId);
+                      }} /> <div className="flex flex-grow text-xl">{item.name}</div><div className="hover:bg-slate-200"><ChevronDown className={cn(openAccordion.includes(item.wapId) ? "rotate-180" : "")} onPointerDown={(e) => { e.stopPropagation(); handleAccordion(item?.wapId) }} /></div>
                     </div>
-                    <div className={cn("flex justify-between items-center w-full g-1", openAccordion.includes(item.itemId) ? "" : "hidden")}>
-                      <NestedChildArray control={form.control} listIndex={index} parentName={item.name} />
+                    <div className={cn("flex justify-between items-center w-full g-1", openAccordion.includes(item.wapId) ? "" : "hidden")}>
+                      <NestedChildArray form={form} listIndex={index} parentName={item.name} control={form.control} />
                     </div>
                   </div>
                 </DragItemWrapper>)}
@@ -261,5 +280,3 @@ const District = () => {
 
 
 export default District;
-
-

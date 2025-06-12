@@ -82,57 +82,83 @@ interface FormDatePickerProps {
   name: string;
   label: string;
   disabled?: boolean;
-  showDateIcon?:boolean
+  showDateIcon?:boolean;
+  minDate?: Date; // 👈 new
+  maxDate?: Date;
 }
 
-export function FormDatePicker({ control, name, label,disabled=false,showDateIcon=false }: FormDatePickerProps) {
+export function FormDatePicker({
+  control,
+  name,
+  label,
+  disabled = false,
+  showDateIcon = false,
+  minDate,
+  maxDate,
+}: FormDatePickerProps) {
   const watchedDate = useWatch({
     control: control,
     name: name,
   });
- const fromYear = 1900;
-  const toYear = 2100;
+
+  const fromYear = minDate?.getFullYear() ?? 1900;
+  const toYear = maxDate?.getFullYear() ?? 2100;
+
   const [month, setMonth] = React.useState<Date | undefined>(new Date());
-  const [open, setOpen] = React.useState(false); 
+  const [open, setOpen] = React.useState(false);
+
   React.useEffect(() => {
-  setMonth(watchedDate ? new Date(watchedDate) : new Date());
-},[watchedDate])
+    setMonth(watchedDate ? new Date(watchedDate) : minDate ? minDate : maxDate ? maxDate : new Date());
+  }, [watchedDate]);
+
+  React.useEffect(()=>{
+      setMonth(minDate)
+},[minDate])
+
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
         <FormItem className="flex flex-col gap-1">
-          <FormLabel className="mt-2">{label}</FormLabel>
+          <FormLabel className="mt-2.5">{label}</FormLabel>
           <FormControl>
-             <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button variant="outline" disabled={disabled}>
-                  {field.value ? dayjs(field.value).format("DD MMM YYYY") : showDateIcon ? <CalendarX/> :  dayjs().format("DD MMM YYYY") }
+                  {field.value
+                    ? dayjs(field.value).format("DD MMM YYYY")
+                    : showDateIcon
+                    ? <CalendarX />
+                    : dayjs().format("DD MMM YYYY")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="z-[9999] p-0">
-               <Calendar
+                <Calendar
                   mode="single"
                   selected={new Date(field.value)}
                   onSelect={(date) => {
                     field.onChange(date);
-                    setMonth(date); // update visible month
-                    setOpen(false); // close the popover
+                    setMonth(date);
+                    setOpen(false);
                   }}
                   month={month}
-                  onMonthChange={(newMonth) => setMonth(newMonth)}
+                  onMonthChange={setMonth}
                   captionLayout="dropdown"
                   fromYear={fromYear}
                   toYear={toYear}
-                  disabled={(date) => dayjs(date).isAfter(dayjs())}
+                  disabled={(date) => {
+                    if (minDate && dayjs(date).isBefore(minDate, 'day')) return true;
+                    if (maxDate && dayjs(date).isAfter(maxDate, 'day')) return true;
+                    return false;
+                  }}
                   components={{
                     Caption: (captionProps) => (
                       <DropdownCaption
                         {...captionProps}
                         fromYear={fromYear}
                         toYear={toYear}
-                        onMonthChange={setMonth} // ✅ Pass your own month setter
+                        onMonthChange={setMonth}
                       />
                     )
                   }}
@@ -144,6 +170,5 @@ export function FormDatePicker({ control, name, label,disabled=false,showDateIco
         </FormItem>
       )}
     />
-
   );
 }
