@@ -143,3 +143,7 @@ export type PeriodTypesResponseType = {
   totalRecords: number;
   geojson:string;
 }
+
+export type PeriodTypeResponseType = {
+  data: WaterAccountingPeriodTypes;
+}

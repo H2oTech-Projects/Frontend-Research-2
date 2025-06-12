@@ -18,9 +18,9 @@ import { waterAccountingPeriodTypeSchema } from '@/utils/schemaValidations/formS
 import { WaterAccoutingPeriodTypeForm } from '@/types/formTypes';
 import { waterAccountingRatePeriodInitialValues } from '@/utils/initialFormValues';
 import { convertKeysToSnakeCase } from '@/utils/stringConversion';
-import { usePostWAPT, usePutWAPT } from '@/services/timeseries';
+import { usePostWAPT, usePutWAPT, useGetPeriodType } from '@/services/timeseries';
 import { useQueryClient } from '@tanstack/react-query';
-import { GET_WAPT_LIST_KEY, PUT_WAPT_KEY, POST_WAPT_KEY } from '@/services/timeseries/constant';
+import { GET_WAPT_LIST_KEY, GET_WAPT_KEY } from '@/services/timeseries/constant';
 interface WaptFormProps {
   id: any;
   setEditId: any
@@ -36,16 +36,25 @@ const WaptForm = ({
     shouldUnregister: true,
   });
 
-  const [open, setOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
+  const [open, setOpen] = useState<boolean>(false);
   const { mutate: createWAPT, isPending: isWAPTcreating } = usePostWAPT()
   const { mutate: updateWAPT, isPending: isWAPTUpdating } = usePutWAPT()
+  const { data: WAPTDetail, isLoading } = useGetPeriodType(id);
 
   useEffect(() => {
     if (id) {
       setOpen(true);
+      queryClient.invalidateQueries({ queryKey: [GET_WAPT_KEY] })
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!!WAPTDetail) {
+      form.setValue("waPeriodType", WAPTDetail.data.wa_period_type)
+      form.setValue("waPeriodTypeName", WAPTDetail.data.wa_period_type_name)
+    }
+  }, [WAPTDetail]);
 
   const handleCreateWAPT = (data: WaterAccoutingPeriodTypeForm) => {
     const FormValue = convertKeysToSnakeCase({
@@ -99,10 +108,10 @@ const WaptForm = ({
   };
   const [showNextModal, setShowNextModal] = useState(false);
   const hideDialogContent = showNextModal ? "hidden" : ''
-  console.log('open =>', open)
+
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={()=>{setOpen(!open);setEditId(null)}}>
           <DialogTrigger asChild>
             <Button variant={"default"} className="h-7 w-auto px-2 text-sm mr-2" onClick={() => setOpen(true)}>
               <Plus size={4} />
