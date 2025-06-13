@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
 import { waterAccountingPeriodTypeSchema } from '@/utils/schemaValidations/formSchema';
 import { WaterAccoutingPeriodTypeForm } from '@/types/formTypes';
 import { waterAccountingRatePeriodInitialValues } from '@/utils/initialFormValues';
@@ -100,7 +101,7 @@ const WaptForm = ({
   }
 
   const onSubmit = (data: WaterAccoutingPeriodTypeForm) => {
-    if (!null) {
+    if (!id) {
       handleCreateWAPT(data)
     } else {
       handlePutWAPT(data)
@@ -108,6 +109,7 @@ const WaptForm = ({
   };
   const [showNextModal, setShowNextModal] = useState(false);
   const hideDialogContent = showNextModal ? "hidden" : ''
+  const title = !!id ? 'Edit' : 'Add'
 
   return (
     <>
@@ -115,12 +117,12 @@ const WaptForm = ({
           <DialogTrigger asChild>
             <Button variant={"default"} className="h-7 w-auto px-2 text-sm mr-2" onClick={() => setOpen(true)}>
               <Plus size={4} />
-              Add Water Accounting Period Type ho ra
+              Add Water Accounting Period Type
             </Button>
           </DialogTrigger>
           <DialogContent className={`sm:max-w-[625px] pr-10 h-[250px] ${hideDialogContent}`}>
             <DialogHeader>
-              <DialogTitle>Add Water Accounting Period Type</DialogTitle>
+              <DialogTitle>{title} Water Accounting Period Type</DialogTitle>
             </DialogHeader>
             <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -162,11 +164,13 @@ const WaptForm = ({
                 </div>
               </div>
             </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit">Save</Button>
+            <DialogFooter className="w-full">
+              <div className="flex justify-start w-full gap-2">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type="submit">Save</Button>
+              </div>
             </DialogFooter>
             </form>
             </Form>

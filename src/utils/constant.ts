@@ -37,6 +37,12 @@ export const  waPeriodTypeColumnProperties =  {
   "wa_period_type_name": "str",
 };
 
+export const  wayColumnProperties =  {
+  "wa_year": "str",
+  "wa_start_date": "str",
+  "wa_end_date": "str",
+};
+
 export const clientColumnProperties = {
   "clientAdminAreaName": "str",
   "clientCountryName": "str",

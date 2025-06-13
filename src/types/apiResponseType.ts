@@ -1,4 +1,4 @@
-import { ClientTableDataTypes, WaterAccountingPeriodTypes } from "./tableTypes";
+import { ClientTableDataTypes, WaterAccountingPeriodTypes, WaterAccountingYearTypes } from "./tableTypes";
 
 interface AccountType {
   value: string;
@@ -146,4 +146,15 @@ export type PeriodTypesResponseType = {
 
 export type PeriodTypeResponseType = {
   data: WaterAccountingPeriodTypes;
+}
+
+export type WayTypeResponseType = {
+  data: WaterAccountingYearTypes;
+}
+
+export type WayTypesResponseType = {
+  data: WaterAccountingYearTypes[];
+  pageNo: number;
+  pageSize: number;
+  totalRecords: number;
 }

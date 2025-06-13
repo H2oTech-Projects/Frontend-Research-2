@@ -42,3 +42,9 @@ export const waterAccountingPeriodTypeSchema = z.object({
   waPeriodTypeName: z.string().optional()
 })
 
+export const waterAccountingYearTypeSchema = z.object({
+  waYear: z.string().optional(),
+  waStartDate: z.string().optional(),
+  waEndDate: z.string().optional(),
+})
+

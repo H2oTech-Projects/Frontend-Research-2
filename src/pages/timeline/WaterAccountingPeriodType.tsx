@@ -40,7 +40,7 @@ const initialTableData = {
   sort_order: ''
 }
 
-const WaterAccountingRatePeriod = () => {
+const WaterAccountingPeriodType = () => {
   const navigate = useNavigate();
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [searchText, setSearchText] = useState("");
@@ -199,4 +199,4 @@ const WaterAccountingRatePeriod = () => {
   );
 };
 
-export default WaterAccountingRatePeriod;
+export default WaterAccountingPeriodType;

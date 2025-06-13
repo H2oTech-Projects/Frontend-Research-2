@@ -113,7 +113,7 @@ const MapTable = <T,>({
         features: row.original
       });
       // @ts-ignore
-      setZoomLevel(13);
+      setPosition && setZoomLevel(13);
       // @ts-ignore
      setClickedField && setClickedField(row.original?.FieldID);
     });

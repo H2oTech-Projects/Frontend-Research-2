@@ -1,4 +1,4 @@
-import { ClientFormType, WaterAccoutingRatePeriodTypeForm } from "@/types/formTypes";
+import { ClientFormType, WaterAccoutingRatePeriodTypeForm, WaterAccoutingYearTypeForm } from "@/types/formTypes";
 
 export const clientInitialValues: ClientFormType = {
   clientId: undefined,
@@ -28,4 +28,10 @@ export const clientInitialValues: ClientFormType = {
 export const waterAccountingRatePeriodInitialValues:  WaterAccoutingRatePeriodTypeForm = {
   waPeriodType: undefined,
   waPeriodTypeName: undefined,
+}
+
+export const waterAccountingYearInitialValues:  WaterAccoutingYearTypeForm = {
+  waYear: undefined,
+  waStartDate: undefined,
+  waEndDate: undefined
 }

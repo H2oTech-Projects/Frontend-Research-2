@@ -1,9 +1,9 @@
 import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
 import { noCacheQueryConfig, queryConfig } from "@/utils/reactQueryConfig";
-import { POST_WAPT_KEY, PUT_WAPT_KEY, GET_WAPT_LIST_KEY, GET_WAPT_KEY } from "./constant";
+import { POST_WAPT_KEY, PUT_WAPT_KEY, GET_WAPT_LIST_KEY, GET_WAPT_KEY, GET_WAY_LIST_KEY, POST_WAY_KEY, PUT_WAY_KEY, GET_WAY_KEY } from "./constant";
 import { RegisterResponse, queryWAPTService } from "./services";
 import { AxiosError } from "axios";
-import { PeriodTypesResponseType, PeriodTypeResponseType } from "@/types/apiResponseType";
+import { PeriodTypesResponseType, PeriodTypeResponseType, WayTypesResponseType, WayTypeResponseType } from "@/types/apiResponseType";
 
 export const usePostWAPT = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
@@ -32,5 +32,34 @@ export const useGetPeriodTypes = ():UseQueryResult<PeriodTypesResponseType> => {
     queryKey: [GET_WAPT_LIST_KEY],
     queryFn:()=> queryWAPTService.getPeriodTypes(),
      ...queryConfig  });
+}
+
+export const useGetWAYs = ():UseQueryResult<WayTypesResponseType> => {
+  return useQuery({
+    queryKey: [GET_WAY_LIST_KEY],
+    queryFn:()=> queryWAPTService.getWAYs(),
+     ...queryConfig  });
+}
+
+export const usePostWAY = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [POST_WAY_KEY],
+    mutationFn: queryWAPTService.postWAY,
+  });
+}
+
+export const usePutWAY = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [PUT_WAY_KEY],
+    mutationFn: queryWAPTService.putWAY,
+  });
+}
+
+export const useGetWAY = (id: any):UseQueryResult<WayTypeResponseType> => {
+  return useQuery({
+    queryKey: [GET_WAY_KEY],
+    queryFn:()=> queryWAPTService.getWAY(id),
+    enabled: !!id,
+    ...noCacheQueryConfig,  });
 }
 
