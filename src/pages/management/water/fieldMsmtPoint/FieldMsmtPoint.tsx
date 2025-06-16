@@ -6,7 +6,7 @@ import { cn } from "../../../../utils/cn";
 import { ColumnDef } from "@tanstack/react-table";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
-import RtPolygon from "@/components/RtPolygon";
+import RtPoint from "@/components/RtPoint";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
 import { buildPopupMessage } from "@/utils/map";
@@ -45,7 +45,7 @@ const FieldMsmtPoint = () => {
   const navigate = useNavigate();
   const [tableInfo,setTableInfo] = useState<initialTableDataTypes>({...initialTableData})
   const [collapse, setCollapse] = useState("default");
-  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
+  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -95,7 +95,7 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => {setTableInfo({...tableInfo,sort:"msmtPointId",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                      onClick={() => {setTableInfo({...tableInfo, sort:"msmt_point_id",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                        Msmt Point ID {tableInfo?.sort !== "msmtPointId" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
@@ -110,7 +110,7 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
               return (
                   <Button
                       variant="ghost"
-                      onClick={() => {setTableInfo({...tableInfo,sort:"msmtPointName",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
+                      onClick={() => {setTableInfo({...tableInfo,sort:"msmt_point_name",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
                   >
                        Msmt Point Name {tableInfo?.sort !== "msmtPointName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
                   </Button>
@@ -282,6 +282,7 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
                         <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
                             <MapTable
+                                tableType={"point"}
                                 defaultData={msmtPoints?.data || []}
                                 columns={columns}
                                 setPosition={setPosition as Function}
@@ -323,17 +324,14 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
                                   data={JSON.parse(mapData['data'])}
                                   color={"#16599a"}
                               />
-                              {!!position.polygon ? (
-                                <RtPolygon
-                                    pathOptions={{ id: position.fieldId } as Object}
-                                    positions={position.polygon}
-                                    color={"red"}
-                                    eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+                              {!!position.point ? (
+                                <RtPoint
+                                  position={position.point}
                                 >
                                   <Popup>
                                     <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
                                   </Popup>
-                                </RtPolygon>
+                                </RtPoint>
                               ) : null}
                             </LeafletMap>)  : (<LeafletMap
                                 position={position}
