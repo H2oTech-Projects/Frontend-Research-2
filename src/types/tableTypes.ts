@@ -146,3 +146,9 @@ export type ClientTableDataTypes = {
     coordinates: any;
   };
 };
+
+export type MsmtPointDataType = {
+  canal?: string;
+  msmtPointId?: string;
+  msmtPointName?: string;
+};

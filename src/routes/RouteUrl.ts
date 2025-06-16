@@ -152,11 +152,17 @@ const DistrictInfo = {
     name: "DistrictInfo",
 };
 
+const FieldMsmtPoint = {
+  url: "/field_msmtpoint",
+  name: "Field-MsmtPoint",
+};
+
 export {
     Map,
     Insight,
     Dashboard,
     Field,
+    FieldMsmtPoint,
     AddField,
     EditField,
     MeasurementPoint,
