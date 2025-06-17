@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import $ from "jquery";
 import { Popup } from "react-leaflet";
 import { cn } from "../../../../utils/cn";
@@ -45,10 +45,23 @@ const FieldMsmtPoint = () => {
   const navigate = useNavigate();
   const [tableInfo,setTableInfo] = useState<initialTableDataTypes>({...initialTableData})
   const [collapse, setCollapse] = useState("default");
-  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: "", features: {} });
+  const [selectedFields, setSelectedFields] = useState<any>([]);
+  const selectedFieldsRef = useRef(selectedFields);
+  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: "", features: {}, fields:[] });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    selectedFieldsRef.current = selectedFields;
+  }, [selectedFields]);
+
+  useEffect(() => {
+    if (!!position.fields){
+      setSelectedFields(position.fields)
+    }
+  }, [position.fields]);
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -57,7 +70,6 @@ const FieldMsmtPoint = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 const {data: msmtPoints, isLoading} = useGetMsmtPointList(tableInfo);
-console.log(msmtPoints);
 const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
 
   const debouncedSearch = useCallback(
@@ -66,6 +78,8 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
     }, 500),
     []
   );
+
+
 
   const columns: ColumnDef<MsmtPointDataType>[] = [
       {
@@ -158,23 +172,6 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
       },
   ];
 
-  const polygonEventHandlers = useMemo(
-    () => ({
-      mouseover(e: any) {
-        const { id } = e.target.options;
-        showInfo(id);
-      },
-      mouseout(e: any) {
-        const { id } = e.target.options;
-        removeInfo(id);
-      },
-      click: (e: any) => {
-        e.target.openPopup(); // Opens popup when clicked
-      }
-    }),
-    [],
-  );
-
   const showInfo = (Id: String) => {
     var popup = $("<div></div>", {
         id: "popup-" + Id,
@@ -194,42 +191,53 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    layer.bindPopup(buildPopupMessage(feature.properties));
     layer.on({
         mouseover: function (e: any) {
             const auxLayer = e.target;
-            auxLayer.setStyle({
-                weight: 4,
-                //color: "#800080"
-            });
             showInfo(auxLayer.feature.properties.FieldID);
         },
         mouseout: function (e: any) {
-            const auxLayer = e.target;
-            auxLayer.setStyle({
-                weight: 2.5,
-                //color: "#9370DB",
-                //fillColor: "lightblue",
-                fillOpacity: 0,
-                opacity: 1,
-            });
-            removeInfo(auxLayer.feature.properties.FieldID);
+          const auxLayer = e.target;
+          removeInfo(auxLayer.feature.properties.FieldID)
         },
+        click: function (e: any) {
+          const auxLayer = e.target;
+          if (selectedFieldsRef.current.includes(auxLayer.feature.properties.FieldID)){
+            const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.FieldID);
+            setSelectedFields(arr)
+          } else {
+            setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.FieldID]);
+          }
+        }
     });
   }
+  const handleMouseDown = () => {
+    // Start timer: fire after 3 sec
+    timerRef.current = window.setTimeout(() => {
+      alert(selectedFields +' associated to \n'+position.msmtPointId + ' msmtPoints.' )
+      setSelectedFields([])
+    }, 3000);
+  };
 
-  const geoJsonStyle = (features: any) => {
-    if (features?.properties?.FieldID === clickedField) {
+  const cancel = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const geoJsonStyle = (feature: any) => {
+    if (selectedFields.includes(feature.properties.FieldID)) {
         return {
-            color: "red", // Border color
-            fillColor: "#16599A", // Fill color for the highlighted area
-            fillOpacity: 0.5,
+            color: "#16599A", // Border color
+            fillColor: "red", // Fill color for the highlighted area
+            fillOpacity: .4,
             weight: 2,
         };
     }
     return {
         color: "#16599A", // Border color
-        fillColor: "lightblue", // Fill color for normal areas
+        fillColor: "transparent", // Fill color for normal areas
         fillOpacity: 0.5,
         weight: 2,
     };
@@ -327,9 +335,11 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
                               {!!position.point ? (
                                 <RtPoint
                                   position={position.point}
+                                  handleMouseDown={handleMouseDown}
+                                  cancel={cancel}
                                 >
                                   <Popup>
-                                    <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+                                    <div dangerouslySetInnerHTML={{ __html: "Please press icon for 3 secs to associate." }} />
                                   </Popup>
                                 </RtPoint>
                               ) : null}

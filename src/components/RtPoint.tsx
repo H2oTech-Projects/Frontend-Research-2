@@ -1,23 +1,35 @@
 import React from "react";
-import { Polygon, CircleMarker, Popup } from "react-leaflet";
-
+import { Polygon, CircleMarker, Popup, Marker } from "react-leaflet";
+import L from "leaflet";
 type RtTypes = {
   position: any;
   children: any;
+  handleMouseDown: any;
+  cancel: any;
 };
+import LightLogo from "../assets/msmtPoint.png";
 
-const RtPoint = ({ position, children }: RtTypes) => {
-  console.log(position, 'ganayo')
+const Icon = new L.Icon({
+  iconUrl: LightLogo, // your water+valve image
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
+  popupAnchor: [0, -30],
+});
+
+const RtPoint = ({ position, children,  handleMouseDown, cancel}: RtTypes) => {
     return (
-      <CircleMarker
-        center={position}
-        radius={10}  // size of the circle in pixels
-        pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.5 }}
+      <Marker
+        position={position}
+        //radius={10}  // size of the circle in pixels
+        //pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.5 }}
+        eventHandlers={{
+          mousedown: handleMouseDown,
+          mouseup: cancel,
+        }}
+        icon={Icon}
       >
-        <Popup>
-          This is the CircleMarker for your PointField!
-        </Popup>
-      </CircleMarker>
+        {children}
+      </Marker>
     );
 };
 

@@ -35,7 +35,7 @@ interface initialTableDataTypes {
   page_no:number,
   page_size:number,
   sort: string  ,
-  sort_order: string 
+  sort_order: string
 }
 const initialTableData = {
   search: "",
@@ -373,7 +373,7 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
     }
     return {
         color: "#16599A", // Border color
-        fillColor: "lightblue", // Fill color for normal areas
+        fillColor: "transparent", // Fill color for normal areas
         fillOpacity: 0.5,
         weight: 2,
     };
@@ -397,7 +397,7 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                                 name="search"
                                 id="search"
                                 placeholder="Search..."
-                                value={searchText} 
+                                value={searchText}
                                 className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
                                 onChange={(e) => {
                                     setSearchText(e.target.value);
@@ -427,7 +427,7 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                     <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
                         <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
                             <MapTable
-                                defaultData={fieldData?.data || []} 
+                                defaultData={fieldData?.data || []}
                                 columns={columns}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
@@ -488,7 +488,7 @@ const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
                                 configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
                             >
                                 <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner/></div>          
+                                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner/></div>
                                 </div>
                         </LeafletMap>)}
                         <CollapseBtn
