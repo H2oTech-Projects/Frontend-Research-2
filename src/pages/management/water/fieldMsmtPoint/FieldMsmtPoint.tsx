@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useGetMsmtPointList, useGetFieldMapList } from "@/services/water/MsmtPoint";
+import { useGetMsmtPointList, useGetFieldMapList } from "@/services/water/msmtPoint";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
