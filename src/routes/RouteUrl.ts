@@ -152,6 +152,11 @@ const DistrictInfo = {
     name: "DistrictInfo",
 };
 
+ const Time = {
+    url:"/time",
+    name:"Time"
+}
+
 export {
     Map,
     Insight,
@@ -184,5 +189,6 @@ export {
     ViewClient,
     AgencyInfo,
     CompanyInfo,
-    DistrictInfo
+    DistrictInfo,
+    Time
 };
