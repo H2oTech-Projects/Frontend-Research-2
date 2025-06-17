@@ -101,6 +101,23 @@ const MapTable = <T,>({
         setSelectedFarm(row.original?.farm_unit_zone)
         return;
       }
+      if (type == 'point') {
+        const parseData = JSON.parse(row.original.geompoint)
+        const coordinates = parseData.coordinates
+        // @ts-ignore
+        setPosition({
+          // @ts-ignore
+          center: [coordinates[1], coordinates[0]],
+          // @ts-ignore
+          point: [coordinates[1], coordinates[0]],
+          // @ts-ignore
+          msmtPointId: row.original.msmtPointId || null,
+          // @ts-ignore
+          features: row.original,
+          fields: row.original.fields
+        });
+        return;
+      }
       // @ts-ignore
       setPosition &&  setPosition({
         // @ts-ignore

@@ -156,12 +156,17 @@ const DistrictInfo = {
     url:"/time",
     name:"Time"
 }
+const FieldMsmtPoint = {
+  url: "/field_msmtpoint",
+  name: "Field-MsmtPoint",
+};
 
 export {
     Map,
     Insight,
     Dashboard,
     Field,
+    FieldMsmtPoint,
     AddField,
     EditField,
     MeasurementPoint,

@@ -9,7 +9,7 @@ export const LeafletMapConfig = { 'minZoom': 4, 'containerStyle': { height: "100
 
 export const geoJsonStyle = {
   color: "#16599A", // Border color
-  fillColor: "lightblue", // Fill color for normal areas
+  fillColor: "transparent", // Fill color for normal areas
   fillOpacity: 0.5,
   weight: 2,
 };

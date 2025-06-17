@@ -15,21 +15,16 @@ const geoJsonRef = useRef<L.GeoJSON>(null);
     if (geoJsonRef.current) {
       geoJsonRef.current.clearLayers(); // Remove old data
       geoJsonRef.current.addData(data); // Add new data
-      geoJsonRef.current.setStyle({
-        fillColor: "transparent",
-        color: color,
-        weight: 1.5,
-      });
+      geoJsonRef.current.setStyle(style);
     }
   }, [data]); // Re-run effect when `data` changes
-
+  console
   return (
   <GeoJSON
     ref={geoJsonRef}
     key={key}
     pathOptions={{
-      //color: "#9370DB",
-      //fillColor: "lightblue",
+      fillColor: "transparent",
       fillOpacity: 0,
       opacity: 1,
       weight: 2.5,

@@ -373,7 +373,7 @@ const Field = () => {
     }
     return {
       color: "#16599A", // Border color
-      fillColor: "lightblue", // Fill color for normal areas
+      fillColor: "transparent", // Fill color for normal areas
       fillOpacity: 0.5,
       weight: 2,
     };
@@ -382,32 +382,31 @@ const Field = () => {
   const ReturnChildren = useMemo(() => {
     return (
       <>
-        {mapData && <RtGeoJson
-          key={"fields"}
-          layerEvents={geoJsonLayerEvents}
-          style={geoJsonStyle}
-          data={JSON.parse(mapData['data'])}
-          color={"#16599a"}
-        />}
-        {!!position.polygon ? (
-          <RtPolygon
-            pathOptions={{ id: position.fieldId } as Object}
-            positions={position.polygon}
-            color={"red"}
-            eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-          >
-            <Popup>
-              <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
-            </Popup>
-          </RtPolygon>
-        ) : null}
-      </>
-    )
+      {mapData && <RtGeoJson
+        key={"fields"}
+        layerEvents={geoJsonLayerEvents}
+        style={geoJsonStyle}
+        data={JSON.parse(mapData['data'])}
+        color={"#16599a"}
+      />}
+      {!!position.polygon ? (
+        <RtPolygon
+          pathOptions={{ id: position.fieldId } as Object}
+          positions={position.polygon}
+          color={"red"}
+          eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+        >
+          <Popup>
+            <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+          </Popup>
+        </RtPolygon>
+      ) : null}
+    </>
+  )
 
-  }, [mapLoading,position])
+}, [mapLoading,position])
 
-  const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
-
+const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
       <PageHeader
