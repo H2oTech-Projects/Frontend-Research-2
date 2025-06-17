@@ -4,7 +4,7 @@ import { toJson } from "@/utils/reactQueryConfig";
 import { convertKeysToCamelCase } from "@/utils/stringConversion";
 
 const WAYS_API = BASE_API_URL + '/ways/options/';
-const WAPT_API = BASE_API_URL + '/wa_period_type/options/';
+const WAPT_API = BASE_API_URL + '/wapts/';
 const WAYS_POST = BASE_API_URL + '/ways/'
 
 export const queryTimeSeries = {
