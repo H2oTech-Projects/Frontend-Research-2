@@ -58,7 +58,6 @@ const MapTable = <T,>({
     useEffect(() => {
       setData(defaultData);
     }, [defaultData]);
-
     useEffect(() => {
     tableInfo?.page_size && setPagination({...pagination, pageSize: tableInfo?.page_size})
     }, [tableInfo?.page_size])
@@ -105,9 +104,9 @@ const MapTable = <T,>({
       // @ts-ignore
       setPosition &&  setPosition({
         // @ts-ignore
-        center: [row.original?.center_latitude || 0, row.original?.center_longitude || 0],
+        center: [row.original?.center_latitude || 38.86902846413033, row.original?.center_longitude || -121.729324818604],
         // @ts-ignore
-        polygon: row.original?.coords || null,
+        polygon: row.original?.coords || [],
         // @ts-ignore
         fieldId: row.original?.FieldID || null,
         // @ts-ignore
@@ -140,7 +139,7 @@ const MapTable = <T,>({
                 textAlign: columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign
               }}
             >
-              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
             </TableHead>
           ))}
         </TableRow>
@@ -181,6 +180,7 @@ const MapTable = <T,>({
 
     const fieldTableContent = () => {
       return table.getRowModel().rows.map((row) =>
+        
         fieldTableRow(row)
       )
     }
@@ -204,9 +204,9 @@ const MapTable = <T,>({
                     } `}
                   key={cell.id}
                   style={{
-                      minWidth: cell.column.columnDef.size,
-                      maxWidth: cell.column.columnDef.size,
-
+                      // minWidth: cell.column.columnDef.size,
+                      // maxWidth: cell.column.columnDef.size,
+                      textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign,
                   }}
                   // @ts-ignore
                   onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
