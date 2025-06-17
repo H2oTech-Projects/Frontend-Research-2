@@ -1,4 +1,4 @@
-import { ClientTableDataTypes } from "./tableTypes";
+import { ClientTableDataTypes, MsmtPointDataType } from "./tableTypes";
 
 interface AccountType {
   value: string;
@@ -105,7 +105,7 @@ export type FieldDataType = {
     StandbyAcr?: number;
     ParcelID?: string;
     VolRateAdj?: number;
-    ActiveDate?: string; 
+    ActiveDate?: string;
     InactiveDa?: string;
     ActiveFlag?: string;
     unq_fld_id?: number;
@@ -134,4 +134,11 @@ export type FieldListResponseType = {
   totalRecords: number;
   geojson:string;
 
+}
+
+export type MsmtPointListResponseType = {
+  data: MsmtPointDataType[];
+  page_no: number;
+  page_size: number;
+  total_records: number;
 }
