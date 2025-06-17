@@ -293,7 +293,6 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
                             <MapTable
                                 tableType={"point"}
                                 defaultData={msmtPoints?.data || []}
-                                // @ts-ignore
                                 columns={columns}
                                 setPosition={setPosition as Function}
                                 setZoomLevel={setZoomLevel as Function}
