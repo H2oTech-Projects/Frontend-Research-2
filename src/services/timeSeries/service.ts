@@ -16,16 +16,20 @@ export const queryTimeSeries = {
     const response = await axiosInstance.get(WAPT_API).catch((err) => console.log(err));
     return convertKeysToCamelCase(toJson(response?.data));
   },
-  postWays :async (data:any) => {
-    console.log(data,"from api call")
-      const response = await axiosInstance.post(WAYS_POST +`${data?.way_year}/` + "waps/ " , data?.wap_list ?? [], {
+  putWays: async (data: any) => {
+    console.log(data, "from api call")
+    const response = await axiosInstance.put(WAYS_POST + `${data?.way_year}/` + "waps/ ", data?.wap_list ?? [], {
       headers: {
         "Content-Type": "application/json",
       },
     });
     return response.data;
-
-}
+  },
+    getWaysDetails:async(id:string | undefined | null ) =>{
+    const response = await axiosInstance.get(WAYS_POST + id + "/waps/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return data?.data;
+},
 
 }
 

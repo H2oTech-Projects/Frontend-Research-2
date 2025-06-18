@@ -1,3 +1,4 @@
 export const GET_WAYS_OPTIONS = 'GET_WAYS_OPTIONS';
 export const GET_WAPT_OPTIONS = 'GET_WAPT_OPTIONS';
-export const POST_WAYS = 'POST_WAYS';
+export const PUT_WAYS = 'PUT_WAYS';
+export const GET_WAYS_DETAILS = "GET_WAYS_DETAILS";
