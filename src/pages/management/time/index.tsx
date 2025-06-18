@@ -246,9 +246,9 @@ const Time = () => {
       <div className="pageContain flex flex-grow flex-col gap-3  ">
         <div className="flex w-full  h-[calc(100vh-140px)] justify-evenly items-center mt-2">
             <Form {...form}>
-              <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow h-[calc(100vh-150px)] bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl  ">
-                <div className='text-xl text-royalBlue dark:text-white'>Create or Update Water Accounting Year</div>
-                <div className="h-auto pb-2 px-2" >
+              <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow h-[calc(100vh-150px)] bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors  ">
+                <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Year</div>
+                <div className="h-auto pb-2 px-2 w-1/3" >
                   <FormComboBox
                     control={form.control}
                     name='wayYear'
@@ -265,7 +265,7 @@ const Time = () => {
 
                       {fields.length > 0 && fields?.map((item: any, index) => {
                         return (<DragItemWrapper key={index} id={item?.waPeriodName?.toString()}>
-                          <div className={cn("flex flex-col  w-full gap-2 items-center bg-slate-400 p-2 hover:bg-royalBlue rounded h-auto ")}>
+                          <div className={cn("flex flex-col  w-full gap-2 items-center bg-slate-400 p-2 hover:bg-royalBlue rounded h-auto dark:hover:bg-slate-900 transition-colors ")}>
                             <div className="flex w-full gap-2 items-center">
                               <div className="flex flex-grow text-xl">{item.waPeriodName}</div>    <Button variant={'destructive'} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { handleWapElementDelete(index) }}> <Trash /></Button>
                             </div>
