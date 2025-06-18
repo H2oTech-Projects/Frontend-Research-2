@@ -6,9 +6,12 @@ import PageHeader from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
-import { useGetWaptOptions, useGetWaysOptions } from '@/services/timeSeries'
+import { useGetWaptOptions, useGetWaysOptions, usePutWays, } from '@/services/timeSeries'
+import { convertKeysToSnakeCase } from '@/utils/stringConversion'
+import { showErrorToast } from '@/utils/tools'
 import { DndContext, DragEndEvent } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
+import dayjs from 'dayjs'
 import { ArrowLeft, Trash } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -28,6 +31,7 @@ const Time = () => {
   const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
   const [listOfWapType, setListOfWapType] = useState<any>([]);
   const [selectedWapType, setSelectedWapType] = useState<string[]>([]);
+  const {mutate:createWays, isPending:isWaysCreatePending} = usePutWays();
   const form = useForm<WayFormType>({
     defaultValues: {
       wayYear: "",
@@ -46,7 +50,7 @@ const Time = () => {
 
   useEffect(() => {
     if (waysOptions && !waysOptionsLoading) {
-      form.setValue("wayYear", waysOptions?.data[0]?.value)
+     waysOptions?.data && form.setValue("wayYear", waysOptions?.data[0]?.value)
     }
 
   }, [waysOptions])
@@ -169,7 +173,31 @@ const Time = () => {
   }
 
   const onSubmit = (data: WayFormType) => {
-    console.log(data)
+    const formattedData = {
+        wayYear: data?.wayYear,
+        wapList: data?.wapList?.map((item)=>{
+            return {
+               waptId: item?.waptId,
+        waPeriodName: item?.waPeriodName,
+        waStartDate: item?.waStartDate ? dayjs(item.waStartDate).format("YYYY-MM-DD") : undefined,
+        waEndDate: item?.waEndDate ? dayjs(item.waEndDate).format("YYYY-MM-DD") : undefined,
+          }
+        })
+    }
+      console.log(formattedData)
+       createWays(convertKeysToSnakeCase(formattedData),{
+         onSuccess: (data: any) => {
+           // Invalidate and refetch
+          console.log(data)
+           toast.success(data?.message);
+       
+           form.reset(); // Reset the form after successful submission
+         
+         },
+         onError: (error) => {
+               showErrorToast(error?.response?.data.message);
+         },
+       })
   }
 
   useEffect(() => {

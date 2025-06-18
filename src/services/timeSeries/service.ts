@@ -16,9 +16,9 @@ export const queryTimeSeries = {
     const response = await axiosInstance.get(WAPT_API).catch((err) => console.log(err));
     return convertKeysToCamelCase(toJson(response?.data));
   },
-  postWays :async (data:any) => {
+  putWays :async (data:any) => {
     console.log(data,"from api call")
-      const response = await axiosInstance.post(WAYS_POST +`${data?.way_year}/` + "waps/ " , data?.wap_list ?? [], {
+      const response = await axiosInstance.put(WAYS_POST +`${data?.way_year}/` + "waps/ " , data?.wap_list ?? [], {
       headers: {
         "Content-Type": "application/json",
       },

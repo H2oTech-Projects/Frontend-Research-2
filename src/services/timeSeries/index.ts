@@ -18,8 +18,8 @@ export const useGetWaptOptions = ()=> {
      ...queryConfig  });
 }
 
-export const usePostWays = () => {
+export const usePutWays = () => {
       return useMutation<RegisterResponse, AxiosError<any>, any>({
         mutationKey: [POST_WAYS],
-        mutationFn: queryTimeSeries.postWays});
+        mutationFn: queryTimeSeries.putWays});
 }
