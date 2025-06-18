@@ -6,11 +6,13 @@ import PageHeader from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
-import { useGetWaptOptions, useGetWaysOptions, usePutWays, } from '@/services/timeSeries'
+import { useGetWaptOptions, useGetWaysDetails, useGetWaysOptions, usePutWays, } from '@/services/timeSeries'
+import { GET_WAYS_DETAILS, PUT_WAYS } from '@/services/timeSeries/constants'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
 import { showErrorToast } from '@/utils/tools'
 import { DndContext, DragEndEvent } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
+import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { ArrowLeft, Trash } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -18,28 +20,31 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
 type WayFormType = {
-  wayYear: string;
+  wayYear: string | undefined;
   wapList: {
     waptId: number;
     waPeriodName: string;
     waStartDate: Date | undefined;
     waEndDate: Date | undefined;
+    pId?: number | null
   }[];
 };
 const Time = () => {
+  const queryClient = useQueryClient();
   const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions()
   const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
   const [listOfWapType, setListOfWapType] = useState<any>([]);
   const [selectedWapType, setSelectedWapType] = useState<string[]>([]);
-  const {mutate:createWays, isPending:isWaysCreatePending} = usePutWays();
+  const { mutate: createWays, isPending: isWaysCreatePending } = usePutWays();
   const form = useForm<WayFormType>({
     defaultValues: {
-      wayYear: "",
+      wayYear: undefined,
       wapList: []
     },
   });
+  const { data: wayDetail, isLoading: isWayDetailLoading } = useGetWaysDetails(form.getValues("wayYear"))
   const formatNumber = (num: number) => num.toString().padStart(2, '0');
-  const countWapType = (data: any[], waptId: string) => data?.filter(item => item?.waptId.toString() === waptId).length
+  // const countWapType = (data: any[], waptId: string) => data?.filter(item => item?.waptId.toString() === waptId).length
   const startEndDate = waysOptions?.data?.filter((item: any) => item.value === form.watch("wayYear"))
 
   useEffect(() => {
@@ -50,10 +55,13 @@ const Time = () => {
 
   useEffect(() => {
     if (waysOptions && !waysOptionsLoading) {
-     waysOptions?.data && form.setValue("wayYear", waysOptions?.data[0]?.value)
+      waysOptions?.data && form.setValue("wayYear", waysOptions?.data[0]?.value)
     }
 
   }, [waysOptions])
+
+
+
 
 
   const { fields, move, append, replace, remove } = useFieldArray({
@@ -150,6 +158,7 @@ const Time = () => {
     const remainingWapList = fields.filter((item, index) => index !== deleteIndex)
     const updatedList = remainingWapList?.map((item, index) => {
       return {
+        pId: item?.pId || null,
         waptId: item?.waptId,
         waPeriodName: item?.waPeriodName,
         waStartDate: initialWapList[index]?.waStartDate,
@@ -173,31 +182,36 @@ const Time = () => {
   }
 
   const onSubmit = (data: WayFormType) => {
+
     const formattedData = {
-        wayYear: data?.wayYear,
-        wapList: data?.wapList?.map((item)=>{
-            return {
-               waptId: item?.waptId,
-        waPeriodName: item?.waPeriodName,
-        waStartDate: item?.waStartDate ? dayjs(item.waStartDate).format("YYYY-MM-DD") : undefined,
-        waEndDate: item?.waEndDate ? dayjs(item.waEndDate).format("YYYY-MM-DD") : undefined,
-          }
-        })
+      wayYear: data?.wayYear,
+      wapList: data?.wapList?.map((item) => {
+        return {
+          id: item?.pId || null,
+          waptId: item?.waptId,
+          waPeriodName: item?.waPeriodName,
+          waStartDate: item?.waStartDate ? dayjs(item.waStartDate).format("YYYY-MM-DD") : undefined,
+          waEndDate: item?.waEndDate ? dayjs(item.waEndDate).format("YYYY-MM-DD") : undefined,
+        }
+      })
     }
-      console.log(formattedData)
-       createWays(convertKeysToSnakeCase(formattedData),{
-         onSuccess: (data: any) => {
-           // Invalidate and refetch
-          console.log(data)
-           toast.success(data?.message);
-       
-           form.reset(); // Reset the form after successful submission
-         
-         },
-         onError: (error) => {
-               showErrorToast(error?.response?.data.message);
-         },
-       })
+    console.log(formattedData)
+    createWays(convertKeysToSnakeCase(formattedData), {
+      onSuccess: (data: any) => {
+        // Invalidate and refetch
+
+        toast.success(data?.message);
+        queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, form.getValues('wayYear')] })
+        queryClient.invalidateQueries({ queryKey: [PUT_WAYS] })
+        form.reset(); // Reset the form after successful submission
+
+
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data.message);
+        queryClient.invalidateQueries({ queryKey: [PUT_WAYS] })
+      },
+    })
   }
 
   useEffect(() => {
@@ -220,7 +234,11 @@ const Time = () => {
     return () => subscription.unsubscribe();
   }, [form]);
 
-
+  useEffect(() => {
+    if (!isWayDetailLoading && wayDetail?.data) {
+      form.setValue("wapList", wayDetail?.data?.map((item:any)=>{return {...item,pId:item?.id}}))
+    }
+  }, [wayDetail])
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
