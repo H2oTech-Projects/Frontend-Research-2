@@ -37,7 +37,7 @@ const menuLinks = [
 
       {
         label: "Time",
-        icon:Icon.FolderClock,
+        icon:Icon.Clock11,
         path:routeUrl?.Time?.url,
         name:routeUrl?.Time?.name,
         type:"link",
