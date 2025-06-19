@@ -66,45 +66,45 @@ const Time = () => {
     name: "wapList"
   });
 
-  const handleLeftShift = () => {
+const handleLeftShift = () => {
     const transferItem = listOfWapType?.filter((item: any) => selectedWapType.includes(item.value));
     const list = form.watch("wapList");
 
-    const listForForm = transferItem?.map((item: any, index: any) => {
-      const wap = item?.label;
-      const wapNumbers = fields
-        .filter((field) => field.waPeriodName.toLowerCase().startsWith(wap.toLowerCase()))
-        .map((field) => {
-          const match = field.waPeriodName.match(/\d+$/);
-          return match ? parseInt(match[0], 10) : 0;
-        });
-
-      const maxNumber = wapNumbers.length > 0 ? Math.max(...wapNumbers) : 0;
-      const periodName = `${startEndDate[0]?.waStartDate.split('-')[0]} ${wap} ${formatNumber(maxNumber + 1)}`;
-
-      if (index === 0 && list.at(-1)?.waEndDate) {
-        const startDate = new Date(list.at(-1)?.waEndDate!);
-        startDate.setDate(startDate.getDate() + 1);
-        return {
-          waptId: item?.value,
-          waPeriodName: periodName,
-          waStartDate: startDate,
-          waEndDate: undefined,
-        };
-      } else {
-        return {
-          waptId: item?.value,
-          waPeriodName: periodName,
-          waStartDate: undefined,
-          waEndDate: undefined,
-        };
-      }
+  const listForForm = transferItem?.map((item: any, index: any) => {
+  const wap = item?.label;
+  const wapNumbers = fields
+    .filter((field) => field.waPeriodName.toLowerCase().includes(wap.toLowerCase()))
+    .map((field) => {
+      const match = field.waPeriodName.match(/\d+$/);
+      return match ? parseInt(match[0], 10) : 0;
     });
+
+  const maxNumber = wapNumbers.length > 0 ? Math.max(...wapNumbers) : 0;
+  const yearPrefix = startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || "";
+  const periodName = `${yearPrefix} ${wap} ${formatNumber(maxNumber + 1)}`;
+
+  if (index === 0 && list.at(-1)?.waEndDate) {
+    const startDate = new Date(list.at(-1)?.waEndDate!);
+    startDate.setDate(startDate.getDate() + 1);
+    return {
+      waptId: item?.value,
+      waPeriodName: periodName,
+      waStartDate: startDate,
+      waEndDate: undefined,
+    };
+  } else {
+    return {
+      waptId: item?.value,
+      waPeriodName: periodName,
+      waStartDate: undefined,
+      waEndDate: undefined,
+    };
+  }
+});
 
     append(listForForm);
     setSelectedWapType([]);
   };
-
   //   const parsePeriod = (name: string) => {
   //   const [season, num] = name.split(" ");
   //   return { season: season.toLowerCase(), index: parseInt(num) };
@@ -132,8 +132,9 @@ const Time = () => {
   const reorderList = (e: DragEndEvent) => {
     if (!e.over || e.active.id === e.over.id) return;
     const list = fields;
-    const oldIdx = list.findIndex(item => item.waPeriodName.toString() === e.active.id.toString());
-    const newIdx = list.findIndex(item => item.waPeriodName.toString() === e.over!.id.toString());
+    console.log(list)
+    const oldIdx = list.findIndex(item => item.id.toString() === e.active.id.toString());
+    const newIdx = list.findIndex(item => item.id.toString() === e.over!.id.toString());
 
     if (oldIdx === -1 || newIdx === -1) return;
 
@@ -197,7 +198,9 @@ const Time = () => {
     createWays(convertKeysToSnakeCase(formattedData), {
       onSuccess: (data: any) => {
         toast.success(data?.message);
+        queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS] })
         queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, form.getValues('wayYear')] })
+        queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, waysOptions?.data && waysOptions?.data[0]?.value ]})
         queryClient.invalidateQueries({ queryKey: [PUT_WAYS] })
         form.reset(); // Reset the form after successful submission
         form.setValue("wayYear", waysOptions?.data[0]?.value)
@@ -237,6 +240,14 @@ const Time = () => {
     }
   }, [wayDetail])
 
+const value = form.watch("wapList");
+
+useEffect(() => {
+  if (value !== form.getValues("wapList")) {
+    console.log("Changed!");
+  }
+}, [value]);
+
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
       <PageHeader
@@ -260,11 +271,11 @@ const Time = () => {
                 </div>
                 {/* <div className="flex flex-col flex-grow overflow-y-auto g-2"> */}
                 <DndContext onDragEnd={reorderList}  >
-                  <SortableContext items={fields.map((item: any, index) => item?.waPeriodName?.toString())}>
+                  <SortableContext items={fields.map((item: any, index) => item?.id?.toString())}>
                     <div className='flex flex-col flex-grow gap-2 overflow-y-auto overflow-x-hidden py-2'>
 
                       {fields.length > 0 && fields?.map((item: any, index) => {
-                        return (<DragItemWrapper key={index} id={item?.waPeriodName?.toString()}>
+                        return (<DragItemWrapper key={item?.id} id={item?.id?.toString()}>
                           <div className={cn("flex flex-col  w-full gap-2 items-center bg-slate-400 p-2 hover:bg-royalBlue rounded h-auto dark:hover:bg-slate-900 transition-colors ")}>
                             <div className="flex w-full gap-2 items-center">
                               <div className="flex flex-grow text-xl">{item.waPeriodName}</div>    <Button variant={'destructive'} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { handleWapElementDelete(index) }}> <Trash /></Button>

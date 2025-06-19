@@ -17,7 +17,7 @@ export const queryTimeSeries = {
     return convertKeysToCamelCase(toJson(response?.data));
   },
   putWays: async (data: any) => {
-    console.log(data, "from api call")
+ 
     const response = await axiosInstance.put(WAYS_POST + `${data?.way_year}/` + "waps/ ", data?.wap_list ?? [], {
       headers: {
         "Content-Type": "application/json",
