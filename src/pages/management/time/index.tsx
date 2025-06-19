@@ -80,7 +80,7 @@ const Time = () => {
         });
 
       const maxNumber = wapNumbers.length > 0 ? Math.max(...wapNumbers) : 0;
-      const periodName = `${wap} ${formatNumber(maxNumber + 1)}`;
+      const periodName = `${startEndDate[0]?.waStartDate.split('-')[0]} ${wap} ${formatNumber(maxNumber + 1)}`;
 
       if (index === 0 && list.at(-1)?.waEndDate) {
         const startDate = new Date(list.at(-1)?.waEndDate!);
@@ -247,7 +247,7 @@ const Time = () => {
         <div className="flex w-full  h-[calc(100vh-140px)] justify-evenly items-center mt-2">
             <Form {...form}>
               <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow h-[calc(100vh-150px)] bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors  ">
-                <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Year</div>
+                <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods</div>
                 <div className="h-auto pb-2 px-2 w-1/3" >
                   <FormComboBox
                     control={form.control}
