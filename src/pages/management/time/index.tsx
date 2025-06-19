@@ -68,9 +68,8 @@ const Time = () => {
   });
 
 const handleLeftShift = () => {
-    const transferItem = listOfWapType?.filter((item: any) => selectedWapType.includes(item.value));
-    const list = form.watch("wapList");
-
+  const transferItem = listOfWapType?.filter((item: any) => selectedWapType.includes(item.value));
+  const list = form.watch("wapList");
   const listForForm = transferItem?.map((item: any, index: any) => {
   const wap = item?.label;
   const wapNumbers = fields
@@ -102,6 +101,10 @@ const handleLeftShift = () => {
     };
   }
 });
+    if(list.length < 1){
+      listForForm[0].waStartDate = startEndDate[0].waStartDate;
+      listForForm.at(-1).waEndDate = startEndDate[0].waEndDate;
+}
 
     append(listForForm);
     setSelectedWapType([]);
@@ -216,25 +219,49 @@ const handleLeftShift = () => {
     })
   }
 
-  useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (!name?.includes("waEndDate")) return;
+  // useEffect(() => {
+  //   setEnableSubmit(true)
+  //   const subscription = form.watch((value, { name }) => {
+  //     if (!name?.includes("waEndDate")) return;
 
-      const indexMatch = name.match(/wapList\.(\d+)\.waEndDate/);
-      if (!indexMatch) return;
+  //     const indexMatch = name.match(/wapList\.(\d+)\.waEndDate/);
+  //     if (!indexMatch) return;
 
-      const index = Number(indexMatch[1]);
-      const endDate = value.wapList?.[index]?.waEndDate;
+  //     const index = Number(indexMatch[1]);
+  //     const endDate = value.wapList?.[index]?.waEndDate;
 
-      if (endDate && value.wapList?.[index + 1]) {
-        const nextStartDate = new Date(endDate);
-        nextStartDate.setDate(nextStartDate.getDate() + 1); // Add 1 day
-        form.setValue(`wapList.${index + 1}.waStartDate`, nextStartDate);
-      }
-    });
+  //     if (endDate && value.wapList?.[index + 1]) {
+  //       const nextStartDate = new Date(endDate);
+  //       nextStartDate.setDate(nextStartDate.getDate() + 1); // Add 1 day
+  //       form.setValue(`wapList.${index + 1}.waStartDate`, nextStartDate);
+  //     }
+  //   });
+   
+  //   return () => subscription.unsubscribe();
+    
+  // }, [form]);
 
-    return () => subscription.unsubscribe();
-  }, [form]);
+useEffect(() => {
+  const subscription = form.watch((value, { name }) => {
+    if (!name?.includes("waStartDate") && !name?.includes("waEndDate")) return;
+
+    setEnableSubmit(true); // ✅ enable the button
+
+    const indexMatch = name.match(/wapList\.(\d+)\.waEndDate/);
+    if (!indexMatch) return;
+
+    const index = Number(indexMatch[1]);
+    const endDate = value.wapList?.[index]?.waEndDate;
+
+    if (endDate && value.wapList?.[index + 1]) {
+      const nextStartDate = new Date(endDate);
+      nextStartDate.setDate(nextStartDate.getDate() + 1); // Add 1 day
+      form.setValue(`wapList.${index + 1}.waStartDate`, nextStartDate);
+    }
+  });
+
+  return () => subscription.unsubscribe();
+}, [form]);
 
   useEffect(() => {
     if (!isWayDetailLoading && wayDetail?.data) {
@@ -242,6 +269,7 @@ const handleLeftShift = () => {
     }
   }, [wayDetail])
 
+ 
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
