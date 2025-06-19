@@ -29,12 +29,13 @@ type WayFormType = {
     pId?: number | null
   }[];
 };
-const Time = () => {
+const Time = () => { 
   const queryClient = useQueryClient();
   const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions()
   const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
   const [listOfWapType, setListOfWapType] = useState<any>([]);
   const [selectedWapType, setSelectedWapType] = useState<string[]>([]);
+  const [enableSubmit,setEnableSubmit] = useState<boolean>(false);
   const { mutate: createWays, isPending: isWaysCreatePending } = usePutWays();
   const form = useForm<WayFormType>({
     defaultValues: {
@@ -104,6 +105,7 @@ const handleLeftShift = () => {
 
     append(listForForm);
     setSelectedWapType([]);
+    setEnableSubmit(true);
   };
   //   const parsePeriod = (name: string) => {
   //   const [season, num] = name.split(" ");
@@ -132,7 +134,6 @@ const handleLeftShift = () => {
   const reorderList = (e: DragEndEvent) => {
     if (!e.over || e.active.id === e.over.id) return;
     const list = fields;
-    console.log(list)
     const oldIdx = list.findIndex(item => item.id.toString() === e.active.id.toString());
     const newIdx = list.findIndex(item => item.id.toString() === e.over!.id.toString());
 
@@ -150,7 +151,7 @@ const handleLeftShift = () => {
     })
 
     replace(updatedArray);
-
+    setEnableSubmit(true);
   };
 
   const handleWapElementDelete = (deleteIndex: number) => {
@@ -165,7 +166,8 @@ const handleLeftShift = () => {
         waEndDate: initialWapList[index]?.waEndDate,
       }
     })
-    replace(updatedList)
+    replace(updatedList);
+    setEnableSubmit(true);
   }
 
   useEffect(() => {
@@ -202,9 +204,9 @@ const handleLeftShift = () => {
         queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, form.getValues('wayYear')] })
         queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, waysOptions?.data && waysOptions?.data[0]?.value ]})
         queryClient.invalidateQueries({ queryKey: [PUT_WAYS] })
-        form.reset(); // Reset the form after successful submission
+        // form.reset(); // Reset the form after successful submission
         form.setValue("wayYear", waysOptions?.data[0]?.value)
-
+        setEnableSubmit(false);
 
       },
       onError: (error) => {
@@ -240,13 +242,6 @@ const handleLeftShift = () => {
     }
   }, [wayDetail])
 
-const value = form.watch("wapList");
-
-useEffect(() => {
-  if (value !== form.getValues("wapList")) {
-    console.log("Changed!");
-  }
-}, [value]);
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
@@ -322,7 +317,7 @@ useEffect(() => {
                   </SortableContext>
                 </DndContext>
                 {/* </div> */}
-               <div className='flex w-full items-center justify-center'>{fields?.length > 0 && <Button onClick={() => form.handleSubmit(onSubmit)} disabled={isWaysCreatePending} form="myForm" className="text-sm w-1/4" >{isWaysCreatePending ? wayDetail?.data.length > 0 ? "Updating" : "Creating" : wayDetail?.data.length > 0 ? "Update" : "Create"}</Button>}</div>
+               <div className='flex w-full items-center justify-center'>{fields?.length > 0 && <Button onClick={() => form.handleSubmit(onSubmit)} disabled={isWaysCreatePending || !enableSubmit} form="myForm" className="text-sm w-1/4" >{isWaysCreatePending ? wayDetail?.data.length > 0 ? "Updating" : "Creating" : wayDetail?.data.length > 0 ? "Update" : "Create"}</Button>}</div>
               </form>
             </Form>
         
