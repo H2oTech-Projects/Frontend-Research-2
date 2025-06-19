@@ -157,6 +157,11 @@ const FieldMsmtPoint = {
   name: "Field-MsmtPoint",
 };
 
+ const Time = {
+    url:"/time",
+    name:"Time"
+}
+
 export {
     Map,
     Insight,
@@ -190,5 +195,6 @@ export {
     ViewClient,
     AgencyInfo,
     CompanyInfo,
-    DistrictInfo
+    DistrictInfo,
+    Time
 };

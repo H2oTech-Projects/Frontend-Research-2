@@ -39,7 +39,7 @@ export const clientColumnProperties = {
   "clientEstablished": "str", // ISO date as string
   "clientFax": "str",
   "clientGeomHa": "number",
-  "clientId": "number",
+  "clientId": "str",
   "clientLegalHa": "number",
   "clientName": "str",
   "clientPhone": "str",

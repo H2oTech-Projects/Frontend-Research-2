@@ -7,6 +7,7 @@ import LightLogo from "../assets/Circular-Black.png";
 import DarkLogo from "../assets/Circular-Light-Gray.png";
 import * as routeUrl from "../routes/RouteUrl";
 import { cn } from "../utils/cn";
+import { icon } from "leaflet";
 
 const menuLinks = [
   {
@@ -33,6 +34,15 @@ const menuLinks = [
   {
     title: "Management",
     links: [
+
+      {
+        label: "Time",
+        icon:Icon.FolderClock,
+        path:routeUrl?.Time?.url,
+        name:routeUrl?.Time?.name,
+        type:"link",
+        Children: [],
+},
       {
         label: "Water",
         icon: Icon.Droplet,
