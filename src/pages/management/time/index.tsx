@@ -67,10 +67,10 @@ const Time = () => {
   });
 
   const handleLeftShift = () => {
-    const transferItem = listOfWapType?.filter((item: any) => selectedWapType.includes(item.value));
+    const transferItem = listOfWapType?.filter((item: any) => selectedWapType.includes(item.id));
     const list = form.watch("wapList");
     const listForForm = transferItem?.map((item: any, index: any) => {
-      const wap = item?.label;
+      const wap = item?.waPeriodTypeName;
       const wapNumbers = fields
         .filter((field) => field.waPeriodName.toLowerCase().includes(wap.toLowerCase()))
         .map((field) => {
@@ -86,14 +86,14 @@ const Time = () => {
         const startDate = new Date(list.at(-1)?.waEndDate!);
         startDate.setDate(startDate.getDate() + 1);
         return {
-          waptId: item?.value,
+          waptId: item?.id,
           waPeriodName: periodName,
           waStartDate: startDate,
           waEndDate: undefined,
         };
       } else {
         return {
-          waptId: item?.value,
+          waptId: item?.id,
           waPeriodName: periodName,
           waStartDate: undefined,
           waEndDate: undefined,
@@ -128,7 +128,7 @@ const Time = () => {
     const suffixMap: Record<string, number[]> = {};
 
     sortedItems.forEach((item) => {
-      const label = listOfWapType.find((t: any) => t.value === item.waptId)?.label ?? "";
+      const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? "";
       const match = item.waPeriodName.match(/(\d+)$/);
       if (match) {
         if (!suffixMap[label]) suffixMap[label] = [];
@@ -144,7 +144,7 @@ const Time = () => {
     // Step 4: Apply suffixes back in order
     const typeIndexMap: Record<string, number> = {}; // to track position in suffix array
     const renamedItems = sortedItems.map((item) => {
-      const label = listOfWapType.find((t: any) => t.value === item.waptId)?.label ?? "";
+      const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? "";
       const currentIndex = typeIndexMap[label] ?? 0;
       const suffix = suffixMap[label]?.[currentIndex] ?? 1;
       typeIndexMap[label] = currentIndex + 1;
@@ -184,6 +184,7 @@ const Time = () => {
         waEndDate: initialWapList[index]?.waEndDate,
       }
     })
+    updatedList.at(-1)!.waEndDate = startEndDate[0].waEndDate;
     replace(updatedList);
     setEnableSubmit(true);
   }
@@ -218,14 +219,13 @@ const Time = () => {
     // console.log(formattedData)
     createWays(convertKeysToSnakeCase(formattedData), {
       onSuccess: (data: any) => {
+         setEnableSubmit(false);
         toast.success(data?.message);
-        queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS] })
-        queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, form.getValues('wayYear')] })
         queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, waysOptions?.data && waysOptions?.data[0]?.value] })
         queryClient.invalidateQueries({ queryKey: [PUT_WAYS] })
         // form.reset(); // Reset the form after successful submission
         // form.setValue("wayYear", waysOptions?.data[0]?.value)
-        setEnableSubmit(false);
+       
 
       },
       onError: (error) => {
@@ -264,6 +264,9 @@ const Time = () => {
     }
   }, [wayDetail])
 
+  useEffect(()=>{
+    setEnableSubmit(false)
+},[form.watch('wayYear')])
 
 
   return (
@@ -337,7 +340,7 @@ const Time = () => {
                     }
                     )}
                     {fields.length < 1 && <div className={cn("flex flex-col  w-full h-[440px] gap-2 items-center justify-center bg-slate-400 p-2  rounded  dark:hover:bg-slate-900 transition-colors ")}>
-                      {isWayDetailLoading ? " Fetching Data" :  "Add Water Accounting Periods"}   
+                      {isWayDetailLoading ? " Fetching Data" : "Add Water Accounting Periods"}
                     </div>}
                   </div>
                 </SortableContext>
@@ -349,11 +352,11 @@ const Time = () => {
 
 
           <div className="w-[5%] flex flex-col items-center justify-center gap-2"><Button onClick={handleLeftShift} ><ArrowLeft /> </Button></div>
-          <div className="flex flex-col gap-2 w-[45%] h-[80%] border border-black rounded p-2  dark:border-slate-50">
-            <div className='text-lg text-royalBlue '>List of Water Accounting Period Types</div>
+           <div className="flex flex-col gap-2 w-[45%] h-[80%]   bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
+            <div className='text-lg text-royalBlue '>Add Water Accounting Period Types for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
             {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2'>
-              {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => <div key={item?.value} className="flex w-full gap-2 items-center h-12 bg-slate-400 px-2 rounded">
-                <input className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.value)} onClick={() => handleClick(selectedWapType, setSelectedWapType, item?.value)} /> <div className="flex flex-grow text-xl">{item?.label}</div>
+              {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => <div key={item?.id} className="flex w-full gap-2 items-center h-12 bg-slate-400 px-2 rounded">
+                <input className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div>
               </div>)}
             </div>}
           </div>
