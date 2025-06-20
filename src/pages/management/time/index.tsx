@@ -224,7 +224,7 @@ const Time = () => {
         queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, waysOptions?.data && waysOptions?.data[0]?.value] })
         queryClient.invalidateQueries({ queryKey: [PUT_WAYS] })
         // form.reset(); // Reset the form after successful submission
-        form.setValue("wayYear", waysOptions?.data[0]?.value)
+        // form.setValue("wayYear", waysOptions?.data[0]?.value)
         setEnableSubmit(false);
 
       },
