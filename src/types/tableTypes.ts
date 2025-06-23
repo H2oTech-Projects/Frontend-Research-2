@@ -10,6 +10,11 @@ export type ParcelData = {
   legal_ac: number;
   carryover_af: number;
   coords: [number, number][];
+  total_alloc_af : number;	
+  etaw_af: number;	
+  remain_af: number;		
+  remain_pct: number;	
+  r_irr_ac: number;	
 };
 
 export type tableCSSConfig = {
@@ -40,6 +45,7 @@ export type MapTableTypes<T> = {
     totalData?: number | undefined;
     collapse?: string;
     useClientPagination?: boolean;
+    customHeight?:any
 };
 export type DummyDataType = {
     district?: string;

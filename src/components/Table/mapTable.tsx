@@ -46,6 +46,7 @@ const MapTable = <T,>({
     setTableInfo,
     collapse,
     useClientPagination = false,
+    customHeight,
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setData] = useState(defaultData?.length > 0 ?  [...defaultData] : []);
@@ -269,10 +270,10 @@ const MapTable = <T,>({
                 {useClientPagination ?  <DataTablePagination table={table} collapse={collapse!}/> : <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>}
             </div>
     }
-
+    console.log( customHeight ? `h-[${customHeight}]` : "h-auto")
     return (
       <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-        <div className={cn(fullHeight ? "h-[calc(100vh-208px)]" : "h-auto ")}>
+        <div className={cn(fullHeight ? "h-[calc(100vh-208px)]" : customHeight ? `${customHeight}` : "h-auto")}>
           <Table className="relative">
             <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
               {isLoading ? emptyTable() : tableContent()}

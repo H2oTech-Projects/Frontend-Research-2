@@ -50,6 +50,11 @@ export interface ParcelDataType {
   carryover_af: number,
   coords: [number, number][],
   view_bound?: [number, number][],
+  total_alloc_af: number;
+  etaw_af: number;
+  remain_af: number;
+  remain_pct: number;
+  r_irr_ac: number;
 
 }
 
@@ -97,26 +102,26 @@ export type AccountFarmUnitDataResponseType = {
 }
 
 export type FieldDataType = {
-    district?: string;
-    FieldID?: string;
-    FieldDesc?: string;
-    FieldAcres?: number;
-    IrrigAcres?: number;
-    StandbyAcr?: number;
-    ParcelID?: string;
-    VolRateAdj?: number;
-    ActiveDate?: string;
-    InactiveDa?: string;
-    ActiveFlag?: string;
-    unq_fld_id?: number;
-    center_latitude?: number;
-    center_longitude?: number;
-    AreaAC?: number;
-    view_bounds: [number, number][];
-    coords: [number, number][],
-    Comment: string;
-    CITY: string;
-    ZIP: string;
+  district?: string;
+  FieldID?: string;
+  FieldDesc?: string;
+  FieldAcres?: number;
+  IrrigAcres?: number;
+  StandbyAcr?: number;
+  ParcelID?: string;
+  VolRateAdj?: number;
+  ActiveDate?: string;
+  InactiveDa?: string;
+  ActiveFlag?: string;
+  unq_fld_id?: number;
+  center_latitude?: number;
+  center_longitude?: number;
+  AreaAC?: number;
+  view_bounds: [number, number][];
+  coords: [number, number][],
+  Comment: string;
+  CITY: string;
+  ZIP: string;
 
 }
 
@@ -127,12 +132,12 @@ export type FieldListResponseType = {
   total_records: number;
 }
 
- export type ClientListResponseType = {
+export type ClientListResponseType = {
   data: ClientTableDataTypes[];
   pageNo: number;
   pageSize: number;
   totalRecords: number;
-  geojson:string;
+  geojson: string;
 
 }
 
