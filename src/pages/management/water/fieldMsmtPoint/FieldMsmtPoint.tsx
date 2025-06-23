@@ -9,8 +9,9 @@ import LeafletMap from "@/components/LeafletMap";
 import RtPoint from "@/components/RtPoint";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
+import {useGetWaps, useGetMsmtPointFields } from '@/services/timeSeries'
+import { toast } from 'react-toastify';
 import { buildPopupMessage } from "@/utils/map";
-
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,7 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useGetMsmtPointList, useGetFieldMapList } from "@/services/water/MsmtPoint";
+import {GeneralSelect} from "@/components/BasicSelect";
+import { useGetMsmtPointList, useClientGetFieldMapList, useMsmtPointFields } from "@/services/water/MsmtPoint";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
@@ -52,10 +54,50 @@ const FieldMsmtPoint = () => {
   const [clickedField, setClickedField] = useState(null);
   const [searchText, setSearchText] = useState("");
   const timerRef = useRef<number | null>(null);
+  const [defaultWap, setDefaultWap] = useState<any>("")
+  const [viewBound, setViewBound] = useState<any>()
 
+  const {data: msmtPoints, isLoading, refetch: refetchMsmtPoints} = useGetMsmtPointList(tableInfo, defaultWap);
+  const {data: mapData,isLoading: mapLoading} = useClientGetFieldMapList();
+  const {data: msmtPointFields, isLoading: msmtPointFieldsLoadin, refetch: refetchmsmtPointFields} = useGetMsmtPointFields(position?.msmtPointId || null, defaultWap)
+  const {data: ways, isLoading: waysLoading} = useGetWaps()
+  const { mutate: updateClient, isPending: isClientUpdating } = useMsmtPointFields()
+
+  console.log(mapData)
   useEffect(() => {
     selectedFieldsRef.current = selectedFields;
   }, [selectedFields]);
+
+  useEffect(() => {
+    if (!!mapData && !!mapData['data']['view_bounds'])
+    setViewBound(mapData['data']['view_bounds'])
+  }, [mapData]);
+
+  useEffect(() =>{
+    if(!!ways){
+      setDefaultWap(ways['data'][0]["value"])
+    }
+  }, [ways])
+
+  useEffect(() =>{
+    if(!!defaultWap){
+      refetchMsmtPoints()
+    }
+  }, [defaultWap])
+
+  useEffect(() =>{
+    if(!!position){
+      refetchmsmtPointFields()
+      setSelectedFields([])
+    }
+  }, [position])
+
+  useEffect(() =>{
+    if (!!msmtPointFields){
+      setSelectedFields(msmtPointFields.data)
+      setViewBound(msmtPointFields.viewBounds)
+    }
+  }, [msmtPointFields])
 
   useEffect(() => {
     if (!!position.fields){
@@ -69,8 +111,8 @@ const FieldMsmtPoint = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-const {data: msmtPoints, isLoading} = useGetMsmtPointList(tableInfo);
-const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
+
+//const {data:mapData,isLoading:mapLoading} = useClientGetFieldMapList();
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -82,24 +124,6 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
 
 
   const columns: ColumnDef<MsmtPointDataType>[] = [
-      {
-          accessorKey: "canal",
-          // header: "Field ID",
-          header: ({ column }) => {
-              return (
-                  <Button
-                      variant="ghost"
-                      onClick={() => {setTableInfo({...tableInfo,sort:"canal",sort_order: tableInfo.sort_order === undefined  ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc"})}}
-                  >
-                      Canal {tableInfo?.sort !== "canal" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-                  </Button>
-              );
-          },
-
-          size: 100, // this size value is in px
-          cell: ({ row }) => <div className="capitalize">{row.getValue("canal")}</div>,
-          //filterFn: 'includesString',
-      },
       {
           accessorKey: "msmtPointId",
           // header: () => {
@@ -133,6 +157,23 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
           size: 150,
           cell: ({ row }) => <div className="capitalize">{row.getValue("msmtPointName")}</div>,
       },
+      {
+        accessorKey: "fields",
+        // header: "Field ID",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                >
+                    Fields {tableInfo?.sort !== "canal" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+                </Button>
+            );
+        },
+
+        size: 100, // this size value is in px
+        cell: ({ row }) => <div className="capitalize">{row.getValue("fields")}</div>,
+        //filterFn: 'includesString',
+    },
       {
           id: "actions",
           header: "",
@@ -212,11 +253,19 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
     });
   }
   const handleMouseDown = () => {
-    // Start timer: fire after 3 sec
+    // Start timer: fire after 2 sec
     timerRef.current = window.setTimeout(() => {
-      alert(selectedFields +' associated to \n'+position.msmtPointId + ' msmtPoints.' )
-      setSelectedFields([])
-    }, 3000);
+      updateClient({id: position.msmtPointId,wapId:defaultWap,fields:selectedFields},{
+        onSuccess: (data: any) => {
+          // Invalidate and refetch
+          toast.success("successfully linked.");
+        },
+        onError: (error) => {
+          toast.error("Not linked.");
+        },
+      })
+
+    }, 2000);
   };
 
   const cancel = () => {
@@ -242,38 +291,46 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
         weight: 2,
     };
   }
+
     return (
         <div className="flex h-full flex-col gap-1 px-4 pt-2">
             <PageHeader
-                pageHeaderTitle="Field"
+                pageHeaderTitle="Field-MsmtPoint"
                 breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
             />
+
             <div className="pageContain flex flex-grow flex-col gap-3">
                 <div className="flex justify-between">
-                    <div className="flex gap-2">
-                        <div className="input h-7 w-52">
-                            <Search
-                                size={16}
-                                className="text-slate-300"
-                            />
-                            <input
-                                name="search"
-                                id="search"
-                                placeholder="Search..."
-                                value={searchText}
-                                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                                onChange={(e) => {
-                                    setSearchText(e.target.value);
-                                    debouncedSearch(e.target.value);}}
-                            />
-                        </div>
-                       {tableInfo.search &&  <Button
-                            variant={"default"}
-                            className="h-7 w-7"
-                            onClick={() => {setSearchText(""); setTableInfo({...tableInfo,search:""})}}
-                        >
-                         <X />
-                        </Button>}
+                    <div className="flex justify-left gap-2">
+                      <span>WAP: </span>{!!defaultWap && <GeneralSelect itemList={ways.data} label={'WAYs'} Value={defaultWap} setValue={setDefaultWap}/>}
+                      <div className="flex gap-2">
+
+                          <div className="input h-7 w-100">
+
+                              <Search
+                                  size={16}
+                                  className="text-slate-300"
+                              />
+                              <input
+                                  name="search"
+                                  id="search"
+                                  placeholder="Search..."
+                                  value={searchText}
+                                  className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                                  onChange={(e) => {
+                                      setSearchText(e.target.value);
+                                      debouncedSearch(e.target.value);}}
+                              />
+                          </div>
+                        {tableInfo.search &&  <Button
+                              variant={"default"}
+                              className="h-7 w-7"
+                              onClick={() => {setSearchText(""); setTableInfo({...tableInfo,search:""})}}
+                          >
+                          <X />
+                          </Button>}
+
+                    </div>
                     </div>
                     <Button
                       variant={"default"}
@@ -283,7 +340,7 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
                                      }}
                     >
                         <Plus size={4} />
-                        Add Field
+                        Add MsmtPoint
                     </Button>
                 </div>
                 <div className="flex flex-grow">
@@ -322,32 +379,34 @@ const {data:mapData,isLoading:mapLoading} = useGetFieldMapList();
                                 position={position}
                                 zoom={zoomLevel}
                                 collapse={collapse}
-                                clickedField={clickedField}
+                                //clickedField={clickedField}
+                                viewBound={viewBound }
                                 configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
                             >
                               <RtGeoJson
                                   key={"fields"}
                                   layerEvents={geoJsonLayerEvents}
                                   style={geoJsonStyle}
-                                  data={JSON.parse(mapData['data'])}
+
+                                  data={JSON.parse(mapData['data']['geojson'])}
                                   color={"#16599a"}
                               />
-                              {!!position.point ? (
+                              {!!position.point && !!position.msmtPointId ? (
                                 <RtPoint
                                   position={position.point}
                                   handleMouseDown={handleMouseDown}
                                   cancel={cancel}
                                 >
-                                  <Popup>
+                                  {/* <Popup>
                                     <div dangerouslySetInnerHTML={{ __html: "Please press icon for 3 secs to associate." }} />
-                                  </Popup>
+                                  </Popup> */}
                                 </RtPoint>
                               ) : null}
                             </LeafletMap>)  : (<LeafletMap
                                 position={position}
                                 zoom={zoomLevel}
                                 collapse={collapse}
-                                clickedField={clickedField}
+                                //clickedField={clickedField}
                                 configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
                             >
                                 <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
