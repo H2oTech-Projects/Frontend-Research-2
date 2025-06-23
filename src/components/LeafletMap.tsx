@@ -14,9 +14,9 @@ type mapConfiguration = {
 };
 
 const layerMapper: any ={
-  'rt_2023:wy2023_202309_eta_accumulation_in': {'id': 'ETA', 'name': 'Evapotransiration (ET)'},
+  'rt_2023:wy2023_202309_eta_accumulation_in': {'id': 'ETA', 'name': 'Evapotranspiration (ET)'},
   'rt_2023:wy2023_202309_etaw_accumulation_in': {'id': 'ETAW', 'name': 'Evapotranspiration of Applied Water (ETAW)'},
-  'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR', 'name': 'Evapotranispiration of Percipitation (ETPR)'},
+  'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR', 'name': 'Evapotranspiration of Precipitation (ETPR)'},
   'rt_2023:wy2023_p_total_in': {'id': 'P_TOTAL', 'name': 'Precipitation (P)'},
 }
 
@@ -37,15 +37,15 @@ const sld =`<StyledLayerDescriptor version="1.0.0">
         <Rule>
           <RasterSymbolizer>
             <ColorMap type="ramp">
-              <ColorMapEntry quantity="0.82677167654036998" label="0.8268" color="#9e6212"/>
-              <ColorMapEntry quantity="9.1027560192347003" label="9.1028" color="#bfa22d"/>
-              <ColorMapEntry quantity="17.378740361929033" label="17.3787" color="#d7db47"/>
-              <ColorMapEntry quantity="25.654724704623366" label="25.6547" color="#86c456"/>
-              <ColorMapEntry quantity="33.930709047317691" label="33.9307" color="#44b26b"/>
-              <ColorMapEntry quantity="42.206693390012028" label="42.2067" color="#4dc2a3"/>
-              <ColorMapEntry quantity="50.482677732706357" label="50.4827" color="#50bdc1"/>
-              <ColorMapEntry quantity="58.122047895193433" label="58.1220" color="#3b788f"/>
-              <ColorMapEntry quantity="64.488189697265994" label="64.4882" color="#2a3f65"/>
+              <ColorMapEntry quantity="0" label="0" color="#9e6212"/>
+              <ColorMapEntry quantity="10" label="10" color="#bfa22d"/>
+              <ColorMapEntry quantity="20" label="20" color="#d7db47"/>
+              <ColorMapEntry quantity="30" label="30" color="#86c456"/>
+              <ColorMapEntry quantity="40" label="40" color="#44b26b"/>
+              <ColorMapEntry quantity="50" label="50" color="#4dc2a3"/>
+              <ColorMapEntry quantity="60" label="60" color="#50bdc1"/>
+              <ColorMapEntry quantity="70" label="70" color="#3b788f"/>
+              <ColorMapEntry quantity="80" label="80" color="#2a3f65"/>
             </ColorMap>
           </RasterSymbolizer>
         </Rule>
@@ -58,6 +58,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const [opacity, setOpacity] = useState(1)
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
+  const [defaultLayer, setDefaultLayer] = useState<string>("Evapotranspiration (ET)")
   const MapHandler = () => {
     const map = useMap();
 
@@ -122,24 +123,56 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       return (
         <div className="flex flex-col absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-2 rounded-[8px] bg-black text-slate-50">
           <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>0.8</span>
+            <span style={{position: 'absolute',display: 'block',left: '35px'}}>80</span>
             <i style={{
-            background: "#9e6212",
-            height: "17px",
-            width: "17px",
-            }}
-            ></i>
-          </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>9.1</span>
-            <i style={{
-              background: "#bfa22d",
+              background: "#2a3f65",
               height: "17px",
               width: "17px",
             }}></i>
           </div>
           <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>17.3</span>
+            <span style={{position: 'absolute',display: 'block',left: '35px'}}>70</span>
+            <i style={{
+              background: "#3b788f",
+              height: "17px",
+              width: "17px",
+            }}></i>
+          </div>
+          <div className="flex flex-row pb-1">
+            <span style={{position: 'absolute',display: 'block',left: '35px'}}>60</span>
+            <i style={{
+              background: "#50bdc1",
+              height: "17px",
+              width: "17px",
+            }}></i>
+          </div>
+          <div className="flex flex-row pb-1">
+            <span style={{position: 'absolute',display: 'block',left: '35px'}}>50</span>
+            <i style={{
+              background: "#4dc2a3",
+              height: "17px",
+              width: "17px",
+            }}></i>
+          </div>
+            <div className="flex flex-row pb-1">
+              <span style={{position: 'absolute',display: 'block',left: '35px'}}>40</span>
+              <i style={{
+              background: "#44b26b",
+              height: "17px",
+              width: "17px",
+              }}
+              ></i>
+            </div>
+            <div className="flex flex-row pb-1">
+              <span style={{position: 'absolute',display: 'block',left: '35px'}}>30</span>
+              <i style={{
+                background: "#86c456",
+                height: "17px",
+                width: "17px",
+              }}></i>
+            </div>
+          <div className="flex flex-row pb-1">
+            <span style={{position: 'absolute',display: 'block',left: '35px'}}>20</span>
             <i style={{
             background: "#d7db47",
             height: "17px",
@@ -148,53 +181,21 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
             ></i>
           </div>
           <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>25.6</span>
+            <span style={{position: 'absolute',display: 'block',left: '35px'}}>10</span>
             <i style={{
-              background: "#86c456",
+              background: "#bfa22d",
               height: "17px",
               width: "17px",
             }}></i>
           </div>
           <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>33.9</span>
+            <span style={{position: 'absolute',display: 'block',left: '35px'}}>0</span>
             <i style={{
-            background: "#44b26b",
+            background: "#9e6212",
             height: "17px",
             width: "17px",
             }}
             ></i>
-          </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>42.2</span>
-            <i style={{
-              background: "#4dc2a3",
-              height: "17px",
-              width: "17px",
-            }}></i>
-          </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>50.4</span>
-            <i style={{
-              background: "#50bdc1",
-              height: "17px",
-              width: "17px",
-            }}></i>
-          </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>58.1</span>
-            <i style={{
-              background: "#3b788f",
-              height: "17px",
-              width: "17px",
-            }}></i>
-          </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>64.4</span>
-            <i style={{
-              background: "#2a3f65",
-              height: "17px",
-              width: "17px",
-            }}></i>
           </div>
         </div>
       )
@@ -220,7 +221,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
     const addLayers = () => {
       return (
         <>
-          <LayersControl.Overlay checked name="Evapotransiration (ET)">
+          <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer=='Evapotranspiration (ET)'}>
             <WMSTileLayer
               url={`${geoserverUrl}`}
               opacity= {opacity}
@@ -230,9 +231,13 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
                 transparent: true,
                 ...( { sld_body: sld } as Record<string, any> ),
               }}
+              eventHandlers={{
+                add: () => setDefaultLayer("Evapotranspiration (ET)"),
+                remove: () => console.log(''),
+              }}
             />
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="Evapotranspiration of Applied Water (ETAW)">
+          <LayersControl.Overlay name="Evapotranspiration of Applied Water (ETAW)" checked={defaultLayer=='Evapotranspiration of Applied Water (ETAW)'}>
             <WMSTileLayer
               url={`${geoserverUrl}`}
               opacity= {opacity}
@@ -242,9 +247,13 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
                 transparent: true,
                 //...( { sld_body: sld } as Record<string, any> ),
               }}
+              eventHandlers={{
+                add: () => setDefaultLayer("Evapotranspiration of Applied Water (ETAW)"),
+                remove: () => console.log(''),
+              }}
             />
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="Evapotranispiration of Percipitation (ETPR)">
+          <LayersControl.Overlay name="Evapotranispiration of Precipitation (ETPR)" checked={defaultLayer=='Evapotranispiration of Precipitation (ETPR)'}>
             <WMSTileLayer
               url={`${geoserverUrl}`}
               opacity= {opacity}
@@ -254,9 +263,13 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
                 transparent: true,
                 //...( { sld_body: sld } as Record<string, any> ),
               }}
+              eventHandlers={{
+                add: () => setDefaultLayer("Evapotranispiration of Precipitation (ETPR)"),
+                remove: () => console.log(''),
+              }}
             />
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="Precipitation (P)">
+          <LayersControl.Overlay name="Precipitation (P)" checked={defaultLayer=='Precipitation (P)'}>
             <WMSTileLayer
               url={`${geoserverUrl}`}
               opacity= {opacity}
@@ -265,6 +278,10 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
                 layers:"rt_2023:wy2023_p_total_in",
                 transparent: true,
                 // ...( { SLD_BODY: sld } as Record<string, any> ),
+              }}
+              eventHandlers={{
+                add: () => setDefaultLayer("Precipitation (P)"),
+                remove: () => console.log(''),
               }}
             />
           </LayersControl.Overlay>
