@@ -31,18 +31,17 @@ const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label,showSearch=
 const [open, setOpen] = useState(false);
 const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
-    <div className="flex items-center gap-2">
-                    <label className="w-[6rem] flex gap-1"><span>{label}</span><span>:</span> </label>
-
+    <div className={cn("flex items-center gap-2  ","w-[28rem]")}>
+                    <label className="min-w-[6rem] flex gap-1"><span>{label}</span><span>:</span> </label>
                    <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className={cn("justify-between  overflow-y-hidden h-8 font-normal", isDesktopDevice ? "w-80 " :"w-60")}
+                        className={cn("justify-between h-8 font-normal w-[24rem]")}
                       >
-                        <div className={cn(" overflow-x-auto ")}>
+                        <div >
                           {selectedValue
                           ? dropdownList?.find((email) => email.value === selectedValue)?.label
                           : `Select ${label}...`}
@@ -50,7 +49,7 @@ const isDesktopDevice = useMediaQuery("(min-width: 768px)");
                          <ChevronDown className="h-4 w-4 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className={cn(" p-0 z-[800]", isDesktopDevice ? "w-80 " :"w-60")}>
+                    <PopoverContent className={cn("w-[--radix-popover-trigger-width] p-0 z-[800]")}>
                       <Command>
                         {showSearch && (
                           <CommandInput placeholder={`Search ${label}...`} className="h-9" />
