@@ -190,22 +190,69 @@ const Time = () => {
     setEnableSubmit(true);
   };
 
-  const handleWapElementDelete = (deleteIndex: number) => {
-    const initialWapList = form.getValues("wapList")
-    const remainingWapList = fields.filter((item, index) => index !== deleteIndex)
-    const updatedList = remainingWapList?.map((item, index) => {
-      return {
-        pId: item?.pId || null,
-        waptId: item?.waptId,
-        waPeriodName: item?.waPeriodName,
-        waStartDate: initialWapList[index]?.waStartDate,
-        waEndDate: initialWapList[index]?.waEndDate,
-      }
-    })
-    updatedList.at(-1)!.waEndDate = startEndDate[0].waEndDate;
-    replace(updatedList);
-    setEnableSubmit(true);
+  // const handleWapElementDelete = (deleteIndex: number) => {
+  //   const initialWapList = form.getValues("wapList")
+  //   const remainingWapList = fields.filter((item, index) => index !== deleteIndex)
+  //   const updatedList = remainingWapList?.map((item, index) => {
+  //     return {
+  //       pId: item?.pId || null,
+  //       waptId: item?.waptId,
+  //       waPeriodName: item?.waPeriodName,
+  //       waStartDate: initialWapList[index]?.waStartDate,
+  //       waEndDate: initialWapList[index]?.waEndDate,
+  //     }
+  //   })
+  //   updatedList.at(-1)!.waEndDate = startEndDate[0].waEndDate;
+  //   replace(updatedList);
+  //   setEnableSubmit(true);
+  // }
+
+const handleWapElementDelete = (deleteIndex: number) => {
+  const initialWapList = form.getValues("wapList");
+
+  // Remove item
+  const remainingList = initialWapList.filter((_, idx) => idx !== deleteIndex);
+
+  const yearPrefix = startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || "";
+
+  // 1. Group by type
+  const typeGroups: Record<number, any[]> = {};
+  for (const item of remainingList) {
+    if (!typeGroups[item.waptId]) typeGroups[item.waptId] = [];
+    typeGroups[item.waptId].push(item);
   }
+
+  // 2. Sort each type group and rebuild waPeriodName
+  const renamedList = remainingList.map((item, idx) => {
+    const label = listOfWapType.find((t : any) => t.id === item.waptId)?.waPeriodTypeName ?? '';
+    const typeGroup = typeGroups[item.waptId];
+    const currentIndex = typeGroup.indexOf(item); // index within its type
+    const suffix = String(currentIndex + 1).padStart(2, '0');
+    return {
+      ...item,
+      waPeriodName: `${yearPrefix} ${label} ${suffix}`
+    };
+  });
+
+  // 3. Re-assign start and end dates
+  if (renamedList.length > 0) {
+    renamedList[0].waStartDate = startEndDate[0]?.waStartDate;
+    for (let i = 1; i < renamedList.length; i++) {
+      const prevEnd = renamedList[i - 1]?.waEndDate;
+      if (prevEnd) {
+        const newStart = new Date(prevEnd);
+        newStart.setDate(newStart.getDate() + 1);
+        renamedList[i].waStartDate = newStart;
+      }
+    }
+    renamedList.at(-1)!.waEndDate = startEndDate[0]?.waEndDate;
+  }
+  console.log(renamedList)
+
+  replace(renamedList);
+  setEnableSubmit(true);
+};
+
 
   useEffect(() => {
     remove();
