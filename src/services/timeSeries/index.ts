@@ -11,10 +11,11 @@ export const useGetWaysOptions = ()=> {
     queryFn:()=> queryTimeSeries.getWaysList(),
      ...queryConfig  });
 }
-export const useGetWaptOptions = ()=> {
+export const useGetWaptOptions = (id:any)=> {
   return useQuery({
-    queryKey: [GET_WAPT_OPTIONS],
-    queryFn:()=> queryTimeSeries.getWaptList(),
+    queryKey: [GET_WAPT_OPTIONS,id],
+    queryFn:()=> queryTimeSeries.getWaptList(id),
+     enabled: !!id,
      ...queryConfig  });
 }
 

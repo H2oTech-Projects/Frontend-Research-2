@@ -16,7 +16,7 @@ import { DndContext, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { ArrowLeft, ArrowRight, Pencil, Trash } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Pencil, Trash, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -39,13 +39,14 @@ type WaptFormType = {
 const Time = () => {
   const queryClient = useQueryClient();
   const [wapYear, setWapYear] = useState<null | string>(null);
-  const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions()
+  const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions(wapYear)
   const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
   const [listOfWapType, setListOfWapType] = useState<any>([]);
   const [selectedWapType, setSelectedWapType] = useState<string[]>([]);
   const [enableSubmit, setEnableSubmit] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<number>();
+  const [waptEditElement, setWaptEditElement] = useState<any>(null)
   const { mutate: createWays, isPending: isWaysCreatePending } = usePutWays();
   const { mutate: postWapt, isPending: isWaptCreating } = usePostWapt();
   const { mutate: updateWapt, isPending: isWaptUpdating } = usePutWapt()
@@ -300,11 +301,12 @@ const Time = () => {
   }
 
   const onWaptSubmit = (data: WaptFormType) => {
-    if (!data?.id) {
-      postWapt(data, {
+    const formattedData = { ...data, wapYearId: wapYear }
+    if (!formattedData?.id) {
+      postWapt(formattedData, {
         onSuccess: (data: any) => {
           toast.success(data?.message);
-          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS] })
+          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
           queryClient.invalidateQueries({ queryKey: [POST_WAPTS] })
           waptForm.reset();
         },
@@ -314,12 +316,12 @@ const Time = () => {
         },
       })
     } else {
-      updateWapt(data, {
+      updateWapt(formattedData, {
         onSuccess: (data: any) => {
           toast.success(data?.message);
-          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS] })
+          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
           queryClient.invalidateQueries({ queryKey: [PUT_WAPTS] })
-          waptForm.reset({ id: undefined, waptName: "" });
+          setWaptEditElement(null)
         },
         onError: (error) => {
           showErrorToast(error?.response?.data.message);
@@ -330,9 +332,10 @@ const Time = () => {
   }
 
   const handleDelete = () => {
-    deleteWapt(id, {
+    const deleteData = { id: id, wapYear: wapYear }
+    deleteWapt(deleteData, {
       onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS] })
+        queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
         queryClient.invalidateQueries({ queryKey: [DELETE_WAPTS] });
         toast.success("Period Type deleted successfully");
         console.log(data)
@@ -395,12 +398,12 @@ const Time = () => {
         <div className="flex w-full  h-[calc(100vh-140px)] justify-evenly items-center mt-2 gap-2">
           <div className="flex flex-col gap-4 w-[45%] h-[calc(100vh-150px)]   ">
             <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors'>
-               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
-              <div className="px-2"><BasicSelect setValue={setWapYear}  Value={wapYear!}  itemList={waysOptions?.data} showLabel={false} /></div>
-</div>
+              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
+              <div className="px-2"><BasicSelect setValue={setWapYear} Value={wapYear!} itemList={waysOptions?.data} showLabel={false} /></div>
+            </div>
             <Form {...waptForm} >
               <form onSubmit={waptForm.handleSubmit(onWaptSubmit)} className="flex flex-col gap-2 w-full  bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
-                <div className='text-lg text-royalBlue dark:text-slate-50 '>Create Water Accounting Period Types for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
+                <div className='text-lg text-royalBlue dark:text-slate-50 '>Create Water Accounting Period Types</div>
                 <div className='flex w-full gap-2 p-2 '>
                   <div className='flex-grow'>  <FormInput
                     control={waptForm.control}
@@ -409,17 +412,34 @@ const Time = () => {
                     placeholder='Enter Period Type Name'
                     type='text'
                     showLabel={false}
-                  /></div>   <Button disabled={waptForm.watch("waptName") ? false : true} type="submit">{waptForm.watch('id') ? "Update" : "Create"}</Button> </div>
+                  /></div>   <Button disabled={waptForm.watch("waptName") ? false : isWaptCreating ? false : true} type="submit">{"Create"}</Button> </div>
 
               </form>
             </Form>
 
             <div className="flex flex-col gap-2 w-full flex-grow  bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
-              <div className='text-lg text-royalBlue dark:text-slate-50 '>Add Water Accounting Period Types for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
+              <div className='text-lg text-royalBlue dark:text-slate-50 '>Add Water Accounting Period Types</div>
               {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-450px)]  '>
-                {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
-                  <input className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div> <Button onClick={() => waptForm.reset({ id: item?.id, waptName: item?.waPeriodTypeName })}> <Pencil /></Button> <Button variant={"destructive"} onClick={() => { setId(item?.id); setOpen(true); }}><Trash /></Button>
-                </div>)}
+                {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => {
+                  if (item?.id !== waptEditElement?.id) {
+                    return (<div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
+                      <input className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div> <Button onClick={() => setWaptEditElement({ id: item?.id, waptName: item?.waPeriodTypeName })}> <Pencil /></Button> <Button variant={"destructive"} disabled={isWaptDeleting} onClick={() => { setId(item?.id); setOpen(true); }}><Trash /></Button>
+                    </div>)
+                  } else {
+                    return <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
+                      <input
+                        value={waptEditElement?.waptName}
+                        onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value })}
+                        className="flex-grow rounded px-2 py-1 text-black dark:text-white bg-white dark:bg-slate-700"
+                      />
+                      <Button className='bg-green-600' disabled={isWaptUpdating} onClick={() => { onWaptSubmit(waptEditElement) }}> <Check /></Button>
+                      <Button variant={'destructive'} onClick={() => setWaptEditElement(null)}> <X /></Button>
+
+
+                    </div>
+                  }
+
+                })}
               </div>}
             </div>
           </div>

@@ -13,8 +13,8 @@ export const queryTimeSeries = {
     const response = await axiosInstance.get(WAYS_API).catch((err) => console.log(err));
     return convertKeysToCamelCase(toJson(response?.data));
   },
-  getWaptList: async () => {
-    const response = await axiosInstance.get(WAPT_API).catch((err) => console.log(err));
+  getWaptList: async (id:any) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/ways/"  + id + "/wapts/").catch((err) => console.log(err));
     return convertKeysToCamelCase(toJson(response?.data));
   },
   postWaptList: async (formValue: any) => {
@@ -23,7 +23,7 @@ export const queryTimeSeries = {
       wa_period_type: formValue?.waptName,
       wa_period_type_name: formValue?.waptName
     }
-    const response = await axiosInstance.post(WAPT_API, data, {
+    const response = await axiosInstance.post(BASE_API_URL + "/ways/"  + formValue?.wapYearId + "/wapts/", data, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -32,15 +32,21 @@ export const queryTimeSeries = {
   },
 
   putWapt: async (formValue: any) => {
-    const response = await axiosInstance.put(BASE_API_URL + '/wapts/' + formValue?.id + '/', { wa_period_type_name: formValue?.waptName }, {
+    console.log(formValue)
+    const data = {
+      client_id: userData?.client_id,
+      wa_period_type: formValue?.waptName,
+      wa_period_type_name: formValue?.waptName
+    }
+    const response = await axiosInstance.put(BASE_API_URL + "/ways/"  + formValue?.wapYearId + "/wapts/" + formValue?.id + "/",data, {
       headers: {
         "Content-Type": "application/json",
       },
     })
     return response?.data
   },
-  deleteWapt: async (id: any) => {
-    const response = await axiosInstance.delete(BASE_API_URL + '/wapts/' + id + '/', {
+  deleteWapt: async (deleteData: any) => {
+    const response = await axiosInstance.delete(BASE_API_URL + "/ways/"  + deleteData?.wapYear + "/wapts/" + deleteData?.id + "/", {
       headers: {
         "Content-Type": "application/json",
       },
