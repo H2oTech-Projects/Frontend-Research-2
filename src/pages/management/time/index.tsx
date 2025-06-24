@@ -87,7 +87,7 @@ const Time = () => {
     name: "wapList"
   });
 
-  const handleLeftShift = () => {
+  const handleRightShift = () => {
     const transferItem = listOfWapType?.filter((item: any) => selectedWapType.includes(item.id));
     const list = form.watch("wapList");
     const listForForm = transferItem?.map((item: any, index: any) => {
@@ -338,7 +338,7 @@ const Time = () => {
         queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
         queryClient.invalidateQueries({ queryKey: [DELETE_WAPTS] });
         toast.success("Period Type deleted successfully");
-        console.log(data)
+        setSelectedWapType((prev: any) => prev.filter((listId: any) => listId !== id))
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
@@ -395,7 +395,7 @@ const Time = () => {
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
       <div className="pageContain flex flex-grow flex-col gap-3  ">
-        <div className="flex w-full  h-[calc(100vh-140px)] justify-evenly items-center mt-2 gap-2">
+        <div className="flex w-full  h-[calc(100vh-140px)] justify-evenly items-center mt-2 gap-4">
           <div className="flex flex-col gap-4 w-[45%] h-[calc(100vh-150px)]   ">
             <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors'>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
@@ -417,10 +417,11 @@ const Time = () => {
               </form>
             </Form>
 
-            <div className="flex flex-col gap-2 w-full flex-grow  bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
-              <div className='text-lg text-royalBlue dark:text-slate-50 '>Add Water Accounting Period Types</div>
-              {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-450px)]  '>
-                {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => {
+            <div className="flex flex-col  w-full flex-grow gap-1  bg-white p-3 pt-1 dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
+              <div className='flex justify-between'>   <div className='text-lg text-royalBlue dark:text-slate-50 '>Add Water Accounting Period Types</div>
+                  </div>
+              {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-480px)]  overflow-x-hidden '>
+                {/* {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => {
                   if (item?.id !== waptEditElement?.id) {
                     return (<div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
                       <input className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div> <Button onClick={() => setWaptEditElement({ id: item?.id, waptName: item?.waPeriodTypeName })}> <Pencil /></Button> <Button variant={"destructive"} disabled={isWaptDeleting} onClick={() => { setId(item?.id); setOpen(true); }}><Trash /></Button>
@@ -434,17 +435,48 @@ const Time = () => {
                       />
                       <Button className='bg-green-600' disabled={isWaptUpdating} onClick={() => { onWaptSubmit(waptEditElement) }}> <Check /></Button>
                       <Button variant={'destructive'} onClick={() => setWaptEditElement(null)}> <X /></Button>
-
-
                     </div>
                   }
 
-                })}
+                })} */}
+
+                <DndContext
+                  onDragEnd={(e) => {
+                    if (!e.over || e.active.id === e.over.id) return;
+                    const oldIndex = listOfWapType.findIndex((item: any) => item.id.toString() === e.active.id.toString());
+                    const newIndex = listOfWapType.findIndex((item: any) => item.id.toString() === e.over!.id.toString());
+                    if (oldIndex === -1 || newIndex === -1) return;
+                    const newList = arrayMove(listOfWapType, oldIndex, newIndex);
+                    setListOfWapType(newList);
+                  }}
+                >
+                  <SortableContext items={listOfWapType.map((item: any) => item.id.toString())}>
+                    {listOfWapType?.map((item: any) => (
+                      <DragItemWrapper key={item?.id} id={item?.id.toString()} disable={waptEditElement !== null}>
+                        {item?.id !== waptEditElement?.id ? <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
+                          <input onPointerDown={(e) => e.stopPropagation()} className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div> <Button onPointerDown={(e) => e.stopPropagation()} onClick={() => setWaptEditElement({ id: item?.id, waptName: item?.waPeriodTypeName })}> <Pencil /></Button> <Button variant={"destructive"} onPointerDown={(e) => e.stopPropagation()} disabled={isWaptDeleting} onClick={() => { setId(item?.id); setOpen(true); }}><Trash /></Button>
+                        </div> : <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
+                          <input
+type="text"
+                            value={waptEditElement?.waptName}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value })}
+                            className="flex-grow rounded px-2 py-1 text-black dark:text-white bg-white dark:bg-slate-700"
+                          />
+                          <Button onPointerDown={(e) => e.stopPropagation()} className='bg-green-600' disabled={isWaptUpdating} onClick={() => { onWaptSubmit(waptEditElement) }}> <Check /></Button>
+                          <Button onPointerDown={(e) => e.stopPropagation()} variant={'destructive'} onClick={() => setWaptEditElement(null)}> <X /></Button>
+                        </div>}
+                      </DragItemWrapper>
+                    ))}
+                  </SortableContext>
+                </DndContext>
               </div>}
+
+                 { <div className="flex items-center justify-center gap-2"><Button onClick={()=>console.log(listOfWapType)}>Sort</Button>
+                   {selectedWapType.length > 0 && <Button disabled={selectedWapType.length < 1} onClick={handleRightShift} >Add to Wap<ArrowRight /> </Button> } </div>}
             </div>
           </div>
-
-          <div className="w-[5%] flex flex-col items-center justify-center gap-2"><Button disabled={selectedWapType.length < 1} onClick={handleLeftShift} ><ArrowRight /> </Button></div>
+             
           <Form {...form}>
             <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow h-[calc(100vh-150px)] w-[45%] bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors  ">
               <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
@@ -507,7 +539,7 @@ const Time = () => {
                       </DragItemWrapper>)
                     }
                     )}
-                    {fields.length < 1 && <div className={cn("flex flex-col  w-full h-[440px] gap-2 items-center justify-center bg-slate-400 p-2  rounded  dark:hover:bg-slate-900 transition-colors ")}>
+                    {fields.length < 1 && <div className={cn("flex flex-col  w-full h-[calc(100vh-164px)] gap-2 items-center justify-center bg-slate-400 p-2  rounded  dark:hover:bg-slate-900 transition-colors ")}>
                       {isWayDetailLoading ? " Fetching Data" : "Add Water Accounting Periods"}
                     </div>}
                   </div>
