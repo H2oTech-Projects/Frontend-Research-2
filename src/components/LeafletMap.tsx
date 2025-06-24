@@ -53,6 +53,19 @@ const sld =`<StyledLayerDescriptor version="1.0.0">
     </UserStyle>
   </NamedLayer>
 </StyledLayerDescriptor>`
+
+const removeLineBars = <style>{`
+      .noUi-handle::before, .noUi-handle::after
+        { display: none;}
+      .noUi-horizontal .noUi-handle {
+        width: 10px;
+        height: 14px;
+        right: -8px;
+        top: -6px;
+      }
+      .noUi-target { width: 100%}
+      `}</style>
+
 const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
   const { center } = position;
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
@@ -121,7 +134,8 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
         )
       }
       return (
-        <div className="flex flex-col absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-2 rounded-[8px] bg-black text-slate-50">
+        <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-2 rounded-[8px] bg-black text-slate-50">
+        <div  className="flex flex-col">
           <div className="flex flex-row pb-1">
             <span style={{position: 'absolute',display: 'block',left: '35px'}}>80</span>
             <i style={{
@@ -198,20 +212,23 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
             ></i>
           </div>
         </div>
+        <div className="flex items-center justify-center">
+          <p className="[writing-mode:vertical-rl] text-center">Unit</p>
+        </div>
+      </div>
       )
     }
 
     const addSlider = () => {
       return (
         <div
-          className="flex flex-col absolute bottom-[2rem] right-[-5rem] z-[1002] h-auto  w-[500px] p-2 m-2 rounded-[8px] bg-green text-slate-50">
+          className="flex flex-col absolute bottom-[2rem] right-[7rem] z-[1002] h-[20px]  w-[200px] p-2 m-2 rounded-[8px] bg-green text-slate-50">
           <Nouislider
             connect= {[true, false]}
             start={100}
-            tooltips= {true}
+            tooltips= {false}
             range= {{ min: 0, max: 100 }}
-            pips= {{ mode: 'steps'}}
-            step= {20}
+            step= {50}
             onUpdate={(num) => {setOpacity(parseFloat(num[0])/100)}}
           />
         </div>
@@ -298,6 +315,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
             minZoom={2}
             style={configurations?.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
         >
+            {removeLineBars}
             { configurations.enableLayers && addSlider() }
             <LayersControl position="bottomleft">
 
