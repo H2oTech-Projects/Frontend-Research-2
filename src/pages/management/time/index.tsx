@@ -1,3 +1,4 @@
+import BasicSelect from '@/components/BasicSelect'
 import DragItemWrapper from '@/components/DndComponent/DragListWrapper'
 import { FormDatePicker } from '@/components/FormComponent/FormDatePicker'
 import { FormInput } from '@/components/FormComponent/FormInput'
@@ -21,7 +22,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
 type WayFormType = {
-  wayYear: string | undefined;
+  // wayYear: string | undefined;
   wapList: {
     waptId: number;
     waPeriodName: string;
@@ -37,6 +38,7 @@ type WaptFormType = {
 }
 const Time = () => {
   const queryClient = useQueryClient();
+  const [wapYear, setWapYear] = useState<null | string>(null);
   const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions()
   const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
   const [listOfWapType, setListOfWapType] = useState<any>([]);
@@ -45,25 +47,25 @@ const Time = () => {
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<number>();
   const { mutate: createWays, isPending: isWaysCreatePending } = usePutWays();
-  const {mutate:postWapt , isPending:isWaptCreating} = usePostWapt();
-  const {mutate:updateWapt, isPending:isWaptUpdating} = usePutWapt()
-  const {mutate:deleteWapt, isPending:isWaptDeleting} = useDeleteWapt();
+  const { mutate: postWapt, isPending: isWaptCreating } = usePostWapt();
+  const { mutate: updateWapt, isPending: isWaptUpdating } = usePutWapt()
+  const { mutate: deleteWapt, isPending: isWaptDeleting } = useDeleteWapt();
   const form = useForm<WayFormType>({
     defaultValues: {
-      wayYear: undefined,
+      // wayYear: undefined,
       wapList: []
     },
   });
   const waptForm = useForm<WaptFormType>({
     defaultValues: {
-      id:undefined,
+      id: undefined,
       waptName: ""
     }
   })
-  const { data: wayDetail, isLoading: isWayDetailLoading } = useGetWaysDetails(form.getValues("wayYear"))
+  const { data: wayDetail, isLoading: isWayDetailLoading } = useGetWaysDetails(wapYear)
   const formatNumber = (num: number) => num.toString().padStart(2, '0');
   // const countWapType = (data: any[], waptId: string) => data?.filter(item => item?.waptId.toString() === waptId).length
-  const startEndDate = waysOptions?.data?.filter((item: any) => item.value === form.watch("wayYear"))
+  const startEndDate = waysOptions?.data?.filter((item: any) => item.value === wapYear)
 
   useEffect(() => {
     if (wapTypeOptions && !isWapTypeOptionsLoading) {
@@ -73,7 +75,7 @@ const Time = () => {
 
   useEffect(() => {
     if (waysOptions && !waysOptionsLoading) {
-      waysOptions?.data && form.setValue("wayYear", waysOptions?.data[0]?.value)
+      waysOptions?.data && setWapYear(waysOptions?.data[0]?.value)
     }
 
   }, [waysOptions])
@@ -207,56 +209,54 @@ const Time = () => {
   //   setEnableSubmit(true);
   // }
 
-const handleWapElementDelete = (deleteIndex: number) => {
-  const initialWapList = form.getValues("wapList");
+  const handleWapElementDelete = (deleteIndex: number) => {
+    const initialWapList = form.getValues("wapList");
 
-  // Remove item
-  const remainingList = initialWapList.filter((_, idx) => idx !== deleteIndex);
+    // Remove item
+    const remainingList = initialWapList.filter((_, idx) => idx !== deleteIndex);
 
-  const yearPrefix = startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || "";
+    const yearPrefix = startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || "";
 
-  // 1. Group by type
-  const typeGroups: Record<number, any[]> = {};
-  for (const item of remainingList) {
-    if (!typeGroups[item.waptId]) typeGroups[item.waptId] = [];
-    typeGroups[item.waptId].push(item);
-  }
-
-  // 2. Sort each type group and rebuild waPeriodName
-  const renamedList = remainingList.map((item, idx) => {
-    const label = listOfWapType.find((t : any) => t.id === item.waptId)?.waPeriodTypeName ?? '';
-    const typeGroup = typeGroups[item.waptId];
-    const currentIndex = typeGroup.indexOf(item); // index within its type
-    const suffix = String(currentIndex + 1).padStart(2, '0');
-    return {
-      ...item,
-      waPeriodName: `${yearPrefix} ${label} ${suffix}`
-    };
-  });
-
-  // 3. Re-assign start and end dates
-  if (renamedList.length > 0) {
-    renamedList[0].waStartDate = startEndDate[0]?.waStartDate;
-    for (let i = 1; i < renamedList.length; i++) {
-      const prevEnd = renamedList[i - 1]?.waEndDate;
-      if (prevEnd) {
-        const newStart = new Date(prevEnd);
-        newStart.setDate(newStart.getDate() + 1);
-        renamedList[i].waStartDate = newStart;
-      }
+    // 1. Group by type
+    const typeGroups: Record<number, any[]> = {};
+    for (const item of remainingList) {
+      if (!typeGroups[item.waptId]) typeGroups[item.waptId] = [];
+      typeGroups[item.waptId].push(item);
     }
-    renamedList.at(-1)!.waEndDate = startEndDate[0]?.waEndDate;
-  }
-  console.log(renamedList)
 
-  replace(renamedList);
-  setEnableSubmit(true);
-};
+    // 2. Sort each type group and rebuild waPeriodName
+    const renamedList = remainingList.map((item, idx) => {
+      const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? '';
+      const typeGroup = typeGroups[item.waptId];
+      const currentIndex = typeGroup.indexOf(item); // index within its type
+      const suffix = String(currentIndex + 1).padStart(2, '0');
+      return {
+        ...item,
+        waPeriodName: `${yearPrefix} ${label} ${suffix}`
+      };
+    });
+
+    // 3. Re-assign start and end dates
+    if (renamedList.length > 0) {
+      renamedList[0].waStartDate = startEndDate[0]?.waStartDate;
+      for (let i = 1; i < renamedList.length; i++) {
+        const prevEnd = renamedList[i - 1]?.waEndDate;
+        if (prevEnd) {
+          const newStart = new Date(prevEnd);
+          newStart.setDate(newStart.getDate() + 1);
+          renamedList[i].waStartDate = newStart;
+        }
+      }
+      renamedList.at(-1)!.waEndDate = startEndDate[0]?.waEndDate;
+    }
+    replace(renamedList);
+    setEnableSubmit(true);
+  };
 
 
   useEffect(() => {
     remove();
-  }, [form.watch("wayYear")])
+  }, [wapYear])
 
   const handleClick = (selectedList: any, setSelectedList: any, id: string) => {
     if (!selectedList.includes(id)) {
@@ -269,7 +269,7 @@ const handleWapElementDelete = (deleteIndex: number) => {
 
   const onSubmit = (data: WayFormType) => {
     const formattedData = {
-      wayYear: data?.wayYear,
+      wayYear: wapYear,
       wapList: data?.wapList?.map((item) => {
         return {
           id: item?.pId || null,
@@ -285,7 +285,7 @@ const handleWapElementDelete = (deleteIndex: number) => {
       onSuccess: (data: any) => {
         setEnableSubmit(false);
         toast.success(data?.message);
-        queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, waysOptions?.data && waysOptions?.data[0]?.value] })
+        queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, wapYear] })
         queryClient.invalidateQueries({ queryKey: [PUT_WAYS] })
         // form.reset(); // Reset the form after successful submission
         // form.setValue("wayYear", waysOptions?.data[0]?.value)
@@ -300,9 +300,9 @@ const handleWapElementDelete = (deleteIndex: number) => {
   }
 
   const onWaptSubmit = (data: WaptFormType) => {
-      if(!data?.id){
-        postWapt(data,{
-        onSuccess: (data: any) => {    
+    if (!data?.id) {
+      postWapt(data, {
+        onSuccess: (data: any) => {
           toast.success(data?.message);
           queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS] })
           queryClient.invalidateQueries({ queryKey: [POST_WAPTS] })
@@ -313,35 +313,35 @@ const handleWapElementDelete = (deleteIndex: number) => {
           queryClient.invalidateQueries({ queryKey: [POST_WAPTS] })
         },
       })
-} else{
-  updateWapt(data,{
-      onSuccess: (data: any) => {    
-        toast.success(data?.message);
+    } else {
+      updateWapt(data, {
+        onSuccess: (data: any) => {
+          toast.success(data?.message);
+          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS] })
+          queryClient.invalidateQueries({ queryKey: [PUT_WAPTS] })
+          waptForm.reset({ id: undefined, waptName: "" });
+        },
+        onError: (error) => {
+          showErrorToast(error?.response?.data.message);
+          queryClient.invalidateQueries({ queryKey: [POST_WAPTS] })
+        },
+      })
+    }
+  }
+
+  const handleDelete = () => {
+    deleteWapt(id, {
+      onSuccess: (data: any) => {
         queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS] })
-        queryClient.invalidateQueries({ queryKey: [PUT_WAPTS] })
-        waptForm.reset({id:undefined,waptName:""});
+        queryClient.invalidateQueries({ queryKey: [DELETE_WAPTS] });
+        toast.success("Period Type deleted successfully");
+        console.log(data)
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
-        queryClient.invalidateQueries({ queryKey: [POST_WAPTS] })
       },
-    })
-}
-  }
-
-   const handleDelete = () => {
-     deleteWapt(id, {
-       onSuccess: (data:any) => {
-         queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS] })
-         queryClient.invalidateQueries({ queryKey: [DELETE_WAPTS] });
-         toast.success("Period Type deleted successfully");
-        console.log(data)
-       },
-       onError: (error) => {
-         showErrorToast(error?.response?.data.message);
-       },
-     });
-   };
+    });
+  };
 
 
   useEffect(() => {
@@ -374,7 +374,7 @@ const handleWapElementDelete = (deleteIndex: number) => {
 
   useEffect(() => {
     setEnableSubmit(false)
-  }, [form.watch('wayYear')])
+  }, [wapYear])
 
 
   return (
@@ -387,34 +387,38 @@ const handleWapElementDelete = (deleteIndex: number) => {
         onConfirm={handleDelete}
       />
 
-<PageHeader
+      <PageHeader
         pageHeaderTitle="Time "
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
       <div className="pageContain flex flex-grow flex-col gap-3  ">
         <div className="flex w-full  h-[calc(100vh-140px)] justify-evenly items-center mt-2 gap-2">
           <div className="flex flex-col gap-4 w-[45%] h-[calc(100vh-150px)]   ">
+            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors'>
+               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
+              <div className="px-2"><BasicSelect setValue={setWapYear}  Value={wapYear!}  itemList={waysOptions?.data} showLabel={false} /></div>
+</div>
             <Form {...waptForm} >
-              <form onSubmit={waptForm.handleSubmit(onWaptSubmit)} className="flex flex-col gap-2 w-full  bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
-                <div className='text-lg text-royalBlue dark:text-slate-50 '>Create Water Accounting Period Types</div>        
-                  <div className='flex w-full gap-2 p-2 '> 
-                 <div className='flex-grow'>  <FormInput
-                  control={waptForm.control}
-                  name='waptName'
-                  label='Period Name'
-                  placeholder='Enter Period Type Name'
-                  type='text'
-                  showLabel={false}
-                /></div>   <Button disabled={waptForm.watch("waptName") ? false :true } type="submit">{waptForm.watch('id') ? "Update" : "Create"}</Button> </div>              
+              <form onSubmit={waptForm.handleSubmit(onWaptSubmit)} className="flex flex-col gap-2 w-full  bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
+                <div className='text-lg text-royalBlue dark:text-slate-50 '>Create Water Accounting Period Types for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
+                <div className='flex w-full gap-2 p-2 '>
+                  <div className='flex-grow'>  <FormInput
+                    control={waptForm.control}
+                    name='waptName'
+                    label='Period Name'
+                    placeholder='Enter Period Type Name'
+                    type='text'
+                    showLabel={false}
+                  /></div>   <Button disabled={waptForm.watch("waptName") ? false : true} type="submit">{waptForm.watch('id') ? "Update" : "Create"}</Button> </div>
 
               </form>
             </Form>
 
             <div className="flex flex-col gap-2 w-full flex-grow  bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Add Water Accounting Period Types for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
-              {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-350px)]  '>
+              {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-450px)]  '>
                 {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
-                  <input className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div> <Button onClick={()=>waptForm.reset({id:item?.id,waptName:item?.waPeriodTypeName})}> <Pencil/></Button> <Button variant={"destructive"} onClick={()=>{setId(item?.id); setOpen(true);} }><Trash/></Button>
+                  <input className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div> <Button onClick={() => waptForm.reset({ id: item?.id, waptName: item?.waPeriodTypeName })}> <Pencil /></Button> <Button variant={"destructive"} onClick={() => { setId(item?.id); setOpen(true); }}><Trash /></Button>
                 </div>)}
               </div>}
             </div>
@@ -423,8 +427,8 @@ const handleWapElementDelete = (deleteIndex: number) => {
           <div className="w-[5%] flex flex-col items-center justify-center gap-2"><Button disabled={selectedWapType.length < 1} onClick={handleLeftShift} ><ArrowRight /> </Button></div>
           <Form {...form}>
             <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow h-[calc(100vh-150px)] w-[45%] bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors  ">
-              <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods</div>
-              <div className="h-auto pb-2 px-2 w-1/2" >
+              <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
+              {/* <div className="h-auto pb-2 px-2 w-1/2" >
                 <FormComboBox
                   control={form.control}
                   name='wayYear'
@@ -433,7 +437,7 @@ const handleWapElementDelete = (deleteIndex: number) => {
                   options={waysOptions?.data || []}
 
                 />
-              </div>
+              </div> */}
               {/* <div className="flex flex-col flex-grow overflow-y-auto g-2"> */}
               <DndContext onDragEnd={reorderList}  >
                 <SortableContext items={fields.map((item: any, index) => item?.id?.toString())}>
