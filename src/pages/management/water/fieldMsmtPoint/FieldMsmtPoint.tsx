@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { MsmtPointDataType } from "@/types/tableTypes";
 import {useGetWaps, useGetMsmtPointFields } from '@/services/timeSeries'
 import { toast } from 'react-toastify';
-import { buildPopupMessage } from "@/utils/map";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -24,7 +23,8 @@ import {
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
 import {GeneralSelect} from "@/components/BasicSelect";
-import { useGetMsmtPointList, useClientGetFieldMapList, useMsmtPointFields } from "@/services/water/MsmtPoint";
+import { useGetMsmtPointList, useClientGetFieldMapList, useMsmtPointFields } from "@/services/water/msmtPoint";
+import { MsmtPointDataT } from "@/types/apiResponseType";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
@@ -61,7 +61,7 @@ const FieldMsmtPoint = () => {
 
   const {data: msmtPoints, isLoading, refetch: refetchMsmtPoints} = useGetMsmtPointList(tableInfo, defaultWap);
   const {data: mapData,isLoading: mapLoading} = useClientGetFieldMapList();
-  const {data: msmtPointFields, isLoading: msmtPointFieldsLoadin, refetch: refetchmsmtPointFields} = useGetMsmtPointFields(position?.msmtPointId || null, defaultWap)
+  const {data: msmtPointFields, refetch: refetchmsmtPointFields} = useGetMsmtPointFields(position?.msmtPointId || null, defaultWap)
   const {data: ways, isLoading: waysLoading} = useGetWaps()
   const { mutate: updateClient, isPending: isClientUpdating } = useMsmtPointFields()
 
@@ -90,7 +90,8 @@ const FieldMsmtPoint = () => {
   useEffect(() =>{
     if(!!position){
       refetchmsmtPointFields()
-      setSelectedFields([])
+      setSelectedFields(position.fields)
+      setEnableLink(false)
     }
   }, [position])
 
@@ -100,12 +101,6 @@ const FieldMsmtPoint = () => {
       setViewBound(msmtPointFields.viewBounds)
     }
   }, [msmtPointFields])
-
-  useEffect(() => {
-    if (!!position.fields){
-      setSelectedFields(position.fields)
-    }
-  }, [position.fields]);
 
   const detectFieldChange = () => {
     const sorted1 = [...selectedFields].sort();
@@ -120,8 +115,6 @@ const FieldMsmtPoint = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
-//const {data:mapData,isLoading:mapLoading} = useClientGetFieldMapList();
-
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
@@ -129,7 +122,7 @@ const FieldMsmtPoint = () => {
     []
   );
 
-  const columns: ColumnDef<MsmtPointDataType>[] = [
+  const columns: ColumnDef<MsmtPointDataT>[] = [
       {
           accessorKey: "msmtPointId",
           // header: () => {

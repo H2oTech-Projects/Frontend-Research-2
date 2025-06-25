@@ -132,7 +132,18 @@ export type FieldListResponseType = {
   total_records: number;
 }
 
-export type ClientListResponseType = {
+export type MsmtPointDataT = {
+  id?: string;
+  canalName?: string;
+  msmtPointId?: string;
+  msmtPointName?: string;
+  gateBrand? : string;
+  geomPoint? : string;
+  fields? : string[];
+  canal?: string;
+}
+
+ export type ClientListResponseType = {
   data: ClientTableDataTypes[];
   pageNo: number;
   pageSize: number;
@@ -142,7 +153,7 @@ export type ClientListResponseType = {
 }
 
 export type MsmtPointListResponseType = {
-  data: MsmtPointDataType[];
+  data: MsmtPointDataT[];
   page_no: number;
   page_size: number;
   total_records: number;
