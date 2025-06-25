@@ -105,7 +105,7 @@ export type FieldDataType = {
     StandbyAcr?: number;
     ParcelID?: string;
     VolRateAdj?: number;
-    ActiveDate?: string; 
+    ActiveDate?: string;
     InactiveDa?: string;
     ActiveFlag?: string;
     unq_fld_id?: number;
@@ -122,6 +122,24 @@ export type FieldDataType = {
 
 export type FieldListResponseType = {
   data: FieldDataType[];
+  page_no: number;
+  page_size: number;
+  total_records: number;
+}
+
+export type MsmtPointDataT = {
+  id?: string;
+  canalName?: string;
+  msmtPointId?: string;
+  msmtPointName?: string;
+  gateBrand? : string;
+  geomPoint? : string;
+  fields? : string[];
+  canal?: string;
+}
+
+export type MsmtPointListResponseType = {
+  data: MsmtPointDataT[];
   page_no: number;
   page_size: number;
   total_records: number;

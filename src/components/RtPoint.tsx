@@ -3,7 +3,7 @@ import { Polygon, CircleMarker, Popup, Marker } from "react-leaflet";
 import L from "leaflet";
 type RtTypes = {
   position: any;
-  children: any;
+  children?: any;
   handleMouseDown: any;
   cancel: any;
 };
