@@ -5,6 +5,7 @@ import { FormInput } from '@/components/FormComponent/FormInput'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
 import CustomModal from '@/components/modal/ConfirmModal'
 import PageHeader from '@/components/PageHeader'
+import Spinner from '@/components/Spinner'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
@@ -12,11 +13,17 @@ import { useDeleteWapt, useGetWaptOptions, useGetWaysDetails, useGetWaysOptions,
 import { DELETE_WAPTS, GET_WAPT_OPTIONS, GET_WAYS_DETAILS, POST_WAPTS, PUT_WAPTS, PUT_WAYS, RANK_WAPTS } from '@/services/timeSeries/constants'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
 import { showErrorToast } from '@/utils/tools'
-import { DndContext, DragEndEvent } from '@dnd-kit/core'
+import {
+  DndContext, DragEndEvent, PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import { useQueryClient } from '@tanstack/react-query'
+import { useMediaQuery } from '@uidotdev/usehooks'
 import dayjs from 'dayjs'
-import { ArrowLeft, ArrowRight, Check, Pencil, Trash, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Pencil, SquarePlus, Trash, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -37,6 +44,7 @@ type WaptFormType = {
   waptName: string;
 }
 const Time = () => {
+  const isDesktopDevice = useMediaQuery("(min-width: 854px)");
   const queryClient = useQueryClient();
   const [wapYear, setWapYear] = useState<null | string>(null);
   const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions(wapYear)
@@ -51,7 +59,7 @@ const Time = () => {
   const { mutate: postWapt, isPending: isWaptCreating } = usePostWapt();
   const { mutate: updateWapt, isPending: isWaptUpdating } = usePutWapt()
   const { mutate: deleteWapt, isPending: isWaptDeleting } = useDeleteWapt();
-  const {mutate:rankWapt, isPending:isWaptRanking} = usePutRankWapt() 
+  const { mutate: rankWapt, isPending: isWaptRanking } = usePutRankWapt()
   const form = useForm<WayFormType>({
     defaultValues: {
       // wayYear: undefined,
@@ -68,7 +76,15 @@ const Time = () => {
   const formatNumber = (num: number) => num.toString().padStart(2, '0');
   // const countWapType = (data: any[], waptId: string) => data?.filter(item => item?.waptId.toString() === waptId).length
   const startEndDate = waysOptions?.data?.filter((item: any) => item.value === wapYear)
-
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    })
+  );
   useEffect(() => {
     if (wapTypeOptions && !isWapTypeOptionsLoading) {
       setListOfWapType(wapTypeOptions?.data)
@@ -347,23 +363,23 @@ const Time = () => {
     });
   };
 
-  const handleRankWapt = ()=> {
+  const handleRankWapt = () => {
     const formData = {
-      wapYearId:wapYear,
-      data: listOfWapType.map((item:any,index:number)=>{return {id:item?.id, rank:index + 1}})
-}
-rankWapt(formData, {
+      wapYearId: wapYear,
+      data: listOfWapType.map((item: any, index: number) => { return { id: item?.id, rank: index + 1 } })
+    }
+    rankWapt(formData, {
       onSuccess: (data: any) => {
         queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
         queryClient.invalidateQueries({ queryKey: [DELETE_WAPTS] });
-        toast.success("Period Type deleted successfully");
+        toast.success(data?.message);
         setSelectedWapType((prev: any) => prev.filter((listId: any) => listId !== id))
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
       },
     });
-}
+  }
 
 
   useEffect(() => {
@@ -414,8 +430,8 @@ rankWapt(formData, {
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
       <div className="pageContain flex flex-grow flex-col gap-3  ">
-        <div className="flex w-full  h-[calc(100vh-140px)] justify-evenly items-center mt-2 gap-4">
-          <div className="flex flex-col gap-4 w-[45%] h-[calc(100vh-150px)]   ">
+        <div className={cn("w-full justify-evenly items-center mt-2 gap-4", isDesktopDevice ? "flex   h-[calc(100vh-140px)] " : "flex flex-col h-auto")}>
+          <div className={cn("flex flex-col gap-4  h-[calc(100vh-150px)]", isDesktopDevice ? "w-[45%]" : "w-full")}>
             <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors'>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
               <div className="px-2"><BasicSelect setValue={setWapYear} Value={wapYear!} itemList={waysOptions?.data} showLabel={false} /></div>
@@ -437,9 +453,9 @@ rankWapt(formData, {
             </Form>
 
             <div className="flex flex-col  w-full flex-grow gap-1  bg-white p-3 pt-1 dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
-              <div className='flex justify-between'>   <div className='text-lg text-royalBlue dark:text-slate-50 '>Add Water Accounting Period Types</div>
+              <div className='flex justify-between'>   <div className='text-lg text-royalBlue dark:text-slate-50 '>List of Water Accounting Period Types</div>
               </div>
-              {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-472px)]  overflow-x-hidden '>
+              {isWapTypeOptionsLoading ? <div className='h-full flex justify-center items-center'><Spinner /></div> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-472px)]  overflow-x-hidden '>
                 {/* {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => {
                   if (item?.id !== waptEditElement?.id) {
                     return (<div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
@@ -458,8 +474,9 @@ rankWapt(formData, {
                   }
 
                 })} */}
-
+                {listOfWapType?.length < 1 && <div className='h-full flex flex-col gap-4 justify-center items-center text-black  dark:text-slate-50'><div className='opacity-50'>Add Water Accounting Period Types</div> <SquarePlus className='opacity-40' size={60} /></div>}
                 <DndContext
+                  sensors={sensors}
                   onDragEnd={(e) => {
                     if (!e.over || e.active.id === e.over.id) return;
                     const oldIndex = listOfWapType.findIndex((item: any) => item.id.toString() === e.active.id.toString());
@@ -495,25 +512,25 @@ rankWapt(formData, {
                           </Button>
                         </div>
                           : <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
-                              <input
-                                type="text"
-                                value={waptEditElement?.waptName}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value })}
-                                className="flex-grow rounded px-2 py-1 text-black dark:text-white bg-white dark:bg-slate-700"
-                              />
-                              <Button
-                                onPointerDown={(e) => e.stopPropagation()}
-                                className='bg-green-600' disabled={isWaptUpdating}
-                                onClick={() => { onWaptSubmit(waptEditElement) }}>
-                                <Check />
-                              </Button>
-                              <Button
-                                onPointerDown={(e) => e.stopPropagation()}
-                                variant={'destructive'}
-                                onClick={() => setWaptEditElement(null)}>
-                                <X />
-                              </Button>
+                            <input
+                              type="text"
+                              value={waptEditElement?.waptName}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value })}
+                              className="flex-grow rounded px-2 py-1 text-black dark:text-white bg-white dark:bg-slate-700"
+                            />
+                            <Button
+                              onPointerDown={(e) => e.stopPropagation()}
+                              className='bg-green-600' disabled={isWaptUpdating}
+                              onClick={() => { onWaptSubmit(waptEditElement) }}>
+                              <Check />
+                            </Button>
+                            <Button
+                              onPointerDown={(e) => e.stopPropagation()}
+                              variant={'destructive'}
+                              onClick={() => setWaptEditElement(null)}>
+                              <X />
+                            </Button>
                           </div>}
                       </DragItemWrapper>
                     ))}
@@ -528,7 +545,7 @@ rankWapt(formData, {
           </div>
 
           <Form {...form}>
-            <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow h-[calc(100vh-150px)] w-[45%] bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors  ">
+            <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-2 flex-grow h-[calc(100vh-150px)]  bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors", isDesktopDevice ? " w-[45%]" : "w-full")}>
               <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
               {/* <div className="h-auto pb-2 px-2 w-1/2" >
                 <FormComboBox
@@ -541,7 +558,7 @@ rankWapt(formData, {
                 />
               </div> */}
               {/* <div className="flex flex-col flex-grow overflow-y-auto g-2"> */}
-              <DndContext onDragEnd={reorderList}  >
+              <DndContext sensors={sensors} onDragEnd={reorderList}  >
                 <SortableContext items={fields.map((item: any, index) => item?.id?.toString())}>
                   <div className='flex flex-col flex-grow gap-2 overflow-y-auto overflow-x-hidden py-2'>
 
@@ -589,8 +606,11 @@ rankWapt(formData, {
                       </DragItemWrapper>)
                     }
                     )}
-                    {fields.length < 1 && <div className={cn("flex flex-col  w-full h-[calc(100vh-164px)] gap-2 items-center justify-center bg-slate-400 p-2  rounded  dark:hover:bg-slate-900 transition-colors ")}>
-                      {isWayDetailLoading ? " Fetching Data" : "Add Water Accounting Periods"}
+                    {fields.length < 1 && <div className={cn("flex flex-col  w-full h-[calc(100vh-164px)] gap-2 items-center justify-center  p-2  rounded  transition-colors ")}>
+                      {isWayDetailLoading ? <Spinner /> : <div className='w-full h-full flex flex-col justify-center items-center'>
+                        <div className='opacity-50'>Add Water Accounting Period</div>
+                        <SquarePlus className='opacity-40' size={60} />
+                      </div>}
                     </div>}
                   </div>
                 </SortableContext>
