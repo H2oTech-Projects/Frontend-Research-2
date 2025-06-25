@@ -67,6 +67,13 @@ export const queryTimeSeries = {
     const data = convertKeysToCamelCase(toJson(response));
     return data?.data;
   },
-
+  putWaptRank : async(formData:any) => {
+    const response = await axiosInstance.put(BASE_API_URL +"/ways/" + formData?.wapYearId + "/wapts/set_rank/",{data: formData?.data}, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    } );
+    return response?.data;
+},
 }
 

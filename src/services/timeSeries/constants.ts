@@ -5,3 +5,4 @@ export const GET_WAYS_DETAILS = "GET_WAYS_DETAILS";
 export const POST_WAPTS = 'POST_WAPTS'
 export const PUT_WAPTS = 'PUT_WAPTS'
 export const DELETE_WAPTS = 'DELETE_WAPTS'
+export const RANK_WAPTS = "RANK_WAPTS"

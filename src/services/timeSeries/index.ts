@@ -1,6 +1,6 @@
 import { useQuery, useMutation, UseQueryResult, useQueries } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
-import { DELETE_WAPTS, GET_WAPT_OPTIONS, GET_WAYS_DETAILS, GET_WAYS_OPTIONS, POST_WAPTS, PUT_WAPTS, PUT_WAYS } from "./constants";
+import { DELETE_WAPTS, GET_WAPT_OPTIONS, GET_WAYS_DETAILS, GET_WAYS_OPTIONS, POST_WAPTS, PUT_WAPTS, PUT_WAYS, RANK_WAPTS } from "./constants";
 import { queryTimeSeries } from "./service";
 import { RegisterResponse } from "../registration/service";
 import { AxiosError } from "axios";
@@ -28,6 +28,11 @@ export const usePutWapt = () => {
        return useMutation<RegisterResponse, AxiosError<any>, any>({
         mutationKey: [PUT_WAPTS],
         mutationFn: queryTimeSeries.putWapt});
+}
+export const usePutRankWapt = () => {
+       return useMutation<RegisterResponse, AxiosError<any>, any>({
+        mutationKey: [RANK_WAPTS],
+        mutationFn: queryTimeSeries.putWaptRank});
 }
 
 export const useDeleteWapt = () =>{
