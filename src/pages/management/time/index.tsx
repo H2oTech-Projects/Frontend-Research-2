@@ -489,7 +489,11 @@ const Time = () => {
                   <SortableContext items={listOfWapType.map((item: any) => item.id.toString())}>
                     {listOfWapType?.map((item: any) => (
                       <DragItemWrapper key={item?.id} id={item?.id.toString()} disable={waptEditElement !== null}>
-                        {item?.id !== waptEditElement?.id ? <div key={item?.id} className="flex w-full gap-2 items-center text-white h-auto bg-slate-400 hover:bg-royalBlue dark:bg-slate-900 p-4 rounded">
+                        {item?.id !== waptEditElement?.id ? <div key={item?.id} className="flex w-full gap-2 items-center text-white h-auto bg-slate-400 hover:bg-royalBlue dark:bg-slate-900 p-4 rounded" onPointerDown={(e) => {
+                          if (e.pointerType === "touch") {
+                            e.stopPropagation();
+                          }
+                        }} >
                           <input
                             onPointerDown={(e) => e.stopPropagation()}
                             className="h-5 w-5"
@@ -564,7 +568,11 @@ const Time = () => {
 
                     {fields.length > 0 && fields?.map((item: any, index) => {
                       return (<DragItemWrapper key={item?.id} id={item?.id?.toString()}>
-                        <div className={cn("flex flex-col  w-full gap-2 items-center text-slate-50 bg-royalBlue p-2 hover:bg-slate-400 rounded h-auto dark:bg-slate-900 dark:hover:bg-slate-400 transition-colors ")}>
+                        <div className={cn("flex flex-col  w-full gap-2 items-center text-slate-50 bg-royalBlue p-2 hover:bg-slate-400 rounded h-auto dark:bg-slate-900 dark:hover:bg-slate-400 transition-colors ")} onPointerDown={(e) => {
+                          if (e.pointerType === "touch") {
+                            e.stopPropagation();
+                          }
+                        }}>
                           <div className="flex w-full gap-2 items-center">
                             <div className="flex flex-grow text-xl">{item.waPeriodName}</div>    <Button variant={'destructive'} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { handleWapElementDelete(index) }}> <Trash /></Button>
                           </div>
