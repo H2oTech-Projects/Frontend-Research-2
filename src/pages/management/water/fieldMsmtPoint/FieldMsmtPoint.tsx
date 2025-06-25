@@ -367,7 +367,7 @@ const FieldMsmtPoint = () => {
                                 setClickedField={setClickedField}
                                 tableInfo={tableInfo}
                                 setTableInfo={setTableInfo}
-                                totalData={msmtPoints?.total_records || 1}
+                                totalData={msmtPoints?.totalRecords || 1}
                                 collapse={collapse}
                                 isLoading={isLoading}
                             />
