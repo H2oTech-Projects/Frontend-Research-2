@@ -112,7 +112,7 @@ const MapTable = <T,>({
           // @ts-ignore
           point: [coordinates[1], coordinates[0]],
           // @ts-ignore
-          msmtPointId: row.original.msmtPointId || null,
+          msmtPointId: row.original.id || null,
           // @ts-ignore
           features: row.original,
           fields: row.original.fields
@@ -198,7 +198,7 @@ const MapTable = <T,>({
 
     const fieldTableContent = () => {
       return table.getRowModel().rows.map((row) =>
-        
+
         fieldTableRow(row)
       )
     }

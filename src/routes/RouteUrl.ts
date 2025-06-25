@@ -152,14 +152,15 @@ const DistrictInfo = {
     name: "DistrictInfo",
 };
 
- const Time = {
-    url:"/time",
-    name:"Time"
-}
 const FieldMsmtPoint = {
   url: "/field_msmtpoint",
   name: "Field-MsmtPoint",
 };
+
+ const Time = {
+    url:"/time",
+    name:"Time"
+}
 
 export {
     Map,
