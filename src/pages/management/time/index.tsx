@@ -8,8 +8,8 @@ import PageHeader from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
-import { useDeleteWapt, useGetWaptOptions, useGetWaysDetails, useGetWaysOptions, usePostWapt, usePutWapt, usePutWays, } from '@/services/timeSeries'
-import { DELETE_WAPTS, GET_WAPT_OPTIONS, GET_WAYS_DETAILS, POST_WAPTS, PUT_WAPTS, PUT_WAYS } from '@/services/timeSeries/constants'
+import { useDeleteWapt, useGetWaptOptions, useGetWaysDetails, useGetWaysOptions, usePostWapt, usePutRankWapt, usePutWapt, usePutWays, } from '@/services/timeSeries'
+import { DELETE_WAPTS, GET_WAPT_OPTIONS, GET_WAYS_DETAILS, POST_WAPTS, PUT_WAPTS, PUT_WAYS, RANK_WAPTS } from '@/services/timeSeries/constants'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
 import { showErrorToast } from '@/utils/tools'
 import { DndContext, DragEndEvent } from '@dnd-kit/core'
@@ -51,6 +51,7 @@ const Time = () => {
   const { mutate: postWapt, isPending: isWaptCreating } = usePostWapt();
   const { mutate: updateWapt, isPending: isWaptUpdating } = usePutWapt()
   const { mutate: deleteWapt, isPending: isWaptDeleting } = useDeleteWapt();
+  const {mutate:rankWapt, isPending:isWaptRanking} = usePutRankWapt() 
   const form = useForm<WayFormType>({
     defaultValues: {
       // wayYear: undefined,
@@ -336,6 +337,24 @@ const Time = () => {
     deleteWapt(deleteData, {
       onSuccess: (data: any) => {
         queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
+        queryClient.invalidateQueries({ queryKey: [RANK_WAPTS] });
+        toast.success(data?.message);
+        setSelectedWapType((prev: any) => prev.filter((listId: any) => listId !== id))
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data.message);
+      },
+    });
+  };
+
+  const handleRankWapt = ()=> {
+    const formData = {
+      wapYearId:wapYear,
+      data: listOfWapType.map((item:any,index:number)=>{return {id:item?.id, rank:index + 1}})
+}
+rankWapt(formData, {
+      onSuccess: (data: any) => {
+        queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
         queryClient.invalidateQueries({ queryKey: [DELETE_WAPTS] });
         toast.success("Period Type deleted successfully");
         setSelectedWapType((prev: any) => prev.filter((listId: any) => listId !== id))
@@ -344,7 +363,7 @@ const Time = () => {
         showErrorToast(error?.response?.data.message);
       },
     });
-  };
+}
 
 
   useEffect(() => {
@@ -419,8 +438,8 @@ const Time = () => {
 
             <div className="flex flex-col  w-full flex-grow gap-1  bg-white p-3 pt-1 dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors ">
               <div className='flex justify-between'>   <div className='text-lg text-royalBlue dark:text-slate-50 '>Add Water Accounting Period Types</div>
-                  </div>
-              {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-480px)]  overflow-x-hidden '>
+              </div>
+              {isWapTypeOptionsLoading ? <>loading</> : <div className='flex flex-col gap-2 overflow-y-auto h-[calc(100vh-472px)]  overflow-x-hidden '>
                 {/* {listOfWapType?.length > 0 && listOfWapType?.map((item: any) => {
                   if (item?.id !== waptEditElement?.id) {
                     return (<div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
@@ -453,30 +472,61 @@ const Time = () => {
                   <SortableContext items={listOfWapType.map((item: any) => item.id.toString())}>
                     {listOfWapType?.map((item: any) => (
                       <DragItemWrapper key={item?.id} id={item?.id.toString()} disable={waptEditElement !== null}>
-                        {item?.id !== waptEditElement?.id ? <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
-                          <input onPointerDown={(e) => e.stopPropagation()} className="h-5 w-5" type="checkbox" checked={selectedWapType.includes(item?.id)} onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)} /> <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div> <Button onPointerDown={(e) => e.stopPropagation()} onClick={() => setWaptEditElement({ id: item?.id, waptName: item?.waPeriodTypeName })}> <Pencil /></Button> <Button variant={"destructive"} onPointerDown={(e) => e.stopPropagation()} disabled={isWaptDeleting} onClick={() => { setId(item?.id); setOpen(true); }}><Trash /></Button>
-                        </div> : <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
+                        {item?.id !== waptEditElement?.id ? <div key={item?.id} className="flex w-full gap-2 items-center text-white h-auto bg-slate-400 hover:bg-royalBlue dark:bg-slate-900 p-4 rounded">
                           <input
-type="text"
-                            value={waptEditElement?.waptName}
                             onPointerDown={(e) => e.stopPropagation()}
-                            onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value })}
-                            className="flex-grow rounded px-2 py-1 text-black dark:text-white bg-white dark:bg-slate-700"
+                            className="h-5 w-5"
+                            type="checkbox"
+                            checked={selectedWapType.includes(item?.id)}
+                            onChange={() => handleClick(selectedWapType, setSelectedWapType, item?.id)}
                           />
-                          <Button onPointerDown={(e) => e.stopPropagation()} className='bg-green-600' disabled={isWaptUpdating} onClick={() => { onWaptSubmit(waptEditElement) }}> <Check /></Button>
-                          <Button onPointerDown={(e) => e.stopPropagation()} variant={'destructive'} onClick={() => setWaptEditElement(null)}> <X /></Button>
-                        </div>}
+                          <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div>
+                          <Button
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onClick={() => setWaptEditElement({ id: item?.id, waptName: item?.waPeriodTypeName })}>
+                            <Pencil />
+                          </Button>
+                          <Button
+                            variant={"destructive"}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            disabled={isWaptDeleting}
+                            onClick={() => { setId(item?.id); setOpen(true); }}>
+                            <Trash />
+                          </Button>
+                        </div>
+                          : <div key={item?.id} className="flex w-full gap-2 items-center h-auto bg-slate-400 dark:bg-slate-900 p-4 rounded">
+                              <input
+                                type="text"
+                                value={waptEditElement?.waptName}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value })}
+                                className="flex-grow rounded px-2 py-1 text-black dark:text-white bg-white dark:bg-slate-700"
+                              />
+                              <Button
+                                onPointerDown={(e) => e.stopPropagation()}
+                                className='bg-green-600' disabled={isWaptUpdating}
+                                onClick={() => { onWaptSubmit(waptEditElement) }}>
+                                <Check />
+                              </Button>
+                              <Button
+                                onPointerDown={(e) => e.stopPropagation()}
+                                variant={'destructive'}
+                                onClick={() => setWaptEditElement(null)}>
+                                <X />
+                              </Button>
+                          </div>}
                       </DragItemWrapper>
                     ))}
                   </SortableContext>
                 </DndContext>
               </div>}
 
-                 { <div className="flex items-center justify-center gap-2"><Button onClick={()=>console.log(listOfWapType)}>Sort</Button>
-                   {selectedWapType.length > 0 && <Button disabled={selectedWapType.length < 1} onClick={handleRightShift} >Add to Wap<ArrowRight /> </Button> } </div>}
+              {<div className="flex items-center justify-center gap-2">
+                {listOfWapType?.length > 1 && <Button disabled={JSON.stringify(listOfWapType) === JSON.stringify(wapTypeOptions?.data)} onClick={() => handleRankWapt()}>Sort</Button>}
+                {selectedWapType.length > 0 && <Button disabled={selectedWapType.length < 1} onClick={handleRightShift} >Add to Wap<ArrowRight /> </Button>} </div>}
             </div>
           </div>
-             
+
           <Form {...form}>
             <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 flex-grow h-[calc(100vh-150px)] w-[45%] bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors  ">
               <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
@@ -497,7 +547,7 @@ type="text"
 
                     {fields.length > 0 && fields?.map((item: any, index) => {
                       return (<DragItemWrapper key={item?.id} id={item?.id?.toString()}>
-                        <div className={cn("flex flex-col  w-full gap-2 items-center bg-slate-400 p-2 hover:bg-royalBlue rounded h-auto dark:bg-slate-900 dark:hover:bg-slate-400 transition-colors ")}>
+                        <div className={cn("flex flex-col  w-full gap-2 items-center text-slate-50 bg-royalBlue p-2 hover:bg-slate-400 rounded h-auto dark:bg-slate-900 dark:hover:bg-slate-400 transition-colors ")}>
                           <div className="flex w-full gap-2 items-center">
                             <div className="flex flex-grow text-xl">{item.waPeriodName}</div>    <Button variant={'destructive'} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { handleWapElementDelete(index) }}> <Trash /></Button>
                           </div>

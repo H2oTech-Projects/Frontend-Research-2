@@ -125,7 +125,7 @@ export function FormDatePicker({
           <FormControl>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" disabled={disabled}>
+                <Button variant="outline" disabled={disabled} className="text-black dark:text-white">
                   {field.value
                     ? dayjs(field.value).format("DD MMM YYYY")
                     : showDateIcon
