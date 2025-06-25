@@ -114,6 +114,7 @@ const MapTable = <T,>({
           msmtPointId: row.original.id || null,
           // @ts-ignore
           features: row.original,
+          fields: row.original.fields
         });
         return;
       }

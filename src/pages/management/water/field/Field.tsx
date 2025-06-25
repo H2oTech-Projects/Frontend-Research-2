@@ -366,7 +366,7 @@ const Field = () => {
     if (features?.properties?.FieldID === clickedField) {
       return {
         color: "red", // Border color
-        fillColor: "#16599A", // Fill color for the highlighted area
+        fillColor: "#transparent", // Fill color for the highlighted area
         fillOpacity: 0.5,
         weight: 2,
       };

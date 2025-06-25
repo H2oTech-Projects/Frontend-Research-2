@@ -31,15 +31,15 @@ const Map = () => {
     const dispatch = useDispatch();
     const handleLogout = () => {
           mutate({refresh_token: refreshToken},{
-            onSuccess: (data) => {  
+            onSuccess: (data) => {
               dispatch(logout());
               setIsModalOpen(false);
               toast.success("Logout successful");
             },
-            onError: (err) => {     
+            onError: (err) => {
                showErrorToast(err?.response?.data.message)
             },
-    
+
     })}
     const showInfo = (label: String, Id: String) => {
       var popup = $("<div></div>", {
@@ -120,7 +120,7 @@ const Map = () => {
   const irrigatedgeoJsonStyle = (features: Feature) => {
     return {
       color: "#16599A", // Border color
-      fillColor: "lightblue", // Fill color for normal areas
+      fillColor: "transparent", // Fill color for normal areas
       fillOpacity: 0.5,
       weight: 2,
     };
@@ -129,7 +129,7 @@ const Map = () => {
   const maderaJsonStyle = (features: Feature) => {
     return {
       color: "#16599A", // Border color
-      fillColor: "lightblue", // Fill color for normal areas
+      fillColor: "transparent", // Fill color for normal areas
       fillOpacity: 0.5,
       weight: 2,
     };

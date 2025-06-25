@@ -56,6 +56,7 @@ const FieldMsmtPoint = () => {
   const timerRef = useRef<number | null>(null);
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [viewBound, setViewBound] = useState<any>()
+  const [enableLink, setEnableLink] = useState(false);
 
   const {data: msmtPoints, isLoading, refetch: refetchMsmtPoints} = useGetMsmtPointList(tableInfo, defaultWap);
   const {data: mapData,isLoading: mapLoading} = useClientGetFieldMapList();
@@ -63,9 +64,9 @@ const FieldMsmtPoint = () => {
   const {data: ways, isLoading: waysLoading} = useGetWaps()
   const { mutate: updateClient, isPending: isClientUpdating } = useMsmtPointFields()
 
-  console.log(mapData)
   useEffect(() => {
     selectedFieldsRef.current = selectedFields;
+    setEnableLink(detectFieldChange())
   }, [selectedFields]);
 
   useEffect(() => {
@@ -104,6 +105,12 @@ const FieldMsmtPoint = () => {
       setSelectedFields(position.fields)
     }
   }, [position.fields]);
+
+  const detectFieldChange = () => {
+    const sorted1 = [...selectedFields].sort();
+    const sorted2 = [...position.fields].sort();
+    return sorted1.length != sorted2.length || !sorted1.every((value, index) => value === sorted2[index])
+  }
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -120,8 +127,6 @@ const FieldMsmtPoint = () => {
     }, 500),
     []
   );
-
-
 
   const columns: ColumnDef<MsmtPointDataType>[] = [
       {
@@ -264,9 +269,22 @@ const FieldMsmtPoint = () => {
           toast.error("Not linked.");
         },
       })
-
     }, 2000);
   };
+
+  const associateFieldMsmtpoint = () => {
+    updateClient({id: position.msmtPointId,wapId:defaultWap,fields:selectedFields},{
+      onSuccess: (data: any) => {
+        // Invalidate and refetch
+        toast.success("successfully linked.");
+        setPosition({...position, fields: selectedFields})
+        setEnableLink(false)
+      },
+      onError: (error) => {
+        toast.error("Not linked.");
+      },
+    })
+  }
 
   const cancel = () => {
     if (timerRef.current) {
@@ -381,7 +399,8 @@ const FieldMsmtPoint = () => {
                                 collapse={collapse}
                                 //clickedField={clickedField}
                                 viewBound={viewBound }
-                                configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
+                                configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }, linkFieldMsmts: enableLink}}
+                                associateFieldMsmtpoint={associateFieldMsmtpoint}
                             >
                               <RtGeoJson
                                   key={"fields"}
