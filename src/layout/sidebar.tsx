@@ -52,7 +52,7 @@ const menuLinks = [
           { label: "Measurement Points", path: routeUrl?.MeasurementPoint?.url ,name:routeUrl?.MeasurementPoint?.name },
           { label: "Fields", path:routeUrl?.Field?.url, name:routeUrl?.Field?.name },
           { label: "Field-MsmtPoint", path:routeUrl?.FieldMsmtPoint?.url, name:routeUrl?.FieldMsmtPoint?.name },
-          { label: "Canals", path:routeUrl?.Canals?.url, name:routeUrl?.Canals?.name },
+          { label: "Conveyances", path:routeUrl?.Conveyances?.url, name:routeUrl?.Conveyances?.name },
           { label: "Districts", path: routeUrl?.District?.url, name:routeUrl?.District?.name },
         ],
       },
