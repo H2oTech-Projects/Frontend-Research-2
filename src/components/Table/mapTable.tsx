@@ -58,7 +58,6 @@ const MapTable = <T,>({
     useEffect(() => {
       setData(defaultData);
     }, [defaultData]);
-
     useEffect(() => {
     tableInfo?.page_size && setPagination({...pagination, pageSize: tableInfo?.page_size})
     }, [tableInfo?.page_size])
@@ -103,20 +102,20 @@ const MapTable = <T,>({
         return;
       }
       // @ts-ignore
-      setPosition({
+      setPosition &&  setPosition({
         // @ts-ignore
-        center: [row.original?.center_latitude, row.original?.center_longitude],
+        center: [row.original?.center_latitude || 38.86902846413033, row.original?.center_longitude || -121.729324818604],
         // @ts-ignore
-        polygon: row.original?.coords,
+        polygon: row.original?.coords || [],
         // @ts-ignore
-        fieldId: row.original?.FieldID,
+        fieldId: row.original?.FieldID || null,
         // @ts-ignore
         features: row.original
       });
       // @ts-ignore
       setZoomLevel(13);
       // @ts-ignore
-      setClickedField(row.original?.FieldID);
+     setClickedField && setClickedField(row.original?.FieldID);
     });
 
     const tableHeader = () => {
@@ -140,7 +139,7 @@ const MapTable = <T,>({
                 textAlign: columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign
               }}
             >
-              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
             </TableHead>
           ))}
         </TableRow>
@@ -181,6 +180,7 @@ const MapTable = <T,>({
 
     const fieldTableContent = () => {
       return table.getRowModel().rows.map((row) =>
+
         fieldTableRow(row)
       )
     }
@@ -204,9 +204,9 @@ const MapTable = <T,>({
                     } `}
                   key={cell.id}
                   style={{
-                      minWidth: cell.column.columnDef.size,
-                      maxWidth: cell.column.columnDef.size,
-
+                      // minWidth: cell.column.columnDef.size,
+                      // maxWidth: cell.column.columnDef.size,
+                      textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign,
                   }}
                   // @ts-ignore
                   onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
@@ -222,7 +222,7 @@ const MapTable = <T,>({
               key={row.id}
               className={cn(
                 // @ts-ignore
-                clickedField === row.original.FieldID ? "bg-slate-400" : "",
+               clickedField && clickedField === row.original.FieldID ? "bg-slate-400" : "",
                 "cursor-pointer",
               )}
               // @ts-ignore
@@ -252,10 +252,10 @@ const MapTable = <T,>({
                 {useClientPagination ?  <DataTablePagination table={table} collapse={collapse!}/> : <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>}
             </div>
     }
-
+    const tableHeight = tableType == 'wap_types' ? 'h-[300px]' : fullHeight ? "h-[300px]" : "h-auto"
     return (
       <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-        <div className={cn(fullHeight ? "h-[calc(100vh-218px)]" : "h-auto ")}>
+        <div className={tableHeight}>
           <Table className="relative">
             <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
               {isLoading ? emptyTable() : tableContent()}

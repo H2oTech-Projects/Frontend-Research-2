@@ -1,3 +1,5 @@
+import { ClientTableDataTypes } from "./tableTypes";
+
 interface AccountType {
   value: string;
   label: string;
@@ -123,4 +125,13 @@ export type FieldListResponseType = {
   page_no: number;
   page_size: number;
   total_records: number;
+}
+
+ export type ClientListResponseType = {
+  data: ClientTableDataTypes[];
+  pageNo: number;
+  pageSize: number;
+  totalRecords: number;
+  geojson:string;
+
 }

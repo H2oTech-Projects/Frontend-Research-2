@@ -21,36 +21,37 @@ type LeafletMapTypes = {
     zoom: number;
     position: any;
     collapse?: string;
-    clickedField?: string | null;
     configurations?: mapConfiguration;
     children?: any;
     viewBound?: any;
 };
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
-const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
-  const { center } = position;
+const LeafletMap = ({ position,zoom, collapse,viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false},children }: LeafletMapTypes) => {
+  const {center} = position;
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
   const MapHandler = () => {
     const map = useMap();
 
-    useEffect(() => {
-      map?.invalidateSize(); // Force the map to resize
-      map?.setView(center); // Force the map to recenter
-      if (!!viewBound){
-        map?.fitBounds(viewBound);
+  useEffect(() => {
+    map.whenReady(() => {
+      map.invalidateSize(); // Ensure proper sizing
+      map.setView(center);  // Recenter
+      if (viewBound) {
+        map.fitBounds(viewBound);
       }
-      //map.setZoom(zoom);
-    }, [collapse, center, zoom, viewBound]);
+    });
+  }, [collapse, center, zoom, map,viewBound]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            map?.invalidateSize();
-        }, 300)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (map) {
+        map.invalidateSize();
+      }
+    }, 300);
 
-
-    }, [collapse, isMenuCollapsed]);
-
+    return () => clearTimeout(timeout);
+  }, [collapse, isMenuCollapsed, map]);
     useEffect(() => {
       const handleLayerAdd = (event: any) => {
         let OldaddedLayers = addedLayers.slice();
@@ -185,7 +186,7 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
             scrollWheelZoom={true}
             zoomControl={false} // Disable default zoom control
             minZoom={2}
-            style={configurations.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
+            style={configurations?.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
         >
             <LayersControl position="bottomleft">
 
@@ -215,4 +216,4 @@ const LeafletMap = ({ zoom, position, collapse, clickedField = null, viewBound, 
     );
 };
 
-export default LeafletMap;
+export default React.memo(LeafletMap);

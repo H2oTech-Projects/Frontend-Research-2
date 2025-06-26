@@ -19,7 +19,7 @@ const Field = {
 
 const AddField = {
     url: "/field/addField",
-    name: "Add Field",
+    name: "AddField",
 };
 
 const EditField = {
@@ -34,12 +34,12 @@ const MeasurementPoint = {
 
 const AddMeasurementPoint = {
     url: "/measurementPoint/addMeasurementPoint",
-    name: "Add MeasurementPoint",
+    name: "AddMeasurementPoint",
 };
 
 const EditMeasurementPoint = {
     url: "/measurementPoint/editMeasurementPoint",
-    name: "Edit MeasurementPoint",
+    name: "EditMeasurementPoint",
 };
 
 const District = {
@@ -49,12 +49,12 @@ const District = {
 
 const AddDistrict = {
     url: "/district/addDistrict",
-    name: "Add District",
+    name: "AddDistrict",
 };
 
 const EditDistrict = {
     url: "/district/editDistrict",
-    name: "Edit District",
+    name: "EditDistrict",
 };
 
 const Customers = {
@@ -76,12 +76,12 @@ const Crops = {
 
 const CustomReport = {
     url: "/customReport",
-    name: "Custom Report",
+    name: "CustomReport",
 };
 
 const DailyReport = {
     url: "/dailyReport",
-    name: "Daily Report",
+    name: "DailyReport",
 };
 
 const Settings = {
@@ -97,6 +97,64 @@ const Profile = {
 const Help = {
     url: "/help",
     name: "Help",
+};
+
+const Canals = {
+    url: "/canals",
+    name: "Canals",
+};
+
+const AddCanal = {
+    url: "/canals/addCanals",
+    name: "AddCanal"
+};
+
+const EditCanal = {
+    url: "/canals/:id/editCanal",
+    name: "EditCanal"
+};
+
+const ViewCanal = {
+    url: "/canals/:id/viewCanal",
+    name: "ViewCanal"
+};
+
+const Clients = {
+    url: "/clients",
+    name: "Clients",
+};
+
+const AddClient = {
+    url: "/clients/addClient",
+    name: "AddClient",
+};
+const EditClient = {
+    url: "/clients/:id/edit",
+    name: "EditClient",
+};
+const ViewClient = {
+    url: "/clients/:id/view",
+    name: "ViewClient",
+};
+
+const AgencyInfo = {
+    url: "/agencyInfo",
+    name: "AgencyInfo",
+};
+
+const CompanyInfo = {
+    url: "/companyInfo",
+    name: "CompanyInfo",
+};
+
+const DistrictInfo = {
+    url: "/districtInfo",
+    name: "DistrictInfo",
+};
+
+const TimeSeries = {
+  url: "/timeseries",
+  name: "Timeseries",
 };
 
 export {
@@ -121,4 +179,16 @@ export {
     Settings,
     Profile,
     Help,
+    Canals,
+    AddCanal,
+    EditCanal,
+    ViewCanal,
+    Clients,
+    AddClient,
+    EditClient,
+    ViewClient,
+    AgencyInfo,
+    CompanyInfo,
+    DistrictInfo,
+    TimeSeries
 };

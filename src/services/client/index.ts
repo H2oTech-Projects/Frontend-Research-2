@@ -1,0 +1,78 @@
+import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
+import { noCacheQueryConfig, queryConfig } from "@/utils/reactQueryConfig";
+import { initialTableDataTypes } from "@/types/tableTypes";
+import { ClientListResponseType } from "@/types/apiResponseType";
+import { DELETE_CLIENT_KEY, GET_CLIENT_DETAILS_KEY, GET_CLIENT_LIST_KEY, GET_CLIENT_MAP_GEOJSON_KEY, GET_CLIENT_TYPE_OPTIONS_KEY, GET_CLIENT_UNIT_SYSTEM_LABELS_KEY, GET_CLIENT_UNIT_SYSTEM_OPTIONS_KEY, POST_CLIENT_KEY, PUT_CLIENT_KEY } from "./constant";
+import { queryClientService, RegisterResponse } from "./services";
+import { AxiosError } from "axios";
+
+
+export const useGetClientList = (tableInfo:initialTableDataTypes):UseQueryResult<ClientListResponseType> => {
+  return useQuery({
+    queryKey: [GET_CLIENT_LIST_KEY,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
+    queryFn: ()=> queryClientService.getClientList(tableInfo),
+    ...noCacheQueryConfig,
+
+  });
+}
+
+export const useGetClientMapGeoJson = ():UseQueryResult<any> => {
+  return useQuery({
+    queryKey: [GET_CLIENT_MAP_GEOJSON_KEY],
+    queryFn: ()=> queryClientService.getClientMapGeoJson(),
+    ...queryConfig,
+  });
+}
+
+export const useGetClientDetails = (id:string | null | undefined):UseQueryResult<any> => {
+  return useQuery({
+    queryKey: [GET_CLIENT_DETAILS_KEY,id],
+    queryFn: ()=> queryClientService.getClientDetails(id),
+    enabled: !!id,
+    ...queryConfig,
+  });
+}
+
+export const usePostClient = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [POST_CLIENT_KEY],
+    mutationFn:queryClientService.postClient,
+
+  });
+}
+export const usePutClient = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [PUT_CLIENT_KEY],
+    mutationFn:queryClientService.putClient,
+
+  });
+}
+
+export const useDeleteClient = () =>{
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [DELETE_CLIENT_KEY],
+    mutationFn:queryClientService.deleteClient,
+  });
+}
+
+export const useGetClientUnitSystemOptions = () => {
+    return useQuery({
+    queryKey: [GET_CLIENT_UNIT_SYSTEM_OPTIONS_KEY],
+    queryFn: ()=> queryClientService.getCLientUnitSystemOptions(),
+    ...queryConfig,
+  });
+}
+export const useGetClientTypeOptions = () => {
+    return useQuery({
+    queryKey: [GET_CLIENT_TYPE_OPTIONS_KEY],
+    queryFn: ()=> queryClientService.getClientTypeOptions(),
+    ...queryConfig,
+  });
+}
+export const useGetClientUnitSystemLabel = () => {
+    return useQuery({
+    queryKey: [GET_CLIENT_UNIT_SYSTEM_LABELS_KEY],
+    queryFn: ()=> queryClientService.getClientUnitSystemLabel(),
+    ...queryConfig,
+  });
+}

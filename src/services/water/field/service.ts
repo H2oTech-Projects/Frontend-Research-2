@@ -14,7 +14,7 @@ export const queryFieldService = {
                 page_no:tableInfo?.page_no,
                 page_size:tableInfo?.page_size,
                 search:tableInfo?.search,
-                sort:tableInfo?.sort,
+                sort_by:tableInfo?.sort,
                 sort_order:tableInfo?.sort_order}
       }).catch((err) => console.log(err));
     return toJson(response?.data);

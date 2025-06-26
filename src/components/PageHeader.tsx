@@ -1,5 +1,6 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Slash } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 
 interface PathType {
@@ -8,11 +9,12 @@ interface PathType {
 }
 
 type PageHeaderProps = {
-    breadcrumbPathList: PathType[];
+    breadcrumbPathList?: PathType[];
     pageHeaderTitle: string;
 };
 
 const PageHeader = ({ breadcrumbPathList, pageHeaderTitle }: PageHeaderProps) => {
+    const navigate = useNavigate();
     return (
         <div className="flex flex-col gap-1">
             <Breadcrumb>
@@ -21,7 +23,7 @@ const PageHeader = ({ breadcrumbPathList, pageHeaderTitle }: PageHeaderProps) =>
                         return (
                             <Fragment key={breadcrumbPath?.menuName}>
                                 <BreadcrumbItem>
-                                    <BreadcrumbLink href={`${breadcrumbPath?.menuPath}`}>{breadcrumbPath?.menuName}</BreadcrumbLink>
+                                    <BreadcrumbLink className="hover:cursor-pointer" onClick={()=>{navigate(breadcrumbPath?.menuPath)}}>{breadcrumbPath?.menuName}</BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator>/</BreadcrumbSeparator>
                             </Fragment>

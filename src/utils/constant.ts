@@ -30,3 +30,30 @@ export const  parcelColumnProperties =  {
     "carryover_af": "number",
     "coords": "str"
   };
+
+export const clientColumnProperties = {
+  "clientAdminAreaName": "str",
+  "clientCountryName": "str",
+  "clientDefaultUnitSystemName": "str",
+  "clientEmail": "str",
+  "clientEstablished": "str", // ISO date as string
+  "clientFax": "str",
+  "clientGeomHa": "number",
+  "clientId": "str",
+  "clientLegalHa": "number",
+  "clientName": "str",
+  "clientPhone": "str",
+  "clientSubadminAreaName": "str",
+  "clientSubadminAreaName2": "str",
+  "clientSubsubadminAreaName": "str",
+  "clientWebsite": "str",
+  "contentTypeId": "number",
+  "id": "number",
+  "locality": "str",
+  "objectId": "number",
+  "poBox": "str",
+  "postalCode": "str",
+  "premise": "str",
+  "street": "str",
+  "subpremise": "str",
+};
