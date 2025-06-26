@@ -1,5 +1,4 @@
-import React from "react";
-import { Polygon, CircleMarker, Popup, Marker } from "react-leaflet";
+import { CircleMarker } from "react-leaflet";
 import L from "leaflet";
 type RtTypes = {
   position: any;
@@ -18,18 +17,17 @@ const Icon = new L.Icon({
 
 const RtPoint = ({ position, children,  handleMouseDown, cancel}: RtTypes) => {
     return (
-      <Marker
-        position={position}
-        //radius={10}  // size of the circle in pixels
-        //pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.5 }}
+      <CircleMarker
+        center={position}
+        radius={10}  // size of the circle in pixels
+        pathOptions={{ color: 'white', fillColor: 'blue', fillOpacity: 1 }}
         eventHandlers={{
           mousedown: handleMouseDown,
           mouseup: cancel,
         }}
-        icon={Icon}
       >
         {children}
-      </Marker>
+      </CircleMarker>
     );
 };
 
