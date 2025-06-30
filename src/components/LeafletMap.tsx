@@ -46,9 +46,6 @@ const sld =`<StyledLayerDescriptor version="1.0.0">
               <ColorMapEntry quantity="30" label="30" color="#86c456"/>
               <ColorMapEntry quantity="40" label="40" color="#44b26b"/>
               <ColorMapEntry quantity="50" label="50" color="#4dc2a3"/>
-              <ColorMapEntry quantity="60" label="60" color="#50bdc1"/>
-              <ColorMapEntry quantity="70" label="70" color="#3b788f"/>
-              <ColorMapEntry quantity="80" label="80" color="#2a3f65"/>
             </ColorMap>
           </RasterSymbolizer>
         </Rule>
@@ -139,7 +136,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       return (
         <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-2 rounded-[8px] bg-black text-slate-50">
         <div  className="flex flex-col">
-          <div className="flex flex-row pb-1">
+          {/* <div className="flex flex-row pb-1">
             <span style={{position: 'absolute',display: 'block',left: '35px'}}>80</span>
             <i style={{
               background: "#2a3f65",
@@ -162,7 +159,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
               height: "17px",
               width: "17px",
             }}></i>
-          </div>
+          </div> */}
           <div className="flex flex-row pb-1">
             <span style={{position: 'absolute',display: 'block',left: '35px'}}>50</span>
             <i style={{
@@ -216,7 +213,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <p className="[writing-mode:vertical-rl] text-center">Unit</p>
+          <p className="[writing-mode:vertical-rl] text-center">Legends Cumulative ET (IN)</p>
         </div>
       </div>
       )
@@ -281,7 +278,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
               }}
             />
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="Evapotranispiration of Precipitation (ETPR)" checked={defaultLayer=='Evapotranispiration of Precipitation (ETPR)'}>
+          <LayersControl.Overlay name="Evapotranspiration of Precipitation (ETPR)" checked={defaultLayer=='Evapotranspiration of Precipitation (ETPR)'}>
             <WMSTileLayer
               url={`${geoserverUrl}`}
               opacity= {opacity}
@@ -292,7 +289,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
                 //...( { sld_body: sld } as Record<string, any> ),
               }}
               eventHandlers={{
-                add: () => setDefaultLayer("Evapotranispiration of Precipitation (ETPR)"),
+                add: () => setDefaultLayer("Evapotranspiration of Precipitation (ETPR)"),
                 remove: () => console.log(''),
               }}
             />
