@@ -3,3 +3,54 @@
     height: 100vh; */
     overflow: hidden;
 }
+
+/* .popup-classname {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: none;         
+  -ms-overflow-style: none;       
+  background-color: white;         
+  border-radius: 8px;
+  padding: 10px;
+  color: black;
+}
+
+.popup-classname::-webkit-scrollbar {
+  display: none;
+}
+
+html.dark .popup-classname {
+  background-color: #1e293b;
+  color: #f1f5f9;            
+} */
+
+.leaflet-popup-content-wrapper {
+  background-color: #16599a !important; /* Make the popup background transparent */
+  border: none; 
+                  /* Remove the border */
+}
+
+html.dark .leaflet-popup-content-wrapper {
+  background-color: #1e293b !important; /* Dark mode background */
+  color: #f1f5f9; /* Dark mode text color */
+}
+
+.leaflet-popup-content {
+  background-color:#16599a !important; /* Set a background color for the popup content */
+  max-height: 400px; /* Set a maximum height for the popup content */
+  overflow-y: hidden !important; /* Enable vertical scrolling if content exceeds max height */
+  scrollbar-width: thin !important; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+html.dark .leaflet-popup-content {
+  scrollbar-color: #4b5563 transparent; /* Dark mode scrollbar color */
+  background-color: #1e293b !important;
+}
+.leaflet-popup-tip {
+  background-color: #16599a !important; /* Set a background color for the popup tip */
+}
+
+html.dark .leaflet-popup-tip {
+  background-color: #1e293b !important; /* Dark mode popup tip color */
+}

@@ -118,7 +118,7 @@ const RTLineChart = ({data}: ChartParameters) => {
       },
     ];
     return (
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" >
         <LineChart
           data={data}
           margin={{
@@ -129,17 +129,17 @@ const RTLineChart = ({data}: ChartParameters) => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" angle={-45} textAnchor="end"/>
-          <YAxis />
+          <XAxis dataKey="name" angle={-40}  textAnchor="end" tick={{ fill: 'white'}} />
+          <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft',style: { fill: 'white' } }} tick={{ fill: 'white' }}/>
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="acc_2022"  textAnchor="end" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="acc_2023"  textAnchor="end" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="acc_2024"  textAnchor="end" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="acc_2022"  textAnchor="end" stroke="#82ca9d" name="2022 Allocation" />
+          <Line type="monotone" dataKey="acc_2023"  textAnchor="end" stroke="#82ca9d" name="2023 Allocation" />
+          <Line type="monotone" dataKey="acc_2024"  textAnchor="end" stroke="#82ca9d" name="2024 Allocation" />
 
-          <Line type="monotone" dataKey="total_allocation_2023"  textAnchor="end" stroke="red" name="2023 Allocation"/>
-          <Line type="monotone" dataKey="total_allocation_2024"  textAnchor="end" stroke="blue" label="2024 Allocation"/>
-          <Line type="monotone" dataKey="total_allocation_2022"  textAnchor="end" stroke="yellow" label="2022 Allocation"/>
+          <Line type="monotone" dataKey="total_allocation_2023"  textAnchor="end" stroke="red" name="2023 Total Allocation "/>
+          <Line type="monotone" dataKey="total_allocation_2024"  textAnchor="end" stroke="blue" name="2024 Total Allocation"/>
+          <Line type="monotone" dataKey="total_allocation_2022"  textAnchor="end" stroke="black" name="2022 Total Allocation"/>
         </LineChart>
       </ResponsiveContainer>
   );

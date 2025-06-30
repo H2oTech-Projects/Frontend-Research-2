@@ -19,7 +19,7 @@ import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { usePostLogoutUser } from "@/services/registration";
 import { showErrorToast } from "@/utils/tools";
-import TableLineChartInfo from '@/utils/TableLineChartInfo';
+import TableLineChartInfo from '@/utils/tableLineChartInfo';
 import { createRoot } from 'react-dom/client';
 // const popupDiv = document.createElement('div');
 // popupDiv.id = 'chart-popup';
@@ -111,10 +111,10 @@ const Map = () => {
     // @ts-ignore
     //layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
     const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.apn;
-    popupDiv.style.width = '100%';
-    popupDiv.style.height = '90%';
-    layer.bindPopup(popupDiv);
+    layer.bindPopup(popupDiv,{maxHeight:600,});
 
     layer.on({
       mouseover: function (e) {
@@ -123,8 +123,8 @@ const Map = () => {
             weight: 4,
             //color: "#800080"
         });
-        const root = createRoot(popupDiv);
-        root.render(<TableLineChartInfo data={{'tableInfo': buildPopupMessage(parcels[auxLayer.feature.properties.apn]), 'chartInfo': []}}/>);
+      
+        createRoot(popupDiv).render(<TableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.apn], 'chartInfo': []}}/>);
         //showInfo('Parcel Id', auxLayer.feature.properties.apn);
       },
       mouseout: function (e) {
@@ -214,7 +214,7 @@ const Map = () => {
           </div>
       )}
 
-      <LeafletMap position={position} zoom={10} configurations={{'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
+      <LeafletMap position={position} zoom={11} configurations={{'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
         {/* <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields} color={"#16599a"}/>
         <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"red"}/> */}
         <RtGeoJson key={'50003'} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"}/>
