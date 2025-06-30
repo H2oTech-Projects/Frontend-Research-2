@@ -4,7 +4,7 @@
   opacity: .9;
 }
 .leaflet-popup-content {
-  height: 200px;
+  height: 250px;
   overflow-y: scroll;
   background: #16599a;
   opacity: .9;

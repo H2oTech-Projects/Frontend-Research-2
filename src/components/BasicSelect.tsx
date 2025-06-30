@@ -31,7 +31,7 @@ export default BasicSelect
 
 export const GeneralSelect = ({ itemList, label, Value ,setValue}: BasicSelectPropsType) => {
   return (
-    <div className="flex flex-col gap-1  space-y-2 w-[200px] h-[28px] text-center">
+    <div className="flex flex-col gap-1  space-y-2 w-[200px] h-[28px] text-center border-solid">
       <select className="h-full rounded-[.5vw] text-slate-900" value={Value} onChange={(e) => setValue(e.target.value)}>
         {itemList.map((item:any) => (
           <option key={item.value} value={item.value} className="text-center">

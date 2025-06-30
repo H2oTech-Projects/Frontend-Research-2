@@ -19,7 +19,12 @@ import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { usePostLogoutUser } from "@/services/registration";
 import { showErrorToast } from "@/utils/tools";
-
+import TableLineChartInfo from '@/utils/TableLineChartInfo';
+import { createRoot } from 'react-dom/client';
+// const popupDiv = document.createElement('div');
+// popupDiv.id = 'chart-popup';
+// popupDiv.style.width = '500px';
+// popupDiv.style.height = '500px';
 const Map = () => {
     const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
     const refreshToken = useSelector((state: any) => state.auth.refresh);
@@ -65,6 +70,7 @@ const Map = () => {
           setIsModalOpen(false);
         }
       };
+
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
         document.removeEventListener("mousedown", handleClickOutside);
@@ -94,8 +100,22 @@ const Map = () => {
   }
 
   const maderaLayerEvents = (feature: Feature, layer: L.Layer) => {
+    // const popupOptions = {
+    //   minWidth: 500,
+    //   maxWidth: 500,
+    //   className: "popup-classname"
+    // };
+    // const popupContentNode = <RTLineChart />;
+    // const popupContentHtml = ReactDOMServer.renderToString(popupContentNode);
+    // console.log(popupContentHtml)
     // @ts-ignore
-    layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
+    //layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
+    const popupDiv = document.createElement('div');
+    popupDiv.id = feature.properties?.apn;
+    popupDiv.style.width = '100%';
+    popupDiv.style.height = '90%';
+    layer.bindPopup(popupDiv);
+
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
@@ -103,7 +123,9 @@ const Map = () => {
             weight: 4,
             //color: "#800080"
         });
-        showInfo('Parcel Id', auxLayer.feature.properties.apn);
+        const root = createRoot(popupDiv);
+        root.render(<TableLineChartInfo data={{'tableInfo': buildPopupMessage(parcels[auxLayer.feature.properties.apn]), 'chartInfo': []}}/>);
+        //showInfo('Parcel Id', auxLayer.feature.properties.apn);
       },
       mouseout: function (e) {
         const auxLayer = e.target;

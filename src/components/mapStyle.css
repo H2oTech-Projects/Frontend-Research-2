@@ -1,12 +1,13 @@
 
 .leaflet-popup-content-wrapper {
-  background: #16599a;
+  background: white;
   opacity: .9;
 }
 .leaflet-popup-content {
-  height: 200px;
+  height: 400px;
+  width: 700px !important;
   overflow-y: scroll;
-  background: #16599a;
+  background: white;
   opacity: .9;
   color: white;
 }
