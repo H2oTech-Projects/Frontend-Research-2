@@ -13,16 +13,16 @@ import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap';
 
 const ConveyancesSchema = z.object({
   client: z.string().min(1, "Client is required"),
-  canal_id: z.string()
-    .length(3, "Canal ID must be exactly 3 characters")
-    .regex(/^[A-Za-z0-9]+$/, "Canal ID must be alphanumeric"),
-  canal_name: z.string().min(1, "Canal name is required"),
-  canal_desc: z.string().optional(),
-  canal_parent: z.string().optional(),
-  canal_seepage_cms: z.coerce.number({
+  convey_id: z.string()
+    .length(3, "Convey ID must be exactly 3 characters")
+    .regex(/^[A-Za-z0-9]+$/, "Convey ID must be alphanumeric"),
+  convey_name: z.string().min(1, "Convey name is required"),
+  convey_desc: z.string().optional(),
+  convey_parent: z.string().optional(),
+  convey_seepage_cms: z.coerce.number({
     required_error: "Seepage rate must be a number"
   }).nonnegative("Seepage must be non-negative").optional(),
-  canalCoordinates: z.array(z.array(
+  conveyCoordinates: z.array(z.array(
     z.tuple([
       z.coerce.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90"),
       z.coerce.number().min(-180, "Longitude must be between -180 and 180").max(180, "Longitude must be between -180 and 180"),
@@ -30,27 +30,27 @@ const ConveyancesSchema = z.object({
   )).min(1, "At least one coordinate is required"),
 });
 
-export type CanalFormType = z.infer<typeof ConveyancesSchema>;
+export type ConveyFormType = z.infer<typeof ConveyancesSchema>;
 
 const ConveyancesForm = () => {
   const location = useLocation();
     const { id } = useParams();
-  const form = useForm<CanalFormType>({
+  const form = useForm<ConveyFormType>({
     resolver: zodResolver(ConveyancesSchema),
     defaultValues: {
       client: "",
-      canal_id: "",
-      canal_name: "",
-      canal_desc: "",
-      canal_parent: "",
-      canal_seepage_cms: undefined,
+      convey_id: "",
+      convey_name: "",
+      convey_desc: "",
+      convey_parent: "",
+      convey_seepage_cms: undefined,
     },
   });
 
-  const onSubmit = (data: CanalFormType) => {
+  const onSubmit = (data: ConveyFormType) => {
     console.log("Form Data:", data);
   };
-  //const polyline = form.watch("canalCoordinates") || [];
+  //const polyline = form.watch("ConveyCoordinates") || [];
   const featureGroupPolygonRef = React.useRef<any>(null);
   // const { fields, append, remove } = useFieldArray({
   //   control: form.control,
@@ -60,7 +60,7 @@ const ConveyancesForm = () => {
   return (
     <div className='h-w-full px-4 pt-2'>
   <PageHeader
-        pageHeaderTitle={`${!id  ? 'Add' : (location.pathname.includes("editCanal") ? "Edit" : "View")} Canal`}
+        pageHeaderTitle={`${!id  ? 'Add' : (location.pathname.includes("editConvey") ? "Edit" : "View")} Convey`}
         breadcrumbPathList={[
           { menuName: "Management", menuPath: "" },
           { menuName: "Clients", menuPath: "/clients" }
@@ -73,16 +73,16 @@ const ConveyancesForm = () => {
             <div className='flex flex-col gap-2'>
              <FormInput
               control={form.control}
-              name='canal_id'
-              label='Canal ID'
-              placeholder='Enter Canal ID (e.g., ABC)'
+              name='convey_id'
+              label='Convey ID'
+              placeholder='Enter Convey ID (e.g., ABC)'
               type='text'
             />
             <FormInput
               control={form.control}
-              name='canal_name'
-              label='Canal Name'
-              placeholder='Enter Canal Name'
+              name='convey_name'
+              label='Convey Name'
+              placeholder='Enter Convey Name'
               type='text'
             />
             <FormComboBox
@@ -99,28 +99,28 @@ const ConveyancesForm = () => {
             />
             <FormInput
               control={form.control}
-              name='canal_parent'
-              label='Parent Canal ID'
-              placeholder='Enter Parent Canal ID (if any)'
+              name='convey_parent'
+              label='Parent Convey ID'
+              placeholder='Enter Parent Convey ID (if any)'
               type='text'
             />
             <FormInput
               control={form.control}
-              name='canal_seepage_cms'
+              name='convey_seepage_cms'
               label='Seepage (cms)'
               placeholder='Enter Seepage in cms'
               type='number'
             />
             <FormTextbox
               control={form.control}
-              name='canal_desc'
-              label='Canal Description'
-              placeholder='Enter Canal Description'
+              name='convey_desc'
+              label='Convey Description'
+              placeholder='Enter Convey Description'
             />
             </div>
              <FormCoordinatesMap
                 form = {form}
-                name="canalCoordinates" label="Canal Coordinates"
+                name="conveyCoordinates" label="Convey Coordinates"
                 type="polyline"
                 refLayer={featureGroupPolygonRef}
                 layerCounts='multiple'
