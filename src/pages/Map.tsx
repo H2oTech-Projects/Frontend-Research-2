@@ -49,7 +49,7 @@ const Map = () => {
     const showInfo = (label: String, Id: String) => {
       var popup = $("<div></div>", {
         id: "popup-" + Id,
-        class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+        class: "absolute top-14 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50",
       });
       // Insert a headline into that popup
       var hed = $("<div></div>", {
@@ -125,7 +125,7 @@ const Map = () => {
         });
       
         createRoot(popupDiv).render(<TableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.apn], 'chartInfo': []}}/>);
-        //showInfo('Parcel Id', auxLayer.feature.properties.apn);
+        showInfo('Parcel Id', auxLayer.feature.properties.apn);
       },
       mouseout: function (e) {
         const auxLayer = e.target;
@@ -167,6 +167,21 @@ const Map = () => {
   }
   return (
     <div id="map" className="relative flex h-screen w-full">
+       <div className="absolute left-2 top-0 z-[800] flex h-[2rem] items-center gap-x-3 justify-center text-white bg-royalBlue mt-2 rounded-lg px-2 bg-opacity-85"> 
+                        <Icon.Search
+                            size={20}
+                            className="text-slate-300"
+                       
+                        />
+                     <input
+                            type="text"
+                            name="search"
+                            id="search"
+                            placeholder="Search..."
+                            className="w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                            autoComplete="off"
+                        />
+                    </div>
       <div className="absolute right-4 top-0 z-[800] flex h-[3.75rem] items-center gap-x-3">
         <Button
             variant={"default"}

@@ -1,3 +1,5 @@
+import { url } from "inspector";
+
 const Map = {
   url: "/map",
   name: "Map",
@@ -177,6 +179,26 @@ const EditConveyance = {
   name: "EditConveyance",
 };
 
+const CustomerField = {
+  url: "/customer-field",
+  name: "CustomerField",
+}
+
+const Region = {
+  url: "/region",
+  name: "Region",
+}
+
+const SubRegion = {
+  url: "/sub-region",
+  name: "Sub-Region",
+};
+
+const FieldParcel = {
+  url: "/field-parcel",
+  name: "Field-Parcel",
+};
+
 export {
   Map,
   Insight,
@@ -215,4 +237,8 @@ export {
   Conveyances,
   AddConveyance,
   EditConveyance,
+  CustomerField,
+  Region,
+  SubRegion,  
+  FieldParcel
 };

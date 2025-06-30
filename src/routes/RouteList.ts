@@ -21,7 +21,7 @@ export const RouteList = [
     path: routeUrl.Field?.url,
     name: routeUrl.Field?.name,
     Component: lazy(
-      async () => await import("./../pages/management/water/field/Field")
+      async () => await import("../pages/management/land/field/Field.tsx")
     ),
   },
   {
@@ -35,14 +35,14 @@ export const RouteList = [
     path: routeUrl.AddField?.url,
     name: routeUrl.AddField?.name,
     Component: lazy(
-      async () => await import("./../pages/management/water/field/AddField")
+      async () => await import("../pages/management/land/field/AddField.tsx")
     ),
   },
   {
     path: routeUrl.EditField?.url,
     name: routeUrl.EditField?.name,
     Component: lazy(
-      async () => await import("./../pages/management/water/field/EditField")
+      async () => await import("../pages/management/land/field/EditField.tsx")
     ),
   },
   {
@@ -108,18 +108,18 @@ export const RouteList = [
   {
     path: routeUrl.Crops?.url,
     name: routeUrl.Crops?.name,
-    Component: lazy(async () => await import("./../pages/management/Crops")),
+    Component: lazy(async () => await import("../pages/management/crops/Crops.tsx")),
   },
   {
     path: routeUrl.Billings?.url,
     name: routeUrl.Billings?.name,
-    Component: lazy(async () => await import("./../pages/management/Billings")),
+    Component: lazy(async () => await import("../pages/management/billing/Billings.tsx")),
   },
   {
     path: routeUrl.Customers?.url,
     name: routeUrl.Customers?.name,
     Component: lazy(
-      async () => await import("./../pages/management/Customers")
+      async () => await import("../pages/management/customer/Customers.tsx")
     ),
   },
   {
@@ -224,5 +224,26 @@ export const RouteList = [
     name: routeUrl?.EditConveyance?.name, 
     Component: lazy(async () => import("./../pages/management/water/conveyances/ConveyanceForm.tsx"))
   },
+  {
+    path: routeUrl?.CustomerField?.url,
+    name: routeUrl?.CustomerField?.name,  
+    Component: lazy(async () => import("./../pages/management/customer/customer-field.tsx"))
+  },
+  {
+    path: routeUrl?.Region?.url,
+    name: routeUrl?.Region?.name,
+    Component: lazy(async () => import("./../pages/management/land/region/Region.tsx"))
+  },
+  {
+    path: routeUrl?.SubRegion?.url,
+    name: routeUrl?.SubRegion?.name,
+    Component: lazy(async () => import("./../pages/management/land/subRegion/subRegion.tsx"))
+  },
+  {
+    path: routeUrl?.FieldParcel?.url,
+    name: routeUrl?.FieldParcel?.name,
+    Component: lazy(async () => import("./../pages/management/land/field-parcel/index.tsx"))
+  },   
+
 
 ];
