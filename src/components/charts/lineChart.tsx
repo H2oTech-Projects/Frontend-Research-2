@@ -158,9 +158,10 @@ const RTLineChart = ({ data, way }: ChartParameters) => {
         <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft', style: { fill: 'white' } }} tick={{ fill: 'white' }} />
         <Tooltip
           labelFormatter={(label) => {
-            return <div className='text-red-500'>{`${label} ${way}`}</div>; // returns "June 2024"
+            return <div className='text-black font-bold underline text-xl'>{`${label} ${way}`}</div>; 
           }}
           formatter={(value: any, name: any) => [`${value}`, name]}
+          contentStyle={{ border: '1px solid #ccc', borderRadius: '8px' }}
         />
         <Legend wrapperStyle={{ paddingTop: 16 }} />
         <Line type="monotone" dataKey={`acc_${way}`} textAnchor="end" stroke="#0096FF" name={`${way} ETAW`} strokeWidth={2}/>
