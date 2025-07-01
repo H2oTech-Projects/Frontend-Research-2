@@ -382,7 +382,7 @@ const Insight = () => {
       <div className="flex flex-col px-3 py-2 ">
         <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
         <div className="flex flex-col items-start  mt-2 gap-2 dark:text-slate-50 ">
-          <RtSelect selectedValue={selectedEmailValue as string} dropdownList={accountList?.data ?? []} label="Account" setSelectedValue={setSelectedEmailValue} />
+          <RtSelect selectedValue={selectedEmailValue as string} dropdownList={accountList?.data ?? []} label="Account" setSelectedValue={()=>console.log("test")} />
           <RtSelect selectedValue={selectedReportTypeValue} dropdownList={ReportTypeList} label="Report Type" setSelectedValue={setSelectedReportTypeValue} showSearch={false} />
           <RtSelect selectedValue={selectedYearValue} dropdownList={yearList} label="Year" setSelectedValue={setSelectedYearValue} showSearch={false} />
         </div>

@@ -1,6 +1,7 @@
 import  { useState } from 'react'
 import RTLineChart from '../components/charts/lineChart';
 import BasicSelect, { GeneralSelect } from "@/components/BasicSelect";
+import { Download } from 'lucide-react';
 interface ChartParameters {
   data?: any;
 }
@@ -179,7 +180,7 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
   return (
     <div className='p-1 h-full w-full flex gap-2'>
       <div className='flex w-2/5 justify-end flex-col gap-2 text-black dark:text-white '>
-        <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
+     <div className='flex justify-between items-center'>   <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
           [{
             value: "2024",
             label: "2024"
@@ -193,9 +194,11 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
             label: "2022"
           }]
         } />
+         <Download className="inline-block items-baseline ml-2 cursor-pointer" size={24} />
+</div>
         <div className='flex flex-grow flex-col gap-1 pl-1 text-white'>
-            <div>Parcel ID: XXX-XXX-XXX-XXX</div>
-            <div>Account ID: MAD_MA_XXXX</div>
+            <div>Parcel ID: XXX-XXX-XXX</div>
+            <div>Account ID: MAD_MA_XXXXX</div>
             <div>Farm Unit Zone: {data?.tableInfo?.zone_name}</div>
             <div>Primary Crop: Pistachios</div>
             <div>2024 Allocation (AF): 173.4</div>
