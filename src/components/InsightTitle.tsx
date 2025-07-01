@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Info } from "lucide-react"
+import { Download, Info } from "lucide-react"
 import { useState } from "react";
 
 const InsightTitle = ({ title, note }: { title: string, note: string }) => {
@@ -24,6 +24,7 @@ const InsightTitle = ({ title, note }: { title: string, note: string }) => {
   return (
     <div className="text-black dark:text-white  font-semibold mt-3 ">
       {title}
+      <Download className="inline-block items-baseline ml-2 cursor-pointer" size={24} />
       <TooltipProvider>
         <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
           <TooltipTrigger onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}> <Info className="inline-block items-baseline ml-2" size={24} /></TooltipTrigger>
