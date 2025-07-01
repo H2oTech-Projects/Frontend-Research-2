@@ -163,11 +163,11 @@ const RTLineChart = ({ data, way }: ChartParameters) => {
           formatter={(value: any, name: any) => [`${value}`, name]}
         />
         <Legend wrapperStyle={{ paddingTop: 16 }} />
-        <Line type="monotone" dataKey={`acc_${way}`} textAnchor="end" stroke="#0096FF" name={`${way} ETAW`} />
-        <Line type="monotone" dataKey="acc_2022" textAnchor="end" strokeDasharray="8 4 2 4" stroke="gray" name="Low (2022)" />
-        <Line type="monotone" dataKey="acc_2023" textAnchor="end" strokeDasharray="8 8" stroke="gray" name="High (2023)" />
-        <Line type="monotone" dataKey="allocation_2024" strokeDasharray="5 5" textAnchor="end" stroke="orange" name="2024 Allocation" />
-        <Line type="monotone" dataKey="total_allocation" textAnchor="end" stroke="red" name="Total Allocation" />
+        <Line type="monotone" dataKey={`acc_${way}`} textAnchor="end" stroke="#0096FF" name={`${way} ETAW`} strokeWidth={2}/>
+        <Line type="monotone" dataKey="acc_2022" textAnchor="end" strokeDasharray="8 4 2 4" stroke="gray" name="Low (2022)" strokeWidth={2}/>
+        <Line type="monotone" dataKey="acc_2023" textAnchor="end" strokeDasharray="8 8" stroke="gray" name="High (2023)" strokeWidth={2}/>
+        <Line type="monotone" dataKey="allocation_2024" strokeDasharray="5 5" textAnchor="end" stroke="orange" name="2024 Allocation" strokeWidth={2}/>
+        <Line type="monotone" dataKey="total_allocation" textAnchor="end" stroke="red" name="Total Allocation" strokeWidth={2}/>
       </LineChart>
     </ResponsiveContainer>
   );
