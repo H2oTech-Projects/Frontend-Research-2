@@ -51,9 +51,9 @@ const menuLinks = [
         Children: [
           { label: "Fields", path: routeUrl?.Field?.url, name: routeUrl?.Field?.name },
           // { label: "Field-MsmtPoint", path: routeUrl?.FieldMsmtPoint?.url, name: routeUrl?.FieldMsmtPoint?.name },
-          { label: "Parcel", path: routeUrl?.FieldParcel?.url, name: routeUrl?.FieldParcel?.name },
-          { label: "Region", path: routeUrl?.Region?.url, name: routeUrl?.Region?.name },
-          { label: "Subregion", path: routeUrl?.SubRegion?.url, name: routeUrl?.SubRegion?.name },
+          { label: "Parcels", path: routeUrl?.FieldParcel?.url, name: routeUrl?.FieldParcel?.name },
+          { label: "Regions", path: routeUrl?.Region?.url, name: routeUrl?.Region?.name },
+          { label: "Subregions", path: routeUrl?.SubRegion?.url, name: routeUrl?.SubRegion?.name },
         ],
       },
       {
@@ -64,7 +64,7 @@ const menuLinks = [
         Children: [
           { label: "Measurement Points", path: routeUrl?.MeasurementPoint?.url, name: routeUrl?.MeasurementPoint?.name },
           // { label: "Fields", path: routeUrl?.Field?.url, name: routeUrl?.Field?.name },
-          // { label: "Field-MsmtPoint", path: routeUrl?.FieldMsmtPoint?.url, name: routeUrl?.FieldMsmtPoint?.name },
+          { label: "Msmt Point-Fields", path: routeUrl?.FieldMsmtPoint?.url, name: routeUrl?.FieldMsmtPoint?.name },
           { label: "Conveyances", path: routeUrl?.Conveyances?.url, name: routeUrl?.Conveyances?.name },
           // { label: "Districts", path: routeUrl?.District?.url, name: routeUrl?.District?.name },
         ],
