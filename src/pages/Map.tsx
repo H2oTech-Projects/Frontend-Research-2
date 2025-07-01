@@ -115,7 +115,7 @@ const Map = () => {
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.apn;
-    layer.bindPopup(popupDiv,{maxHeight:600,});
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700});
 
     layer.on({
       mouseover: function (e) {

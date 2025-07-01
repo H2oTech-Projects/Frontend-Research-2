@@ -134,7 +134,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
         )
       }
       return (
-        <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-2 rounded-[8px] bg-black text-slate-50">
+        <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-1 rounded-[8px] bg-black text-slate-50">
         <div  className="flex flex-col">
           {/* <div className="flex flex-row pb-1">
             <span style={{position: 'absolute',display: 'block',left: '35px'}}>80</span>
@@ -213,7 +213,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <p className="[writing-mode:vertical-rl] text-center">Legends Cumulative ET (IN)</p>
+          <p className="[writing-mode:vertical-rl] text-center">Cumulative ET (IN)</p>
         </div>
       </div>
       )

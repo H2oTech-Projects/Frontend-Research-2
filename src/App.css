@@ -7,9 +7,9 @@
 /* .popup-classname {
   max-height: 200px;
   overflow-y: auto;
-  scrollbar-width: none;         
-  -ms-overflow-style: none;       
-  background-color: white;         
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background-color: white;
   border-radius: 8px;
   padding: 10px;
   color: black;
@@ -21,12 +21,12 @@
 
 html.dark .popup-classname {
   background-color: #1e293b;
-  color: #f1f5f9;            
+  color: #f1f5f9;
 } */
 
 .leaflet-popup-content-wrapper {
   background-color: #16599a !important; /* Make the popup background transparent */
-  border: none; 
+  border: none;
                   /* Remove the border */
 }
 
@@ -37,7 +37,7 @@ html.dark .leaflet-popup-content-wrapper {
 
 .leaflet-popup-content {
   background-color:#16599a !important; /* Set a background color for the popup content */
-  max-height: 400px; /* Set a maximum height for the popup content */
+  max-height: 550px; /* Set a maximum height for the popup content */
   overflow-y: hidden !important; /* Enable vertical scrolling if content exceeds max height */
   scrollbar-width: thin !important; /* For Firefox */
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
