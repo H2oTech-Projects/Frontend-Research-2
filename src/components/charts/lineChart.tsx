@@ -7,164 +7,169 @@ interface ChartParameters {
   way?: string;
 }
 
-const RTLineChart = ({data, way}: ChartParameters) => {
-    data = [
-      {
-        name: 'Jan',
-        acc_2024: 0.0,
-        acc_2023: 0.0,
-        acc_2022: 0.0,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Feb',
-        acc_2024: 1.6,
-        acc_2023: 1.6,
-        acc_2022: 1.3,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Mar',
-        acc_2024: 5.8,
-        acc_2023: 6,
-        acc_2022: 5.4,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Apr',
-        acc_2024: 19.0,
-        acc_2023: 19.9,
-        acc_2022: 16.3,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'May',
-        acc_2024: 43.6,
-        acc_2023: 47.8,
-        acc_2022: 40.3,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Jun',
-        acc_2024: 77.7,
-        acc_2023: 82.6,
-        acc_2022: 71.9,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Jul',
-        acc_2024: 113.0,
-        acc_2023: 121.7,
-        acc_2022: 106.2,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Aug',
-        acc_2024: 142.7,
-        acc_2023: 153.7,
-        acc_2022: 131.9,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Sep',
-        acc_2024: 162.3,
-        acc_2023: 175.2,
-        acc_2022: 149.7,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Oct',
-        acc_2024: 174.1,
-        acc_2023: 188.3,
-        acc_2022: 159.9,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Nov',
-        acc_2024: 179.9,
-        acc_2023: 194.8,
-        acc_2022: 165.4,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-      {
-        name: 'Dec',
-        acc_2024: 182.5,
-        acc_2023: 197.7,
-        acc_2022: 167.6,
-        total_allocation_2024: 197.7,
-        total_allocation_2023: 182.5,
-        total_allocation_2022: 167.6,
-        total_allocation: 206.2,
-        allocation_2024: 173.4
-      },
-    ];
-    return (
-      <ResponsiveContainer width="100%" height="100%" >
-        <LineChart
-          data={data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
+const RTLineChart = ({ data, way }: ChartParameters) => {
+  data = [
+    {
+      name: 'Jan',
+      acc_2024: 0.0,
+      acc_2023: 0.0,
+      acc_2022: 0.0,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Feb',
+      acc_2024: 1.6,
+      acc_2023: 1.6,
+      acc_2022: 1.3,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Mar',
+      acc_2024: 5.8,
+      acc_2023: 6,
+      acc_2022: 5.4,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Apr',
+      acc_2024: 19.0,
+      acc_2023: 19.9,
+      acc_2022: 16.3,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'May',
+      acc_2024: 43.6,
+      acc_2023: 47.8,
+      acc_2022: 40.3,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Jun',
+      acc_2024: 77.7,
+      acc_2023: 82.6,
+      acc_2022: 71.9,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Jul',
+      acc_2024: 113.0,
+      acc_2023: 121.7,
+      acc_2022: 106.2,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Aug',
+      acc_2024: 142.7,
+      acc_2023: 153.7,
+      acc_2022: 131.9,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Sep',
+      acc_2024: 162.3,
+      acc_2023: 175.2,
+      acc_2022: 149.7,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Oct',
+      acc_2024: 174.1,
+      acc_2023: 188.3,
+      acc_2022: 159.9,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Nov',
+      acc_2024: 179.9,
+      acc_2023: 194.8,
+      acc_2022: 165.4,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Dec',
+      acc_2024: 182.5,
+      acc_2023: 197.7,
+      acc_2022: 167.6,
+      total_allocation_2024: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+  ];
+  return (
+    <ResponsiveContainer width="100%" height="100%" >
+      <LineChart
+        data={data}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" angle={-40} textAnchor="end" tick={{ fill: 'white' }} interval={0} />
+        <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft', style: { fill: 'white' } }} tick={{ fill: 'white' }} />
+        <Tooltip
+          labelFormatter={(label) => {
+            return <div className='text-red-500'>{`${label} ${way}`}</div>; // returns "June 2024"
           }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" angle={-40}  textAnchor="end" tick={{ fill: 'white'}} interval={0} />
-          <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft',style: { fill: 'white' } }} tick={{ fill: 'white' }}/>
-          <Tooltip />
-          <Legend wrapperStyle={{ paddingTop: 16 }}  />
-          <Line type="monotone" dataKey={`acc_${way}`}  textAnchor="end" stroke="#0096FF" name={`${way} ETAW` } />
-          <Line type="monotone" dataKey="acc_2022"  textAnchor="end" strokeDasharray="8 4 2 4"  stroke="gray" name="Low (2022)" />
-          <Line type="monotone" dataKey="acc_2023"  textAnchor="end" strokeDasharray="8 8"  stroke="gray" name="High (2023)" />
-          <Line type="monotone" dataKey="allocation_2024"  strokeDasharray="5 5"  textAnchor="end" stroke="orange" name="2024 Allocation"/>
-          <Line type="monotone" dataKey="total_allocation"  textAnchor="end" stroke="red" name="Total Allocation"/>
-        </LineChart>
-      </ResponsiveContainer>
+          formatter={(value: any, name: any) => [`${value}`, name]}
+        />
+        <Legend wrapperStyle={{ paddingTop: 16 }} />
+        <Line type="monotone" dataKey={`acc_${way}`} textAnchor="end" stroke="#0096FF" name={`${way} ETAW`} />
+        <Line type="monotone" dataKey="acc_2022" textAnchor="end" strokeDasharray="8 4 2 4" stroke="gray" name="Low (2022)" />
+        <Line type="monotone" dataKey="acc_2023" textAnchor="end" strokeDasharray="8 8" stroke="gray" name="High (2023)" />
+        <Line type="monotone" dataKey="allocation_2024" strokeDasharray="5 5" textAnchor="end" stroke="orange" name="2024 Allocation" />
+        <Line type="monotone" dataKey="total_allocation" textAnchor="end" stroke="red" name="Total Allocation" />
+      </LineChart>
+    </ResponsiveContainer>
   );
 };
 
