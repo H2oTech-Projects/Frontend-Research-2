@@ -14,7 +14,7 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
         <thead>
           <tr >
             <th>Year</th>
-            <th>Month</th>
+            <th className="pl-[2px]">Month</th>
             <th>ETAW (AF)</th>
             <th>Cumulative ETAW (AF)</th>
             <th>Remaining (AF)</th>
@@ -178,7 +178,7 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
   }
   return (
     <div className='p-1 h-full w-full flex gap-2'>
-      <div className='flex w-1/3 justify-end flex-col gap-2 text-black dark:text-white '>
+      <div className='flex w-2/5 justify-end flex-col gap-2 text-black dark:text-white '>
         <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
           [{
             value: "2024",
@@ -210,7 +210,7 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
 
     </div>
       </div>
-      <div className='flex w-2/3 h-full text-white'>
+      <div className='flex w-3/5 h-full text-white'>
         <RTLineChart way={way}/>
       </div>
     </div>

@@ -184,7 +184,7 @@ const Map = () => {
             autoComplete="off"
           />
         </div>
-        <div className="flex items-center gap-x-3" > 
+        <div className="flex items-center gap-x-3" >
         <Button
           variant={"default"}
           className="size-8"
