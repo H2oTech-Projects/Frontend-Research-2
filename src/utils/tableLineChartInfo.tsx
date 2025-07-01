@@ -243,11 +243,11 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
     return (
       <table className="dataframe text-white  border-separate border-spacing-x-3 -ml-2">
         <thead>
-          <tr>
+           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>Monthly Value</th>
-            <th className='text-right'>Cumulative Value</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
           </tr>
