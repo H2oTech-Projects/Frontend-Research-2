@@ -154,10 +154,10 @@ const RTLineChart = ({data, way}: ChartParameters) => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" angle={-40}  textAnchor="end" tick={{ fill: 'white'}} />
+          <XAxis dataKey="name" angle={-40}  textAnchor="end" tick={{ fill: 'white'}} interval={0} />
           <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft',style: { fill: 'white' } }} tick={{ fill: 'white' }}/>
           <Tooltip />
-          <Legend />
+          <Legend wrapperStyle={{ paddingTop: 16 }}  />
           <Line type="monotone" dataKey={`acc_${way}`}  textAnchor="end" stroke="#0096FF" name={`${way} ETAW` } />
           <Line type="monotone" dataKey="acc_2022"  textAnchor="end" strokeDasharray="8 4 2 4"  stroke="gray" name="Low (2022)" />
           <Line type="monotone" dataKey="acc_2023"  textAnchor="end" strokeDasharray="8 8"  stroke="gray" name="High (2023)" />
