@@ -31,15 +31,15 @@ const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label,showSearch=
 const [open, setOpen] = useState(false);
 const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
-    <div className={cn("flex items-center gap-2  ","w-[28rem]")}>
-                    <label className="min-w-[6rem] flex gap-1"><span>{label}</span><span>:</span> </label>
+    <div className={cn("flex items-center gap-2  ","w-[40rem]")}>
+                    <label className="min-w-[6rem] flex gap-1"><span>{label}:</span> </label>
                    <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className={cn("justify-between h-8 font-normal w-[24rem]")}
+                        className={cn("justify-between h-8 font-normal w-[30rem]")}
                       >
                         <div >
                           {selectedValue
