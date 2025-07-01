@@ -168,52 +168,54 @@ const Map = () => {
   }
   return (
     <div id="map" className="relative flex h-screen w-full">
-       <div className="absolute left-2 top-0 z-[800] flex h-[2rem] items-center gap-x-3 justify-center text-white bg-royalBlue mt-2 rounded-lg px-2 bg-opacity-85">
-                        <Icon.Search
-                            size={20}
-                            className="text-slate-300"
+       <div className="absolute right-4 top-0 z-[800] flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
+        <div className="flex items-center gap-x-3 justify-center text-white bg-royalBlue  ml-6 rounded-lg px-2  h-[32px]">
+          <Icon.Search
+            size={20}
+            className="text-slate-300"
 
-                        />
-                     <input
-                            type="text"
-                            name="search"
-                            id="search"
-                            placeholder="Search..."
-                            className="w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                            autoComplete="off"
-                        />
-                    </div>
-      <div className="absolute right-4 top-0 z-[800] flex h-[3.75rem] items-center gap-x-3">
-        <Button
-            variant={"default"}
-            className="size-8"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-        >
-          <Icon.Sun
-              size={20}
-              className="dark:hidden"
           />
-          <Icon.Moon
-              size={20}
-              className="hidden dark:block"
+          <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="Search..."
+            className="w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+            autoComplete="off"
           />
-        </Button>
+        </div>
+        <div className="flex items-center gap-x-3" >
         <Button
           variant={"default"}
-          className="size-8">
-          <Icon.Bell size={20} />
+          className="size-8"
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
+          <Icon.Sun
+            size={20}
+            className="dark:hidden"
+          />
+          <Icon.Moon
+            size={20}
+            className="hidden dark:block"
+          />
         </Button>
-        <button
+          <Button
+            variant={"default"}
+            className="size-8">
+            <Icon.Bell size={20} />
+          </Button>
+          <button
             className="size-10 overflow-hidden rounded-full"
             onClick={() => setIsModalOpen(!isModalOpen)}
-        >
-          <img
+          >
+            <img
               src={profileImg}
               alt="profile image"
               className="size-full object-cover"
-          />
-        </button>
+            />
+          </button></div>
       </div>
+
       {isModalOpen && (
         <div
           ref={modalRef}
@@ -230,7 +232,7 @@ const Map = () => {
           </div>
       )}
 
-      <LeafletMap position={position} zoom={11} configurations={{'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
+      <LeafletMap position={position} viewBound={[[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]]} zoom={11} configurations={{'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
         {/* <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields} color={"#16599a"}/>
         <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"red"}/> */}
         <RtGeoJson key={'50003'} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"}/>

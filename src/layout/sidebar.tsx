@@ -22,7 +22,7 @@ const menuLinks = [
         Children: [],
       },
       {
-        label: "Insights",
+        label: "Allocation",
         icon: Icon.LayoutDashboard,
         name: routeUrl?.Insight?.name,
         path: routeUrl?.Insight?.url,
@@ -51,9 +51,9 @@ const menuLinks = [
         Children: [
           { label: "Fields", path: routeUrl?.Field?.url, name: routeUrl?.Field?.name },
           // { label: "Field-MsmtPoint", path: routeUrl?.FieldMsmtPoint?.url, name: routeUrl?.FieldMsmtPoint?.name },
-          { label: "Field-Parcel", path: routeUrl?.FieldParcel?.url, name: routeUrl?.FieldParcel?.name },
+          { label: "Parcel", path: routeUrl?.FieldParcel?.url, name: routeUrl?.FieldParcel?.name },
           { label: "Region", path: routeUrl?.Region?.url, name: routeUrl?.Region?.name },
-          { label: "Sub-Region", path: routeUrl?.SubRegion?.url, name: routeUrl?.SubRegion?.name },
+          { label: "Subregion", path: routeUrl?.SubRegion?.url, name: routeUrl?.SubRegion?.name },
         ],
       },
       {
@@ -76,7 +76,7 @@ const menuLinks = [
         type: "group",
         Children: [
           { label: "Customers", path: routeUrl?.Customers?.url, name: routeUrl?.Customers?.name },
-          { label: "Customer-field", path: routeUrl?.CustomerField?.url, name: routeUrl?.CustomerField?.name }],
+          { label: "Customer-Field", path: routeUrl?.CustomerField?.url, name: routeUrl?.CustomerField?.name }],
       },
       {
         label: "Crops",
@@ -85,14 +85,7 @@ const menuLinks = [
         type: "group",
         Children: [
           { label: "Crops", path: routeUrl?.Crops?.url, name: routeUrl?.Crops?.name },
-          { label: "Crop-field", path: routeUrl?.CustomerField?.url, name: routeUrl?.CustomerField?.name }],
-      },
-      {
-        label: "Allocations",
-        icon: Icon.ChartColumnBig,
-        name: routeUrl?.Allocations?.name,
-        path: routeUrl?.Allocations?.url,
-        type: "link",
+          { label: "Crop-Field", path: routeUrl?.CustomerField?.url, name: routeUrl?.CustomerField?.name }],
       },
       {
         label: "Billing",
@@ -132,6 +125,13 @@ const menuLinks = [
         name: routeUrl?.AgencyInfo?.name,
         type: "link",
         Children: [],
+      },
+            {
+        label: "Allocation",
+        icon: Icon.ChartColumnBig,
+        name: routeUrl?.Allocations?.name,
+        path: routeUrl?.Allocations?.url,
+        type: "link",
       },
       // {
       //   label: "Company Information",
