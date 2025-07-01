@@ -158,7 +158,7 @@ const RTLineChart = ({ data, way }: ChartParameters) => {
         <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft', style: { fill: 'white' } }} tick={{ fill: 'white' }} />
         <Tooltip
           labelFormatter={(label) => {
-            return <div className='text-black font-bold underline text-xl'>{`${label} ${way}`}</div>; 
+            return <div className='text-black font-bold underline '>{`${label} ${way}`}</div>; 
           }}
           formatter={(value: any, name: any) => [`${value}`, name]}
           contentStyle={{ border: '1px solid #ccc', borderRadius: '8px' }}
