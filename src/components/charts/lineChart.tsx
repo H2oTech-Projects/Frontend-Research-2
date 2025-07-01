@@ -158,7 +158,7 @@ const RTLineChart = ({data, way}: ChartParameters) => {
           <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft',style: { fill: 'white' } }} tick={{ fill: 'white' }}/>
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey={`acc_${way}`}  textAnchor="end" stroke="#0096FF" name={`${way} Allocation` } />
+          <Line type="monotone" dataKey={`acc_${way}`}  textAnchor="end" stroke="#0096FF" name={`${way} ETAW` } />
           <Line type="monotone" dataKey="acc_2022"  textAnchor="end" strokeDasharray="8 4 2 4"  stroke="gray" name="Low (2022)" />
           <Line type="monotone" dataKey="acc_2023"  textAnchor="end" strokeDasharray="8 8"  stroke="gray" name="High (2023)" />
           <Line type="monotone" dataKey="allocation_2024"  strokeDasharray="5 5"  textAnchor="end" stroke="orange" name="2024 Allocation"/>
