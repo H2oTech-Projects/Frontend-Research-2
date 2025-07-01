@@ -490,7 +490,7 @@ const Insight = () => {
 
           <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
             <div
-              className={cn("relative flex h-[calc(100vh-232px)] w-full")}
+              className={cn("insight-Map relative flex h-[calc(100vh-232px)] w-full")}
               id="map2"
             >
               {

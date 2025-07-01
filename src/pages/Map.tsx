@@ -53,7 +53,8 @@ const Map = () => {
       });
       // Insert a headline into that popup
       var hed = $("<div></div>", {
-        text: `${label}: ` + Id,
+        text: `${label}: XXX-XXX-XXX` ,
+        // text: `${label}: ` + Id,
         css: { fontSize: "16px", marginBottom: "3px" },
       }).appendTo(popup);
       // Add the popup to the map

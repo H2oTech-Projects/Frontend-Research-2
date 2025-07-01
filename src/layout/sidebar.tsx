@@ -23,7 +23,7 @@ const menuLinks = [
       },
       {
         label: "Allocation",
-        icon: Icon.LayoutDashboard,
+        icon: Icon.ChartColumnBig,
         name: routeUrl?.Insight?.name,
         path: routeUrl?.Insight?.url,
         type: "link",
