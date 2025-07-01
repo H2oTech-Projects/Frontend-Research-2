@@ -7,6 +7,7 @@ import { Popup } from 'react-leaflet'
 import { AccountDetailType, parcel_id_mapperType } from '@/types/apiResponseType'
 import { geoFarmJsonStyle, geoJsonStyle, InsightMapPosition, LeafletMapConfig } from '@/utils/mapConstant'
 import { buildPopupMessage } from "@/utils/map";
+import { createRoot } from "react-dom/client";
 
 interface InsightMapProps {
   viewBoundFarmGeoJson:[number,number][] | null;
@@ -46,7 +47,8 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
     });
     // Insert a headline into that popup
     var hed = $("<div></div>", {
-      text: "Parcel: " + Id,
+    //  text: "Parcel: " + Id,
+      text: "Parcel: XXX-XXX-XXX",
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
     // Add the popup to the map
@@ -58,7 +60,13 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
+        const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; overflow:hidden";
+    popupDiv.id = feature.properties?.apn;
+    layer.bindPopup(popupDiv);
+    // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -66,6 +74,21 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
           weight: 4,
           //color: "#800080"
         });
+        createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+        {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
+        <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
+          <div>Parcel ID: XXX-XXX-XXX</div>
+          <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div>
+            <div>Total Allocation (AF): 66.5</div>
+            <div>ETAW (AF): 46.5</div>
+            <div>Remaining (AF): 19.7</div>
+            <div>Remaining (%): 29.7</div>
+            <div>Sustainable Yield Acreage (AC): 20.1</div>
+            <div>Transitional Water Acreage (AC): 19.3</div>
+            <div>2024 Allocation (AF): 45.9</div>
+            <div>Carryover (AF): 20.3</div>
+            <div> Zone Abbreviation: MEN</div>
+</div>);
         showInfo(auxLayer.feature.properties.apn);
       },
       mouseout: function (e: any) {
