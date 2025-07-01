@@ -70,10 +70,10 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
+        // auxLayer.setStyle({
+        //   weight: 4,
+        //   //color: "#800080"
+        // });
         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
         {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
         <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
@@ -93,13 +93,13 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2.5,
-          //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
-          opacity: 1,
-        });
+        // auxLayer.setStyle({
+        //   weight: 2.5,
+        //   //color: "#9370DB",
+        //   //fillColor: "lightblue",
+        //   fillOpacity: 0,
+        //   opacity: 1,
+        // });
         removeInfo(auxLayer.feature.properties.apn);
       },
     })};
