@@ -4,9 +4,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 interface ChartParameters {
   data?: any;
+  way?: string;
 }
 
-const RTLineChart = ({data}: ChartParameters) => {
+const RTLineChart = ({data, way}: ChartParameters) => {
     data = [
       {
         name: 'Jan',
@@ -16,6 +17,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Feb',
@@ -25,6 +28,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Mar',
@@ -34,6 +39,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Apr',
@@ -43,6 +50,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'May',
@@ -52,15 +61,19 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
-        name: 'June',
+        name: 'Jun',
         acc_2024: 77.7,
         acc_2023: 82.6,
         acc_2022: 71.9,
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Jul',
@@ -70,6 +83,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Aug',
@@ -79,6 +94,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Sep',
@@ -88,6 +105,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Oct',
@@ -97,6 +116,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Nov',
@@ -106,6 +127,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
       {
         name: 'Dec',
@@ -115,6 +138,8 @@ const RTLineChart = ({data}: ChartParameters) => {
         total_allocation_2024: 197.7,
         total_allocation_2023: 182.5,
         total_allocation_2022: 167.6,
+        total_allocation: 206.2,
+        allocation_2024: 173.4
       },
     ];
     return (
@@ -133,13 +158,12 @@ const RTLineChart = ({data}: ChartParameters) => {
           <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft',style: { fill: 'white' } }} tick={{ fill: 'white' }}/>
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="acc_2022"  textAnchor="end" stroke="#82ca9d" name="2022 Allocation" />
-          <Line type="monotone" dataKey="acc_2023"  textAnchor="end" stroke="#82ca9d" name="2023 Allocation" />
-          <Line type="monotone" dataKey="acc_2024"  textAnchor="end" stroke="#82ca9d" name="2024 Allocation" />
+          <Line type="monotone" dataKey="acc_2022"  textAnchor="end" strokeDasharray="8 4 2 4"  stroke="gray" name="Low (2022)" />
+          <Line type="monotone" dataKey="acc_2023"  textAnchor="end" strokeDasharray="8 8"  stroke="gray" name="High (2023)" />
+          <Line type="monotone" dataKey={`acc_${way}`}  textAnchor="end" stroke="#0096FF" name={`${way} Allocation` } />
 
-          <Line type="monotone" dataKey="total_allocation_2023"  textAnchor="end" stroke="red" name="2023 Total Allocation "/>
-          <Line type="monotone" dataKey="total_allocation_2024"  textAnchor="end" stroke="blue" name="2024 Total Allocation"/>
-          <Line type="monotone" dataKey="total_allocation_2022"  textAnchor="end" stroke="black" name="2022 Total Allocation"/>
+          <Line type="monotone" dataKey="allocation_2024"  strokeDasharray="5 5"  textAnchor="end" stroke="orange" name="2024 Allocation"/>
+          <Line type="monotone" dataKey="total_allocation"  textAnchor="end" stroke="red" name="Total Allocation"/>
         </LineChart>
       </ResponsiveContainer>
   );

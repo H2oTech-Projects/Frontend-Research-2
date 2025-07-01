@@ -112,9 +112,10 @@ const Map = () => {
     //layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
     const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
+    // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.apn;
-    layer.bindPopup(popupDiv,{maxHeight:600,});
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700});
 
     layer.on({
       mouseover: function (e) {
@@ -123,7 +124,7 @@ const Map = () => {
             weight: 4,
             //color: "#800080"
         });
-      
+
         createRoot(popupDiv).render(<TableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.apn], 'chartInfo': []}}/>);
         showInfo('Parcel Id', auxLayer.feature.properties.apn);
       },
@@ -167,11 +168,11 @@ const Map = () => {
   }
   return (
     <div id="map" className="relative flex h-screen w-full">
-       <div className="absolute left-2 top-0 z-[800] flex h-[2rem] items-center gap-x-3 justify-center text-white bg-royalBlue mt-2 rounded-lg px-2 bg-opacity-85"> 
+       <div className="absolute left-2 top-0 z-[800] flex h-[2rem] items-center gap-x-3 justify-center text-white bg-royalBlue mt-2 rounded-lg px-2 bg-opacity-85">
                         <Icon.Search
                             size={20}
                             className="text-slate-300"
-                       
+
                         />
                      <input
                             type="text"
