@@ -207,6 +207,7 @@ const Insight = () => {
           </div>
         );
       },
+      cell: ({ row }) => <div>XXX-XXX-XXX</div>,
     },
     {
       accessorKey: "primary_crop",
