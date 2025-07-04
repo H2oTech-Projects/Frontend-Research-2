@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect';
 import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap';
+import { FormFileReader } from '@/components/FormComponent/FormFileReader';
+import BasicSelect from '@/components/BasicSelect';
 
 const ConveyancesSchema = z.object({
   client: z.string().min(1, "Client is required"),
@@ -22,19 +24,15 @@ const ConveyancesSchema = z.object({
   convey_seepage_cms: z.coerce.number({
     required_error: "Seepage rate must be a number"
   }).nonnegative("Seepage must be non-negative").optional(),
-  conveyCoordinates: z.array(z.array(
-    z.tuple([
-      z.coerce.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90"),
-      z.coerce.number().min(-180, "Longitude must be between -180 and 180").max(180, "Longitude must be between -180 and 180"),
-    ])
-  )).min(1, "At least one coordinate is required"),
+  uploadFile: z.array(z.instanceof(File)).optional(),
 });
 
 export type ConveyFormType = z.infer<typeof ConveyancesSchema>;
 
 const ConveyancesForm = () => {
+  const [shapeType, setShapeType] = useState<string>("shape")
   const location = useLocation();
-    const { id } = useParams();
+  const { id } = useParams();
   const form = useForm<ConveyFormType>({
     resolver: zodResolver(ConveyancesSchema),
     defaultValues: {
@@ -44,6 +42,7 @@ const ConveyancesForm = () => {
       convey_desc: "",
       convey_parent: "",
       convey_seepage_cms: undefined,
+
     },
   });
 
@@ -59,8 +58,8 @@ const ConveyancesForm = () => {
 
   return (
     <div className='h-w-full px-4 pt-2'>
-  <PageHeader
-        pageHeaderTitle={`${!id  ? 'Add' : (location.pathname.includes("editConvey") ? "Edit" : "View")} Convey`}
+      <PageHeader
+        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("editConvey") ? "Edit" : "View")} Convey`}
         breadcrumbPathList={[
           { menuName: "Management", menuPath: "" },
           { menuName: "Clients", menuPath: "/clients" }
@@ -70,61 +69,81 @@ const ConveyancesForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
           <div className='grid grid-cols-2 gap-4 mb-4'>
-            <div className='flex flex-col gap-2'>
-             <FormInput
-              control={form.control}
-              name='convey_id'
-              label='Convey ID'
-              placeholder='Enter Convey ID (e.g., ABC)'
-              type='text'
-            />
-            <FormInput
-              control={form.control}
-              name='convey_name'
-              label='Convey Name'
-              placeholder='Enter Convey Name'
-              type='text'
-            />
-            <FormComboBox
-              control={form.control}
-              name='client'
-              label='Client'
-              options={
-                [
-                  { label: "Ram", value: "GPS" },
-                  { label: "Hari", value: "Survey" },
-                  { label: "Aerial", value: "Aerial" }
-                ]
-              }
-            />
-            <FormInput
-              control={form.control}
-              name='convey_parent'
-              label='Parent Convey ID'
-              placeholder='Enter Parent Convey ID (if any)'
-              type='text'
-            />
-            <FormInput
-              control={form.control}
-              name='convey_seepage_cms'
-              label='Seepage (cms)'
-              placeholder='Enter Seepage in cms'
-              type='number'
-            />
-            <FormTextbox
-              control={form.control}
-              name='convey_desc'
-              label='Convey Description'
-              placeholder='Enter Convey Description'
-            />
-            </div>
-             <FormCoordinatesMap
-                form = {form}
-                name="conveyCoordinates" label="Convey Coordinates"
-                type="polyline"
-                refLayer={featureGroupPolygonRef}
-                layerCounts='multiple'
-            />
+          
+              <FormInput
+                control={form.control}
+                name='convey_id'
+                label='Convey ID'
+                placeholder='Enter Convey ID (e.g., ABC)'
+                type='text'
+              />
+              <FormInput
+                control={form.control}
+                name='convey_name'
+                label='Convey Name'
+                placeholder='Enter Convey Name'
+                type='text'
+              />
+              <FormComboBox
+                control={form.control}
+                name='client'
+                label='Client'
+                options={
+                  [
+                    { label: "Ram", value: "GPS" },
+                    { label: "Hari", value: "Survey" },
+                    { label: "Aerial", value: "Aerial" }
+                  ]
+                }
+              />
+              <FormInput
+                control={form.control}
+                name='convey_parent'
+                label='Parent Convey ID'
+                placeholder='Enter Parent Convey ID (if any)'
+                type='text'
+              />
+              <FormInput
+                control={form.control}
+                name='convey_seepage_cms'
+                label='Seepage (cms)'
+                placeholder='Enter Seepage in cms'
+                type='number'
+              />
+              <FormTextbox
+                control={form.control}
+                name='convey_desc'
+                label='Convey Description'
+                placeholder='Enter Convey Description'
+              />
+  {!location.pathname.includes("view") && <BasicSelect
+                itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
+                label="Choose Geometric File Type"
+                Value={shapeType}
+                setValue={(newValue) => {
+                  // Clear the selected files **before** changing shapeType
+                  form.setValue("uploadFile", undefined);
+                  // setPreviewMapData(null);
+                  setShapeType(newValue);
+                }} />}
+              {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
+                {shapeType === "geojson" ? <FormFileReader
+                  control={form.control}
+                  name="uploadFile"
+                  label="Upload GeoJSON file"
+                  placeholder='Choose GeoJSON File'
+                  multiple={false}
+                  accept=".geojson"
+                /> : <FormFileReader
+                  control={form.control}
+                  name="uploadFile"
+                  label="Upload Shapefile"
+                  placeholder='Choose Shapefile'
+                  multiple={true}
+                  accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
+              </div>}
+          
+           
           </div>
           <Button className='w-24' type="submit">Submit</Button>
         </form>
