@@ -1,155 +1,155 @@
 const Map = {
-    url: "/map",
-    name: "Map",
+  url: "/map",
+  name: "Map",
 };
 
 const Insight = {
-    url: "/insight",
-    name: "Insight",
+  url: "/insight",
+  name: "Insight",
 };
 const Dashboard = {
-    url: "/dashboard",
-    name: "Dashboard",
+  url: "/dashboard",
+  name: "Dashboard",
 };
 
 const Field = {
-    url: "/field",
-    name: "Field",
+  url: "/field",
+  name: "Field",
 };
 
 const AddField = {
-    url: "/field/addField",
-    name: "AddField",
+  url: "/field/addField",
+  name: "AddField",
 };
 
 const EditField = {
-    url: "/field/editField",
-    name: "Edit Field",
+  url: "/field/editField",
+  name: "Edit Field",
 };
 
 const MeasurementPoint = {
-    url: "/measurementPoint",
-    name: "MeasurementPoint",
+  url: "/measurementPoint",
+  name: "MeasurementPoint",
 };
 
 const AddMeasurementPoint = {
-    url: "/measurementPoint/addMeasurementPoint",
-    name: "AddMeasurementPoint",
+  url: "/measurementPoint/addMeasurementPoint",
+  name: "AddMeasurementPoint",
 };
 
 const EditMeasurementPoint = {
-    url: "/measurementPoint/editMeasurementPoint",
-    name: "EditMeasurementPoint",
+  url: "/measurementPoint/editMeasurementPoint",
+  name: "EditMeasurementPoint",
 };
 
 const District = {
-    url: "/district",
-    name: "District",
+  url: "/district",
+  name: "District",
 };
 
 const AddDistrict = {
-    url: "/district/addDistrict",
-    name: "AddDistrict",
+  url: "/district/addDistrict",
+  name: "AddDistrict",
 };
 
 const EditDistrict = {
-    url: "/district/editDistrict",
-    name: "EditDistrict",
+  url: "/district/editDistrict",
+  name: "EditDistrict",
 };
 
 const Customers = {
-    url: "/customers",
-    name: "Customers",
+  url: "/customers",
+  name: "Customers",
 };
 const Billings = {
-    url: "/billings",
-    name: "Billings",
+  url: "/billings",
+  name: "Billings",
 };
 const Allocations = {
-    url: "/allocations",
-    name: "Allocations",
+  url: "/allocations",
+  name: "Allocations",
 };
 const Crops = {
-    url: "/crops",
-    name: "Crops",
+  url: "/crops",
+  name: "Crops",
 };
 
 const CustomReport = {
-    url: "/customReport",
-    name: "CustomReport",
+  url: "/customReport",
+  name: "CustomReport",
 };
 
 const DailyReport = {
-    url: "/dailyReport",
-    name: "DailyReport",
+  url: "/dailyReport",
+  name: "DailyReport",
 };
 
 const Settings = {
-    url: "/settings",
-    name: "Settings",
+  url: "/settings",
+  name: "Settings",
 };
 
 const Profile = {
-    url: "/profile",
-    name: "Profile",
+  url: "/profile",
+  name: "Profile",
 };
 
 const Help = {
-    url: "/help",
-    name: "Help",
+  url: "/help",
+  name: "Help",
 };
 
 const Canals = {
-    url: "/canals",
-    name: "Canals",
+  url: "/canals",
+  name: "Canals",
 };
 
 const AddCanal = {
-    url: "/canals/addCanals",
-    name: "AddCanal"
+  url: "/canals/addCanals",
+  name: "AddCanal"
 };
 
 const EditCanal = {
-    url: "/canals/:id/editCanal",
-    name: "EditCanal"
+  url: "/canals/:id/editCanal",
+  name: "EditCanal"
 };
 
 const ViewCanal = {
-    url: "/canals/:id/viewCanal",
-    name: "ViewCanal"
+  url: "/canals/:id/viewCanal",
+  name: "ViewCanal"
 };
 
 const Clients = {
-    url: "/clients",
-    name: "Clients",
+  url: "/clients",
+  name: "Clients",
 };
 
 const AddClient = {
-    url: "/clients/addClient",
-    name: "AddClient",
+  url: "/clients/addClient",
+  name: "AddClient",
 };
 const EditClient = {
-    url: "/clients/:id/edit",
-    name: "EditClient",
+  url: "/clients/:id/edit",
+  name: "EditClient",
 };
 const ViewClient = {
-    url: "/clients/:id/view",
-    name: "ViewClient",
+  url: "/clients/:id/view",
+  name: "ViewClient",
 };
 
 const AgencyInfo = {
-    url: "/agencyInfo",
-    name: "AgencyInfo",
+  url: "/agencyInfo",
+  name: "AgencyInfo",
 };
 
 const CompanyInfo = {
-    url: "/companyInfo",
-    name: "CompanyInfo",
+  url: "/companyInfo",
+  name: "CompanyInfo",
 };
 
 const DistrictInfo = {
-    url: "/districtInfo",
-    name: "DistrictInfo",
+  url: "/districtInfo",
+  name: "DistrictInfo",
 };
 
 const FieldMsmtPoint = {
@@ -157,44 +157,62 @@ const FieldMsmtPoint = {
   name: "Field-MsmtPoint",
 };
 
- const Time = {
-    url:"/time",
-    name:"Time"
+const Time = {
+  url: "/time",
+  name: "Time"
 }
 
+const Conveyances = {
+  url: "/conveyances",
+  name: "Conveyances",
+};
+
+const AddConveyance = {
+  url: "/conveyances/addConveyances",
+  name: "AddConveyance",
+};
+
+const EditConveyance = {
+  url: "/conveyances/:id/editConveyance",
+  name: "EditConveyance",
+};
+
 export {
-    Map,
-    Insight,
-    Dashboard,
-    Field,
-    FieldMsmtPoint,
-    AddField,
-    EditField,
-    MeasurementPoint,
-    AddMeasurementPoint,
-    EditMeasurementPoint,
-    District,
-    AddDistrict,
-    EditDistrict,
-    Customers,
-    Billings,
-    Allocations,
-    Crops,
-    CustomReport,
-    DailyReport,
-    Settings,
-    Profile,
-    Help,
-    Canals,
-    AddCanal,
-    EditCanal,
-    ViewCanal,
-    Clients,
-    AddClient,
-    EditClient,
-    ViewClient,
-    AgencyInfo,
-    CompanyInfo,
-    DistrictInfo,
-    Time
+  Map,
+  Insight,
+  Dashboard,
+  Field,
+  FieldMsmtPoint,
+  AddField,
+  EditField,
+  MeasurementPoint,
+  AddMeasurementPoint,
+  EditMeasurementPoint,
+  District,
+  AddDistrict,
+  EditDistrict,
+  Customers,
+  Billings,
+  Allocations,
+  Crops,
+  CustomReport,
+  DailyReport,
+  Settings,
+  Profile,
+  Help,
+  Canals,
+  AddCanal,
+  EditCanal,
+  ViewCanal,
+  Clients,
+  AddClient,
+  EditClient,
+  ViewClient,
+  AgencyInfo,
+  CompanyInfo,
+  DistrictInfo,
+  Time,
+  Conveyances,
+  AddConveyance,
+  EditConveyance,
 };

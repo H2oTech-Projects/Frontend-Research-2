@@ -29,5 +29,6 @@ export const clientSchema = z.object({
   uploadFile: z.array(z.instanceof(File)).optional(),
   clientDefaultUnitSystem:z.coerce.number().optional(),
   clientType: z.coerce.number().min(1, "Client type is required").optional(),
+   accountingDate: z.coerce.date().optional(),
 })
 

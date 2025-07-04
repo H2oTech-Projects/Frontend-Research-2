@@ -208,6 +208,21 @@ export const RouteList = [
     path: routeUrl?.Time?.url,
     name: routeUrl?.Time?.name,
     Component: lazy(async () => import("./../pages/management/time/index"))
-  }
+  },
+  {
+    path: routeUrl?.Conveyances?.url,
+    name: routeUrl?.Conveyances?.name,  
+    Component: lazy(async () => import("./../pages/management/water/conveyances/index"))
+  },
+  {
+    path: routeUrl?.AddConveyance?.url,
+    name: routeUrl?.AddConveyance?.name,
+    Component: lazy(async () => import("./../pages/management/water/conveyances/ConveyanceForm.tsx"))
+  },
+  {
+    path: routeUrl?.EditConveyance?.url,
+    name: routeUrl?.EditConveyance?.name, 
+    Component: lazy(async () => import("./../pages/management/water/conveyances/ConveyanceForm.tsx"))
+  },
 
 ];

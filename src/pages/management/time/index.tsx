@@ -323,22 +323,23 @@ const Time = () => {
       postWapt(formattedData, {
         onSuccess: (data: any) => {
           toast.success(data?.message);
-          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
-          queryClient.invalidateQueries({ queryKey: [POST_WAPTS] })
+          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] });
+          queryClient.invalidateQueries({ queryKey: [POST_WAPTS] });
           waptForm.reset();
         },
         onError: (error) => {
           showErrorToast(error?.response?.data.message);
-          queryClient.invalidateQueries({ queryKey: [POST_WAPTS] })
+          queryClient.invalidateQueries({ queryKey: [POST_WAPTS] });
         },
       })
     } else {
       updateWapt(formattedData, {
         onSuccess: (data: any) => {
           toast.success(data?.message);
-          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] })
-          queryClient.invalidateQueries({ queryKey: [PUT_WAPTS] })
-          setWaptEditElement(null)
+          queryClient.invalidateQueries({ queryKey: [GET_WAPT_OPTIONS, wapYear] });
+          queryClient.invalidateQueries({ queryKey: [PUT_WAPTS] });
+          queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, wapYear] });
+          setWaptEditElement(null);
         },
         onError: (error) => {
           showErrorToast(error?.response?.data.message);

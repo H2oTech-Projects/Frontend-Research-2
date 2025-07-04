@@ -128,7 +128,8 @@ const ClientForm = () => {
   const handleCreateClient = (data: ClientFormType) => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
-      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD")
+      clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
+      accountingDate: dayjs(data.accountingDate).format("YYYY-MM-DD"),
     })
     const cleaned = Object.fromEntries(
       Object.entries(FormValue).filter(([_, value]) => value !== undefined)
@@ -153,6 +154,7 @@ const ClientForm = () => {
     const FormValue = convertKeysToSnakeCase({
       ...data,
       clientEstablished: dayjs(data.clientEstablished).format("YYYY-MM-DD"),
+      accountingDate: dayjs(data.accountingDate).format("YYYY-MM-DD"),
       id: id
     })
     const cleaned = Object.fromEntries(
@@ -209,19 +211,19 @@ const ClientForm = () => {
     }
   }, [form.watch("uploadFile")])
 
-useEffect(()=>{
+  useEffect(() => {
     if (!!unitSystemOptions && unitSystemOptions?.length > 0) {
       !id && form.setValue("clientDefaultUnitSystem", unitSystemOptions[0]?.value)
     }
 
-},[unitSystemOptions])
+  }, [unitSystemOptions])
 
-useEffect(() => {
-  if (!!clientTypeOptions && clientTypeOptions?.length > 0) {
-    !id && form.setValue("clientType", clientTypeOptions[0]?.value)
+  useEffect(() => {
+    if (!!clientTypeOptions && clientTypeOptions?.length > 0) {
+      !id && form.setValue("clientType", clientTypeOptions[0]?.value)
+    }
   }
-}
-, [clientTypeOptions])
+    , [clientTypeOptions])
 
 
   const locationLabel = !!locationLabels?.data && !!form.getValues('clientCountry') && locationLabels?.data[form.getValues('clientCountry')!]
@@ -288,8 +290,8 @@ useEffect(() => {
               placeholder='Enter legal Area '
               type='number'
               showLabel={true}
-              disabled={location.pathname.includes("view")} 
-/>
+              disabled={location.pathname.includes("view")}
+            />
 
             {location.pathname.includes("view") && <FormItem>
               <FormLabel>{UnitSystemLabel?.clientGeomHa} </FormLabel>
@@ -320,6 +322,13 @@ useEffect(() => {
               name='clientEstablished'
               label='Established Date'
               disabled={location.pathname.includes("view")}
+            />
+
+            <FormDatePicker
+              control={form.control}
+              name="accountingDate"
+              label="Accounting Month & Day"
+              hideYear={true}
             />
 
           </div>
@@ -420,7 +429,7 @@ useEffect(() => {
             <FormInput
               control={form.control}
               name="clientLocality"
-              label= { locationLabel?.locality || "Locality"}
+              label={locationLabel?.locality || "Locality"}
               placeholder={`Enter Client ${locationLabel?.locality || "Locality"}`}
               type="text"
               showLabel
@@ -469,7 +478,7 @@ useEffect(() => {
             <FormInput
               control={form.control}
               name="clientSubpremise"
-              label= {locationLabel?.subpremise || "Sub Premise"}
+              label={locationLabel?.subpremise || "Sub Premise"}
               placeholder={`Enter Client ${locationLabel?.subpremise || "Sub Premise"}`}
               type="text"
               showLabel
