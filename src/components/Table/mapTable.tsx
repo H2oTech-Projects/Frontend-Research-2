@@ -47,6 +47,7 @@ const MapTable = <T,>({
     collapse,
     useClientPagination = false,
     customHeight,
+    setClickedGeom = null
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setData] = useState(defaultData?.length > 0 ?  [...defaultData] : []);
@@ -92,6 +93,10 @@ const MapTable = <T,>({
     }, [doFilter]);
 
     const handleOnClick = ((row: any, type: any) => {
+      if(type === "conveyance") {
+        setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});  
+    
+} 
       if (type=="parcel") {
         // @ts-ignore
         setSelectedParcel(row.original?.parcel_id)
