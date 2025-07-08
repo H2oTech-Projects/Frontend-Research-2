@@ -391,8 +391,7 @@ const FieldMsmtPoint = () => {
                                 collapse={collapse}
                                 //clickedField={clickedField}
                                 viewBound={viewBound }
-                                configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }, linkFieldMsmts: enableLink}}
-                                associateFieldMsmtpoint={associateFieldMsmtpoint}
+                                configurations={{'minZoom': 11, 'containerStyle': { height: "100%", width: "100%" , overflow: "hidden", borderRadius: "8px" }}}
                             >
                               <RtGeoJson
                                   key={"fields"}

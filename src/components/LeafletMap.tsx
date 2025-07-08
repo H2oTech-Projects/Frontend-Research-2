@@ -11,6 +11,7 @@ import "./sliderDesign.css"
 type mapConfiguration = {
     minZoom: number;
     containerStyle: {};
+    enableLayers?: boolean;
 };
 
 const layerMapper: any ={
@@ -27,7 +28,6 @@ type LeafletMapTypes = {
     configurations?: mapConfiguration;
     children?: any;
     viewBound?: any;
-    associateFieldMsmtpoint?: any;
 };
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
 const sld =`<StyledLayerDescriptor version="1.0.0">
