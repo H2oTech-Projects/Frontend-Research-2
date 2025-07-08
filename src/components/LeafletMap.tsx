@@ -11,7 +11,6 @@ import "./sliderDesign.css"
 type mapConfiguration = {
     minZoom: number;
     containerStyle: {};
-    enableLayers?: boolean;
 };
 
 const layerMapper: any ={
