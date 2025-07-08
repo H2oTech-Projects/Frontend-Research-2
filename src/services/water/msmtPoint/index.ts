@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult, useMutation } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryFieldService, RegisterResponse  } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
-import { GET_FIELD_MAP_KEY, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY } from "./constant";
+import { GET_CLIENT_FIELD_MAP_KEY, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY } from "./constant";
 import { MsmtPointListResponseType } from "@/types/apiResponseType";
 import { AxiosError } from "axios";
 
@@ -15,17 +15,17 @@ export const useGetMsmtPointList = (tableInfo:initialTableDataTypes, wapId:strin
   });
 }
 
-export const useGetFieldMapList = () => {
-  return useQuery({
-    queryKey: [GET_FIELD_MAP_KEY],
-    queryFn: ()=> queryFieldService.getFieldMapList(),
-    ...queryConfig,
-  });
-}
+// export const useGetFieldMapList = () => {
+//   return useQuery({
+//     queryKey: [GET_FIELD_MAP_KEY],
+//     queryFn: ()=> queryFieldService.getFieldMapList(),
+//     ...queryConfig,
+//   });
+// }
 
 export const useClientGetFieldMapList = () => {
   return useQuery({
-    queryKey: [GET_FIELD_MAP_KEY],
+    queryKey: [GET_CLIENT_FIELD_MAP_KEY],
     queryFn: ()=> queryFieldService.getClientFieldMapList(),
     ...queryConfig,
   });

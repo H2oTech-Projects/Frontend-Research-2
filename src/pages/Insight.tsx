@@ -317,7 +317,7 @@ else {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
               />
-              <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
+              <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm} parcelLoading={accountParcelsLoading}/>
               <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                 <AccountDetailTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail?.data!} />
               </div>
@@ -376,7 +376,7 @@ else {
                       <Filter />
                     </Button>
                   </div>
-              
+
                     <MapTable
                       defaultData={accountParcels?.data?.parcel_table_data || []}
                       columns={columns2}
@@ -390,7 +390,7 @@ else {
                       useClientPagination={true}
                       showPagination={true}
                     />
-               
+
                 </div>
 
               </div>
@@ -421,7 +421,7 @@ else {
               configurations={LeafletMapConfig}
             >
               <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner/></div>          
+                <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner/></div>
               </div>
             </LeafletMap>
             }

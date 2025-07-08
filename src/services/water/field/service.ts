@@ -10,7 +10,7 @@ const GET_FIELD_MAP_LIST = BASE_API_URL + "/fields/map/";
 export const queryFieldService = {
   getFieldList: async (tableInfo:initialTableDataTypes) => {
     const response = await axiosInstance.get(GET_FIELD_LIST,{
-      params:{  
+      params:{
                 page_no:tableInfo?.page_no,
                 page_size:tableInfo?.page_size,
                 search:tableInfo?.search,
