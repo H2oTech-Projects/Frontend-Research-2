@@ -396,7 +396,7 @@ const Insight = () => {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
                 />
-                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm} />
+                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm} parcelLoading={accountParcelsLoading}/>
                 <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                   <AccountDetailTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail?.data!} />
                 </div>

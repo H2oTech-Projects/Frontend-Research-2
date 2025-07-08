@@ -89,7 +89,7 @@ const FieldMsmtPoint = () => {
 
   useEffect(() =>{
     if(!!position){
-      refetchmsmtPointFields()
+      !!position?.msmtPointId && defaultWap && refetchmsmtPointFields()
       setSelectedFields(position.fields)
       setEnableLink(false)
     }
