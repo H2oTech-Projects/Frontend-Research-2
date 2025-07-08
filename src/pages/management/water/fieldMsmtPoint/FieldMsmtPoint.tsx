@@ -346,12 +346,11 @@ const FieldMsmtPoint = () => {
                     <Button
                       variant={"default"}
                       className="h-7 w-auto px-2 text-sm"
-                      onClick={() => {
-                                      navigate("/field/addField")
-                                     }}
+                      disabled={!enableLink}
+                      onClick={() => associateFieldMsmtpoint()}
                     >
                         <Plus size={4} />
-                        Add MsmtPoint
+                        Link MsmtPoint-Field
                     </Button>
                 </div>
                 <div className="flex flex-grow">

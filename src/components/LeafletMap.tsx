@@ -12,7 +12,6 @@ type mapConfiguration = {
     minZoom: number;
     containerStyle: {};
     enableLayers?: boolean;
-    linkFieldMsmts?: boolean;
 };
 
 const layerMapper: any ={
@@ -56,7 +55,7 @@ const sld =`<StyledLayerDescriptor version="1.0.0">
     </UserStyle>
   </NamedLayer>
 </StyledLayerDescriptor>`
-const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false, linkFieldMsmts: false},  associateFieldMsmtpoint, children }: LeafletMapTypes) => {
+const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
   const { center } = position;
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const [opacity, setOpacity] = useState(1)
@@ -220,13 +219,6 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       )
     }
 
-    const showLinkIcon = () => {
-      return (
-        <div className="flex flex-col absolute top-50 right-1 z-[1002] h-[30px]  w-[40px] p-2 m-2 rounded-[8px] bg-[#16599a] text-slate-50">
-          <Link onClick={() => associateFieldMsmtpoint()}/>
-        </div>
-      )
-    }
 
     const addLayers = () => {
       return (
@@ -293,7 +285,6 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
             style={configurations?.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
         >
             { configurations.enableLayers && addSlider() }
-            { configurations.linkFieldMsmts && showLinkIcon() }
             <LayersControl position="bottomleft">
 
                 <LayersControl.BaseLayer
