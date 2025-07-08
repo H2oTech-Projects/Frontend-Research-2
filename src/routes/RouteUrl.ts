@@ -168,13 +168,18 @@ const Conveyances = {
 };
 
 const AddConveyance = {
-  url: "/conveyances/addConveyances",
+  url: "/conveyances/add",
   name: "AddConveyance",
 };
 
 const EditConveyance = {
-  url: "/conveyances/:id/editConveyance",
+  url: "/conveyances/:id/edit",
   name: "EditConveyance",
+};
+
+const ViewConveyance = {
+  url: "/conveyances/:id/view",
+  name: "ViewConveyance",
 };
 
 export {
@@ -215,4 +220,5 @@ export {
   Conveyances,
   AddConveyance,
   EditConveyance,
+  ViewConveyance
 };

@@ -10,11 +10,11 @@ export type ParcelData = {
   legal_ac: number;
   carryover_af: number;
   coords: [number, number][];
-  total_alloc_af : number;	
-  etaw_af: number;	
-  remain_af: number;		
-  remain_pct: number;	
-  r_irr_ac: number;	
+  total_alloc_af: number;
+  etaw_af: number;
+  remain_af: number;
+  remain_pct: number;
+  r_irr_ac: number;
 };
 
 export type tableCSSConfig = {
@@ -23,113 +23,114 @@ export type tableCSSConfig = {
 }
 
 export type MapTableTypes<T> = {
-    defaultData: T[];
-    columns: ColumnDef<T>[];
-    doFilter?: Boolean;
-    filterValue?: String;
-    setPosition?: null | Function;
-    setZoomLevel?: null | Function;
-    setClickedField?: null | Function;
-    clickedField?: null | string;
-    fullHeight?: boolean;
-    showPagination?: boolean;
-    textAlign?: "left" | "center" | "right";
-    columnProperties?: any | null;
-    tableCSSConfig?: tableCSSConfig | null;
-    tableType?: string | null;
-    setSelectedFarm?: null | Function;
-    setSelectedParcel?: null | Function;
-    isLoading?: boolean;
-    tableInfo?: initialTableDataTypes;
-    setTableInfo?: Function;
-    totalData?: number | undefined;
-    collapse?: string;
-    useClientPagination?: boolean;
-    customHeight?:any
+  defaultData: T[];
+  columns: ColumnDef<T>[];
+  doFilter?: Boolean;
+  filterValue?: String;
+  setPosition?: null | Function;
+  setZoomLevel?: null | Function;
+  setClickedField?: null | Function;
+  clickedField?: null | string;
+  fullHeight?: boolean;
+  showPagination?: boolean;
+  textAlign?: "left" | "center" | "right";
+  columnProperties?: any | null;
+  tableCSSConfig?: tableCSSConfig | null;
+  tableType?: string | null;
+  setSelectedFarm?: null | Function;
+  setSelectedParcel?: null | Function;
+  isLoading?: boolean;
+  tableInfo?: initialTableDataTypes;
+  setTableInfo?: Function;
+  totalData?: number | undefined;
+  collapse?: string;
+  useClientPagination?: boolean;
+  customHeight?: any;
+  setClickedGeom?: null | Function;
 };
 export type DummyDataType = {
-    district?: string;
-    FieldID?: string;
-    FieldDesc?: string;
-    FieldAcres?: number;
-    IrrigAcres?: number;
-    StandbyAcr?: number;
-    ParcelID?: string;
-    VolRateAdj?: number;
-    ActiveDate?: string; // ISO Date format
-    InactiveDa?: string; // ISO Date format
-    ActiveFlag?: string;
-    unq_fld_id?: number;
-    center_latitude?: number;
-    center_longitude?: number;
-    AreaAC?: number;
+  district?: string;
+  FieldID?: string;
+  FieldDesc?: string;
+  FieldAcres?: number;
+  IrrigAcres?: number;
+  StandbyAcr?: number;
+  ParcelID?: string;
+  VolRateAdj?: number;
+  ActiveDate?: string; // ISO Date format
+  InactiveDa?: string; // ISO Date format
+  ActiveFlag?: string;
+  unq_fld_id?: number;
+  center_latitude?: number;
+  center_longitude?: number;
+  AreaAC?: number;
 };
 
 export type FarmUnit = {
-    farm_unit_zone: string; // Farm Unit Zone
-    fu_sy_ac: number; // Sustainable Yield Acreage (AC)
-    fu_tw_ac: number; // Transitional Water Acreage (AC)
-    fu_alloc_af: number; // 2024 Allocation (AF)
-    fu_carryover_af: number | string; // Carryover (AF) (can be a number or string)
-    adjustment: number; // 2024 Adjustment (AF)
-    fu_total_adjustment_af: number; // Total Allocation (AF)
-    fu_etaw_af: number; // ETAW (AF)
-    fu_remain_af: number; // Remaining (AF)
-    "remaining_%": number; // Remaining Percentage (calculated)
-    parcels:string[];
-    parcel_table_info: ParcelData[];
-  }
-
-  export interface AccountDetails {
-    account_id: string;
-    account_name: string;
-    mailing_address: string;
-    start_date: string; // ISO date format (YYYY-MM-DD)
-    end_date: string; // ISO date format (YYYY-MM-DD)
-    msmt_method: string; // Measurement Method
-    report_creation_date: string; // Date in DD-MM-YYYY format
-    report_revision_date: string; // Placeholder for revision date (can be "-" or a date)
-    farm_units: FarmUnit[];
-    geojson_parcels: any;
-    parcel_geometries: any;
-    view_bounds: any;
-    chart_data: any;
-    parcel_table_info: ParcelData[];
-  }
-
-export type dummyGroundWaterDataTypes={
-    [key: string]: AccountDetails
+  farm_unit_zone: string; // Farm Unit Zone
+  fu_sy_ac: number; // Sustainable Yield Acreage (AC)
+  fu_tw_ac: number; // Transitional Water Acreage (AC)
+  fu_alloc_af: number; // 2024 Allocation (AF)
+  fu_carryover_af: number | string; // Carryover (AF) (can be a number or string)
+  adjustment: number; // 2024 Adjustment (AF)
+  fu_total_adjustment_af: number; // Total Allocation (AF)
+  fu_etaw_af: number; // ETAW (AF)
+  fu_remain_af: number; // Remaining (AF)
+  "remaining_%": number; // Remaining Percentage (calculated)
+  parcels: string[];
+  parcel_table_info: ParcelData[];
 }
-  export interface AccountDetails2 {
-    account_id: string;
-    account_name: string;
-    mailing_address: string;
-    start_date: string; // ISO date format (YYYY-MM-DD)
-    end_date: string; // ISO date format (YYYY-MM-DD)
-    msmt_method: string; // Measurement Method
-    report_creation_date: string; // Date in DD-MM-YYYY format
-    report_revision_date: string; // Placeholder for revision date (can be "-" or a date)
-    farm_units: FarmUnit[];
-    geojson_parcels: any;
-    parcel_geometries: any;
-    view_bounds: any;
-    chart_data: any;
-    parcel_table_info: ParcelData[];
-  }
 
-export type dummyGroundWaterDataTypes2={
-    [key: string]: AccountDetails2
+export interface AccountDetails {
+  account_id: string;
+  account_name: string;
+  mailing_address: string;
+  start_date: string; // ISO date format (YYYY-MM-DD)
+  end_date: string; // ISO date format (YYYY-MM-DD)
+  msmt_method: string; // Measurement Method
+  report_creation_date: string; // Date in DD-MM-YYYY format
+  report_revision_date: string; // Placeholder for revision date (can be "-" or a date)
+  farm_units: FarmUnit[];
+  geojson_parcels: any;
+  parcel_geometries: any;
+  view_bounds: any;
+  chart_data: any;
+  parcel_table_info: ParcelData[];
+}
+
+export type dummyGroundWaterDataTypes = {
+  [key: string]: AccountDetails
+}
+export interface AccountDetails2 {
+  account_id: string;
+  account_name: string;
+  mailing_address: string;
+  start_date: string; // ISO date format (YYYY-MM-DD)
+  end_date: string; // ISO date format (YYYY-MM-DD)
+  msmt_method: string; // Measurement Method
+  report_creation_date: string; // Date in DD-MM-YYYY format
+  report_revision_date: string; // Placeholder for revision date (can be "-" or a date)
+  farm_units: FarmUnit[];
+  geojson_parcels: any;
+  parcel_geometries: any;
+  view_bounds: any;
+  chart_data: any;
+  parcel_table_info: ParcelData[];
+}
+
+export type dummyGroundWaterDataTypes2 = {
+  [key: string]: AccountDetails2
 }
 export interface initialTableDataTypes {
-  search:string | undefined ;
-  page_no:number,
-  page_size:number,
+  search: string | undefined;
+  page_no: number,
+  page_size: number,
   sort: string | undefined,
   sort_order: string | undefined
 }
 
 export type ClientTableDataTypes = {
-  id:string
+  id: string
   client_id: string;
   client_name: string;
   client_ha: number;
@@ -158,3 +159,17 @@ export type MsmtPointDataType = {
   msmtPointId?: string;
   msmtPointName?: string;
 };
+
+export type conveyanceDataType = {
+  clientId: string;
+  clientName :string;
+  conveyDesc : string;
+  conveyId : number;
+  conveyName: string;
+  conveyParentId:number;
+  conveyParentName:string;
+  conveySeepageCms:number;
+  conveyTypeId: number;
+  conveyTypeName  : string;
+  id    : string;
+}
