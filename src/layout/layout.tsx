@@ -34,6 +34,7 @@ const Layout = () => {
     useClickOutside([sidebarRef], () => {
         if (!isDesktopDevice && !collapsed) {
             setCollapsed(true);
+            localStorage.setItem("isMenuCollapsed",JSON.stringify(!collapsed))
         }
     });
 
