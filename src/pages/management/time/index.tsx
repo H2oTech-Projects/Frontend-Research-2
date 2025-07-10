@@ -618,7 +618,7 @@ const Time = () => {
                                 name={`wapList.${index}.waEndDate`}
                                 label="End date"
                                 showDateIcon={true}
-
+                                disabled={index + 1 === fields.length ? true : false}
                                 minDate={
                                   form.watch(`wapList.${index}.waStartDate`)
                                     ? (() => {
