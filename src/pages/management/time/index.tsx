@@ -254,39 +254,51 @@ const Time = () => {
 
     //const yearPrefix = selectedWAYdetail?.[0]?.waStartDate?.split?.('-')?.[0] || "";
 
-    // 1. Group by type
-    const typeGroups: Record<number, any[]> = {};
-    for (const item of remainingList) {
-      if (!typeGroups[item.waptId]) typeGroups[item.waptId] = [];
-      typeGroups[item.waptId].push(item);
-    }
+    // // 1. Group by type
+    // const typeGroups: Record<number, any[]> = {};
+    // for (const item of remainingList) {
+    //   if (!typeGroups[item.waptId]) typeGroups[item.waptId] = [];
+    //   typeGroups[item.waptId].push(item);
+    // }
 
-    // 2. Sort each type group and rebuild waPeriodName
-    const renamedList = remainingList.map((item, idx) => {
-      const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? '';
-      const typeGroup = typeGroups[item.waptId];
-      const currentIndex = typeGroup.indexOf(item); // index within its type
-      const suffix = String(currentIndex + 1).padStart(2, '0');
-      return {
-        ...item,
-        waPeriodName: `${yearPrefix} ${label} ${suffix}`
-      };
-    });
-
+    // // 2. Sort each type group and rebuild waPeriodName
+    // const renamedList = remainingList.map((item, idx) => {
+    //   const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? '';
+    //   const typeGroup = typeGroups[item.waptId];
+    //   const currentIndex = typeGroup.indexOf(item); // index within its type
+    //   const suffix = String(currentIndex + 1).padStart(2, '0');
+    //   return {
+    //     ...item,
+    //     waPeriodName: `${yearPrefix} ${label} ${suffix}`
+    //   };
+    // });
+    let labelCounter: Record<string, number> = {}; // to track position in suffix array
     // 3. Re-assign start and end dates
-    if (renamedList.length > 0) {
-      renamedList[0].waStartDate = selectedWAYdetail[0]?.waStartDate;
-      for (let i = 1; i < renamedList.length; i++) {
-        const prevEnd = renamedList[i - 1]?.waEndDate;
+    if (remainingList.length > 0) {
+      remainingList[0].waStartDate = selectedWAYdetail[0]?.waStartDate;
+      const label = listOfWapType.find((t: any) => t.id === remainingList[0].waptId)?.waPeriodTypeName ?? '';
+      remainingList[0].waPeriodName = `${yearPrefix} ${label} 01`
+      labelCounter[label] = 1;
+
+      for (let i = 1; i < remainingList.length; i++) {
+        const prevEnd = remainingList[i - 1]?.waEndDate;
+        const label = listOfWapType.find((t: any) => t.id === remainingList[i].waptId)?.waPeriodTypeName ?? '';
+        if (!labelCounter[label]) {
+          labelCounter[label] = 1;
+        } else {
+          labelCounter[label] +=1
+        }
+        const newPeriodName = `${yearPrefix} ${label} ${String(labelCounter[label]).padStart(2, '0')}`;
         if (prevEnd) {
           const newStart = new Date(prevEnd);
           newStart.setDate(newStart.getDate() + 1);
-          renamedList[i].waStartDate = newStart;
+          remainingList[i].waStartDate = newStart;
         }
+        remainingList[i].waPeriodName = newPeriodName;
       }
-      renamedList.at(-1)!.waEndDate = selectedWAYdetail[0]?.waEndDate;
+      remainingList.at(-1)!.waEndDate = selectedWAYdetail[0]?.waEndDate;
     }
-    replace(renamedList);
+    replace(remainingList);
     setEnableSubmit(true);
   };
 
