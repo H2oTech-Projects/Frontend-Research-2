@@ -15,6 +15,17 @@ export interface RegisterResponse {
 }
 
 export const queryFieldService = {
+  // getMsmtPointList: async (tableInfo:initialTableDataTypes, wapId: string | null) => {
+  //   const response = await axiosInstance.get(GET_MSMTPOINT_LIST+"/msmt_points/waps/"+wapId+ "/msmt_points/",{
+  //     params:{
+  //               page_no:tableInfo?.page_no,
+  //               page_size:tableInfo?.page_size,
+  //               search:tableInfo?.search,
+  //               sort_by:tableInfo?.sort,
+  //               sort_order:tableInfo?.sort_order}
+  //     }).catch((err) => console.log(err));
+  //   return convertKeysToCamelCase(toJson(response?.data));
+  // },
   getMsmtPointList: async (tableInfo:initialTableDataTypes, wapId: string | null) => {
     const response = await axiosInstance.get(GET_MSMTPOINT_LIST+"/waps/"+wapId+ "/msmt_points/",{
       params:{
@@ -27,6 +38,13 @@ export const queryFieldService = {
     return convertKeysToCamelCase(toJson(response?.data));
   },
 
+getApportionMethod : async ()=>{
+  const response = await axiosInstance.get(BASE_API_URL + "/apportion_methods/")
+
+      const data = convertKeysToCamelCase(toJson(response));
+    return data?.data
+},
+
   getFieldMapList :async()=>{
     const response  = await axiosInstance.get(GET_FIELD_MAP_LIST).catch((err) => console.log(err));
     return toJson(response);
@@ -36,7 +54,7 @@ getClientFieldMapList :async()=>{
   return toJson(response);
 },
 putMsmtPointFields: async (data: any) => {
-  const response = await axiosInstance.put<any>(PUT_MSMTPOINT_FIELDS + data?.id + "/waps/"+data?.wapId+"/msmtpointfields/",data, {
+  const response = await axiosInstance.put<any>(PUT_MSMTPOINT_FIELDS + data?.id + "/waps/"+data?.wapId+"/fields/apportion_config/",data, {
     headers: {
       "Content-Type": "application/json",
     },

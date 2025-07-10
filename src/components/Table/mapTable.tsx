@@ -46,6 +46,7 @@ const MapTable = <T,>({
     setTableInfo,
     collapse,
     useClientPagination = false,
+    customHeight ="h-[calc(100vh-208px)]",
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [data, setData] = useState(defaultData?.length > 0 ?  [...defaultData] : []);
@@ -272,7 +273,7 @@ const MapTable = <T,>({
 
     return (
       <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-        <div className={cn(fullHeight ? "h-[calc(100vh-208px)]" : "h-auto ")}>
+        <div className={cn(fullHeight ? customHeight : "h-auto ")}>
           <Table className="relative">
             <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
               {isLoading ? emptyTable() : tableContent()}

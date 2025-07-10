@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult, useMutation } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryFieldService, RegisterResponse  } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
-import { GET_CLIENT_FIELD_MAP_KEY, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY } from "./constant";
+import { GET_APPORTION_METHOD_TYPE, GET_CLIENT_FIELD_MAP_KEY, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY } from "./constant";
 import { MsmtPointListResponseType } from "@/types/apiResponseType";
 import { AxiosError } from "axios";
 
@@ -37,4 +37,13 @@ export const useMsmtPointFields = () => {
     mutationFn:queryFieldService.putMsmtPointFields,
 
   });
+}
+
+export const useGetApportionMethodType = () =>{
+    return useQuery({
+        queryKey: [GET_APPORTION_METHOD_TYPE],
+          queryFn: ()=>queryFieldService.getApportionMethod(),
+         ...queryConfig,
+
+})
 }

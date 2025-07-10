@@ -4,18 +4,19 @@ type BasicSelectPropsType = {
   label: string;
   Value:string;
   setValue: (value: string) => void;
+  showLabel?: boolean;
 }
 
-const BasicSelect = ({ itemList, label,Value ,setValue}: BasicSelectPropsType) => {
+const BasicSelect = ({ itemList, label,Value ,setValue,showLabel=true}: BasicSelectPropsType) => {
   return (
     <div className="flex flex-col gap-1  space-y-2 ">
-      <label className="font-medium text-sm">{label} </label>
+     {showLabel && <label className="text-sm text-slate-500">{label}</label>}
       <Select value={Value }  onValueChange={(value) => setValue(value)}>
         <SelectTrigger className="w-full h-10 border  rounded-md transition-colors" >
           <SelectValue placeholder={`Select a ${label}`} />
         </SelectTrigger>
         <SelectContent className="!z-[800]">
-          {itemList.map((item) => (
+          {itemList?.map((item) => (
             <SelectItem key={item.value} value={item.value}>
               {item.label}
             </SelectItem>
