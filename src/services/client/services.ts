@@ -54,6 +54,13 @@ export const queryClientService = {
     const data = convertKeysToCamelCase(toJson(response));
     return data?.data;
 },
+
+  getClientListOptions: async () =>{
+    const response = await axiosInstance.get(BASE_API_URL + "/client_detail/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return data?.data;
+},
+
   postClient: async (data: any) => {
     const response = await axiosInstance.post<any>(GET_CLIENT_LIST, createFormData(data,"upload_file"), {
       headers: {

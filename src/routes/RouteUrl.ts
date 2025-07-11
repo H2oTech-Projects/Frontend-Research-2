@@ -170,12 +170,12 @@ const Conveyances = {
 };
 
 const AddConveyance = {
-  url: "/conveyances/addConveyances",
+  url: "/conveyances/add",
   name: "AddConveyance",
 };
 
 const EditConveyance = {
-  url: "/conveyances/:id/editConveyance",
+  url: "/conveyances/:id/edit",
   name: "EditConveyance",
 };
 
@@ -197,6 +197,11 @@ const SubRegion = {
 const FieldParcel = {
   url: "/field-parcel",
   name: "Field-Parcel",
+};
+
+const ViewConveyance = {
+  url: "/conveyances/:id/view",
+  name: "ViewConveyance",
 };
 
 export {
@@ -239,6 +244,7 @@ export {
   EditConveyance,
   CustomerField,
   Region,
-  SubRegion,  
-  FieldParcel
+  SubRegion,
+  FieldParcel,
+  ViewConveyance
 };

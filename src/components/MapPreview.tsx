@@ -4,7 +4,7 @@ import Spinner from '@/components/Spinner';
 import { useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
 import RtGeoJson from "./RtGeoJson";
-const MapPreview = ({ data, isLoading }: any) => {
+const MapPreview = ({ data, isLoading }: {data:any,isLoading:boolean}) => {
 
   const MapSizeHandler = () => {
     // This component is used to handle the map size when the side menu is collapsed or expanded
