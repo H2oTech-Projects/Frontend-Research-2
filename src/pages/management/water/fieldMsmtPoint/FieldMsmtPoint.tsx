@@ -22,7 +22,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
 import BasicSelect, { GeneralSelect } from "@/components/BasicSelect";
-import { useGetMsmtPointList, useClientGetFieldMapList, useMsmtPointFields, useGetApportionMethodType } from "@/services/water/msmtPoint";
+import { useGetMsmtPointList, useClientGetFieldMapList, useMsmtPointFields, useGetApportionMethodType, useGetMsmtPointFieldDetail } from "@/services/water/msmtPoint";
 import { MsmtPointDataT } from "@/types/apiResponseType";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
@@ -36,6 +36,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormComboBox } from "@/components/FormComponent/FormRTSelect";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/FormComponent/FormInput";
+import { convertKeysToSnakeCase } from "@/utils/stringConversion";
 
 interface initialTableDataTypes {
   search: string;
@@ -54,7 +55,7 @@ const initialTableData = {
 
 
 const ApportionSchema = z.object({
-  apportionMethodType: z.coerce.number(),
+  apportionMethodType: z.coerce.number().min(1,"Choose Apportion Method"),
   data: z
     .array(
       z.object({
@@ -87,10 +88,9 @@ const FieldMsmtPoint = () => {
   const form = useForm<any>({
     resolver: zodResolver(ApportionSchema),
     defaultValues: {
-      apportionMethodType: undefined,
+      apportionMethodType: null,
       data: []
     },
-    shouldUnregister: true,
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -101,21 +101,23 @@ const FieldMsmtPoint = () => {
   const { data: msmtPoints, isLoading, refetch: refetchMsmtPoints } = useGetMsmtPointList(tableInfo, defaultWap);
   const { data: mapData, isLoading: mapLoading } = useClientGetFieldMapList();
   const { data: msmtPointFields, refetch: refetchmsmtPointFields } = useGetMsmtPointFields(position?.msmtPointId || null, defaultWap)
+  const { data: msmtPointFieldDetail, refetch: refetchMsmtPointFieldsDetail } = useGetMsmtPointFieldDetail(position?.msmtPointId || null, defaultWap)
   const { data: ways, isLoading: waysLoading } = useGetWaps()
   const { mutate: updateMsmtPointField, isPending: isClientUpdating } = useMsmtPointFields()
   const { data: apportionMethodType, isLoading: methodTypeLoading } = useGetApportionMethodType()
 
-  useEffect(() => {
-    if (apportionMethodType && !methodTypeLoading) {
-      form.setValue("apportionMethodType", apportionMethodType?.data?.options[0]?.value)
-    }
 
-  }, [apportionMethodType])
 
   useEffect(() => {
-    selectedFieldsRef.current = selectedFields;
-    setEnableLink(detectFieldChange())
+    if (selectedFields.length > 0) {
+      selectedFieldsRef.current = selectedFields;
+      setEnableLink(true)
+    }else{
+    setEnableLink(false)
+}
   }, [selectedFields]);
+
+
 
   useEffect(() => {
     if (!!mapData && !!mapData['data']['view_bounds'])
@@ -138,16 +140,28 @@ const FieldMsmtPoint = () => {
     if (!!position) {
       !!position?.msmtPointId && defaultWap && refetchmsmtPointFields()
       setSelectedFields(position.fields)
-      // setEnableLink(false)
+      // setEnableLink(true)
     }
   }, [position])
+
 
   useEffect(() => {
     if (!!msmtPointFields) {
       setSelectedFields(msmtPointFields.data)
       setViewBound(msmtPointFields.viewBounds)
+      setEnableLink(true)
     }
+
+
   }, [msmtPointFields])
+
+  // useEffect(() => {
+  //   if (!!msmtPointFieldDetail) {
+  //     // form.setValue("apportionMethodType",msmtPointFieldDetail?.data?.apportionMethodTypeId)
+  //     //  apportionMethodType?.data?.apportionVolPercentIds.includes(msmtPointFieldDetail?.data?.apportionMethodTypeId) &&  append(msmtPointFieldDetail?.data?.fields)
+  //     setEnableLink(true)
+  //   }
+  // }, [msmtPointFieldDetail])
 
   const detectFieldChange = () => {
     const sorted1 = [...selectedFields].sort();
@@ -281,14 +295,15 @@ const FieldMsmtPoint = () => {
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        // showInfo(auxLayer.feature.properties.FieldID);
+        showInfo(auxLayer.feature.properties.FieldID);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
-        // removeInfo(auxLayer.feature.properties.FieldID)
+        removeInfo(auxLayer.feature.properties.FieldID)
       },
       click: function (e: any) {
         const auxLayer = e.target;
+        removeInfo(auxLayer.feature.properties.FieldID)
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.FieldID)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.FieldID);
           setSelectedFields(arr)
@@ -316,6 +331,7 @@ const FieldMsmtPoint = () => {
   const associateFieldMsmtpoint = () => {
     updateMsmtPointField({ id: position.msmtPointId, wapId: defaultWap, fields: selectedFields }, {
       onSuccess: (data: any) => {
+
         // Invalidate and refetch
         toast.success("successfully linked.");
         setPosition({ ...position, fields: selectedFields })
@@ -352,19 +368,20 @@ const FieldMsmtPoint = () => {
   }
 
   const onSubmit = (data: ApportionFormType) => {
-    console.log(position.msmtPointId)
+
     const formData = {
       id: position.msmtPointId, wapId: defaultWap, linkedFields: selectedFields,
       apportion_method_type_id: data?.apportionMethodType,
-      fields: apportionMethodType?.data?.apportionVolPercentIds.includes(form.watch("apportionMethodType")) ? data?.data : null
+      fields: apportionMethodType?.data?.apportionVolPercentIds.includes(form.watch("apportionMethodType")) ? convertKeysToSnakeCase(data?.data!) : undefined
     }
+
     updateMsmtPointField(formData, {
       onSuccess: (data: any) => {
-        // Invalidate and refetch
-        toast.success("successfully linked.");
-        setPosition({ ...position, fields: selectedFields })
-        setEnableLink(false)
+        data?.success ? toast.success(data?.message) : toast.error(data?.message);
+        refetchMsmtPointFieldsDetail();
+        refetchMsmtPoints();
         setOpen(false)
+        form.reset()
       },
       onError: (error) => {
         toast.error("Not linked.");
@@ -375,21 +392,76 @@ const FieldMsmtPoint = () => {
   const handleConfirm = () => {
     console.log("hello")
 
-
   };
 
-  const handleAssociatePopUp = () => {
-    const dividedPercentage = 100 / selectedFields.length
-    const fieldData = selectedFields?.map((item: any) => {
-      return {
-        fieldId: item,
-        percent: dividedPercentage,
-        manualVol: null
+  useEffect(() => {
+    if (apportionMethodType?.data?.apportionVolPercentIds.includes(form.watch("apportionMethodType")) && fields.length < 1) {
+      const dividedPercentage = 100 / selectedFields.length;
+      const fieldData = selectedFields?.map((item: any) => {
+        return {
+          fieldId: item,
+          percent: dividedPercentage,
+          manualVol: null
 
+        }
+      })
+      append(fieldData)
+    }
+
+  }, [form.watch("apportionMethodType")])
+
+
+
+  const handleAssociatePopUp = () => {
+
+    const dividedPercentage = 100 / selectedFields.length
+    if (!msmtPointFieldDetail?.success) {
+      const fieldData = selectedFields?.map((item: any) => {
+        return {
+          fieldId: item,
+          percent: dividedPercentage,
+          manualVol: null
+
+        }
+      })
+      if (apportionMethodType) {
+        form.setValue("apportionMethodType", apportionMethodType?.data?.options[0]?.value)
       }
-    })
-    append(fieldData)
-    setOpen(true)
+      append(fieldData)
+      setOpen(true)
+    }
+    else {
+      if (!!msmtPointFieldDetail?.data) {
+        form.setValue("apportionMethodType", msmtPointFieldDetail?.data?.apportionMethodTypeId || apportionMethodType?.data?.options[0]?.value )
+        // apportionMethodType?.data?.apportionVolPercentIds.includes(msmtPointFieldDetail?.data?.apportionMethodTypeId) && append(msmtPointFieldDetail?.data?.fields)
+        if (apportionMethodType?.data?.apportionVolPercentIds.includes(msmtPointFieldDetail?.data?.apportionMethodTypeId)) {
+           
+          if (JSON.stringify(msmtPointFieldDetail?.data?.linkedFields.sort()) === JSON.stringify(selectedFields.sort())) {
+          
+            remove()
+            append(msmtPointFieldDetail?.data?.fields)
+          } else {
+                 
+            if (!form.watch("apportionMethodType")) {
+                   
+              form.setValue("apportionMethodType", apportionMethodType?.data?.options[0]?.value)
+            }
+            const fieldData = selectedFields?.map((item: any) => {
+              return {
+                fieldId: item,
+                percent: dividedPercentage,
+                manualVol: null
+              }
+            })
+            append(fieldData)
+          }
+
+        }
+      }
+      setOpen(true)
+    }
+
+
   }
 
   return (
@@ -462,10 +534,10 @@ const FieldMsmtPoint = () => {
             <div className="flex items-center justify-center gap-3 ">
               <Button variant={"default"} type="submit" >Link</Button> <Button onClick={() => {
                 setOpen(false)
-                setPosition({ ...position, fields: selectedFields })
-                setEnableLink(true)
-                form.reset()
-                remove(fields.map((_, index) => index));
+                // setPosition({ ...position, fields: selectedFields })
+                // setEnableLink(true)
+                remove();
+                // remove(fields.map((_, index) => index));
               }} variant={"destructive"} type="button">Cancel</Button>
 
             </div>

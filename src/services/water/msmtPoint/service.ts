@@ -53,8 +53,25 @@ getClientFieldMapList :async()=>{
   const response  = await axiosInstance.get(GET_CLIENT_FIELD_MAP_LIST).catch((err) => console.log(err));
   return toJson(response);
 },
+
+
+getMsmtPointFieldsDetail: async (id:any,wapId:any) => {
+  const response = await axiosInstance.get<any>(PUT_MSMTPOINT_FIELDS + id + "/waps/"+wapId+"/fields/apportion_config/");
+  const data = convertKeysToCamelCase(toJson(response));
+  return data?.data
+},
 putMsmtPointFields: async (data: any) => {
-  const response = await axiosInstance.put<any>(PUT_MSMTPOINT_FIELDS + data?.id + "/waps/"+data?.wapId+"/fields/apportion_config/",data, {
+  const formData = data?.fields ? {
+    apportion_method_type_id: data?.apportion_method_type_id,
+    linkedFields: data?.linkedFields,
+    fields: data?.fields
+} : {
+   apportion_method_type_id: data?.apportion_method_type_id,
+    linkedFields: data?.linkedFields,
+}
+  const response = await axiosInstance.put<any>(PUT_MSMTPOINT_FIELDS + data?.id + "/waps/"+data?.wapId+"/fields/apportion_config/",
+    formData
+, {
     headers: {
       "Content-Type": "application/json",
     },
