@@ -115,16 +115,18 @@ const Time = () => {
     const list = form.watch("wapList");
     const listForForm = transferItem?.map((item: any, index: any) => {
       const wap = item?.waPeriodTypeName;
-      const wapNumbers = fields
-        .filter((field) => field.waPeriodName.toLowerCase().includes(wap.toLowerCase()))
-        .map((field) => {
-          const match = field.waPeriodName.match(/\d+$/);
-          return match ? parseInt(match[0], 10) : 0;
-        });
+      //matchedWaptCount
+      const matchedWaptCount = fields
+        .filter((field) => field.waptId.toString() === item.id.toString()).length
 
-      const maxNumber = wapNumbers.length > 0 ? Math.max(...wapNumbers) : 0;
+        // .map((field) => {
+        //   const match = field.waPeriodName.match(/\d+$/);
+        //   return match ? parseInt(match[0], 10) : 0;
+        // });
+
+      // const maxNumber = matchedWaptCount;
       //const yearPrefix = selectedWAYdetail?.[0]?.waStartDate?.split?.('-')?.[0] || "";
-      const periodName = `${yearPrefix} ${wap} ${formatNumber(maxNumber + 1)}`;
+      const periodName = `${yearPrefix} ${wap} ${formatNumber(matchedWaptCount + 1)}`;
 
       if (index === 0 && list.at(-1)?.waEndDate) {
         const startDate = new Date(list.at(-1)?.waEndDate!);
