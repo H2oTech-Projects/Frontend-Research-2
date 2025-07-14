@@ -591,7 +591,7 @@ const FieldMsmtPoint = () => {
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
             <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
-              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
+              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
               <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={ways?.data} showLabel={false} label="wap" /></div>
             </div>
             <div className={cn(" h-[calc(100vh-260px) w-full")}>
