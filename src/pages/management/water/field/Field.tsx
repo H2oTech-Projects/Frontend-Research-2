@@ -29,6 +29,8 @@ import { useGetFieldList, useGetFieldMapList } from "@/services/water/field";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
+import BasicSelect from "@/components/BasicSelect";
+import { useGetWaps } from "@/services/timeSeries";
 
 interface initialTableDataTypes {
   search: string;
@@ -52,6 +54,7 @@ const Field = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
+  const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
@@ -62,7 +65,7 @@ const Field = () => {
   };
   const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
   const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
-
+  const { data: waps, isLoading: wapsLoading } = useGetWaps()
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
@@ -404,9 +407,17 @@ const Field = () => {
       </>
     )
 
-  }, [mapLoading,position])
+  }, [mapLoading, position])
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
+
+  useEffect(() => {
+    if (!!waps) {
+      setDefaultWap(waps?.data[0]?.value)
+    }
+  }, [waps])
+
+
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
@@ -446,7 +457,7 @@ const Field = () => {
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={() => {
-              navigate("/field/addField")
+              navigate(`/field/addField`)
             }}
           >
             <Plus size={4} />
@@ -454,8 +465,12 @@ const Field = () => {
           </Button>
         </div>
         <div className="flex flex-grow">
-          <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
+          <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
+            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
+              <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={waps?.data} showLabel={false} label="wap" /></div>
+            </div>
+            <div className={cn(" h-[calc(100vh-260px) w-full")}>
               <MapTable
                 defaultData={fieldData?.data || []}
                 columns={columns}
@@ -468,6 +483,7 @@ const Field = () => {
                 totalData={fieldData?.total_records || 1}
                 collapse={collapse}
                 isLoading={isLoading}
+                customHeight="h-[calc(100vh-308px)]"
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
@@ -491,7 +507,7 @@ const Field = () => {
                 // clickedField={clickedField}
                 configurations={mapConfiguration}
               >
-               {ReturnChildren}
+                {ReturnChildren}
               </LeafletMap>) : (<LeafletMap
                 position={position}
                 zoom={zoomLevel}
