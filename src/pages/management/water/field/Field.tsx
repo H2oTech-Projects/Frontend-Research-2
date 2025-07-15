@@ -480,7 +480,7 @@ const Field = () => {
                 clickedField={clickedField}
                 tableInfo={tableInfo}
                 setTableInfo={setTableInfo}
-                totalData={fieldData?.total_records || 1}
+                totalData={fieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-308px)]"
