@@ -35,14 +35,21 @@ export const RouteList = [
     path: routeUrl.AddField?.url,
     name: routeUrl.AddField?.name,
     Component: lazy(
-      async () => await import("./../pages/management/water/field/AddField")
+      async () => await import("./../pages/management/water/field/FieldForm")
     ),
   },
   {
     path: routeUrl.EditField?.url,
     name: routeUrl.EditField?.name,
     Component: lazy(
-      async () => await import("./../pages/management/water/field/EditField")
+      async () => await import("./../pages/management/water/field/FieldForm")
+    ),
+  },
+  {
+    path: routeUrl.ViewField?.url,
+    name: routeUrl.ViewField?.name,
+    Component: lazy(
+      async () => await import("./../pages/management/water/field/FieldForm")
     ),
   },
   {
