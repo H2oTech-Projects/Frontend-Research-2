@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useGetFieldList, useGetFieldMapList } from "@/services/water/field";
+import { useGetFieldList, useGetFieldListByWAP, useGetFieldMapList } from "@/services/water/field";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
@@ -63,7 +63,8 @@ const Field = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
+  // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
+  const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo,defaultWap);
   const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
   const { data: waps, isLoading: wapsLoading } = useGetWaps()
   const debouncedSearch = useCallback(
@@ -72,18 +73,17 @@ const Field = () => {
     }, 500),
     []
   );
-
   const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
   const columns: ColumnDef<DummyDataType>[] = [
     {
-      accessorKey: "FieldID",
+      accessorKey: "fieldId",
       // header: "Field ID",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "FieldID", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "Field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -91,11 +91,11 @@ const Field = () => {
       },
 
       size: 100, // this size value is in px
-      cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
       //filterFn: 'includesString',
     },
     {
-      accessorKey: "FieldDesc",
+      accessorKey: "fieldName",
       // header: () => {
       //     return <>Field Description</>;
       // },
@@ -103,169 +103,169 @@ const Field = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "FieldDesc", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field Description {tableInfo?.sort !== "FieldDesc" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Field Name {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 300,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("FieldDesc")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("fieldName")}</div>,
     },
     {
-      accessorKey: "FieldAcres",
+      accessorKey: "fieldIrrigArea",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "FieldAcres", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_irrig_rea", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field Acres {tableInfo?.sort !== "FieldAcres" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Field Irrig  {tableInfo?.sort !== "fieldIrrigArea" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("FieldAcres")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldIrrigArea")}</div>,
     },
     {
-      accessorKey: "IrrigAcres",
+      accessorKey: "fieldLegalArea",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "IrrigAcres", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_area", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Irrig Acres {tableInfo?.sort !== "IrrigAcres" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+             Stand by Acres {tableInfo?.sort !== "fieldLegalArea" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("IrrigAcres")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalArea")}</div>,
     },
+    // {
+    //   accessorKey: "StandbyAcr",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "StandbyAcr", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Stand by Acres {tableInfo?.sort !== "StandbyAcr" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 200,
+    //   cell: ({ row }) => <div>{row.getValue("StandbyAcr")}</div>,
+    // },
+    // {
+    //   accessorKey: "ParcelID",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "ParcelID", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         ParcelID
+    //         {tableInfo?.sort !== "ParcelID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 300,
+    //   cell: ({ row }) => <div>{row.getValue("ParcelID")}</div>,
+    // },
+    // {
+    //   accessorKey: "VolRateAdj",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "VolRateAdj", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         VolRateAdj
+    //         {tableInfo?.sort !== "VolRateAdj" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 150,
+    //   cell: ({ row }) => <div>{row.getValue("VolRateAdj")}</div>,
+    // },
+    // {
+    //   accessorKey: "ActiveDate",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "ActiveDate", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Active Date
+    //         {tableInfo?.sort !== "ActiveDate" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 150,
+    //   cell: ({ row }) => <div>{dayjs(row.getValue("ActiveDate")).format("MM/DD/YYYY")}</div>,
+    // },
+    // {
+    //   accessorKey: "InactiveDa",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "InactiveDa", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Inactive Date
+    //         {tableInfo?.sort !== "InactiveDa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 150,
+    //   cell: ({ row }) => <div>{dayjs(row.getValue("InactiveDa")).format("MM/DD/YYYY")}</div>,
+    // },
     {
-      accessorKey: "StandbyAcr",
+      accessorKey: "fieldActBool",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "StandbyAcr", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Stand by Acres {tableInfo?.sort !== "StandbyAcr" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 200,
-      cell: ({ row }) => <div>{row.getValue("StandbyAcr")}</div>,
-    },
-    {
-      accessorKey: "ParcelID",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "ParcelID", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            ParcelID
-            {tableInfo?.sort !== "ParcelID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 300,
-      cell: ({ row }) => <div>{row.getValue("ParcelID")}</div>,
-    },
-    {
-      accessorKey: "VolRateAdj",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "VolRateAdj", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            VolRateAdj
-            {tableInfo?.sort !== "VolRateAdj" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 150,
-      cell: ({ row }) => <div>{row.getValue("VolRateAdj")}</div>,
-    },
-    {
-      accessorKey: "ActiveDate",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "ActiveDate", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Active Date
-            {tableInfo?.sort !== "ActiveDate" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 150,
-      cell: ({ row }) => <div>{dayjs(row.getValue("ActiveDate")).format("MM/DD/YYYY")}</div>,
-    },
-    {
-      accessorKey: "InactiveDa",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "InactiveDa", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Inactive Date
-            {tableInfo?.sort !== "InactiveDa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 150,
-      cell: ({ row }) => <div>{dayjs(row.getValue("InactiveDa")).format("MM/DD/YYYY")}</div>,
-    },
-    {
-      accessorKey: "ActiveFlag",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "ActiveFlag", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_act_bool", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Active Status
-            {tableInfo?.sort !== "ActiveFlag" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            {tableInfo?.sort !== "fieldActBool" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      cell: ({ row }) => <div>{row.getValue("ActiveFlag")}</div>,
+      cell: ({ row }) => <div>{row.getValue("fieldActBool") ? "Active" : "Inactive"}</div>,
     },
-    {
-      accessorKey: "unq_fld_id",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "unq_fld_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Unique Flag ID
-            {tableInfo?.sort !== "unq_fld_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div>{row.getValue("unq_fld_id")}</div>,
-    },
-    {
-      accessorKey: "AreaAC",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "AreaAC", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Area Acres
-            {tableInfo?.sort !== "AreaAC" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div>{row.getValue("AreaAC")}</div>,
-    },
+    // {
+    //   accessorKey: "unq_fld_id",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "unq_fld_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Unique Flag ID
+    //         {tableInfo?.sort !== "unq_fld_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   cell: ({ row }) => <div>{row.getValue("unq_fld_id")}</div>,
+    // },
+    // {
+    //   accessorKey: "AreaAC",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "AreaAC", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Area Acres
+    //         {tableInfo?.sort !== "AreaAC" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   cell: ({ row }) => <div>{row.getValue("AreaAC")}</div>,
+    // },
     {
       id: "actions",
       header: "",

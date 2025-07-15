@@ -22,53 +22,56 @@ import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { useMediaQuery } from '@uidotdev/usehooks'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useGetWaps } from '@/services/timeSeries'
+import { usePostFieldByWAP } from '@/services/water/field'
+import { convertKeysToSnakeCase } from '@/utils/stringConversion'
+import { GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY_BY_WAP, POST_FIELD_KEY_BY_WAP } from '@/services/water/field/constant'
+import { showErrorToast } from '@/utils/tools'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
-  wapId:z.number().nullable(),
+  wapId:z.number().nullable().optional(),
+  fieldId:z.string().optional(),
   fieldName: z.string().min(5, "Field Name must be at least 5 characters"),
-  field_desc: z.string().optional(),
-  field_cmnt: z.string().optional(),
-  IrrigAcres: z.coerce.number(),
-  StandbyAcres: z.coerce.number().optional(),
-  ActiveFlag: z.string().optional(),
-  MsmtMethod: z.string().min(1, "Measurement Method is required"),
-  MsmtMethodDesc: z.string().optional(),
-  uploadFile: z.array(z.instanceof(File)).optional(),
+  fieldDesc: z.string().optional(),
+  fieldIrrigArea: z.coerce.number(),
+  fieldLegalArea  : z.coerce.number(),
+  fieldActBool: z.string().optional(),
+  fieldGeometryFile: z.array(z.instanceof(File)).optional(),
 
 });
 
 type FormValues = z.infer<typeof formSchema>;
 const FieldForm = () => {
+const navigate = useNavigate();
   const { id } = useParams();
+  const clientId = JSON.parse(localStorage.getItem("auth") as string)?.client_id
   const queryClient = useQueryClient();
   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape");
   const { mutate: previewMap, isPending: mapLoading } = usePostMapPreview();
   const { data: waps, isLoading: wapsLoading } = useGetWaps();
+  const {mutate:createFieldByWap, isPending:creatingField} = usePostFieldByWAP();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      wapId:null,
+      wapId:Number(''),
+      fieldId:"",
       fieldName: "",
-      IrrigAcres: Number(''),
-      StandbyAcres: Number(''),
-      ActiveFlag: "true",
-      MsmtMethod: "",
-      MsmtMethodDesc: "",
-      field_desc: "",
-      field_cmnt: "",
-      uploadFile: undefined
+      fieldIrrigArea: Number(''),
+      fieldLegalArea  : Number(''),
+      fieldActBool: "True",
+      fieldDesc: "",
+      fieldGeometryFile: undefined
       // markers: [],
     },
   });
 
   useEffect(() => {
-    if (!!form.watch("uploadFile")) {
-      const file = form.watch("uploadFile");
+    if (!!form.watch("fieldGeometryFile")) {
+      const file = form.watch("fieldGeometryFile");
       if (file?.length !== 0) {
         previewMap(file, {
           onSuccess: (data) => {
@@ -77,22 +80,38 @@ const FieldForm = () => {
           },
           onError: (error: any) => {
             queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
-            toast.error(error?.response?.data.message?.APIException[0]);
+            showErrorToast(error?.response?.data?.message || "Failed upload file");
           },
         });
       }
     }
-  }, [form.watch("uploadFile")])
+  }, [form.watch("fieldGeometryFile")])
 
   useEffect(()=>{
-    if(!id && waps.data){
+    if(!id && waps?.data){
     form.setValue("wapId",waps?.data[0].value)
 }
 },[waps])
 
 
   const onSubmit = (data: FormValues) => {
-    console.log("Form Data:", data);
+    const formData =convertKeysToSnakeCase({...data,clientId:clientId}) 
+       createFieldByWap(formData, {
+           onSuccess: (data: any) => {
+             // Invalidate and refetch
+             queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
+             queryClient.invalidateQueries({ queryKey: [GET_FIELD_DETAIL_KEY_BY_WAP] });
+             queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
+             toast.success(data?.message);
+             navigate("/field");
+             form.reset(); // Reset the form after successful submission
+           },
+           onError: (error) => {
+             showErrorToast(error?.response?.data?.message || "Failed to create field");
+             queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
+           },
+         });
+    
   };
 
   return (
@@ -108,23 +127,14 @@ const FieldForm = () => {
     
 
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
-             <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data} />
+            <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data} />
+            <FormInput control={form.control} name='fieldId' label='Field ID' placeholder='Enter Field ID' type='text' />
             <FormInput control={form.control} name='fieldName' label='Field Name' placeholder='Enter Field Name' type='text' />
-
-            <FormInput control={form.control} name='IrrigAcres' label='Irrigable Acres' placeholder='Enter Irrigable  Acres' type='number' />
-            <FormInput control={form.control} name='StandbyAcres' label='Stand By Acres' placeholder='Enter Stand By  Acres' type='number' />
-
-            <FormTextbox control={form.control} name='field_desc' label='Field Description' placeholder='Enter Field Description' />
-            <FormTextbox control={form.control} name='field_cmnt' label='Comments' placeholder='Comments...' />
-
-           
-            <FormComboBox control={form.control} name='MsmtMethod' label='Measurement Method' options={[{ label: "GPS", value: "GPS" }, { label: "Survey", value: "Survey" }, { label: "Aerial", value: "Aerial" }]} />
-            <FormRadioGroup control={form.control} name='ActiveFlag' label='Active status' options={[{ label: "Yes", value: "true" }, { label: "No", value: "false" }]} />
-
-            <FormTextbox control={form.control} name='MsmtMethodDesc' label='Measurement Method Description' placeholder='Enter Measurement Method Description' />
-            {/* <FormComboBox control={form.control} name = "year" label= 'Year' options={[{ label:"2022",value:"2022"},{ label:"2023",value:"2023"},{ label:"2024",value:"2024"}]}/> */}
-
-
+            <FormInput control={form.control} name='fieldIrrigArea' label='Irrigable Area' placeholder='Enter Irrigable  Area' type='number' />
+            <FormInput control={form.control} name='fieldLegalArea' label='Irrigable Area' placeholder='Enter Stand By  Area' type='number' />
+            {/* <FormInput control={form.control} name= 'fieldLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
+            <FormTextbox control={form.control} name='fieldDesc' label='Field Description' placeholder='Enter Field Description' />
+            <FormRadioGroup control={form.control} name='fieldActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} />
 
             {!location.pathname.includes("view") && <BasicSelect
               itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
@@ -132,7 +142,7 @@ const FieldForm = () => {
               Value={shapeType}
               setValue={(newValue) => {
                 // Clear the selected files **before** changing shapeType
-                form.setValue("uploadFile", undefined);
+                form.setValue("fieldGeometryFile", undefined);
                 setPreviewMapData(null);
                 setShapeType(newValue);
               }} />}
@@ -140,14 +150,14 @@ const FieldForm = () => {
             {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
               {shapeType === "geojson" ? <FormFileReader
                 control={form.control}
-                name="uploadFile"
+                name="fieldGeometryFile"
                 label="Upload GeoJSON file"
                 placeholder='Choose GeoJSON File'
                 multiple={false}
                 accept=".geojson"
               /> : <FormFileReader
                 control={form.control}
-                name="uploadFile"
+                name="fieldGeometryFile"
                 label="Upload Shapefile"
                 placeholder='Choose Shapefile'
                 multiple={true}
