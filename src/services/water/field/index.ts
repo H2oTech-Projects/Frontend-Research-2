@@ -2,7 +2,7 @@ import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryFieldService } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
-import { GET_FIELD_LIST_KEY, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, POST_FIELD_KEY_BY_WAP } from "./constant";
+import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, POST_FIELD_KEY_BY_WAP, PUT_FIELD_KEY_BY_WAP } from "./constant";
 import { FieldListResponseType } from "@/types/apiResponseType";
 import { RegisterResponse } from "../msmtPoint/service";
 import { AxiosError } from "axios";
@@ -32,9 +32,40 @@ export const useGetFieldListByWAP = (tableInfo:initialTableDataTypes,wapId:numbe
 })
 } 
 
+export const useGetFieldMapByWAP = (wapId:number):UseQueryResult<any> => {
+  return useQuery({
+      queryKey: [GET_FIELD_MAP_KEY,wapId],
+    queryFn: ()=> queryFieldService.getFieldMapByWAP(wapId),
+     enabled: !!wapId,
+    ...queryConfig,
+})
+}
+
+export const useGetFieldDetailByWAP = (wapId:string,fieldId:string):UseQueryResult<any> => {
+    return useQuery({
+      queryKey:[GET_FIELD_DETAIL_KEY_BY_WAP,fieldId,wapId],
+      queryFn:()=>  queryFieldService.getFieldDetailByWAP(fieldId,wapId),
+      enabled: !!wapId && !!fieldId,
+    ...queryConfig
+})
+}
+
 export const usePostFieldByWAP = () =>{
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [POST_FIELD_KEY_BY_WAP],
     mutationFn:queryFieldService.postFieldByWap,
   });
+}
+export const usePutFieldByWAP = () =>{
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [PUT_FIELD_KEY_BY_WAP],
+    mutationFn:queryFieldService.putFieldByWap,
+  });
+}
+
+export const useDeleteFieldByWAP = () => {
+ return useMutation<RegisterResponse, AxiosError<any>, any>({
+     mutationKey: [DELETE_FIELD_KEY_BY_FIELD],
+     mutationFn:queryFieldService.deleteFieldByWAP,
+   });
 }

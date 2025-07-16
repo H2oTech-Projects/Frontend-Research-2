@@ -43,8 +43,10 @@ export type MapTableTypes<T> = {
     customHeight?: string;
 };
 export type DummyDataType = {
+    id:number;
     district?: string;
-    FieldID?: string;
+    fieldId?: string;
+    fieldFieldId?: string;
     FieldDesc?: string;
     FieldAcres?: number;
     IrrigAcres?: number;

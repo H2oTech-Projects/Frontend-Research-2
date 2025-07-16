@@ -23,7 +23,7 @@ const AddField = {
 };
 
 const EditField = {
-    url: "/field/:id/edit",
+    url: "/field/:id/edit/:wapId",
     name: "Edit Field",
 };
 const ViewField = {

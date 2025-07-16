@@ -54,7 +54,7 @@ export function FormComboBox({
                   disabled={disabled}
                 >
                   {watchedValue && options?.length !== 0
-                    ? options.find((option) => option.value === field.value)?.label
+                    ? options?.find((option) => option.value === field.value)?.label
                     : placeholder}
                   <ChevronsDown className="opacity-80" />
                 </Button>

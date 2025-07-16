@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form"
 import { FormInput } from '@/components/FormComponent/FormInput'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
-import { LatLng, LeafletEvent, Layer, FeatureGroup as LeafletFeatureGroup } from "leaflet"
+import { LatLng, LeafletEvent, Layer, FeatureGroup as LeafletFeatureGroup, LatLngBounds } from "leaflet"
 import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap'
 import { useEffect, useRef, useState } from 'react'
 import { FormTextbox } from '@/components/FormComponent/FormTextbox'
@@ -22,11 +22,11 @@ import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { useMediaQuery } from '@uidotdev/usehooks'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useGetWaps } from '@/services/timeSeries'
-import { usePostFieldByWAP } from '@/services/water/field'
+import { useGetFieldDetailByWAP, usePostFieldByWAP, usePutFieldByWAP } from '@/services/water/field'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
-import { GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY_BY_WAP, POST_FIELD_KEY_BY_WAP } from '@/services/water/field/constant'
+import { GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY_BY_WAP, POST_FIELD_KEY_BY_WAP, PUT_FIELD_KEY_BY_WAP } from '@/services/water/field/constant'
 import { showErrorToast } from '@/utils/tools'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
@@ -45,15 +45,18 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 const FieldForm = () => {
 const navigate = useNavigate();
-  const { id } = useParams();
+  const location = useLocation();
+  const { id,wapId } = useParams();
   const clientId = JSON.parse(localStorage.getItem("auth") as string)?.client_id
   const queryClient = useQueryClient();
   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape");
-  const { mutate: previewMap, isPending: mapLoading } = usePostMapPreview();
   const { data: waps, isLoading: wapsLoading } = useGetWaps();
+  const {data:fieldDetailData,isLoading:isFieldDetailLoading} = useGetFieldDetailByWAP(wapId!,id!)
+  const { mutate: previewMap, isPending: mapLoading } = usePostMapPreview();
   const {mutate:createFieldByWap, isPending:creatingField} = usePostFieldByWAP();
+  const {mutate:updateFieldByWap, isPending:updatingField} = usePutFieldByWAP();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -91,12 +94,25 @@ const navigate = useNavigate();
     if(!id && waps?.data){
     form.setValue("wapId",waps?.data[0].value)
 }
+    else{
+      form.setValue("wapId",Number(wapId))
+}
+
 },[waps])
 
+useEffect(()=>{
+  if(fieldDetailData && id){
+    form.reset({...fieldDetailData?.data[0],fieldActBool : fieldDetailData?.data[0]?.fieldActBool ? "True" : "False",fieldIrrigArea:fieldDetailData?.data[0]?.fieldIrrigHa,fieldLegalArea:fieldDetailData?.data[0]?.fieldLegalHa});
+    form.setValue("wapId",Number(wapId));
+    setPreviewMapData({ data: fieldDetailData?.fieldGeojson, view_bounds: fieldDetailData?.viewBounds ?  fieldDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
+}
+
+},[fieldDetailData])
 
   const onSubmit = (data: FormValues) => {
-    const formData =convertKeysToSnakeCase({...data,clientId:clientId}) 
-       createFieldByWap(formData, {
+    const formData =convertKeysToSnakeCase({...data,clientId:clientId,id:id}) 
+          if(!id) {
+           createFieldByWap(formData, {
            onSuccess: (data: any) => {
              // Invalidate and refetch
              queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
@@ -111,13 +127,30 @@ const navigate = useNavigate();
              queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
            },
          });
+} else {
+         updateFieldByWap(formData, {
+           onSuccess: (data: any) => {
+             // Invalidate and refetch
+             queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
+             queryClient.invalidateQueries({ queryKey: [GET_FIELD_DETAIL_KEY_BY_WAP] });
+             queryClient.invalidateQueries({ queryKey: [PUT_FIELD_KEY_BY_WAP] });
+             toast.success(data?.message);
+             navigate("/field");
+             form.reset(); // Reset the form after successful submission
+           },
+           onError: (error) => {
+             showErrorToast(error?.response?.data?.message || "Failed to create field");
+             queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
+           },
+         });
+}
     
   };
 
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
-        pageHeaderTitle="Add Field"
+         pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Field`}
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Field", menuPath: "/field" }]}
       />
 
@@ -127,7 +160,7 @@ const navigate = useNavigate();
     
 
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
-            <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data} />
+            <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data}  disabled= {id ? true : false}/>
             <FormInput control={form.control} name='fieldId' label='Field ID' placeholder='Enter Field ID' type='text' />
             <FormInput control={form.control} name='fieldName' label='Field Name' placeholder='Enter Field Name' type='text' />
             <FormInput control={form.control} name='fieldIrrigArea' label='Irrigable Area' placeholder='Enter Irrigable  Area' type='number' />
