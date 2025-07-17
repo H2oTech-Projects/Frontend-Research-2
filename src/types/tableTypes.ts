@@ -25,7 +25,7 @@ export type MapTableTypes<T> = {
     setPosition?: null | Function;
     setZoomLevel?: null | Function;
     setClickedField?: null | Function;
-    clickedField?: null | string;
+    clickedField?: null | any;
     fullHeight?: boolean;
     showPagination?: boolean;
     textAlign?: "left" | "center" | "right";

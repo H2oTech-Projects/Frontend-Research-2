@@ -133,7 +133,7 @@ const MapTable = <T,>({
       // @ts-ignore
       setZoomLevel(13);
       // @ts-ignore
-     setClickedField && setClickedField(row.original?.FieldID);
+     setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
     });
 
     const tableHeader = () => {

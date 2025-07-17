@@ -59,7 +59,8 @@ const Field = () => {
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
-  const [clickedField, setClickedField] = useState(null);
+  const [clickedField, setClickedField] = useState({id: "", viewBounds: null});
+  // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
@@ -73,7 +74,7 @@ const Field = () => {
   };
   // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
   const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo,defaultWap);
-  const { data: mapData, isLoading: mapLoading } = useGetFieldMapByWAP(defaultWap);
+  const { data: mapData, isLoading: mapLoading,refetch:refetchMap } = useGetFieldMapByWAP(defaultWap);
 //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
   const { data: waps, isLoading: wapsLoading } = useGetWaps()
   const {mutate:deleteField,isPending:isFieldDeleting} = useDeleteFieldByWAP()
@@ -193,7 +194,7 @@ const Field = () => {
               <Trash2 />
               Delete
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id }/view/${defaultWap}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
@@ -210,7 +211,7 @@ const Field = () => {
     deleteField({fieldId:id,wapId:defaultWap}, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
-        // queryClient.invalidateQueries({ queryKey: [GET_CLIENT_MAP_GEOJSON_KEY] });
+        refetchMap();
         queryClient.invalidateQueries({ queryKey: [DELETE_FIELD_KEY_BY_FIELD] });
         toast.success("Client deleted successfully");
       },
@@ -280,11 +281,33 @@ const Field = () => {
     });
   }
 
-  const geoJsonStyle = (features: any) => {
-    if (features?.properties?.FieldID === clickedField) {
+  // const geoJsonStyle = (features: any) => {
+  //   if (features?.properties?.FieldID === clickedField) {
+  //     return {
+  //       color: "red", // Border color
+  //       fillColor: "#transparent", // Fill color for the highlighted area
+  //       fillOpacity: 0.5,
+  //       weight: 2,
+  //     };
+  //   }
+  //   return {
+  //     color: "#16599A", // Border color
+  //     fillColor: "transparent", // Fill color for normal areas
+  //     fillOpacity: 0.5,
+  //     weight: 2,
+  //   };
+  // }
+
+
+  const ReturnChildren = useMemo(() => {
+    
+    const geoJsonStyle = (features: any) => {
+    // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
+    if (features?.properties?.field_id === clickedField?.id?.toString()) {
+      
       return {
         color: "red", // Border color
-        fillColor: "#transparent", // Fill color for the highlighted area
+        fillColor: "transparent", // Fill color for the highlighted area
         fillOpacity: 0.5,
         weight: 2,
       };
@@ -296,8 +319,6 @@ const Field = () => {
       weight: 2,
     };
   }
-
-  const ReturnChildren = useMemo(() => {
     return (
       <>
         {mapData && <RtGeoJson
@@ -322,7 +343,8 @@ const Field = () => {
       </>
     )
 
-  }, [mapLoading, position])
+  }, [mapLoading, position,mapData])
+
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
@@ -428,6 +450,7 @@ const Field = () => {
                 collapse={collapse}
                 // clickedField={clickedField}
                 configurations={mapConfiguration}
+                viewBound={clickedField?.viewBounds ?? mapData?.viewBounds}
               >
                 {ReturnChildren}
               </LeafletMap>) : (<LeafletMap

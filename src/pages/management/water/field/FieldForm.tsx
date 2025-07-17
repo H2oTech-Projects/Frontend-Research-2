@@ -161,13 +161,13 @@ useEffect(()=>{
 
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
             <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data}  disabled= {id ? true : false}/>
-            <FormInput control={form.control} name='fieldId' label='Field ID' placeholder='Enter Field ID' type='text' />
-            <FormInput control={form.control} name='fieldName' label='Field Name' placeholder='Enter Field Name' type='text' />
-            <FormInput control={form.control} name='fieldIrrigArea' label='Irrigable Area' placeholder='Enter Irrigable  Area' type='number' />
-            <FormInput control={form.control} name='fieldLegalArea' label='Irrigable Area' placeholder='Enter Stand By  Area' type='number' />
+            <FormInput control={form.control} name='fieldId' label='Field ID' placeholder='Enter Field ID' type='text' disabled={location.pathname.includes("view")} />
+            <FormInput control={form.control} name='fieldName' label='Field Name' placeholder='Enter Field Name' type='text' disabled={location.pathname.includes("view")} />
+            <FormInput control={form.control} name='fieldIrrigArea' label='Irrigable Area' placeholder='Enter Irrigable  Area' type='number' disabled={location.pathname.includes("view")} />
+            <FormInput control={form.control} name='fieldLegalArea' label='Irrigable Area' placeholder='Enter Stand By  Area' type='number' disabled={location.pathname.includes("view")} />
             {/* <FormInput control={form.control} name= 'fieldLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
-            <FormTextbox control={form.control} name='fieldDesc' label='Field Description' placeholder='Enter Field Description' />
-            <FormRadioGroup control={form.control} name='fieldActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} />
+            <FormTextbox control={form.control} name='fieldDesc' label='Field Description' placeholder='Enter Field Description' disabled={location.pathname.includes("view")} />
+            <FormRadioGroup control={form.control} name='fieldActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]}  disabled={location.pathname.includes("view")}/>
 
             {!location.pathname.includes("view") && <BasicSelect
               itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
@@ -202,7 +202,7 @@ useEffect(()=>{
 
 
           {/* <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/> */}
-          <Button className=' w-24' type="submit">Submit</Button>
+            {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={creatingField || updatingField} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
         </form>
       </Form>
     </div>

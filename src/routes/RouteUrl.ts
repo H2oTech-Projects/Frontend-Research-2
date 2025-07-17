@@ -27,7 +27,7 @@ const EditField = {
     name: "Edit Field",
 };
 const ViewField = {
-    url: "/field/:id/edit",
+    url: "/field/:id/view/:wapId",
     name: "View Field",
 };
 
