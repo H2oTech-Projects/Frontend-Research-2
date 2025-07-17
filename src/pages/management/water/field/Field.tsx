@@ -298,6 +298,9 @@ const Field = () => {
   //   };
   // }
 
+useEffect(()=>{
+  setClickedField({id: "", viewBounds: null})
+},[defaultWap])
 
   const ReturnChildren = useMemo(() => {
     
