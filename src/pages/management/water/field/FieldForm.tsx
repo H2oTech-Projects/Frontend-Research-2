@@ -28,6 +28,7 @@ import { useGetFieldDetailByWAP, usePostFieldByWAP, usePutFieldByWAP } from '@/s
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
 import { GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY_BY_WAP, POST_FIELD_KEY_BY_WAP, PUT_FIELD_KEY_BY_WAP } from '@/services/water/field/constant'
 import { showErrorToast } from '@/utils/tools'
+import { UnitSystemName } from '@/utils'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
@@ -63,8 +64,8 @@ const navigate = useNavigate();
       wapId:Number(''),
       fieldId:"",
       fieldName: "",
-      fieldIrrigArea: Number(''),
-      fieldLegalArea  : Number(''),
+      fieldIrrigArea: undefined,
+      fieldLegalArea  : undefined,
       fieldActBool: "True",
       fieldDesc: "",
       fieldGeometryFile: undefined
@@ -163,8 +164,8 @@ useEffect(()=>{
             <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data}  disabled= {id ? true : false}/>
             <FormInput control={form.control} name='fieldId' label='Field ID' placeholder='Enter Field ID' type='text' disabled={location.pathname.includes("view")} />
             <FormInput control={form.control} name='fieldName' label='Field Name' placeholder='Enter Field Name' type='text' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='fieldIrrigArea' label='Irrigable Area' placeholder='Enter Irrigable  Area' type='number' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='fieldLegalArea' label='Irrigable Area' placeholder='Enter Stand By  Area' type='number' disabled={location.pathname.includes("view")} />
+            <FormInput control={form.control} name='fieldIrrigArea' label={'Irrigable Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Irrigable  Area' type='number' disabled={location.pathname.includes("view")} />
+            <FormInput control={form.control} name='fieldLegalArea' label={'Stand By Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Stand By  Area' type='number' disabled={location.pathname.includes("view")} />
             {/* <FormInput control={form.control} name= 'fieldLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
             <FormTextbox control={form.control} name='fieldDesc' label='Field Description' placeholder='Enter Field Description' disabled={location.pathname.includes("view")} />
             <FormRadioGroup control={form.control} name='fieldActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]}  disabled={location.pathname.includes("view")}/>

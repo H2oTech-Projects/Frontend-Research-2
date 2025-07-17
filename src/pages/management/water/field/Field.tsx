@@ -26,7 +26,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
 import { useDeleteFieldByWAP, useGetFieldList, useGetFieldListByWAP, useGetFieldMapByWAP, useGetFieldMapList } from "@/services/water/field";
-import { debounce } from "@/utils";
+import { debounce, UnitSystemName } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
@@ -120,7 +120,7 @@ const Field = () => {
           </Button>
         );
       },
-      size: 300,
+      size: 180,
       cell: ({ row }) => <div className="lowercase">{row.getValue("fieldName")}</div>,
     },
     {
@@ -131,11 +131,11 @@ const Field = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_irrig_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field Irrig  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Field Irrig ({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      size: 150,
+      size: 180,
       cell: ({ row }) => <div className="capitalize">{row.getValue("fieldIrrigHa")}</div>,
     },
     {
@@ -146,11 +146,11 @@ const Field = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-             Stand by Acres {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+             Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      size: 150,
+      size: 180,
       cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
     },
     {
@@ -166,7 +166,7 @@ const Field = () => {
           </Button>
         );
       },
-      cell: ({ row }) => <div>{row.getValue("fieldActBool") ? "Active" : "Inactive"}</div>,
+      cell: ({ row }) => <div className="flex justify-center items-center">{row.getValue("fieldActBool") ? <div className="w-3 h-3 rounded-full bg-green-500 "></div> : <div className="w-3 h-3 rounded-full bg-red-500"></div>}</div>,
     },
     {
       id: "actions",

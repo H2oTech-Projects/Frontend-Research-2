@@ -1,3 +1,5 @@
+import { useSelector } from "react-redux";
+
 export function debounce<T extends (...args: any[]) => void>(
   func: T,
   delay: number
@@ -8,4 +10,11 @@ export function debounce<T extends (...args: any[]) => void>(
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => func(...args), delay);
   };
+}
+
+export const UnitSystemName = () => {
+  const unitSystemName = useSelector((state: any) => state.auth.unitSystemName);
+  if (unitSystemName.toLowerCase().trim() === "metric") {
+    return "Ha"
+  } else return "Ac"
 }
