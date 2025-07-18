@@ -366,16 +366,17 @@ const Field = () => {
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
-      <CustomModal
+      
+      <PageHeader
+        pageHeaderTitle="Field"
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
+      />
+<CustomModal
         isOpen={open}
         onClose={() => setOpen(false)}
         title="Delete Field"
         description="Are you sure you want to delete this Field? This action cannot be undone."
         onConfirm={handleDelete}
-      />
-      <PageHeader
-        pageHeaderTitle="Field"
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
@@ -422,7 +423,7 @@ const Field = () => {
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
               <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={waps?.data} showLabel={false} label="wap" /></div>
             </div>
-            <div className={cn(" h-[calc(100vh-260px) w-full")}>
+            <div className={cn(" h-[calc(100vh-312px) w-full")}>
               <MapTable
                 defaultData={fieldData?.data || []}
                 columns={columns}
@@ -435,7 +436,7 @@ const Field = () => {
                 totalData={fieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
-                customHeight="h-[calc(100vh-308px)]"
+                customHeight="h-[calc(100vh-312px)]"
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
