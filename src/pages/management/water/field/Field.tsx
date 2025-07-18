@@ -354,7 +354,6 @@ const Field = () => {
 
   useEffect(() => {
     if (!!waps) {
-    console.log("here",location.state)
       if (location.state?.wapId) {
         setDefaultWap(location.state.wapId)
       } else {
