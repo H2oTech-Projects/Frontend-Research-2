@@ -28,7 +28,7 @@ import CollapseBtn from "@/components/CollapseBtn";
 import { useDeleteFieldByWAP, useGetFieldList, useGetFieldListByWAP, useGetFieldMapByWAP, useGetFieldMapList } from "@/services/water/field";
 import { debounce, UnitSystemName } from "@/utils";
 import Spinner from "@/components/Spinner";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
 import { useGetWaps } from "@/services/timeSeries";
 import { showErrorToast } from "@/utils/tools";
@@ -54,12 +54,13 @@ const initialTableData = {
 
 const Field = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient()
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
-  const [clickedField, setClickedField] = useState({id: "", viewBounds: null});
+  const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
@@ -73,11 +74,11 @@ const Field = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
   // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
-  const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo,defaultWap);
-  const { data: mapData, isLoading: mapLoading,refetch:refetchMap } = useGetFieldMapByWAP(defaultWap);
-//  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
+  const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo, defaultWap);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetFieldMapByWAP(defaultWap);
+  //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
   const { data: waps, isLoading: wapsLoading } = useGetWaps()
-  const {mutate:deleteField,isPending:isFieldDeleting} = useDeleteFieldByWAP()
+  const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
@@ -146,7 +147,7 @@ const Field = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-             Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -186,15 +187,15 @@ const Field = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id }/edit/${defaultWap}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWap}`) }}>
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
-         <DropdownMenuItem onClick={() => { setId(String(row.original.id!) ); setOpen(true) }}>
+            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
               <Trash2 />
               Delete
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id }/view/${defaultWap}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWap}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
@@ -208,7 +209,7 @@ const Field = () => {
   ];
 
   const handleDelete = () => {
-    deleteField({fieldId:id,wapId:defaultWap}, {
+    deleteField({ fieldId: id, wapId: defaultWap }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
         refetchMap();
@@ -298,30 +299,30 @@ const Field = () => {
   //   };
   // }
 
-useEffect(()=>{
-  setClickedField({id: "", viewBounds: null})
-},[defaultWap])
+  useEffect(() => {
+    setClickedField({ id: "", viewBounds: null })
+  }, [defaultWap])
 
   const ReturnChildren = useMemo(() => {
-    
+
     const geoJsonStyle = (features: any) => {
-    // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
-    if (features?.properties?.field_id === clickedField?.id?.toString()) {
-      
+      // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
+      if (features?.properties?.field_id === clickedField?.id?.toString()) {
+
+        return {
+          color: "red", // Border color
+          fillColor: "transparent", // Fill color for the highlighted area
+          fillOpacity: 0.5,
+          weight: 2,
+        };
+      }
       return {
-        color: "red", // Border color
-        fillColor: "transparent", // Fill color for the highlighted area
+        color: "#16599A", // Border color
+        fillColor: "transparent", // Fill color for normal areas
         fillOpacity: 0.5,
         weight: 2,
       };
     }
-    return {
-      color: "#16599A", // Border color
-      fillColor: "transparent", // Fill color for normal areas
-      fillOpacity: 0.5,
-      weight: 2,
-    };
-  }
     return (
       <>
         {mapData && <RtGeoJson
@@ -346,14 +347,19 @@ useEffect(()=>{
       </>
     )
 
-  }, [mapLoading, position,mapData])
+  }, [mapLoading, position, mapData])
 
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
   useEffect(() => {
     if (!!waps) {
-      setDefaultWap(waps?.data[0]?.value)
+    console.log("here",location.state)
+      if (location.state?.wapId) {
+        setDefaultWap(location.state.wapId)
+      } else {
+        setDefaultWap(waps?.data[0]?.value)
+      }
     }
   }, [waps])
 
