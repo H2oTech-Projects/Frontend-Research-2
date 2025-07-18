@@ -3,14 +3,15 @@ type BasicSelectPropsType = {
   itemList: { label: string; value: string }[];
   label?: string;
   Value?:string;
-  showLabel?:boolean
+  showLabel?: boolean;
   setValue: (value: string) => void;
 }
+
 const BasicSelect = ({ itemList, label,Value ,setValue,showLabel=true}: BasicSelectPropsType) => {
   return (
     <div className="flex flex-col gap-1  space-y-2 w-full">
-     {showLabel &&  <label className="font-medium text-sm">{label} </label> }
-      <Select value={Value ?? undefined }  onValueChange={(value) => setValue(value)}>
+      {showLabel &&  <label className="font-medium text-sm">{label} </label> }
+        <Select value={Value ?? undefined }  onValueChange={(value) => setValue(value)}>
         <SelectTrigger className="w-full h-10 border  rounded-md transition-colors" >
           <SelectValue placeholder={`Select a ${label}`} />
         </SelectTrigger>

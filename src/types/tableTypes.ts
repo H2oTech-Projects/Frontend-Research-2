@@ -30,7 +30,7 @@ export type MapTableTypes<T> = {
   setPosition?: null | Function;
   setZoomLevel?: null | Function;
   setClickedField?: null | Function;
-  clickedField?: null | string;
+  clickedField?: null | any;
   fullHeight?: boolean;
   showPagination?: boolean;
   textAlign?: "left" | "center" | "right";
@@ -49,8 +49,10 @@ export type MapTableTypes<T> = {
   setClickedGeom?: null | Function;
 };
 export type DummyDataType = {
+  id:number;
   district?: string;
-  FieldID?: string;
+  fieldId?: string;
+  fieldFieldId?: string;
   FieldDesc?: string;
   FieldAcres?: number;
   IrrigAcres?: number;

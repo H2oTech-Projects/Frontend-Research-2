@@ -14,7 +14,7 @@ const geoJsonRef = useRef<L.GeoJSON>(null);
   useEffect(() => {
     if (geoJsonRef.current) {
       geoJsonRef.current.clearLayers(); // Remove old data
-      geoJsonRef.current.addData(data); // Add new data
+    data &&   geoJsonRef.current.addData(data); // Add new data
       geoJsonRef.current.setStyle(style);
     }
   }, [data]); // Re-run effect when `data` changes

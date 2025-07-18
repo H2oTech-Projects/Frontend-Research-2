@@ -25,10 +25,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useGetFieldList, useGetFieldMapList } from "@/services/water/field";
-import { debounce } from "@/utils";
+import { useDeleteFieldByWAP, useGetFieldList, useGetFieldListByWAP, useGetFieldMapByWAP, useGetFieldMapList } from "@/services/water/field";
+import { debounce, UnitSystemName } from "@/utils";
 import Spinner from "@/components/Spinner";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import BasicSelect from "@/components/BasicSelect";
+import { useGetWaps } from "@/services/timeSeries";
+import { showErrorToast } from "@/utils/tools";
+import CustomModal from "@/components/modal/ConfirmModal";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 
 interface initialTableDataTypes {
   search: string;
@@ -47,12 +54,18 @@ const initialTableData = {
 
 const Field = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient()
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
-  const [clickedField, setClickedField] = useState(null);
+  const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
+  // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
+  const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState<string>("");
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -60,27 +73,29 @@ const Field = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
-  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
-
+  // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
+  const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo, defaultWap);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetFieldMapByWAP(defaultWap);
+  //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
+  const { data: waps, isLoading: wapsLoading } = useGetWaps()
+  const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
     }, 500),
     []
   );
-
-  const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
+  // const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
   const columns: ColumnDef<DummyDataType>[] = [
     {
-      accessorKey: "FieldID",
+      accessorKey: "fieldId",
       // header: "Field ID",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "FieldID", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -88,11 +103,11 @@ const Field = () => {
       },
 
       size: 100, // this size value is in px
-      cell: ({ row }) => <div className="capitalize">{row.getValue("FieldID")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
       //filterFn: 'includesString',
     },
     {
-      accessorKey: "FieldDesc",
+      accessorKey: "fieldName",
       // header: () => {
       //     return <>Field Description</>;
       // },
@@ -100,168 +115,59 @@ const Field = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "FieldDesc", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field Description {tableInfo?.sort !== "FieldDesc" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Field Name {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      size: 300,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("FieldDesc")}</div>,
+      size: 180,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("fieldName")}</div>,
     },
     {
-      accessorKey: "FieldAcres",
+      accessorKey: "fieldIrrigHa",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "FieldAcres", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_irrig_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field Acres {tableInfo?.sort !== "FieldAcres" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Field Irrig ({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("FieldAcres")}</div>,
+      size: 180,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldIrrigHa")}</div>,
     },
     {
-      accessorKey: "IrrigAcres",
+      accessorKey: "fieldLegalHa",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "IrrigAcres", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Irrig Acres {tableInfo?.sort !== "IrrigAcres" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("IrrigAcres")}</div>,
+      size: 180,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
     },
     {
-      accessorKey: "StandbyAcr",
+      accessorKey: "fieldActBool",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "StandbyAcr", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Stand by Acres {tableInfo?.sort !== "StandbyAcr" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 200,
-      cell: ({ row }) => <div>{row.getValue("StandbyAcr")}</div>,
-    },
-    {
-      accessorKey: "ParcelID",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "ParcelID", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            ParcelID
-            {tableInfo?.sort !== "ParcelID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 300,
-      cell: ({ row }) => <div>{row.getValue("ParcelID")}</div>,
-    },
-    {
-      accessorKey: "VolRateAdj",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "VolRateAdj", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            VolRateAdj
-            {tableInfo?.sort !== "VolRateAdj" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 150,
-      cell: ({ row }) => <div>{row.getValue("VolRateAdj")}</div>,
-    },
-    {
-      accessorKey: "ActiveDate",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "ActiveDate", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Active Date
-            {tableInfo?.sort !== "ActiveDate" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 150,
-      cell: ({ row }) => <div>{dayjs(row.getValue("ActiveDate")).format("MM/DD/YYYY")}</div>,
-    },
-    {
-      accessorKey: "InactiveDa",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "InactiveDa", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Inactive Date
-            {tableInfo?.sort !== "InactiveDa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 150,
-      cell: ({ row }) => <div>{dayjs(row.getValue("InactiveDa")).format("MM/DD/YYYY")}</div>,
-    },
-    {
-      accessorKey: "ActiveFlag",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "ActiveFlag", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_act_bool", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Active Status
-            {tableInfo?.sort !== "ActiveFlag" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            {tableInfo?.sort !== "fieldActBool" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
-      cell: ({ row }) => <div>{row.getValue("ActiveFlag")}</div>,
-    },
-    {
-      accessorKey: "unq_fld_id",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "unq_fld_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Unique Flag ID
-            {tableInfo?.sort !== "unq_fld_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div>{row.getValue("unq_fld_id")}</div>,
-    },
-    {
-      accessorKey: "AreaAC",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "AreaAC", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Area Acres
-            {tableInfo?.sort !== "AreaAC" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div>{row.getValue("AreaAC")}</div>,
+      cell: ({ row }) => <div className="flex justify-center items-center">{row.getValue("fieldActBool") ? <div className="w-3 h-3 rounded-full bg-green-500 "></div> : <div className="w-3 h-3 rounded-full bg-red-500"></div>}</div>,
     },
     {
       id: "actions",
@@ -281,15 +187,15 @@ const Field = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWap}`) }}>
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
               <Trash2 />
               Delete
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWap}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
@@ -301,6 +207,20 @@ const Field = () => {
       },
     },
   ];
+
+  const handleDelete = () => {
+    deleteField({ fieldId: id, wapId: defaultWap }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
+        refetchMap();
+        queryClient.invalidateQueries({ queryKey: [DELETE_FIELD_KEY_BY_FIELD] });
+        toast.success("Client deleted successfully");
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data.message);
+      },
+    });
+  };
 
   const polygonEventHandlers = useMemo(
     () => ({
@@ -346,7 +266,7 @@ const Field = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo(auxLayer.feature.properties.FieldID);
+        showInfo(auxLayer.feature.properties.field_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -357,29 +277,52 @@ const Field = () => {
           fillOpacity: 0,
           opacity: 1,
         });
-        removeInfo(auxLayer.feature.properties.FieldID);
+        removeInfo(auxLayer.feature.properties.field_id);
       },
     });
   }
 
-  const geoJsonStyle = (features: any) => {
-    if (features?.properties?.FieldID === clickedField) {
+  // const geoJsonStyle = (features: any) => {
+  //   if (features?.properties?.FieldID === clickedField) {
+  //     return {
+  //       color: "red", // Border color
+  //       fillColor: "#transparent", // Fill color for the highlighted area
+  //       fillOpacity: 0.5,
+  //       weight: 2,
+  //     };
+  //   }
+  //   return {
+  //     color: "#16599A", // Border color
+  //     fillColor: "transparent", // Fill color for normal areas
+  //     fillOpacity: 0.5,
+  //     weight: 2,
+  //   };
+  // }
+
+  useEffect(() => {
+    setClickedField({ id: "", viewBounds: null })
+  }, [defaultWap])
+
+  const ReturnChildren = useMemo(() => {
+
+    const geoJsonStyle = (features: any) => {
+      // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
+      if (features?.properties?.field_id === clickedField?.id?.toString()) {
+
+        return {
+          color: "red", // Border color
+          fillColor: "transparent", // Fill color for the highlighted area
+          fillOpacity: 0.5,
+          weight: 2,
+        };
+      }
       return {
-        color: "red", // Border color
-        fillColor: "#transparent", // Fill color for the highlighted area
+        color: "#16599A", // Border color
+        fillColor: "transparent", // Fill color for normal areas
         fillOpacity: 0.5,
         weight: 2,
       };
     }
-    return {
-      color: "#16599A", // Border color
-      fillColor: "transparent", // Fill color for normal areas
-      fillOpacity: 0.5,
-      weight: 2,
-    };
-  }
-
-  const ReturnChildren = useMemo(() => {
     return (
       <>
       {mapData && <RtGeoJson
@@ -404,14 +347,35 @@ const Field = () => {
     </>
   )
 
-}, [mapLoading,position])
+  }, [mapLoading, position, mapData])
 
-const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
+  const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
+
+  useEffect(() => {
+    if (!!waps) {
+      if (location.state?.wapId) {
+        setDefaultWap(location.state.wapId)
+      } else {
+        setDefaultWap(waps?.data[0]?.value)
+      }
+    }
+  }, [waps])
+
+
+
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
+
       <PageHeader
         pageHeaderTitle="Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
+      />
+<CustomModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Delete Field"
+        description="Are you sure you want to delete this Field? This action cannot be undone."
+        onConfirm={handleDelete}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
@@ -445,7 +409,7 @@ const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={() => {
-              navigate("/field/addField")
+              navigate(`/field/addField`)
             }}
           >
             <Plus size={4} />
@@ -453,8 +417,12 @@ const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle
           </Button>
         </div>
         <div className="flex flex-grow">
-          <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
+          <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
+            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
+              <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={waps?.data} showLabel={false} label="wap" /></div>
+            </div>
+            <div className={cn(" h-[calc(100vh-312px) w-full")}>
               <MapTable
                 defaultData={fieldData?.data || []}
                 columns={columns}
@@ -464,9 +432,10 @@ const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle
                 clickedField={clickedField}
                 tableInfo={tableInfo}
                 setTableInfo={setTableInfo}
-                totalData={fieldData?.total_records || 1}
+                totalData={fieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
+                customHeight="h-[calc(100vh-312px)]"
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
@@ -489,8 +458,9 @@ const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle
                 collapse={collapse}
                 // clickedField={clickedField}
                 configurations={mapConfiguration}
+                viewBound={clickedField?.viewBounds ?? mapData?.viewBounds}
               >
-               {ReturnChildren}
+                {ReturnChildren}
               </LeafletMap>) : (<LeafletMap
                 position={position}
                 zoom={zoomLevel}
@@ -503,7 +473,7 @@ const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle
                 </div>
               </LeafletMap>)}
               <CollapseBtn
-                className="absolute -left-4 top-1/2 z-[11000] m-2 flex size-8 items-center justify-center"
+                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
                 onClick={tableCollapseBtn}
                 note={collapse === 'default' ? 'View Full Map' : "Show Table"}
               >

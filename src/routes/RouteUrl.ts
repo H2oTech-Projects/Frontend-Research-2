@@ -25,8 +25,12 @@ const AddField = {
 };
 
 const EditField = {
-  url: "/field/editField",
+  url: "/field/:id/edit/:wapId",
   name: "Edit Field",
+};
+const ViewField = {
+    url: "/field/:id/view/:wapId",
+    name: "View Field",
 };
 
 const MeasurementPoint = {
@@ -212,6 +216,7 @@ export {
   FieldMsmtPoint,
   AddField,
   EditField,
+  ViewField,
   MeasurementPoint,
   AddMeasurementPoint,
   EditMeasurementPoint,

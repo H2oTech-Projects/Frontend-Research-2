@@ -22,6 +22,7 @@ interface FormRadioGroupProps {
   label: string;
   options: Option[];
   showLabel?: boolean;
+  disabled?:boolean;
 }
 
 export function FormRadioGroup({
@@ -30,6 +31,7 @@ export function FormRadioGroup({
   label,
   options,
   showLabel = true,
+  disabled = false
 }: FormRadioGroupProps) {
   return (
     <FormField
@@ -43,6 +45,7 @@ export function FormRadioGroup({
               onValueChange={field.onChange}
               defaultValue={field.value}
                className="flex  space-x-1"
+              disabled={disabled}
             >
               {options.map((option) => (
                 <FormItem

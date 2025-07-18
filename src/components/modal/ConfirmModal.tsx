@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import React from "react"
 
 interface CustomModalProps {
@@ -9,6 +10,8 @@ interface CustomModalProps {
   confirmText?: string
   cancelText?: string
   onConfirm?: () => void
+  isDeleteModal?: boolean
+  showActionButton?:boolean
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -20,21 +23,23 @@ const CustomModal: React.FC<CustomModalProps> = ({
   confirmText = "Confirm",
   cancelText = "Cancel",
   onConfirm,
+  isDeleteModal = true,
+  showActionButton = true,
 }) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 animate-fade-in">
+    <div className="fixed inset-0 z-[899] flex items-center justify-center bg-black/50">
+      <div className="bg-white rounded-xl shadow-lg w-auto p-6 animate-fade-in dark:bg-slate-800 dark:text-slate-50">
         <h2 className="text-lg font-semibold">{title}</h2>
         {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
 
         <div className="mt-4">{children}</div>
-
-        <div className="mt-6 flex justify-end gap-2">
+        {
+showActionButton && <div className="mt-6 flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
+            className="px-4 py-2 rounded-md text-sm bg-gray-100 hover:bg-gray-200 dark:text-black"
           >
             {cancelText}
           </button>
@@ -43,11 +48,14 @@ const CustomModal: React.FC<CustomModalProps> = ({
               onConfirm?.()
               onClose()
             }}
-            className="px-4 py-2 rounded-md text-sm bg-red-600 text-white hover:bg-red-700"
+            className={cn("px-4 py-2 rounded-md text-sm  text-white ",isDeleteModal ? "bg-red-600 hover:bg-red-700" : "bg-royalBlue hover:bg-blue-700")}
           >
             {confirmText}
           </button>
         </div>
+
+}
+        
       </div>
     </div>
   )

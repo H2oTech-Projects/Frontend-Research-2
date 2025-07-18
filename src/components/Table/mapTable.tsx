@@ -46,7 +46,7 @@ const MapTable = <T,>({
     setTableInfo,
     collapse,
     useClientPagination = false,
-    customHeight,
+    customHeight ="h-[calc(100vh-208px)]",
     setClickedGeom = null
 }: MapTableTypes<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -94,9 +94,9 @@ const MapTable = <T,>({
 
     const handleOnClick = ((row: any, type: any) => {
       if(type === "conveyance") {
-        setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});  
-    
-} 
+        setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});
+
+}
       if (type=="parcel") {
         // @ts-ignore
         setSelectedParcel(row.original?.parcel_id)
@@ -138,7 +138,7 @@ const MapTable = <T,>({
       // @ts-ignore
       setZoomLevel(13);
       // @ts-ignore
-     setClickedField && setClickedField(row.original?.FieldID);
+     setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
     });
 
     const tableHeader = () => {
@@ -278,7 +278,7 @@ const MapTable = <T,>({
 
     return (
       <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-        <div className={cn(fullHeight ? "h-[calc(100vh-208px)]" : customHeight ? `${customHeight}` : "h-auto")}>
+        <div className={cn(fullHeight ? customHeight : "h-auto ")}>
           <Table className="relative">
             <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
               {isLoading ? emptyTable() : tableContent()}

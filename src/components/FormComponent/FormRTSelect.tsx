@@ -54,7 +54,7 @@ export function FormComboBox({
                   disabled={disabled}
                 >
                   {watchedValue && options?.length !== 0
-                    ? options.find((option) => option.value === field.value)?.label
+                    ? options?.find((option) => option.value === field.value)?.label
                     : placeholder}
                   <ChevronsDown className="opacity-80" />
                 </Button>
@@ -66,7 +66,7 @@ export function FormComboBox({
                 <CommandList>
                   <CommandEmpty>No option found.</CommandEmpty>
                   <CommandGroup>
-                    {options.map((option) => (
+                    {options?.map((option) => (
                       <CommandItem
                         key={option.value}
                         value={option.label}
