@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 interface FormComboBoxProps {
   control: Control<any>;
   name: string;
-  label: string;
+  label?: string;
   options: { label: string; value: string | number }[];
   className?: string;
   placeholder?: string;
@@ -40,7 +40,7 @@ export function FormComboBox({
       name={name}
       render={({ field }) => (
         <FormItem className={cn("w-full", className)}>
-          <FormLabel>{label}</FormLabel>
+          {!!label && <FormLabel>{label}</FormLabel>}
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <FormControl>

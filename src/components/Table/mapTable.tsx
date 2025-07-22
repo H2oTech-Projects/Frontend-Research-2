@@ -131,7 +131,7 @@ const MapTable = <T,>({
         features: row.original
       });
       // @ts-ignore
-      setZoomLevel(13);
+      setPosition && setZoomLevel(13);
       // @ts-ignore
      setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
     });
@@ -270,7 +270,7 @@ const MapTable = <T,>({
                 {useClientPagination ?  <DataTablePagination table={table} collapse={collapse!}/> : <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>}
             </div>
     }
-
+    const tableHeight = tableType == 'wap_types' ? 'h-[300px]' : fullHeight ? "h-[300px]" : "h-auto"
     return (
       <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
         <div className={cn(fullHeight ? customHeight : "h-auto ")}>

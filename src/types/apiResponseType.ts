@@ -1,4 +1,4 @@
-import { ClientTableDataTypes } from "./tableTypes";
+import { ClientTableDataTypes, WaterAccountingPeriodTypes, WaterAccountingYearTypes } from "./tableTypes";
 
 interface AccountType {
   value: string;
@@ -152,4 +152,27 @@ export type MsmtPointListResponseType = {
   totalRecords: number;
   geojson:string;
 
+}
+
+export type PeriodTypesResponseType = {
+  data: WaterAccountingPeriodTypes[];
+  pageNo: number;
+  pageSize: number;
+  totalRecords: number;
+  geojson:string;
+}
+
+export type PeriodTypeResponseType = {
+  data: WaterAccountingPeriodTypes;
+}
+
+export type WayTypeResponseType = {
+  data: WaterAccountingYearTypes;
+}
+
+export type WayTypesResponseType = {
+  data: WaterAccountingYearTypes[];
+  pageNo: number;
+  pageSize: number;
+  totalRecords: number;
 }

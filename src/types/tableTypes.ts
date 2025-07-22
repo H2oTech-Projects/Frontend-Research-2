@@ -155,3 +155,16 @@ export type MsmtPointDataType = {
   msmtPointId?: string;
   msmtPointName?: string;
 };
+export type WaterAccountingPeriodTypes = {
+  id:string
+  wa_period_type: string;
+  wa_period_type_name: string;
+  client_name: string;
+};
+
+export type WaterAccountingYearTypes = {
+  id:string
+  wa_start_date: string;
+  wa_end_date: string;
+  wa_year: string;
+};

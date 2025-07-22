@@ -31,3 +31,20 @@ export const clientSchema = z.object({
   clientType: z.coerce.number().min(1, "Client type is required").optional(),
 })
 
+export const waterAccountingRatePeriodSchema = z.object({
+  waRateTypeId: z.coerce.number().optional(),
+  waPeriodName: z.coerce.number().optional(),
+  waRateDetail: z.string().optional()
+})
+
+export const waterAccountingPeriodTypeSchema = z.object({
+  waPeriodType: z.string().optional(),
+  waPeriodTypeName: z.string().optional()
+})
+
+export const waterAccountingYearTypeSchema = z.object({
+  waYear: z.string().optional(),
+  waStartDate: z.string().optional(),
+  waEndDate: z.string().optional(),
+})
+
