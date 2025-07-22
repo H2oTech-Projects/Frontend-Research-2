@@ -2,7 +2,6 @@ import BasicSelect from '@/components/BasicSelect'
 import DragItemWrapper from '@/components/DndComponent/DragListWrapper'
 import { FormDatePicker } from '@/components/FormComponent/FormDatePicker'
 import { FormInput } from '@/components/FormComponent/FormInput'
-import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
 import CustomModal from '@/components/modal/ConfirmModal'
 import PageHeader from '@/components/PageHeader'
 import Spinner from '@/components/Spinner'
@@ -23,14 +22,15 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMediaQuery } from '@uidotdev/usehooks'
 import dayjs from 'dayjs'
-import { ArrowLeft, ArrowRight, Check, Pencil, SquarePlus, Trash, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { ArrowRight, Check, Pencil, SquarePlus, Trash, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
-type WayFormType = {
+type WapFormType = {
   // wayYear: string | undefined;
   wapList: {
+    id?: number;
     waptId: number;
     waPeriodName: string;
     waStartDate: Date | undefined;
@@ -47,35 +47,40 @@ const Time = () => {
   const isDesktopDevice = useMediaQuery("(min-width: 854px)");
   const queryClient = useQueryClient();
   const [wapYear, setWapYear] = useState<null | string>(null);
-  const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions(wapYear)
-  const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
   const [listOfWapType, setListOfWapType] = useState<any>([]);
   const [selectedWapType, setSelectedWapType] = useState<string[]>([]);
   const [enableSubmit, setEnableSubmit] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<number>();
   const [waptEditElement, setWaptEditElement] = useState<any>(null)
+
+  const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
+  const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions(wapYear)
+  const { data: wayDetail, isLoading: isWayDetailLoading } = useGetWaysDetails(wapYear)
   const { mutate: createWays, isPending: isWaysCreatePending } = usePutWays();
   const { mutate: postWapt, isPending: isWaptCreating } = usePostWapt();
   const { mutate: updateWapt, isPending: isWaptUpdating } = usePutWapt()
   const { mutate: deleteWapt, isPending: isWaptDeleting } = useDeleteWapt();
   const { mutate: rankWapt, isPending: isWaptRanking } = usePutRankWapt()
-  const form = useForm<WayFormType>({
+
+  const form = useForm<WapFormType>({
     defaultValues: {
-      // wayYear: undefined,
       wapList: []
     },
   });
+
   const waptForm = useForm<WaptFormType>({
     defaultValues: {
       id: undefined,
       waptName: ""
     }
   })
-  const { data: wayDetail, isLoading: isWayDetailLoading } = useGetWaysDetails(wapYear)
+
   const formatNumber = (num: number) => num.toString().padStart(2, '0');
   // const countWapType = (data: any[], waptId: string) => data?.filter(item => item?.waptId.toString() === waptId).length
-  const startEndDate = waysOptions?.data?.filter((item: any) => item.value === wapYear)
+  const selectedWAYdetail = waysOptions?.data?.filter((item: any) => item.value === wapYear)
+  const yearPrefix = selectedWAYdetail?.[0]?.waStartDate?.split?.('-')?.[0] || "";
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor, {
@@ -85,6 +90,7 @@ const Time = () => {
       },
     })
   );
+
   useEffect(() => {
     if (wapTypeOptions && !isWapTypeOptionsLoading) {
       setListOfWapType(wapTypeOptions?.data)
@@ -109,16 +115,18 @@ const Time = () => {
     const list = form.watch("wapList");
     const listForForm = transferItem?.map((item: any, index: any) => {
       const wap = item?.waPeriodTypeName;
-      const wapNumbers = fields
-        .filter((field) => field.waPeriodName.toLowerCase().includes(wap.toLowerCase()))
-        .map((field) => {
-          const match = field.waPeriodName.match(/\d+$/);
-          return match ? parseInt(match[0], 10) : 0;
-        });
+      //matchedWaptCount
+      const matchedWaptCount = fields
+        .filter((field) => field.waptId.toString() === item.id.toString()).length
 
-      const maxNumber = wapNumbers.length > 0 ? Math.max(...wapNumbers) : 0;
-      const yearPrefix = startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || "";
-      const periodName = `${yearPrefix} ${wap} ${formatNumber(maxNumber + 1)}`;
+        // .map((field) => {
+        //   const match = field.waPeriodName.match(/\d+$/);
+        //   return match ? parseInt(match[0], 10) : 0;
+        // });
+
+      // const maxNumber = matchedWaptCount;
+      //const yearPrefix = selectedWAYdetail?.[0]?.waStartDate?.split?.('-')?.[0] || "";
+      const periodName = `${yearPrefix} ${wap} ${formatNumber(matchedWaptCount + 1)}`;
 
       if (index === 0 && list.at(-1)?.waEndDate) {
         const startDate = new Date(list.at(-1)?.waEndDate!);
@@ -139,93 +147,106 @@ const Time = () => {
       }
     });
     if (list.length < 1) {
-      listForForm[0].waStartDate = startEndDate[0].waStartDate;
+      listForForm[0].waStartDate = selectedWAYdetail[0].waStartDate;
 
     }
-    listForForm.at(-1).waEndDate = startEndDate[0].waEndDate;
+    listForForm.at(-1).waEndDate = selectedWAYdetail[0].waEndDate;
     append(listForForm);
     setSelectedWapType([]);
     setEnableSubmit(true);
   };
 
+  const getListIndex = (list: any, event: DragEndEvent, type: string) => {
+    if (type == 'active') return list.findIndex((item: any)  => item?.id.toString() === event.active.id.toString())
+    return list.findIndex((item: any) => item?.id.toString() === event.over!.id.toString());
+  }
 
   const reorderList = (e: DragEndEvent) => {
     if (!e.over || e.active.id === e.over.id) return;
     const list = form.watch("wapList");
-    const oldIdx = fields.findIndex(item => item.id.toString() === e.active.id.toString());
-    const newIdx = fields.findIndex(item => item.id.toString() === e.over!.id.toString());
+    const oldIdx = getListIndex(fields, e, 'active')
+    const newIdx = getListIndex(fields, e, 'over!')
 
     if (oldIdx === -1 || newIdx === -1) return;
 
     // Step 1: Reorder full items
     const sortedItems = arrayMove(fields, oldIdx, newIdx);
 
-    const yearPrefix = startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || "";
+    // // Step 2: Extract existing suffix numbers per type
+    // const suffixMap: Record<string, number[]> = {};
 
-    // Step 2: Extract existing suffix numbers per type
-    const suffixMap: Record<string, number[]> = {};
+    // sortedItems.forEach((item) => {
+    //   const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? "";
 
-    sortedItems.forEach((item) => {
+    //   const match = item.waPeriodName.match(/(\d+)$/);
+    //   if (match) {
+    //     if (!suffixMap[label]) suffixMap[label] = [];
+    //     suffixMap[label].push(Number(match[1]));
+    //   }
+    // });
+
+    // // const newSorted = sortedItems.map((item) => {
+    // //   const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? "";
+    // //   return {
+
+    // //   }
+    // // }
+
+    // // Step 3: Sort suffixes for each type to maintain original order
+    // Object.keys(suffixMap).forEach(type => {
+    //   suffixMap[type].sort((a, b) => a - b);
+    // });
+
+
+    // // Step 4: Apply suffixes back in order
+    // const typeIndexMap: Record<string, number> = {}; // to track position in suffix array
+    // const renamedItems = sortedItems.map((item) => {
+    //   const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? "";
+    //   const currentIndex = typeIndexMap[label] ?? 0;
+    //   const suffix = suffixMap[label]?.[currentIndex] ?? 1;
+    //   typeIndexMap[label] = currentIndex + 1;
+
+    //   const newPeriodName = `${yearPrefix} ${label} ${String(suffix).padStart(2, '0')}`;
+
+    //   return {
+    //     ...item,
+    //     pId: sortedItems?.filter((item) => item.waPeriodName.toString() === newPeriodName)[0]?.pId,
+    //     waPeriodName: newPeriodName,
+    //   };
+    // });
+
+
+    // const updatedArray = renamedItems?.map((item: any, index) => {
+
+    //   return {
+    //     pId: item?.pId,
+    //     waPeriodName: item?.waPeriodName,
+    //     waptId: item?.waptId,
+    //     waStartDate: list[index]?.waStartDate,
+    //     waEndDate: list[index]?.waEndDate
+    //   }
+    // })
+
+    const labelCounter: Record<string, number> = {}; // to track position in suffix array
+    const newupdatedArray = sortedItems?.map((item: any, index) => {
       const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? "";
-      const match = item.waPeriodName.match(/(\d+)$/);
-      if (match) {
-        if (!suffixMap[label]) suffixMap[label] = [];
-        suffixMap[label].push(Number(match[1]));
+      if (!labelCounter[label]) {
+        labelCounter[label] = 1;
+      } else {
+        labelCounter[label] +=1
       }
-    });
-
-    // Step 3: Sort suffixes for each type to maintain original order
-    Object.keys(suffixMap).forEach(type => {
-      suffixMap[type].sort((a, b) => a - b);
-    });
-
-    // Step 4: Apply suffixes back in order
-    const typeIndexMap: Record<string, number> = {}; // to track position in suffix array
-    const renamedItems = sortedItems.map((item) => {
-      const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? "";
-      const currentIndex = typeIndexMap[label] ?? 0;
-      const suffix = suffixMap[label]?.[currentIndex] ?? 1;
-      typeIndexMap[label] = currentIndex + 1;
-
-      const newPeriodName = `${yearPrefix} ${label} ${String(suffix).padStart(2, '0')}`;
-
+      const newPeriodName = `${yearPrefix} ${label} ${String(labelCounter[label]).padStart(2, '0')}`;
       return {
-        ...item,
         pId: sortedItems?.filter((item) => item.waPeriodName.toString() === newPeriodName)[0]?.pId,
         waPeriodName: newPeriodName,
-      };
-    });
-
-    const updatedArray = renamedItems?.map((item: any, index) => {
-      return {
-        pId: item?.pId,
-        waPeriodName: item?.waPeriodName,
         waptId: item?.waptId,
         waStartDate: list[index]?.waStartDate,
         waEndDate: list[index]?.waEndDate
       }
     })
-
-    replace(updatedArray);
+    replace(newupdatedArray);
     setEnableSubmit(true);
   };
-
-  // const handleWapElementDelete = (deleteIndex: number) => {
-  //   const initialWapList = form.getValues("wapList")
-  //   const remainingWapList = fields.filter((item, index) => index !== deleteIndex)
-  //   const updatedList = remainingWapList?.map((item, index) => {
-  //     return {
-  //       pId: item?.pId || null,
-  //       waptId: item?.waptId,
-  //       waPeriodName: item?.waPeriodName,
-  //       waStartDate: initialWapList[index]?.waStartDate,
-  //       waEndDate: initialWapList[index]?.waEndDate,
-  //     }
-  //   })
-  //   updatedList.at(-1)!.waEndDate = startEndDate[0].waEndDate;
-  //   replace(updatedList);
-  //   setEnableSubmit(true);
-  // }
 
   const handleWapElementDelete = (deleteIndex: number) => {
     const initialWapList = form.getValues("wapList");
@@ -233,41 +254,53 @@ const Time = () => {
     // Remove item
     const remainingList = initialWapList.filter((_, idx) => idx !== deleteIndex);
 
-    const yearPrefix = startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || "";
+    //const yearPrefix = selectedWAYdetail?.[0]?.waStartDate?.split?.('-')?.[0] || "";
 
-    // 1. Group by type
-    const typeGroups: Record<number, any[]> = {};
-    for (const item of remainingList) {
-      if (!typeGroups[item.waptId]) typeGroups[item.waptId] = [];
-      typeGroups[item.waptId].push(item);
-    }
+    // // 1. Group by type
+    // const typeGroups: Record<number, any[]> = {};
+    // for (const item of remainingList) {
+    //   if (!typeGroups[item.waptId]) typeGroups[item.waptId] = [];
+    //   typeGroups[item.waptId].push(item);
+    // }
 
-    // 2. Sort each type group and rebuild waPeriodName
-    const renamedList = remainingList.map((item, idx) => {
-      const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? '';
-      const typeGroup = typeGroups[item.waptId];
-      const currentIndex = typeGroup.indexOf(item); // index within its type
-      const suffix = String(currentIndex + 1).padStart(2, '0');
-      return {
-        ...item,
-        waPeriodName: `${yearPrefix} ${label} ${suffix}`
-      };
-    });
-
+    // // 2. Sort each type group and rebuild waPeriodName
+    // const renamedList = remainingList.map((item, idx) => {
+    //   const label = listOfWapType.find((t: any) => t.id === item.waptId)?.waPeriodTypeName ?? '';
+    //   const typeGroup = typeGroups[item.waptId];
+    //   const currentIndex = typeGroup.indexOf(item); // index within its type
+    //   const suffix = String(currentIndex + 1).padStart(2, '0');
+    //   return {
+    //     ...item,
+    //     waPeriodName: `${yearPrefix} ${label} ${suffix}`
+    //   };
+    // });
+    let labelCounter: Record<string, number> = {}; // to track position in suffix array
     // 3. Re-assign start and end dates
-    if (renamedList.length > 0) {
-      renamedList[0].waStartDate = startEndDate[0]?.waStartDate;
-      for (let i = 1; i < renamedList.length; i++) {
-        const prevEnd = renamedList[i - 1]?.waEndDate;
+    if (remainingList.length > 0) {
+      remainingList[0].waStartDate = selectedWAYdetail[0]?.waStartDate;
+      const label = listOfWapType.find((t: any) => t.id === remainingList[0].waptId)?.waPeriodTypeName ?? '';
+      remainingList[0].waPeriodName = `${yearPrefix} ${label} 01`
+      labelCounter[label] = 1;
+
+      for (let i = 1; i < remainingList.length; i++) {
+        const prevEnd = remainingList[i - 1]?.waEndDate;
+        const label = listOfWapType.find((t: any) => t.id === remainingList[i].waptId)?.waPeriodTypeName ?? '';
+        if (!labelCounter[label]) {
+          labelCounter[label] = 1;
+        } else {
+          labelCounter[label] +=1
+        }
+        const newPeriodName = `${yearPrefix} ${label} ${String(labelCounter[label]).padStart(2, '0')}`;
         if (prevEnd) {
           const newStart = new Date(prevEnd);
           newStart.setDate(newStart.getDate() + 1);
-          renamedList[i].waStartDate = newStart;
+          remainingList[i].waStartDate = newStart;
         }
+        remainingList[i].waPeriodName = newPeriodName;
       }
-      renamedList.at(-1)!.waEndDate = startEndDate[0]?.waEndDate;
+      remainingList.at(-1)!.waEndDate = selectedWAYdetail[0]?.waEndDate;
     }
-    replace(renamedList);
+    replace(remainingList);
     setEnableSubmit(true);
   };
 
@@ -285,7 +318,7 @@ const Time = () => {
     }
   }
 
-  const onSubmit = (data: WayFormType) => {
+  const onSubmit = (data: WapFormType) => {
     const formattedData = {
       wayYear: wapYear,
       wapList: data?.wapList?.map((item) => {
@@ -480,8 +513,8 @@ const Time = () => {
                   sensors={sensors}
                   onDragEnd={(e) => {
                     if (!e.over || e.active.id === e.over.id) return;
-                    const oldIndex = listOfWapType.findIndex((item: any) => item.id.toString() === e.active.id.toString());
-                    const newIndex = listOfWapType.findIndex((item: any) => item.id.toString() === e.over!.id.toString());
+                    const oldIndex = getListIndex(listOfWapType, e, 'active')
+                    const newIndex = getListIndex(listOfWapType, e, 'over!')
                     if (oldIndex === -1 || newIndex === -1) return;
                     const newList = arrayMove(listOfWapType, oldIndex, newIndex);
                     setListOfWapType(newList);
@@ -551,7 +584,7 @@ const Time = () => {
 
           <Form {...form}>
             <form id="myForm" onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-2 flex-grow h-[calc(100vh-150px)]  bg-white p-3  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors", isDesktopDevice ? " w-[45%]" : "w-full")}>
-              <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods for {startEndDate?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
+              <div className='text-xl text-royalBlue dark:text-white transition-colors'>Create or Update Water Accounting Periods for {selectedWAYdetail?.[0]?.waStartDate?.split?.('-')?.[0] || ""}</div>
               {/* <div className="h-auto pb-2 px-2 w-1/2" >
                 <FormComboBox
                   control={form.control}
@@ -585,9 +618,9 @@ const Time = () => {
                                 name={`wapList.${index}.waStartDate`}
                                 label='Start Date'
                                 showDateIcon={true}
-                                disabled
-                                minDate={index === 0 ? new Date(startEndDate[0]?.waStartDate ?? "") : form.watch(`wapList.${index - 1}.waEndDate`) ? new Date(form.watch(`wapList.${index - 1}.waEndDate`)!) : new Date()}
-                                maxDate={new Date(startEndDate[0]?.waEndDate ?? "")}
+                                disabled={index !== 0}
+                                minDate={index === 0 ? new Date(selectedWAYdetail[0]?.waStartDate ?? "") : form.watch(`wapList.${index - 1}.waEndDate`) ? new Date(form.watch(`wapList.${index - 1}.waEndDate`)!) : new Date()}
+                                maxDate={new Date(selectedWAYdetail[0]?.waEndDate ?? "")}
                               />
                             </div>
                             <div onPointerDown={(e) => e.stopPropagation()}>
@@ -604,9 +637,9 @@ const Time = () => {
                                       date.setDate(date.getDate() + 1);
                                       return date;
                                     })()
-                                    : new Date(startEndDate[0]?.waStartDate ?? "")
+                                    : new Date(selectedWAYdetail[0]?.waStartDate ?? "")
                                 }
-                                maxDate={new Date(startEndDate[0]?.waEndDate ?? "")}
+                                maxDate={new Date(selectedWAYdetail[0]?.waEndDate ?? "")}
                               />
                             </div>
 
