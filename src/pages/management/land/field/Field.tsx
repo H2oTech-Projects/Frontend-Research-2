@@ -155,6 +155,21 @@ const Field = () => {
       cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
     },
     {
+      accessorKey: "geomHa",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+            Geometric Area ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+      size: 180,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
+    },
+    {
       accessorKey: "fieldActBool",
       header: ({ column }) => {
         return (
@@ -214,7 +229,7 @@ const Field = () => {
         queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
         refetchMap();
         queryClient.invalidateQueries({ queryKey: [DELETE_FIELD_KEY_BY_FIELD] });
-        toast.success("Client deleted successfully");
+        toast.success("Field deleted successfully");
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
