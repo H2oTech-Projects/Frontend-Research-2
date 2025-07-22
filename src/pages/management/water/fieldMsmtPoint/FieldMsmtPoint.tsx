@@ -435,15 +435,15 @@ const FieldMsmtPoint = () => {
         form.setValue("apportionMethodType", msmtPointFieldDetail?.data?.apportionMethodTypeId || apportionMethodType?.data?.options[0]?.value )
         // apportionMethodType?.data?.apportionVolPercentIds.includes(msmtPointFieldDetail?.data?.apportionMethodTypeId) && append(msmtPointFieldDetail?.data?.fields)
         if (apportionMethodType?.data?.apportionVolPercentIds.includes(msmtPointFieldDetail?.data?.apportionMethodTypeId)) {
-           
+
           if (JSON.stringify(msmtPointFieldDetail?.data?.linkedFields.sort()) === JSON.stringify(selectedFields.sort())) {
-          
+
             remove()
             append(msmtPointFieldDetail?.data?.fields)
           } else {
-                 
+
             if (!form.watch("apportionMethodType")) {
-                   
+
               form.setValue("apportionMethodType", apportionMethodType?.data?.options[0]?.value)
             }
             const fieldData = selectedFields?.map((item: any) => {

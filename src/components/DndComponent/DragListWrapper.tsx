@@ -4,12 +4,13 @@ import { CSS } from "@dnd-kit/utilities";
 
 interface DragItemWrapperProps {
   id:string,
-  children: any
+  children: any,
+  disable?:boolean
 } 
 
-const DragItemWrapper = (props:DragItemWrapperProps) => {
+const DragItemWrapper = (props:DragItemWrapperProps) => { 
   const { attributes, listeners, setNodeRef, transform, transition } = 
-    useSortable({ id: props.id });
+    useSortable({ id: props.id, disabled:props.disable ?? false  });
 
   return (
     <div

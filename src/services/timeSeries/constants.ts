@@ -3,3 +3,7 @@ export const GET_WAPT_OPTIONS = 'GET_WAPT_OPTIONS';
 export const PUT_WAYS = 'PUT_WAYS';
 export const GET_WAYS_DETAILS = "GET_WAYS_DETAILS";
 export const GET_MSMTPOINT_FIELDS = "GET_MSMTPOINT_FIELDS";
+export const POST_WAPTS = 'POST_WAPTS'
+export const PUT_WAPTS = 'PUT_WAPTS'
+export const DELETE_WAPTS = 'DELETE_WAPTS'
+export const RANK_WAPTS = "RANK_WAPTS"
