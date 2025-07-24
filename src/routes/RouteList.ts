@@ -237,6 +237,11 @@ export const RouteList = [
     Component: lazy(async () => import("../pages/management/customer/customerField/customer-field"))
   },
   {
+    path: routeUrl?.AddCustomerField?.url,
+    name: routeUrl?.AddCustomerField?.name,
+    Component: lazy(async () => import("../pages/management/customer/customerField/formCustomerField"))
+  },
+  {
     path: routeUrl?.Region?.url,
     name: routeUrl?.Region?.name,
     Component: lazy(async () => import("./../pages/management/land/region/Region"))

@@ -34,6 +34,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
+import { useGetCustomerFieldListByWAP } from "@/services/customerField";
 
 interface initialTableDataTypes {
   search: string;
@@ -60,7 +61,7 @@ const CustomerField = () => {
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
-  const [defaultWay, setDefaultWay] = useState<any>("")
+  const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
@@ -72,10 +73,10 @@ const CustomerField = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
   // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
-  const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo, defaultWay);
-  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetFieldMapByWAP(defaultWay);
+  const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetFieldMapByWAP(defaultWap);
   //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
-const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
+  const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
   const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -84,8 +85,8 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
     []
   );
   // const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
-
-  const columns: ColumnDef<DummyDataType>[] = [
+console.log(customerFieldData?.data)
+  const columns: ColumnDef<any>[] = [
     {
       accessorKey: "fieldId",
       // header: "Field ID",
@@ -123,7 +124,7 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
       cell: ({ row }) => <div className="lowercase">{row.getValue("fieldName")}</div>,
     },
     {
-      accessorKey: "fieldIrrigHa",
+      accessorKey: "customers",
       header: ({ column }) => {
         return (
           <Button
@@ -135,38 +136,38 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldIrrigHa")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("customers")}</div>,
     },
-    {
-      accessorKey: "fieldLegalHa",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
-    },
-    {
-      accessorKey: "fieldActBool",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_act_bool", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Active Status
-            {tableInfo?.sort !== "fieldActBool" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div className="flex justify-center items-center">{row.getValue("fieldActBool") ? <div className="w-3 h-3 rounded-full bg-green-500 "></div> : <div className="w-3 h-3 rounded-full bg-red-500"></div>}</div>,
-    },
+    // {
+    //   accessorKey: "fieldLegalHa",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 180,
+    //   cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
+    // },
+    // {
+    //   accessorKey: "fieldActBool",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_act_bool", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Active Status
+    //         {tableInfo?.sort !== "fieldActBool" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   cell: ({ row }) => <div className="flex justify-center items-center">{row.getValue("fieldActBool") ? <div className="w-3 h-3 rounded-full bg-green-500 "></div> : <div className="w-3 h-3 rounded-full bg-red-500"></div>}</div>,
+    // },
     {
       id: "actions",
       header: "",
@@ -185,7 +186,7 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWay}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWap}`) }}>
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
@@ -193,7 +194,7 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
               <Trash2 />
               Delete
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWay}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWap}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
@@ -207,7 +208,7 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
   ];
 
   const handleDelete = () => {
-    deleteField({ fieldId: id, wapId: defaultWay }, {
+    deleteField({ fieldId: id, wapId: defaultWap }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
         refetchMap();
@@ -299,7 +300,7 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
 
   useEffect(() => {
     setClickedField({ id: "", viewBounds: null })
-  }, [defaultWay])
+  }, [defaultWap])
 
   const ReturnChildren = useMemo(() => {
 
@@ -350,14 +351,14 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
   useEffect(() => {
-    if (!!waysOptions) {
+    if (!!wapsOptions) {
       if (location.state?.wapId) {
-        setDefaultWay(location.state.wapId)
+        setDefaultWap(location.state.wapId)
       } else {
-        setDefaultWay(waysOptions?.data[0]?.value)
+        setDefaultWap(wapsOptions?.data[0]?.value)
       }
     }
-  }, [waysOptions])
+  }, [wapsOptions])
 
 
 
@@ -407,22 +408,22 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={() => {
-              navigate(`/field/addField`)
+              navigate(`/customer-field/add`)
             }}
           >
             <Plus size={4} />
-            Add Field
+            Add Links
           </Button>
         </div>
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
-              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
-              <div className="px-2"><BasicSelect setValue={setDefaultWay} Value={defaultWay!} itemList={waysOptions?.data} showLabel={false} label="wap" /></div>
+         <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
+              <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={wapsOptions?.data} showLabel={false} label="wap" /></div>
             </div>
             <div className={cn(" h-[calc(100vh-312px) w-full")}>
               <MapTable
-                defaultData={ []}
+                defaultData={customerFieldData?.data || []}
                 columns={columns}
                 setPosition={setPosition as Function}
                 setZoomLevel={setZoomLevel as Function}
@@ -430,7 +431,7 @@ const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions()
                 clickedField={clickedField}
                 tableInfo={tableInfo}
                 setTableInfo={setTableInfo}
-                totalData={fieldData?.totalRecords || 1}
+                totalData={customerFieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-312px)]"
