@@ -18,3 +18,11 @@ export const UnitSystemName = () => {
     return "Ha"
   } else return "Ac"
 }
+
+export function removeKeysFromObject<T extends object>(obj: T, keysToRemove: (keyof T)[]): Partial<T> {
+  const result = { ...obj };
+  for (const key of keysToRemove) {
+    delete result[key];
+  }
+  return result;
+}
