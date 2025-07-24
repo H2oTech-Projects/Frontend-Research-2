@@ -16,7 +16,8 @@ import { FormRadioGroup } from '@/components/FormComponent/FormRadio'
 import BasicSelect from '@/components/BasicSelect'
 import { cn } from '@/lib/utils'
 import { FormFileReader } from '@/components/FormComponent/FormFileReader'
-import MapPreview from '@/components/MapPreview'
+//import MapPreview from '@/components/MapPreview'
+import FieldMapPreview from '@/components/FieldMapPreview'
 import { usePostMapPreview } from '@/services/mapPreview'
 import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant'
 import { useQueryClient } from '@tanstack/react-query'
@@ -105,7 +106,7 @@ const FieldForm = () => {
     if (fieldDetailData && id) {
       form.reset({ ...fieldDetailData?.data[0], fieldActBool: fieldDetailData?.data[0]?.fieldActBool ? "True" : "False", fieldIrrigArea: fieldDetailData?.data[0]?.fieldIrrigHa, fieldLegalArea: fieldDetailData?.data[0]?.fieldLegalHa });
       form.setValue("wapId", Number(wapId));
-      setPreviewMapData({ data: fieldDetailData?.fieldGeojson, view_bounds: fieldDetailData?.viewBounds ? fieldDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
+      setPreviewMapData({ data: fieldDetailData?.fieldGeojson,coordinates: fieldDetailData?.fieldCoordinates,   view_bounds: fieldDetailData?.viewBounds ? fieldDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
     }
 
   }, [fieldDetailData])
@@ -209,7 +210,7 @@ const FieldForm = () => {
             </div>}
 
           </div>
-          <MapPreview data={previewMapData} isLoading={mapLoading} />
+          <FieldMapPreview data={previewMapData} isLoading={mapLoading} />
 
 
           {/* <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/> */}
