@@ -4,36 +4,45 @@ import { queryConfig } from "@/utils/reactQueryConfig";
 import { RegisterResponse } from "../registration/service";
 import { AxiosError } from "axios";
 import { queryCustomerFieldService } from "./services";
-import { GET_ALL_CUSTOMER_FIELD, GET_CUSTOMERS_OPTIONS, GET_FIELD_OPTIONS, POST_CUSTOMER_FIELD } from "./constants";
+import { GET_ALL_CUSTOMER_FIELD, GET_BY_ID_CUSTOMER_FIELD, GET_CUSTOMERS_OPTIONS, GET_FIELD_OPTIONS, POST_CUSTOMER_FIELD } from "./constants";
 
-export const useGetCustomerList = ()=> {
+export const useGetCustomerList = () => {
   return useQuery({
     queryKey: [GET_CUSTOMERS_OPTIONS],
-    queryFn: ()=> queryCustomerFieldService.getCustomerOptions(),
+    queryFn: () => queryCustomerFieldService.getCustomerOptions(),
     ...queryConfig,
   });
 }
-export const useGetFieldList = (wayId:number | undefined)=> {
+export const useGetFieldList = (wayId: number | undefined) => {
   return useQuery({
-    queryKey: [GET_FIELD_OPTIONS,wayId],
-    queryFn: ()=> queryCustomerFieldService.getFieldOptions(wayId!),
+    queryKey: [GET_FIELD_OPTIONS, wayId],
+    queryFn: () => queryCustomerFieldService.getFieldOptions(wayId!),
     enabled: !!wayId,
     ...queryConfig,
   });
 }
 
-export const useGetCustomerFieldListByWAP = (tableInfo:initialTableDataTypes,wapId:number):UseQueryResult<any> => {
-    return useQuery({
-    queryKey: [GET_ALL_CUSTOMER_FIELD,wapId,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
-    queryFn: ()=> queryCustomerFieldService.getCustomerFieldListByWAP(tableInfo,wapId),
+export const useGetCustomerFieldListByWAP = (tableInfo: initialTableDataTypes, wapId: number): UseQueryResult<any> => {
+  return useQuery({
+    queryKey: [GET_ALL_CUSTOMER_FIELD, wapId, tableInfo?.page_no, tableInfo?.page_size, tableInfo?.search, tableInfo?.sort, tableInfo?.sort_order],
+    queryFn: () => queryCustomerFieldService.getCustomerFieldListByWAP(tableInfo, wapId),
     enabled: !!wapId,
     ...queryConfig
+  })
+}
+
+export const useGetCustomerFieldDetailByWAP = (wapId:string,customerFieldId:string):UseQueryResult<any> => {
+    return useQuery({
+      queryKey:[GET_BY_ID_CUSTOMER_FIELD,customerFieldId,wapId],
+      queryFn:()=>  queryCustomerFieldService.getCustomerFieldDetailByWAP(customerFieldId,wapId),
+      enabled: !!wapId && !!customerFieldId,
+    ...queryConfig
 })
-} 
+}
 
 export const usePostCustomerField = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [POST_CUSTOMER_FIELD],
-    mutationFn:queryCustomerFieldService.postCustomerField,
+    mutationFn: queryCustomerFieldService.postCustomerField,
   });
 }
