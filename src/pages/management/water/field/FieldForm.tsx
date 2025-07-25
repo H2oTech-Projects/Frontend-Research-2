@@ -41,7 +41,7 @@ const formSchema = z.object({
   fieldLegalArea: z.coerce.number(),
   fieldActBool: z.string().optional(),
   fieldGeometryFile: z.array(z.instanceof(File)).optional(),
-
+  fieldCoordinates: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -69,8 +69,8 @@ const FieldForm = () => {
       fieldLegalArea: undefined,
       fieldActBool: "True",
       fieldDesc: "",
-      fieldGeometryFile: undefined
-      // markers: [],
+      fieldGeometryFile: undefined,
+      fieldCoordinates: "",
     },
   });
 
@@ -106,6 +106,7 @@ const FieldForm = () => {
     if (fieldDetailData && id) {
       form.reset({ ...fieldDetailData?.data[0], fieldActBool: fieldDetailData?.data[0]?.fieldActBool ? "True" : "False", fieldIrrigArea: fieldDetailData?.data[0]?.fieldIrrigHa, fieldLegalArea: fieldDetailData?.data[0]?.fieldLegalHa });
       form.setValue("wapId", Number(wapId));
+      form.setValue("fieldCoordinates", JSON.stringify(fieldDetailData?.fieldCoordinates));
       setPreviewMapData({ data: fieldDetailData?.fieldGeojson,coordinates: fieldDetailData?.fieldCoordinates,   view_bounds: fieldDetailData?.viewBounds ? fieldDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
     }
 
@@ -159,6 +160,10 @@ const FieldForm = () => {
 
   };
 
+  const updateFieldCoordinates = (coordinates: any) => {
+    form.setValue("fieldCoordinates", JSON.stringify(coordinates));
+  }
+
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
@@ -210,7 +215,7 @@ const FieldForm = () => {
             </div>}
 
           </div>
-          <FieldMapPreview data={previewMapData} isLoading={mapLoading} />
+          <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} />
 
 
           {/* <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/> */}

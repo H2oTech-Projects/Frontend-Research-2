@@ -9,7 +9,7 @@ import RtGeoJson from "./RtGeoJson";
 import "leaflet/dist/leaflet.css"
 import "leaflet-draw/dist/leaflet.draw.css"
 
-const FieldMapPreview = ({ data, isLoading }: any) => {
+const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
   const refLayer = useRef<LeafletFeatureGroup>(null);
   const MapSizeHandler = () => {
     // This component is used to handle the map size when the side menu is collapsed or expanded
@@ -49,6 +49,7 @@ const FieldMapPreview = ({ data, isLoading }: any) => {
     const updatedPolygons: [number, number][][] = [];
     refLayer.current?.eachLayer((layer: Layer) => {
       updatedPolygons.push(getCoordinates(layer));});
+    updateFieldCoordinates(updatedPolygons)
   };
 
   // Handle polygon deletion event
@@ -114,9 +115,11 @@ const FieldMapPreview = ({ data, isLoading }: any) => {
                 onDeleted={onPolygonDeleted}
                 draw={{
                   rectangle: false,
+                  polyline: false,
                   circle: false,
                   circlemarker: false,
-                  polygon: true,
+                  marker: false,
+                  polygon: false,
                 }}
                 edit= {{
                   remove: false
