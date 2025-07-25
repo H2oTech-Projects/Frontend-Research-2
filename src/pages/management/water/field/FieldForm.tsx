@@ -81,6 +81,7 @@ const FieldForm = () => {
         previewMap(file, {
           onSuccess: (data) => {
             setPreviewMapData(data || null);
+            form.setValue("fieldCoordinates", JSON.stringify(data?.coordinates));
             queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
           },
           onError: (error: any) => {
