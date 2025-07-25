@@ -73,8 +73,8 @@ export function FormMultiComboBox({
                         const selectedLabels = options
                           ?.filter((opt) => selectedValues.includes(opt.value))
                           ?.map((opt) => opt.label);
-                        const displayed = selectedLabels.slice(0, 2).join(", ");
-                        const extraCount = selectedLabels.length - 2;
+                        const displayed = selectedLabels?.slice(0, 2).join(", ");
+                        const extraCount = selectedLabels?.length - 2;
                         return extraCount > 0 ? `${displayed}, ...` : displayed;
                       })()
                       : placeholder}</div>

@@ -32,17 +32,31 @@ export const queryCustomerFieldService = {
     const data = convertKeysToCamelCase(toJson(response));
     return toJson(data?.data);
   },
-
-  getCustomerFieldDetailByWAP : async (customerFieldId:string ,wapId:string) => {
-    const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/field_customers/" + customerFieldId + "/").catch((err) => console.log(err));
+  getCustomerFieldMapByWAP: async (wapId: number) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/customers_field/map/",
+    ).catch((err) => console.log(err));
     const data = convertKeysToCamelCase(toJson(response));
     return toJson(data?.data);
-},
+  },
+  getCustomerFieldDetailByWAP: async (customerFieldId: string, wapId: string) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/fields/" + customerFieldId + "/customers/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return toJson(data?.data);
+  },
 
   postCustomerField: async (formData: any) => {
     const data = convertKeysToSnakeCase(removeKeysFromObject(formData, ["wapId", "customerIds"]))
     console.log(data)
     const response = await axiosInstance.post(BASE_API_URL + "/waps/" + formData?.wapId + "/field_customers/", data, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    return response.data;
+  },
+  putCustomerField: async (formData: any) => {
+    const data = convertKeysToSnakeCase(removeKeysFromObject(formData, ["wapId", "customerIds"]))
+    const response = await axiosInstance.put(BASE_API_URL + "/waps/" + formData?.wapId + "/fields/" + formData?.fieldId + "/customers/", data, {
       headers: {
         "Content-Type": "application/json",
       }

@@ -325,7 +325,7 @@ const Field = () => {
     }
     return (
       <>
-      {mapData && <RtGeoJson
+      {mapData?.data && <RtGeoJson
         key={"fields"}
         layerEvents={geoJsonLayerEvents}
         style={geoJsonStyle}

@@ -4,7 +4,7 @@ import { queryConfig } from "@/utils/reactQueryConfig";
 import { RegisterResponse } from "../registration/service";
 import { AxiosError } from "axios";
 import { queryCustomerFieldService } from "./services";
-import { GET_ALL_CUSTOMER_FIELD, GET_BY_ID_CUSTOMER_FIELD, GET_CUSTOMERS_OPTIONS, GET_FIELD_OPTIONS, POST_CUSTOMER_FIELD } from "./constants";
+import { GET_ALL_CUSTOMER_FIELD, GET_ALL_CUSTOMER_FIELD_MAP, GET_BY_ID_CUSTOMER_FIELD, GET_CUSTOMERS_OPTIONS, GET_FIELD_OPTIONS, POST_CUSTOMER_FIELD, PUT_CUSTOMER_FIELD } from "./constants";
 
 export const useGetCustomerList = () => {
   return useQuery({
@@ -30,6 +30,14 @@ export const useGetCustomerFieldListByWAP = (tableInfo: initialTableDataTypes, w
     ...queryConfig
   })
 }
+export const useGetCustomerFieldMapByWAP = (wapId:number):UseQueryResult<any> => {
+  return useQuery({
+      queryKey: [GET_ALL_CUSTOMER_FIELD_MAP,wapId],
+    queryFn: ()=> queryCustomerFieldService.getCustomerFieldMapByWAP(wapId),
+     enabled: !!wapId,
+    ...queryConfig,
+})
+}
 
 export const useGetCustomerFieldDetailByWAP = (wapId:string,customerFieldId:string):UseQueryResult<any> => {
     return useQuery({
@@ -44,5 +52,11 @@ export const usePostCustomerField = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [POST_CUSTOMER_FIELD],
     mutationFn: queryCustomerFieldService.postCustomerField,
+  });
+}
+export const usePutCustomerField = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [PUT_CUSTOMER_FIELD],
+    mutationFn: queryCustomerFieldService.putCustomerField,
   });
 }

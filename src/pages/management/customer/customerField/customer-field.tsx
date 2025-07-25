@@ -34,7 +34,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
-import { useGetCustomerFieldListByWAP } from "@/services/customerField";
+import { useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
 
 interface initialTableDataTypes {
   search: string;
@@ -74,7 +74,7 @@ const CustomerField = () => {
   };
   // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
   const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
-  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetFieldMapByWAP(defaultWap);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWap);
   //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
   const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
   const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
@@ -86,24 +86,24 @@ const CustomerField = () => {
   );
 
   const columns: ColumnDef<any>[] = [
-    {
-      accessorKey: "fieldId",
-      // header: "Field ID",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
+    // {
+    //   accessorKey: "fieldId",
+    //   // header: "Field ID",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
 
-      size: 100, // this size value is in px
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
-      //filterFn: 'includesString',
-    },
+    //   size: 100, // this size value is in px
+    //   cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
+    //   //filterFn: 'includesString',
+    // },
     {
       accessorKey: "fieldName",
       // header: () => {
@@ -136,6 +136,21 @@ const CustomerField = () => {
       },
       size: 180,
       cell: ({ row }) => <div className="capitalize">{row.getValue("customers")}</div>,
+    },
+    {
+      accessorKey: "customerPctFarmed",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+            Customer Percentage Farmed({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+      size: 180,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("customerPctFarmed")}</div>,
     },
     // {
     //   accessorKey: "fieldLegalHa",
@@ -185,15 +200,15 @@ const CustomerField = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.id}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}>
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+            {/* <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
               <Trash2 />
               Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/view/${row.original.id}`) }}>
+            </DropdownMenuItem> */}
+            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/view/${row.original.fieldId}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
@@ -323,7 +338,7 @@ const CustomerField = () => {
     }
     return (
       <>
-      {mapData && <RtGeoJson
+      {mapData?.data && <RtGeoJson
         key={"fields"}
         layerEvents={geoJsonLayerEvents}
         style={geoJsonStyle}
