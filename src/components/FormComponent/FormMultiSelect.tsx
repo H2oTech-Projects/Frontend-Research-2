@@ -53,7 +53,7 @@ export function FormMultiComboBox({
       render={({ field }) => (
         <FormItem className={cn("w-full", className)}>
           <FormLabel>{label}</FormLabel>
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover open={disabled ? false : open} onOpenChange={(v) => !disabled && setOpen(v)}>
             <PopoverTrigger asChild>
               <FormControl>
                 <div className="flex flex-col w-full h-auto">
@@ -71,8 +71,8 @@ export function FormMultiComboBox({
                     <div className="w-[80%] overflow-hidden flex justify-start">{selectedValues?.length > 0
                       ? (() => {
                         const selectedLabels = options
-                          .filter((opt) => selectedValues.includes(opt.value))
-                          .map((opt) => opt.label);
+                          ?.filter((opt) => selectedValues.includes(opt.value))
+                          ?.map((opt) => opt.label);
                         const displayed = selectedLabels.slice(0, 2).join(", ");
                         const extraCount = selectedLabels.length - 2;
                         return extraCount > 0 ? `${displayed}, ...` : displayed;
