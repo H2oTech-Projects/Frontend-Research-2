@@ -15,6 +15,14 @@ export function debounce<T extends (...args: any[]) => void>(
 export const UnitSystemName = () => {
   const unitSystemName = useSelector((state: any) => state.auth.unitSystemName);
   if (unitSystemName.toLowerCase().trim() === "metric") {
-    return "HA"
-  } else return "AC"
+    return "Ha"
+  } else return "Ac"
+}
+
+export function removeKeysFromObject<T extends object>(obj: T, keysToRemove: (keyof T)[]): Partial<T> {
+  const result = { ...obj };
+  for (const key of keysToRemove) {
+    delete result[key];
+  }
+  return result;
 }

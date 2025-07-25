@@ -2,17 +2,14 @@ import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, File
 import { useState, useMemo, useEffect, useCallback } from "react";
 import $ from "jquery";
 import { Circle, Popup } from "react-leaflet";
-import { cn } from "../../../../utils/cn";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtPolygon from "@/components/RtPolygon";
 import RtGeoJson from "@/components/RtGeoJson";
-import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
-import swmcFields from "../../../../geojson/SMWC_Fields.json";
 import { buildPopupMessage } from "@/utils/map";
 
 import {
@@ -30,12 +27,14 @@ import { debounce, UnitSystemName } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
-import { useGetWaps } from "@/services/timeSeries";
+import { useGetWaps, useGetWaysOptions } from "@/services/timeSeries";
 import { showErrorToast } from "@/utils/tools";
 import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
+import { cn } from "@/lib/utils";
+import { useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
 
 interface initialTableDataTypes {
   search: string;
@@ -52,7 +51,7 @@ const initialTableData = {
   sort_order: ''
 }
 
-const Field = () => {
+const CustomerField = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient()
@@ -74,10 +73,10 @@ const Field = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
   // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
-  const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo, defaultWap);
-  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetFieldMapByWAP(defaultWap);
+  const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWap);
   //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
-  const { data: waps, isLoading: wapsLoading } = useGetWaps()
+  const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
   const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -85,27 +84,26 @@ const Field = () => {
     }, 500),
     []
   );
-  // const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
-  const columns: ColumnDef<DummyDataType>[] = [
-    {
-      accessorKey: "fieldId",
-      // header: "Field ID",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
+  const columns: ColumnDef<any>[] = [
+    // {
+    //   accessorKey: "fieldId",
+    //   // header: "Field ID",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
 
-      size: 100, // this size value is in px
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
-      //filterFn: 'includesString',
-    },
+    //   size: 100, // this size value is in px
+    //   cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
+    //   //filterFn: 'includesString',
+    // },
     {
       accessorKey: "fieldName",
       // header: () => {
@@ -125,65 +123,65 @@ const Field = () => {
       cell: ({ row }) => <div className="lowercase">{row.getValue("fieldName")}</div>,
     },
     {
-      accessorKey: "fieldIrrigHa",
+      accessorKey: "customers",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_irrig_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field Irrig ({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Customers({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldIrrigHa")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("customers")}</div>,
     },
     {
-      accessorKey: "fieldLegalHa",
+      accessorKey: "customerPctFarmed",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Customer Percentage Farmed({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("customerPctFarmed")}</div>,
     },
-    {
-      accessorKey: "geomHa",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Geometric Area ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
-    },
-    {
-      accessorKey: "fieldActBool",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_act_bool", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Active Status
-            {tableInfo?.sort !== "fieldActBool" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div className="flex justify-center items-center">{row.getValue("fieldActBool") ? <div className="w-3 h-3 rounded-full bg-green-500 "></div> : <div className="w-3 h-3 rounded-full bg-red-500"></div>}</div>,
-    },
+    // {
+    //   accessorKey: "fieldLegalHa",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 180,
+    //   cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
+    // },
+    // {
+    //   accessorKey: "fieldActBool",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_act_bool", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Active Status
+    //         {tableInfo?.sort !== "fieldActBool" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   cell: ({ row }) => <div className="flex justify-center items-center">{row.getValue("fieldActBool") ? <div className="w-3 h-3 rounded-full bg-green-500 "></div> : <div className="w-3 h-3 rounded-full bg-red-500"></div>}</div>,
+    // },
     {
       id: "actions",
       header: "",
@@ -202,15 +200,15 @@ const Field = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWap}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}>
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+            {/* <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
               <Trash2 />
               Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWap}`) }}>
+            </DropdownMenuItem> */}
+            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/view/${row.original.fieldId}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
@@ -229,7 +227,7 @@ const Field = () => {
         queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
         refetchMap();
         queryClient.invalidateQueries({ queryKey: [DELETE_FIELD_KEY_BY_FIELD] });
-        toast.success("Field deleted successfully");
+        toast.success("Client deleted successfully");
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
@@ -367,14 +365,14 @@ const Field = () => {
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
   useEffect(() => {
-    if (!!waps) {
+    if (!!wapsOptions) {
       if (location.state?.wapId) {
         setDefaultWap(location.state.wapId)
       } else {
-        setDefaultWap(waps?.data[0]?.value)
+        setDefaultWap(wapsOptions?.data[0]?.value)
       }
     }
-  }, [waps])
+  }, [wapsOptions])
 
 
 
@@ -382,8 +380,8 @@ const Field = () => {
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
       <PageHeader
-        pageHeaderTitle="Field"
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
+        pageHeaderTitle="Customer-Field"
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" },{ menuName: "Customers", menuPath: "" }]}
       />
 <CustomModal
         isOpen={open}
@@ -424,22 +422,22 @@ const Field = () => {
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={() => {
-              navigate(`/field/addField`)
+              navigate(`/customer-field/add`)
             }}
           >
             <Plus size={4} />
-            Add Field
+            Add Links
           </Button>
         </div>
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+         <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
-              <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={waps?.data} showLabel={false} label="wap" /></div>
+              <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={wapsOptions?.data} showLabel={false} label="wap" /></div>
             </div>
             <div className={cn(" h-[calc(100vh-312px) w-full")}>
               <MapTable
-                defaultData={fieldData?.data || []}
+                defaultData={customerFieldData?.data || []}
                 columns={columns}
                 setPosition={setPosition as Function}
                 setZoomLevel={setZoomLevel as Function}
@@ -447,7 +445,7 @@ const Field = () => {
                 clickedField={clickedField}
                 tableInfo={tableInfo}
                 setTableInfo={setTableInfo}
-                totalData={fieldData?.totalRecords || 1}
+                totalData={customerFieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-312px)]"
@@ -502,4 +500,4 @@ const Field = () => {
   );
 };
 
-export default Field;
+export default CustomerField;
