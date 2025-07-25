@@ -3,7 +3,6 @@ type BasicSelectPropsType = {
   itemList: { label: string; value: string }[];
   label?: string;
   Value:string;
-  showLabel?:boolean
   setValue: (value: string) => void;
   showLabel?: boolean;
 }
