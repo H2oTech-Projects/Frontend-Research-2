@@ -20,7 +20,7 @@ import { useMediaQuery } from '@uidotdev/usehooks'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useGetWaps } from '@/services/timeSeries'
 import { showErrorToast } from '@/utils/tools'
-import { useGetCustomerList, useGetFieldList, usePostCustomerField } from '@/services/customerField'
+import { useGetCustomerFieldDetailByWAP, useGetCustomerList, useGetFieldList, usePostCustomerField } from '@/services/customerField'
 import { FormMultiComboBox } from '@/components/FormComponent/FormMultiSelect'
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from '@/services/customerField/constants'
 
@@ -51,11 +51,12 @@ const CustomerFieldForm = () => {
   const { data: wapsOptions, isLoading: wapsOptionsLoading } = useGetWaps();
   const { data: customerOptions, isLoading: customerOptionsLoading } = useGetCustomerList();
   const { data: fieldOptions, isLoading: fieldOptionsLoading } = useGetFieldList(wayId);
+  const {data:fieldCustomerData,isLoading:isFieldCustomerDataLoading} = useGetCustomerFieldDetailByWAP(wapId!,id!)
   const {mutate:createCustomerField,isPending:isCustomerFieldCreating} = usePostCustomerField();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      wapId:undefined,
+      wapId:Number(wapId),
       fieldId: undefined,
       customerIds: [],
       customers: [],
@@ -69,17 +70,21 @@ const CustomerFieldForm = () => {
   })
 
 
+
   useEffect(() => {
     if (!id && wapsOptions?.data) {
+        console.log("hererererere")
       form.setValue("wapId", wapsOptions?.data[0].value);
       setWayId(wapsOptions?.data[0].value)
     }
-    else {
-      form.setValue("wapId", Number(wapId));
-      setWayId(Number(wapId))
-    }
+    // else {
+    //   form.setValue("wapId", Number(wapId));
+    //   setWayId(Number(wapId))
+    // }
 
   }, [wapsOptions])
+
+
 
   useEffect(() => {
     setWayId(form.getValues("wapId"))
@@ -128,6 +133,14 @@ const CustomerFieldForm = () => {
 
   };
 
+  useEffect(()=>{
+    if(fieldCustomerData?.success){
+      const customerList = fieldCustomerData?.data?.customers?.map((item:any)=> item?.customerId);
+      form.reset({...fieldCustomerData?.data,customerIds : customerList,wapId:Number(wapId) })
+}
+},[fieldCustomerData])
+
+
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
@@ -139,9 +152,9 @@ const CustomerFieldForm = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-2' : 'grid-cols-1')}>
             <FormComboBox control={form.control} name='wapId' label='Water Accounting Periods' options={wapsOptions?.data} disabled={id ? true : false} />
-            <FormComboBox control={form.control} name='fieldId' label='Fields' options={fieldOptions?.data} disabled={id ? true : false} />
+            <FormComboBox control={form.control} name='fieldId' label='Fields' options={fieldOptions?.data}  />
+            <FormMultiComboBox control={form.control} name='customerIds' label='Customer' options={customerOptions?.data} />
             <FormTextbox control={form.control} name='comment' label='comment' placeholder='Enter comment' disabled={location.pathname.includes("view")} />
-            <FormMultiComboBox control={form.control} name='customerIds' label='Customer' options={customerOptions?.data} disabled={id ? true : false} />
           </div>
           {/* <MapPreview data={previewMapData} isLoading={mapLoading} /> */}
         {  fields?.length > 0 && <div className='text-lg text-royalBlue dark:text-slate-50 '>Percentage Farm By customers</div>}

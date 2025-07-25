@@ -84,8 +84,7 @@ const CustomerField = () => {
     }, 500),
     []
   );
-  // const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
-console.log(customerFieldData?.data)
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "fieldId",
@@ -186,7 +185,7 @@ console.log(customerFieldData?.data)
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWap}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.id}`) }}>
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
@@ -194,7 +193,7 @@ console.log(customerFieldData?.data)
               <Trash2 />
               Delete
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWap}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/view/${row.original.id}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
