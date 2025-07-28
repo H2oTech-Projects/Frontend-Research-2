@@ -187,6 +187,18 @@ const CustomerField = {
   url: "/customer-field",
   name: "CustomerField",
 }
+const AddCustomerField = {
+  url: "/customer-field/add",
+  name: "CustomerField",
+}
+const EditCustomerField = {
+  url: "/customer-field/waps/:wapId/edit/:id",
+  name: "CustomerField",
+}
+const ViewCustomerField = {
+  url: "/customer-field/waps/:wapId/view/:id",
+  name: "CustomerField",
+}
 
 const Region = {
   url: "/region",
@@ -248,6 +260,9 @@ export {
   AddConveyance,
   EditConveyance,
   CustomerField,
+  AddCustomerField,
+  EditCustomerField,
+  ViewCustomerField,
   Region,
   SubRegion,
   FieldParcel,
