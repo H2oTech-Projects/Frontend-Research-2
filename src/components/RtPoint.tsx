@@ -25,6 +25,7 @@ const RtPoint = ({ position, children,  handleMouseDown, cancel}: RtTypes) => {
           mousedown: handleMouseDown,
           mouseup: cancel,
         }}
+        pane="markerPane" 
       >
         {children}
       </CircleMarker>
