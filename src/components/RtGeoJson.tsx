@@ -31,6 +31,7 @@ const geoJsonRef = useRef<L.GeoJSON>(null);
     }}
     onEachFeature={layerEvents}
     data={data}
+    pane="overlayPane"
     style={style}
     />
   );

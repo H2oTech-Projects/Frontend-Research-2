@@ -169,8 +169,8 @@ const Map = () => {
   }
   return (
     <div id="map" className="relative flex h-screen w-full">
-       <div className="absolute right-4 top-0 z-[800] flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
-        <div className="flex items-center gap-x-3 justify-center text-white bg-royalBlue  ml-6 rounded-lg px-2  h-[32px]">
+       <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
+        <div className="flex items-center gap-x-3 justify-center text-white bg-royalBlue  ml-6 rounded-lg px-2  h-[32px] z-[450]">
           <Icon.Search
             size={20}
             className="text-slate-300"
@@ -185,7 +185,7 @@ const Map = () => {
             autoComplete="off"
           />
         </div>
-        <div className="flex items-center gap-x-3" >
+        <div className="flex items-center gap-x-3 z-[450]" >
         <Button
           variant={"default"}
           className="size-8"
