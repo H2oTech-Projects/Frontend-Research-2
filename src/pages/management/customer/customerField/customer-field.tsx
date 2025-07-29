@@ -105,7 +105,7 @@ const CustomerField = () => {
     //   //filterFn: 'includesString',
     // },
     {
-      accessorKey: "fieldName",
+      accessorKey: "customerName",
       // header: () => {
       //     return <>Field Description</>;
       // },
@@ -113,45 +113,45 @@ const CustomerField = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field Name {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+           Customer Name {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("fieldName")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("customerName")}</div>,
     },
     {
-      accessorKey: "customers",
+      accessorKey: "pctFarmedFields",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_irrig_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "pct_farmed_fields", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Customers({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          Fields   {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("customers")}</div>,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("pctFarmedFields")}</div>,
     },
-    {
-      accessorKey: "customerPctFarmed",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Customer Percentage Farmed({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("customerPctFarmed")}</div>,
-    },
+    // {
+    //   accessorKey: "customerPctFarmed",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Customer Percentage Farmed({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 180,
+    //   cell: ({ row }) => <div className="capitalize">{row.getValue("customerPctFarmed")}</div>,
+    // },
     // {
     //   accessorKey: "fieldLegalHa",
     //   header: ({ column }) => {
@@ -200,7 +200,8 @@ const CustomerField = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}>
+            {/* <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}> */}
+            <DropdownMenuItem >
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
@@ -208,7 +209,7 @@ const CustomerField = () => {
               <Trash2 />
               Delete
             </DropdownMenuItem> */}
-            <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/view/${row.original.fieldId}`) }}>
+            <DropdownMenuItem >
               <Eye />
               View
             </DropdownMenuItem>
