@@ -406,13 +406,13 @@ const Insight = () => {
                                                 Resources Department Office at (559) 662-8015 or WNR@maderacounty.com for information. Total Allocation (AF) is equal to the sum of 2024
                                                 Allocation (AF), Carryover (AF), and 2024 Adjustment(s) (AF)"
                 />
-                <div className="my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] h-[400px]">
+                <div className="my-2 px-3 py-2 rounded-[8px] overflow-hidden shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] h-[420px] ">
                   <MapTable
                     defaultData={accountFarmUnits?.data as AccountFarmUnitDataType[] || []}
                     columns={columns}
                     doFilter={false}
                     filterValue={""}
-                    fullHeight={false}
+                    fullHeight={true}
                     showPagination={false}
                     textAlign="left" // this aligns the text to the left in the table, if not provided it will be center
                     columnProperties={farmUnitColumnProperties}
@@ -456,13 +456,13 @@ const Insight = () => {
                         <Filter />
                       </Button>
                     </div>
-                    <div className="h-[calc(100vh-308px)]">
+                    <div className="h-[calc(100vh-300px)]">
                       <MapTable
                         defaultData={accountParcels?.data?.parcel_table_data || []}
                         columns={columns2}
                         doFilter={doFilter}
                         filterValue={searchText}
-                        fullHeight={false}
+                        fullHeight={true}
                         customHeight={'h-[calc(100vh-348px)]'}
                         columnProperties={parcelColumnProperties}
                         tableType={"parcel"}

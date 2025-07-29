@@ -120,7 +120,7 @@ const FieldMsmtPoint = () => {
 
 
   useEffect(() => {
-    if (!!mapData && !!mapData['data']['view_bounds'])
+    if (!!mapData?.data && !!mapData['data']['view_bounds'])
       setViewBound(mapData['data']['view_bounds'])
   }, [mapData]);
 
@@ -357,6 +357,7 @@ const FieldMsmtPoint = () => {
         fillColor: "red", // Fill color for the highlighted area
         fillOpacity: .4,
         weight: 2,
+        zIndex: 150, // Ensure it is above the RtPoint
       };
     }
     return {
@@ -633,15 +634,7 @@ const FieldMsmtPoint = () => {
                 viewBound={viewBound}
                 configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
               >
-                <RtGeoJson
-                  key={"fields"}
-                  layerEvents={geoJsonLayerEvents}
-                  style={geoJsonStyle}
-
-                  data={JSON.parse(mapData['data']['geojson'])}
-                  color={"#16599a"}
-                />
-                {!!position.point && !!position.msmtPointId ? (
+        {!!position.point && !!position.msmtPointId ? (
                   <RtPoint
                     position={position.point}
                     handleMouseDown={handleMouseDown}
@@ -652,6 +645,17 @@ const FieldMsmtPoint = () => {
                                   </Popup> */}
                   </RtPoint>
                 ) : null}
+
+               {mapData?.data &&  
+                <RtGeoJson
+                  key={"fields"}
+                  layerEvents={geoJsonLayerEvents}
+                  style={geoJsonStyle}
+
+                  data={JSON.parse(mapData['data']['geojson'])}
+                  color={"#16599a"}
+                />}
+        
               </LeafletMap>) : (<LeafletMap
                 position={position}
                 zoom={zoomLevel}
