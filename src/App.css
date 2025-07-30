@@ -45,7 +45,7 @@ html.dark .leaflet-popup-content-wrapper {
 
 .customer-field-msmtpoint {
   background-color:#16599a !important; /* Set a background color for the popup content */
-  max-height: 150px; /* Set a maximum height for the popup content */
+  max-height: 85px; /* Set a maximum height for the popup content */
   max-width: 200px;
   overflow-y: hidden !important; /* Enable vertical scrolling if content exceeds max height */
   scrollbar-width: thin !important; /* For Firefox */

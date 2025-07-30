@@ -2,6 +2,7 @@ import { useState } from 'react'
 import RTLineChart from '../components/charts/lineChart';
 import BasicSelect, { GeneralSelect } from "@/components/BasicSelect";
 import { Download } from 'lucide-react';
+import { Button } from '../components/ui/button';
 interface ChartParameters {
   data?: any;
 }
@@ -413,16 +414,21 @@ type MsmtPointDetailTypes ={
 
 export const MsmtPointInfo = ({mpId, msmtPointId, wapId}: MsmtPointDetailTypes) => {
   return (
-    <div className='flex-col w-full '>
-      <div className='w-full pb-[3px]'>
+    <div className='flex-col w-[140px] '>
+      <div className='w-full pb-[10px] underline pl-[32px]'>
         {msmtPointId}
       </div>
-      <div className="w-full">
-        <button onClick={() => {
-          window.location.href = `/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`;
+      <div className="w-full flex flex-row justify-between">
+        <Button className="text-white bg-slate-900/90 h-6 px-2 text-xs" onClick={() => {
+          window.open(`/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
         }}>
           View Detail
-        </button>
+        </Button>
+        <Button className="text-white bg-slate-900/90 h-6 px-2 text-xs" onClick={() => {
+          window.open(`/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
+        }}>
+          xyz........
+        </Button>
       </div>
     </div>
   );

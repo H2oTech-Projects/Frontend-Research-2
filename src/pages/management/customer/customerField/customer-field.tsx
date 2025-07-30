@@ -7,7 +7,6 @@ import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
 import { createRoot } from 'react-dom/client';
-import { MemoryRouter } from 'react-router-dom';
 
 import {
   DropdownMenu,
@@ -339,7 +338,7 @@ const CustomerField = () => {
         auxLayer.setStyle({
           weight: 4,
         });
-        createRoot(popupDiv).render(<MemoryRouter><MsmtPointInfo mpId={auxLayer.feature.properties.mp_id} msmtPointId={auxLayer.feature.properties.msmt_point_id} wapId={defaultWap} /></MemoryRouter>);
+        createRoot(popupDiv).render(<MsmtPointInfo mpId={auxLayer.feature.properties.mp_id} msmtPointId={auxLayer.feature.properties.msmt_point_id} wapId={defaultWap} />);
         showInfo('MsmtPoint: ',auxLayer.feature.properties.msmt_point_id);
       },
       mouseout: function (e: any) {
