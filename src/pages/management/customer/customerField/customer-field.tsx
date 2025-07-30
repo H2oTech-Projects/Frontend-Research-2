@@ -118,7 +118,7 @@ const CustomerField = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Customer Name {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Customer Name {tableInfo?.sort !== "customer_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -126,20 +126,20 @@ const CustomerField = () => {
       cell: ({ row }) => <div className="lowercase">{row.getValue("customerName")}</div>,
     },
     {
-      accessorKey: "pctFarmedFields",
+      accessorKey: "fieldPctFarmed",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "pct_farmed_fields", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Fields   {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Fields   {tableInfo?.sort !== "field_pct_farmed" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
       cell: ({ row }) => {
-        const fields = row.getValue("pctFarmedFields") as string[];
+        const fields = row.getValue("fieldPctFarmed") as string[];
         return (
           <div className="capitalize">
             {Array.isArray(fields) ? fields.join(", ") : fields}
@@ -290,7 +290,7 @@ const CustomerField = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo(auxLayer.feature.properties.field_id);
+        showInfo(auxLayer.feature.properties.field_id || auxLayer.feature.properties.customer_field_ids);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -301,7 +301,7 @@ const CustomerField = () => {
           fillOpacity: 0,
           opacity: 1,
         });
-        removeInfo(auxLayer.feature.properties.field_id);
+        removeInfo(auxLayer.feature.properties.field_id || auxLayer.feature.properties.customer_field_ids);
       },
     });
   }
@@ -358,16 +358,22 @@ const CustomerField = () => {
           key={"msmtPoints"}
           layerEvents={geoJsonLayerEvents}
           style={fieldGeojsonStyle}
-          data={JSON.parse(geojson['fieldGeojson'])}
+          data={JSON.parse(geojson?.fieldGeojson)}
           color={"#16599a"}
         />}
-
+        {/* {geojson?.msmtPoint && <RtGeoJson
+          key={"msmtPoints"}
+          layerEvents={geoJsonLayerEvents}
+          style={fieldGeojsonStyle}
+          data={JSON.parse(geojson?.msmtPoint)}
+          color={"#16599a"}
+        />} */}
+{/* 
         {geojson?.msmtPoint && <RtPoint
           position={geojson?.msmtPoint}
 
         />
-
-        }
+        } */}
       </>
     )
 
