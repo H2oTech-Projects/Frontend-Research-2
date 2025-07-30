@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import $ from "jquery";
 import { Circle, Popup } from "react-leaflet";
 import { ColumnDef } from "@tanstack/react-table";
@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
 import { useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
+import RtPoint from "@/components/RtPoint";
 
 interface initialTableDataTypes {
   search: string;
@@ -54,12 +55,14 @@ const initialTableData = {
 const CustomerField = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
+  const timerRef = useRef<number | null>(null);
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
-  const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
+  // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
+  const [geojson, setGeojson] = useState<any>({ fieldGeojson: null, msmtPoint: null, viewBounds: null })
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
@@ -115,7 +118,7 @@ const CustomerField = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-           Customer Name {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Customer Name {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -130,12 +133,19 @@ const CustomerField = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "pct_farmed_fields", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-          Fields   {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Fields   {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("pctFarmedFields")}</div>,
+      cell: ({ row }) => {
+        const fields = row.getValue("pctFarmedFields") as string[];
+        return (
+          <div className="capitalize">
+            {Array.isArray(fields) ? fields.join(", ") : fields}
+          </div>
+        );
+      },
     },
     // {
     //   accessorKey: "customerPctFarmed",
@@ -236,22 +246,22 @@ const CustomerField = () => {
     });
   };
 
-  const polygonEventHandlers = useMemo(
-    () => ({
-      mouseover(e: any) {
-        const { id } = e.target.options;
-        showInfo(id);
-      },
-      mouseout(e: any) {
-        const { id } = e.target.options;
-        removeInfo(id);
-      },
-      click: (e: any) => {
-        e.target.openPopup(); // Opens popup when clicked
-      }
-    }),
-    [],
-  );
+  // const polygonEventHandlers = useMemo(
+  //   () => ({
+  //     mouseover(e: any) {
+  //       const { id } = e.target.options;
+  //       showInfo(id);
+  //     },
+  //     mouseout(e: any) {
+  //       const { id } = e.target.options;
+  //       removeInfo(id);
+  //     },
+  //     click: (e: any) => {
+  //       e.target.openPopup(); // Opens popup when clicked
+  //     }
+  //   }),
+  //   [],
+  // );
 
   const showInfo = (Id: String) => {
     var popup = $("<div></div>", {
@@ -272,7 +282,7 @@ const CustomerField = () => {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    layer.bindPopup(buildPopupMessage(feature.properties));
+    // layer.bindPopup(buildPopupMessage(feature.properties));
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -314,22 +324,12 @@ const CustomerField = () => {
   // }
 
   useEffect(() => {
-    setClickedField({ id: "", viewBounds: null })
+    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null })
   }, [defaultWap])
 
   const ReturnChildren = useMemo(() => {
 
     const geoJsonStyle = (features: any) => {
-      // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
-      if (features?.properties?.field_id === clickedField?.id?.toString()) {
-
-        return {
-          color: "red", // Border color
-          fillColor: "transparent", // Fill color for the highlighted area
-          fillOpacity: 0.5,
-          weight: 2,
-        };
-      }
       return {
         color: "#16599A", // Border color
         fillColor: "transparent", // Fill color for normal areas
@@ -337,31 +337,41 @@ const CustomerField = () => {
         weight: 2,
       };
     }
+    const fieldGeojsonStyle = (features: any) => {
+      return {
+        color: "red",
+        fillColor: "transparent", // Fill color for normal areas
+        fillOpacity: 0.5,
+        weight: 2,
+      };
+    }
     return (
       <>
-      {mapData?.data && <RtGeoJson
-        key={"fields"}
-        layerEvents={geoJsonLayerEvents}
-        style={geoJsonStyle}
-        data={JSON.parse(mapData['data'])}
-        color={"#16599a"}
-      />}
-      {!!position.polygon ? (
-        <RtPolygon
-          pathOptions={{ id: position.fieldId } as Object}
-          positions={position.polygon}
-          color={"red"}
-          eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-        >
-          <Popup>
-            <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
-          </Popup>
-        </RtPolygon>
-      ) : null}
-    </>
-  )
+        {mapData?.data && <RtGeoJson
+          key={"fields"}
+          layerEvents={geoJsonLayerEvents}
+          style={geoJsonStyle}
+          data={JSON.parse(mapData['data'])}
+          color={"#16599a"}
+        />}
+        {geojson?.fieldGeojson && <RtGeoJson
+          key={"msmtPoints"}
+          layerEvents={geoJsonLayerEvents}
+          style={fieldGeojsonStyle}
+          data={JSON.parse(geojson['fieldGeojson'])}
+          color={"#16599a"}
+        />}
 
-  }, [mapLoading, position, mapData])
+        {geojson?.msmtPoint && <RtPoint
+          position={geojson?.msmtPoint}
+
+        />
+
+        }
+      </>
+    )
+
+  }, [mapLoading, position, mapData, geojson])
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
@@ -382,9 +392,9 @@ const CustomerField = () => {
 
       <PageHeader
         pageHeaderTitle="Customer-Field"
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" },{ menuName: "Customers", menuPath: "" }]}
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
       />
-<CustomModal
+      <CustomModal
         isOpen={open}
         onClose={() => setOpen(false)}
         title="Delete Field"
@@ -432,7 +442,7 @@ const CustomerField = () => {
         </div>
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-         <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
               <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={wapsOptions?.data} showLabel={false} label="wap" /></div>
             </div>
@@ -442,14 +452,14 @@ const CustomerField = () => {
                 columns={columns}
                 setPosition={setPosition as Function}
                 setZoomLevel={setZoomLevel as Function}
-                setClickedField={setClickedField}
-                clickedField={clickedField}
                 tableInfo={tableInfo}
                 setTableInfo={setTableInfo}
                 totalData={customerFieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-312px)]"
+                setGeojson={setGeojson as Function}
+                tableType={"relation"}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
@@ -472,7 +482,7 @@ const CustomerField = () => {
                 collapse={collapse}
                 // clickedField={clickedField}
                 configurations={mapConfiguration}
-                viewBound={clickedField?.viewBounds ?? mapData?.viewBounds}
+                viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
               >
                 {ReturnChildren}
               </LeafletMap>) : (<LeafletMap

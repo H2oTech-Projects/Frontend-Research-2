@@ -3,8 +3,8 @@ import L from "leaflet";
 type RtTypes = {
   position: any;
   children?: any;
-  handleMouseDown: any;
-  cancel: any;
+  handleMouseDown?: any;
+  cancel?: any;
 };
 import LightLogo from "../assets/msmtPoint.png";
 
@@ -21,9 +21,9 @@ const RtPoint = ({ position, children,  handleMouseDown, cancel}: RtTypes) => {
         center={position}
         radius={10}  // size of the circle in pixels
         pathOptions={{ color: 'white', fillColor: 'blue', fillOpacity: 1 }}
-        eventHandlers={{
+        eventHandlers={handleMouseDown && {
           mousedown: handleMouseDown,
-          mouseup: cancel,
+          mouseup: cancel 
         }}
         pane="markerPane" 
       >
