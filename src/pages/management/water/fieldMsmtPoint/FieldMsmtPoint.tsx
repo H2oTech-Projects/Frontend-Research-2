@@ -273,14 +273,14 @@ const FieldMsmtPoint = () => {
     },
   ];
 
-  const showInfo = (Id: String) => {
+  const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
       id: "popup-" + Id,
       class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
     var hed = $("<div></div>", {
-      text: "FieldID: " + Id,
+      text: `${Label}${Id}`,
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
     // Add the popup to the map
@@ -295,7 +295,7 @@ const FieldMsmtPoint = () => {
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        showInfo(auxLayer.feature.properties.FieldID);
+        showInfo('FieldID: ', auxLayer.feature.properties.FieldID);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -646,7 +646,7 @@ const FieldMsmtPoint = () => {
                   </RtPoint>
                 ) : null}
 
-               {mapData?.data &&  
+               {mapData?.data &&
                 <RtGeoJson
                   key={"fields"}
                   layerEvents={geoJsonLayerEvents}
@@ -655,7 +655,7 @@ const FieldMsmtPoint = () => {
                   data={JSON.parse(mapData['data']['geojson'])}
                   color={"#16599a"}
                 />}
-        
+
               </LeafletMap>) : (<LeafletMap
                 position={position}
                 zoom={zoomLevel}

@@ -1,16 +1,11 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import $ from "jquery";
-import { Circle, Popup } from "react-leaflet";
 import { ColumnDef } from "@tanstack/react-table";
-import dayjs from "dayjs";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
-import RtPolygon from "@/components/RtPolygon";
 import RtGeoJson from "@/components/RtGeoJson";
-import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
-import { buildPopupMessage } from "@/utils/map";
 
 import {
   DropdownMenu,
@@ -35,7 +30,6 @@ import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
 import { useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
-import RtPoint from "@/components/RtPoint";
 
 interface initialTableDataTypes {
   search: string;
@@ -263,14 +257,14 @@ const CustomerField = () => {
   //   [],
   // );
 
-  const showInfo = (Id: String) => {
+  const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
       id: "popup-" + Id,
       class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
     var hed = $("<div></div>", {
-      text: "FieldID: " + Id,
+      text: `${Label} ${Id}`,
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
     // Add the popup to the map
@@ -290,22 +284,62 @@ const CustomerField = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo(auxLayer.feature.properties.field_id || auxLayer.feature.properties.customer_field_ids);
+        showInfo("FieldID: ",auxLayer.feature.properties.field_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
         auxLayer.setStyle({
           weight: 2.5,
           //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
-          opacity: 1,
+          fillOpacity: 0.5,
         });
-        removeInfo(auxLayer.feature.properties.field_id || auxLayer.feature.properties.customer_field_ids);
+        removeInfo(auxLayer.feature.properties.field_id);
       },
     });
   }
 
+  const fieldJsonLayerEvents = (feature: any, layer: any) => {
+    // layer.bindPopup(buildPopupMessage(feature.properties));
+    layer.on({
+      mouseover: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 4,
+          //color: "#800080"
+        });
+        showInfo("FieldID: ",auxLayer.feature.properties.customer_field_ids);
+      },
+      mouseout: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 2.5,
+          //color: "#9370DB",
+          fillColor: "red",
+          fillOpacity: 0.3,
+        });
+        removeInfo(auxLayer.feature.properties.customer_field_ids);
+      },
+    });
+  }
+  const pointLayerEvents = (feature: any, layer: any) => {
+    // layer.bindPopup(buildPopupMessage(feature.properties));
+    layer.on({
+      mouseover: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 4,
+        });
+        showInfo('MsmtPoint: ',auxLayer.feature.properties.msmt_point_id);
+      },
+      mouseout: function (e: any) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+          weight: 2,
+        });
+        removeInfo(auxLayer.feature.properties.msmt_point_id);
+      },
+    });
+  }
   // const geoJsonStyle = (features: any) => {
   //   if (features?.properties?.FieldID === clickedField) {
   //     return {
@@ -340,8 +374,16 @@ const CustomerField = () => {
     const fieldGeojsonStyle = (features: any) => {
       return {
         color: "red",
-        fillColor: "transparent", // Fill color for normal areas
-        fillOpacity: 0.5,
+        fillColor: "red", // Fill color for normal areas
+        fillOpacity: 0.3,
+        weight: 2,
+      };
+    }
+    const pointGeojsonStyle = (features: any) => {
+      return {
+        color: "white",
+        fillColor: "blue", // Fill color for normal areas
+        fillOpacity: 1,
         weight: 2,
       };
     }
@@ -356,24 +398,18 @@ const CustomerField = () => {
         />}
         {geojson?.fieldGeojson && <RtGeoJson
           key={"msmtPoints"}
-          layerEvents={geoJsonLayerEvents}
+          layerEvents={fieldJsonLayerEvents}
           style={fieldGeojsonStyle}
           data={JSON.parse(geojson?.fieldGeojson)}
           color={"#16599a"}
         />}
-        {/* {geojson?.msmtPoint && <RtGeoJson
+        {geojson?.msmtPoint && <RtGeoJson
           key={"msmtPoints"}
-          layerEvents={geoJsonLayerEvents}
-          style={fieldGeojsonStyle}
+          layerEvents={pointLayerEvents}
+          style={pointGeojsonStyle}
           data={JSON.parse(geojson?.msmtPoint)}
           color={"#16599a"}
-        />} */}
-{/* 
-        {geojson?.msmtPoint && <RtPoint
-          position={geojson?.msmtPoint}
-
-        />
-        } */}
+        />}
       </>
     )
 

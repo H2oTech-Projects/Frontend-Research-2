@@ -254,9 +254,9 @@ const Field = () => {
     [],
   );
 
-  const showInfo = (Id: String) => {
+  const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
-      id: "popup-" + Id,
+      id: `${Label}${Id}`,
       class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
@@ -281,7 +281,7 @@ const Field = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo(auxLayer.feature.properties.field_id);
+        showInfo("FieldID: ",auxLayer.feature.properties.field_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
