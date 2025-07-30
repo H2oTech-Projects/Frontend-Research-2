@@ -37,6 +37,7 @@ import { FormComboBox } from "@/components/FormComponent/FormRTSelect";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/FormComponent/FormInput";
 import { convertKeysToSnakeCase } from "@/utils/stringConversion";
+import { useLocation } from 'react-router-dom';
 
 interface initialTableDataTypes {
   search: string;
@@ -69,17 +70,21 @@ const ApportionSchema = z.object({
 type ApportionFormType = z.infer<typeof ApportionSchema>;
 
 const FieldMsmtPoint = () => {
-  const navigate = useNavigate();
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
+  const params= new URLSearchParams(useLocation().search)
+  const mpId = params.get("mpId");
+  const wapId= params.get("wapId");
+  const msmtPointId= params.get("msmtpoint");
+
+  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData, search: msmtPointId })
   const [collapse, setCollapse] = useState("default");
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
-  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: "", features: {}, fields: [] });
+  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: mpId || "", features: {}, fields: [] });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState(msmtPointId || "");
   const timerRef = useRef<number | null>(null);
-  const [defaultWap, setDefaultWap] = useState<any>("")
+  const [defaultWap, setDefaultWap] = useState<any>(27 || "")
   const [viewBound, setViewBound] = useState<any>()
   const [enableLink, setEnableLink] = useState(false);
   const [open, setOpen] = useState(false);
@@ -125,7 +130,7 @@ const FieldMsmtPoint = () => {
   }, [mapData]);
 
   useEffect(() => {
-    if (!!ways) {
+    if (!!ways && !wapId) {
       setDefaultWap(ways['data'][0]["value"])
     }
   }, [ways])
@@ -149,6 +154,7 @@ const FieldMsmtPoint = () => {
     if (!!msmtPointFields) {
       setSelectedFields(msmtPointFields.data)
       setViewBound(msmtPointFields.viewBounds)
+      setPosition({...position, center: msmtPointFields.center, point: msmtPointFields.center, fields: msmtPointFields.fields})
       setEnableLink(true)
     }
 
@@ -651,7 +657,6 @@ const FieldMsmtPoint = () => {
                   key={"fields"}
                   layerEvents={geoJsonLayerEvents}
                   style={geoJsonStyle}
-
                   data={JSON.parse(mapData['data']['geojson'])}
                   color={"#16599a"}
                 />}

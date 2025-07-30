@@ -6,6 +6,8 @@ import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
+import { createRoot } from 'react-dom/client';
+import { MemoryRouter } from 'react-router-dom';
 
 import {
   DropdownMenu,
@@ -30,6 +32,7 @@ import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
 import { useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
+import {MsmtPointInfo} from '@/utils/tableLineChartInfo';
 
 interface initialTableDataTypes {
   search: string;
@@ -323,12 +326,20 @@ const CustomerField = () => {
   }
   const pointLayerEvents = (feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(feature.properties));
+    const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map';
+    // @ts-ignore
+    popupDiv.style = "border-radius:8px; overflow:hidden";
+    popupDiv.id = feature.properties?.msmt_point_id;
+    layer.bindPopup(popupDiv,{maxHeight:30, maxWidth:70, className: 'customer-field-msmtpoint'});
+
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
         auxLayer.setStyle({
           weight: 4,
         });
+        createRoot(popupDiv).render(<MemoryRouter><MsmtPointInfo mpId={auxLayer.feature.properties.mp_id} msmtPointId={auxLayer.feature.properties.msmt_point_id} wapId={defaultWap} /></MemoryRouter>);
         showInfo('MsmtPoint: ',auxLayer.feature.properties.msmt_point_id);
       },
       mouseout: function (e: any) {

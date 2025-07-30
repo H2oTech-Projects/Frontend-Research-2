@@ -403,3 +403,27 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
 };
 
 export default TableLineChartInfo;
+
+
+type MsmtPointDetailTypes ={
+  mpId: string;
+  msmtPointId: string;
+  wapId: string
+}
+
+export const MsmtPointInfo = ({mpId, msmtPointId, wapId}: MsmtPointDetailTypes) => {
+  return (
+    <div className='flex-col w-full '>
+      <div className='w-full pb-[3px]'>
+        {msmtPointId}
+      </div>
+      <div className="w-full">
+        <button onClick={() => {
+          window.location.href = `/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`;
+        }}>
+          View Detail
+        </button>
+      </div>
+    </div>
+  );
+};
