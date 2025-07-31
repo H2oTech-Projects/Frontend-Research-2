@@ -39,11 +39,11 @@ export const useGetCustomerFieldMapByWAP = (wapId:number):UseQueryResult<any> =>
 })
 }
 
-export const useGetCustomerFieldDetailByWAP = (wapId:string,customerFieldId:string):UseQueryResult<any> => {
+export const useGetCustomerFieldDetailByWAP = (wapId:string,customerId:string):UseQueryResult<any> => {
     return useQuery({
-      queryKey:[GET_BY_ID_CUSTOMER_FIELD,customerFieldId,wapId],
-      queryFn:()=>  queryCustomerFieldService.getCustomerFieldDetailByWAP(customerFieldId,wapId),
-      enabled: !!wapId && !!customerFieldId,
+      queryKey:[GET_BY_ID_CUSTOMER_FIELD,customerId,wapId],
+      queryFn:()=>  queryCustomerFieldService.getCustomerFieldDetailByWAP(customerId,wapId),
+      enabled: !!wapId && !!customerId,
     ...queryConfig
 })
 }

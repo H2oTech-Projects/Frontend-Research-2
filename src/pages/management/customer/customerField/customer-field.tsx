@@ -30,7 +30,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
-import { useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
+import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
 import {MsmtPointInfo} from '@/utils/tableLineChartInfo';
 
 interface initialTableDataTypes {
@@ -74,7 +74,8 @@ const CustomerField = () => {
   // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
   const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWap);
-  //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
+  const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWap!, id!)
+//  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
   const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
   const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
   const debouncedSearch = useCallback(
@@ -126,6 +127,7 @@ const CustomerField = () => {
       header: ({ column }) => {
         return (
           <Button
+            className="flex items-start justify-start"
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
@@ -134,14 +136,7 @@ const CustomerField = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => {
-        const fields = row.getValue("fieldPctFarmed") as string[];
-        return (
-          <div className="capitalize">
-            {Array.isArray(fields) ? fields.join(", ") : fields}
-          </div>
-        );
-      },
+      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("fieldPctFarmed")}</div>,
     },
     // {
     //   accessorKey: "customerPctFarmed",
@@ -207,7 +202,7 @@ const CustomerField = () => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {/* <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}> */}
-            <DropdownMenuItem >
+            <DropdownMenuItem onClick={() => { setId(row.original.customerId); setOpen(true) }} >
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
@@ -437,7 +432,48 @@ const CustomerField = () => {
     }
   }, [wapsOptions])
 
+const EditModel = () => {
+    const handleConfirm = () => {
+      console.log("here")
+    }
+    const uniqueFieldIds = useMemo(() => {
+      if (!fieldCustomerData?.data) return [];
+      return [...new Set(fieldCustomerData?.data?.map((item: any) => item.fieldId))];
+    }, [fieldCustomerData?.data]);
+    return <CustomModal
+      isOpen={open}
+      onClose={() => {
+        setOpen(false)
 
+      }}
+      title="Edit Link Customer and Field"
+      confirmText="Link"
+      onConfirm={handleConfirm}
+      isDeleteModal={false}
+      showActionButton={true}
+    >
+      {isFieldCustomerDataLoading ? <div className="flex justify-center items-center h-full"><Spinner /></div> : <div className="h-[500px] overflow-y-auto w-[500px]">
+        {uniqueFieldIds?.map((fieldId: any) => {
+          const customerData = fieldCustomerData?.data?.filter((item: any) => item.fieldId === fieldId);
+          return <div className="mb-3" key={fieldId}>
+            <div>Field Name: <span className="text-royalBlue text-xl font-semibold">{customerData[0]?.fieldName}</span></div>
+            {customerData?.map((item: any) => {
+              return <div className="grid gap-4 auto-rows-auto grid-cols-3" key={item?.fieldId}>
+                <span className="flex justify-center items-center">{item?.customerName}</span>
+                <span className="flex justify-center items-center">{item?.pctFarmed}</span>
+              </div>
+            })}</div>
+        })}
+
+
+        {/* {
+          fieldCustomerData?.data?.map((item: any) => {
+            return <div className="grid gap-4 auto-rows-auto grid-cols-3" key={item?.customerId}><span className="flex justify-center items-center">{item?.customerName}</span><span className="flex justify-center items-center">{item?.fieldName}</span><span className="flex justify-center items-center">{item?.pctFarmed}</span></div>
+          })
+        } */}
+      </div>}
+    </CustomModal>
+  }
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
@@ -446,13 +482,7 @@ const CustomerField = () => {
         pageHeaderTitle="Customer-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
       />
-      <CustomModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Delete Field"
-        description="Are you sure you want to delete this Field? This action cannot be undone."
-        onConfirm={handleDelete}
-      />
+      <EditModel />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex gap-2">
