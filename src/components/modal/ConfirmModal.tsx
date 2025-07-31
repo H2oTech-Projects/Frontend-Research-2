@@ -29,7 +29,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[899] flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-[1111] flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-lg w-auto p-6 animate-fade-in dark:bg-slate-800 dark:text-slate-50">
         <h2 className="text-lg font-semibold">{title}</h2>
         {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
@@ -45,7 +45,7 @@ showActionButton && <div className="mt-6 flex justify-end gap-2">
           </button>
           <button
             onClick={() => {
-              onConfirm?.()
+              onConfirm && onConfirm()
               onClose()
             }}
             className={cn("px-4 py-2 rounded-md text-sm  text-white ",isDeleteModal ? "bg-red-600 hover:bg-red-700" : "bg-royalBlue hover:bg-blue-700")}

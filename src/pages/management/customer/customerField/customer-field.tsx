@@ -1,13 +1,15 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import $ from "jquery";
+import $, { data } from "jquery";
 import { ColumnDef } from "@tanstack/react-table";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
 import { createRoot } from 'react-dom/client';
-
+import {
+  Form
+} from "@/components/ui/form"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,8 +32,16 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
-import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP } from "@/services/customerField";
-import {MsmtPointInfo} from '@/utils/tableLineChartInfo';
+import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP, usePutCustomerField } from "@/services/customerField";
+import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
+import { z } from "zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormInput } from "@/components/FormComponent/FormInput";
+import { error } from "console";
+import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
+import { de } from "zod/dist/types/v4/locales";
+import { set } from "date-fns";
 
 interface initialTableDataTypes {
   search: string;
@@ -48,6 +58,19 @@ const initialTableData = {
   sort_order: ''
 }
 
+const formSchema = z.object({
+  customers: z.array(
+    z.object({
+      fieldName: z.string().optional(),
+      customerName: z.string().optional(),
+      fieldId: z.coerce.number().optional(),
+      customerId: z.coerce.number().optional(),
+      pctFarmed: z.coerce.number().optional(), // optional range check
+    })
+  ),
+  comment: z.string().optional(),
+});
+type FormValues = z.infer<typeof formSchema>;
 const CustomerField = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -71,13 +94,12 @@ const CustomerField = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
   const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWap);
   const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWap!, id!)
-//  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
+  const { mutate: updateCustomerField, isPending: isCustomerFieldUpdating } = usePutCustomerField();
   const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
-  const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
+
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
@@ -85,30 +107,11 @@ const CustomerField = () => {
     []
   );
 
-  const columns: ColumnDef<any>[] = [
-    // {
-    //   accessorKey: "fieldId",
-    //   // header: "Field ID",
-    //   header: ({ column }) => {
-    //     return (
-    //       <Button
-    //         variant="ghost"
-    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-    //       >
-    //         Field ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-    //       </Button>
-    //     );
-    //   },
 
-    //   size: 100, // this size value is in px
-    //   cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
-    //   //filterFn: 'includesString',
-    // },
+
+  const columns: ColumnDef<any>[] = [
     {
       accessorKey: "customerName",
-      // header: () => {
-      //     return <>Field Description</>;
-      // },
       header: ({ column }) => {
         return (
           <Button
@@ -138,51 +141,6 @@ const CustomerField = () => {
       size: 180,
       cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("fieldPctFarmed")}</div>,
     },
-    // {
-    //   accessorKey: "customerPctFarmed",
-    //   header: ({ column }) => {
-    //     return (
-    //       <Button
-    //         variant="ghost"
-    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-    //       >
-    //         Customer Percentage Farmed({UnitSystemName()})  {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-    //       </Button>
-    //     );
-    //   },
-    //   size: 180,
-    //   cell: ({ row }) => <div className="capitalize">{row.getValue("customerPctFarmed")}</div>,
-    // },
-    // {
-    //   accessorKey: "fieldLegalHa",
-    //   header: ({ column }) => {
-    //     return (
-    //       <Button
-    //         variant="ghost"
-    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-    //       >
-    //         Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "fieldLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-    //       </Button>
-    //     );
-    //   },
-    //   size: 180,
-    //   cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
-    // },
-    // {
-    //   accessorKey: "fieldActBool",
-    //   header: ({ column }) => {
-    //     return (
-    //       <Button
-    //         variant="ghost"
-    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "field_act_bool", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-    //       >
-    //         Active Status
-    //         {tableInfo?.sort !== "fieldActBool" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-    //       </Button>
-    //     );
-    //   },
-    //   cell: ({ row }) => <div className="flex justify-center items-center">{row.getValue("fieldActBool") ? <div className="w-3 h-3 rounded-full bg-green-500 "></div> : <div className="w-3 h-3 rounded-full bg-red-500"></div>}</div>,
-    // },
     {
       id: "actions",
       header: "",
@@ -223,36 +181,6 @@ const CustomerField = () => {
     },
   ];
 
-  const handleDelete = () => {
-    deleteField({ fieldId: id, wapId: defaultWap }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
-        refetchMap();
-        queryClient.invalidateQueries({ queryKey: [DELETE_FIELD_KEY_BY_FIELD] });
-        toast.success("Client deleted successfully");
-      },
-      onError: (error) => {
-        showErrorToast(error?.response?.data.message);
-      },
-    });
-  };
-
-  // const polygonEventHandlers = useMemo(
-  //   () => ({
-  //     mouseover(e: any) {
-  //       const { id } = e.target.options;
-  //       showInfo(id);
-  //     },
-  //     mouseout(e: any) {
-  //       const { id } = e.target.options;
-  //       removeInfo(id);
-  //     },
-  //     click: (e: any) => {
-  //       e.target.openPopup(); // Opens popup when clicked
-  //     }
-  //   }),
-  //   [],
-  // );
 
   const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
@@ -281,7 +209,7 @@ const CustomerField = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo("FieldID: ",auxLayer.feature.properties.field_id);
+        showInfo("FieldID: ", auxLayer.feature.properties.field_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -304,7 +232,7 @@ const CustomerField = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo("FieldID: ",auxLayer.feature.properties.customer_field_ids);
+        showInfo("FieldID: ", auxLayer.feature.properties.customer_field_ids);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -325,7 +253,7 @@ const CustomerField = () => {
     // @ts-ignore
     popupDiv.style = "border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.msmt_point_id;
-    layer.bindPopup(popupDiv,{maxHeight:30, maxWidth:70, className: 'customer-field-msmtpoint'});
+    layer.bindPopup(popupDiv, { maxHeight: 30, maxWidth: 70, className: 'customer-field-msmtpoint' });
 
     layer.on({
       mouseover: function (e: any) {
@@ -334,7 +262,7 @@ const CustomerField = () => {
           weight: 4,
         });
         createRoot(popupDiv).render(<MsmtPointInfo mpId={auxLayer.feature.properties.mp_id} msmtPointId={auxLayer.feature.properties.msmt_point_id} wapId={defaultWap} />);
-        showInfo('MsmtPoint: ',auxLayer.feature.properties.msmt_point_id);
+        showInfo('MsmtPoint: ', auxLayer.feature.properties.msmt_point_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -345,22 +273,7 @@ const CustomerField = () => {
       },
     });
   }
-  // const geoJsonStyle = (features: any) => {
-  //   if (features?.properties?.FieldID === clickedField) {
-  //     return {
-  //       color: "red", // Border color
-  //       fillColor: "#transparent", // Fill color for the highlighted area
-  //       fillOpacity: 0.5,
-  //       weight: 2,
-  //     };
-  //   }
-  //   return {
-  //     color: "#16599A", // Border color
-  //     fillColor: "transparent", // Fill color for normal areas
-  //     fillOpacity: 0.5,
-  //     weight: 2,
-  //   };
-  // }
+
 
   useEffect(() => {
     setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null })
@@ -432,46 +345,79 @@ const CustomerField = () => {
     }
   }, [wapsOptions])
 
-const EditModel = () => {
-    const handleConfirm = () => {
-      console.log("here")
+
+
+  const EditModel = () => {
+    const [showForm, setShowForm] = useState<boolean>(false);
+    const form = useForm<FormValues>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        customers: []
+      },
+    });
+    const { fields, append, remove } = useFieldArray({
+      control: form.control,
+      name: "customers"
+    })
+
+    useEffect(() => {
+      if (fieldCustomerData?.data) {
+        form.setValue("customers", fieldCustomerData?.data)
+        setShowForm(true)
+      }
+    }, [fieldCustomerData])
+    const onSubmit = (data: FormValues) => {
+      const formData ={wapId:defaultWap, customerId: id, data: data}
+            updateCustomerField(formData, {
+            onSuccess: (data: any) => {
+              setOpen(false);
+              queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+              queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+              refetchMap();
+              refetch();
+              toast.success(data?.message);
+              setId("");
+            
+            },
+            onError: (error) => {
+              showErrorToast(error?.response?.data?.message || "Failed to create Link");
+              queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+            },
+          });
     }
-    const uniqueFieldIds = useMemo(() => {
-      if (!fieldCustomerData?.data) return [];
-      return [...new Set(fieldCustomerData?.data?.map((item: any) => item.fieldId))];
-    }, [fieldCustomerData?.data]);
     return <CustomModal
       isOpen={open}
       onClose={() => {
         setOpen(false)
-
       }}
       title="Edit Link Customer and Field"
       confirmText="Link"
-      onConfirm={handleConfirm}
       isDeleteModal={false}
-      showActionButton={true}
+      showActionButton={false}
     >
-      {isFieldCustomerDataLoading ? <div className="flex justify-center items-center h-full"><Spinner /></div> : <div className="h-[500px] overflow-y-auto w-[500px]">
-        {uniqueFieldIds?.map((fieldId: any) => {
-          const customerData = fieldCustomerData?.data?.filter((item: any) => item.fieldId === fieldId);
-          return <div className="mb-3" key={fieldId}>
-            <div>Field Name: <span className="text-royalBlue text-xl font-semibold">{customerData[0]?.fieldName}</span></div>
-            {customerData?.map((item: any) => {
-              return <div className="grid gap-4 auto-rows-auto grid-cols-3" key={item?.fieldId}>
-                <span className="flex justify-center items-center">{item?.customerName}</span>
-                <span className="flex justify-center items-center">{item?.pctFarmed}</span>
+      {showForm && <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit, (error) => { console.log(error, "error") })} className="h-[30rem] w-auto flex flex-col gap-2 " >
+
+          <div className="mb-3 flex gap-2" >
+            <div className="w-[100px]">Field Name</div>
+            <div className="w-[200px]" >Customer Name</div>
+            <div>Farmed Percentage(%) </div>
+          </div>
+          <div className="h-[90%] overflow-y-auto p-2">
+
+            {fields && fields?.map((field, index) => {
+              return <div className="mb-3 flex gap-2" key={field?.id}>
+                <div className="w-[100px]">{field?.fieldName}</div>
+                <div className="w-[200px]" >{field?.customerName}</div>
+                <div> <FormInput control={form.control} label="Percentage Farm" name={`customers.${index}.pctFarmed`} type="number" placeholder="Enter Percentage" showLabel={false} /></div>
               </div>
-            })}</div>
-        })}
-
-
-        {/* {
-          fieldCustomerData?.data?.map((item: any) => {
-            return <div className="grid gap-4 auto-rows-auto grid-cols-3" key={item?.customerId}><span className="flex justify-center items-center">{item?.customerName}</span><span className="flex justify-center items-center">{item?.fieldName}</span><span className="flex justify-center items-center">{item?.pctFarmed}</span></div>
-          })
-        } */}
-      </div>}
+            })}
+          </div>
+          <div className="flex gap-2  items-center justify-end">
+            <Button type="submit">Update</Button> <Button type="button" onClick={() => setOpen(false)} >Cancel</Button>
+          </div>
+        </form>
+      </Form>}
     </CustomModal>
   }
 
