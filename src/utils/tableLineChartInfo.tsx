@@ -2,6 +2,7 @@ import { useState } from 'react'
 import RTLineChart from '../components/charts/lineChart';
 import BasicSelect, { GeneralSelect } from "@/components/BasicSelect";
 import { Download } from 'lucide-react';
+import { Button } from '../components/ui/button';
 interface ChartParameters {
   data?: any;
 }
@@ -403,3 +404,32 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
 };
 
 export default TableLineChartInfo;
+
+
+type MsmtPointDetailTypes ={
+  mpId: string;
+  msmtPointId: string;
+  wapId: string
+}
+
+export const MsmtPointInfo = ({mpId, msmtPointId, wapId}: MsmtPointDetailTypes) => {
+  return (
+    <div className='flex-col w-[140px] '>
+      <div className='w-full pb-[10px] underline pl-[32px]'>
+        {msmtPointId}
+      </div>
+      <div className="w-full flex flex-row justify-between">
+        <Button className="text-white bg-slate-900/90 h-6 px-2 text-xs" onClick={() => {
+          window.open(`/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
+        }}>
+          View Detail
+        </Button>
+        <Button className="text-white bg-slate-900/90 h-6 px-2 text-xs" onClick={() => {
+          window.open(`/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
+        }}>
+          xyz........
+        </Button>
+      </div>
+    </div>
+  );
+};

@@ -75,7 +75,7 @@ export const queryTimeSeries = {
     return data?.data;
   },
   getMsmtPoinFields:async(msmtPointId:string | undefined | null, wayId:string | null |undefined ) =>{
-    const response = await axiosInstance.get(MSMTPOINT_FIELDS_API+"/msmt_points/"+msmtPointId+"/waps/"+wayId+"/msmtpointfields/").catch((err) => console.log(err));
+    const response = await axiosInstance.get(MSMTPOINT_FIELDS_API+"/waps/"+wayId+"/msmt_points/"+msmtPointId+"/msmtpointfields/").catch((err) => console.log(err));
     const data = convertKeysToCamelCase(toJson(response));
     return data?.data;
   },

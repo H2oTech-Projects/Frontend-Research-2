@@ -37,6 +37,7 @@ import { FormComboBox } from "@/components/FormComponent/FormRTSelect";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/FormComponent/FormInput";
 import { convertKeysToSnakeCase } from "@/utils/stringConversion";
+import { useLocation } from 'react-router-dom';
 
 interface initialTableDataTypes {
   search: string;
@@ -69,17 +70,21 @@ const ApportionSchema = z.object({
 type ApportionFormType = z.infer<typeof ApportionSchema>;
 
 const FieldMsmtPoint = () => {
-  const navigate = useNavigate();
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
+  const params= new URLSearchParams(useLocation().search)
+  const mpId = params.get("mpId");
+  const wapId= params.get("wapId");
+  const msmtPointId= params.get("msmtpoint");
+
+  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData, search: msmtPointId || "" })
   const [collapse, setCollapse] = useState("default");
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
-  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: "", features: {}, fields: [] });
+  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: mpId || "", features: {}, fields: [] });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState(null);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState(msmtPointId || "");
   const timerRef = useRef<number | null>(null);
-  const [defaultWap, setDefaultWap] = useState<any>("")
+  const [defaultWap, setDefaultWap] = useState<any>(wapId || "")
   const [viewBound, setViewBound] = useState<any>()
   const [enableLink, setEnableLink] = useState(false);
   const [open, setOpen] = useState(false);
@@ -120,12 +125,12 @@ const FieldMsmtPoint = () => {
 
 
   useEffect(() => {
-    if (!!mapData && !!mapData['data']['view_bounds'])
+    if (!!mapData?.data && !!mapData['data']['view_bounds'])
       setViewBound(mapData['data']['view_bounds'])
   }, [mapData]);
 
   useEffect(() => {
-    if (!!ways) {
+    if (!!ways && !wapId) {
       setDefaultWap(ways['data'][0]["value"])
     }
   }, [ways])
@@ -149,6 +154,7 @@ const FieldMsmtPoint = () => {
     if (!!msmtPointFields) {
       setSelectedFields(msmtPointFields.data)
       setViewBound(msmtPointFields.viewBounds)
+      setPosition({...position, center: msmtPointFields.center, point: msmtPointFields.center, fields: msmtPointFields.fields})
       setEnableLink(true)
     }
 
@@ -273,14 +279,14 @@ const FieldMsmtPoint = () => {
     },
   ];
 
-  const showInfo = (Id: String) => {
+  const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
       id: "popup-" + Id,
       class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
     var hed = $("<div></div>", {
-      text: "FieldID: " + Id,
+      text: `${Label}${Id}`,
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
     // Add the popup to the map
@@ -295,7 +301,7 @@ const FieldMsmtPoint = () => {
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        showInfo(auxLayer.feature.properties.FieldID);
+        showInfo('FieldID: ', auxLayer.feature.properties.FieldID);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -357,6 +363,7 @@ const FieldMsmtPoint = () => {
         fillColor: "red", // Fill color for the highlighted area
         fillOpacity: .4,
         weight: 2,
+        zIndex: 150, // Ensure it is above the RtPoint
       };
     }
     return {
@@ -633,15 +640,7 @@ const FieldMsmtPoint = () => {
                 viewBound={viewBound}
                 configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
               >
-                <RtGeoJson
-                  key={"fields"}
-                  layerEvents={geoJsonLayerEvents}
-                  style={geoJsonStyle}
-
-                  data={JSON.parse(mapData['data']['geojson'])}
-                  color={"#16599a"}
-                />
-                {!!position.point && !!position.msmtPointId ? (
+        {!!position.point && !!position.msmtPointId ? (
                   <RtPoint
                     position={position.point}
                     handleMouseDown={handleMouseDown}
@@ -652,6 +651,16 @@ const FieldMsmtPoint = () => {
                                   </Popup> */}
                   </RtPoint>
                 ) : null}
+
+               {mapData?.data &&
+                <RtGeoJson
+                  key={"fields"}
+                  layerEvents={geoJsonLayerEvents}
+                  style={geoJsonStyle}
+                  data={JSON.parse(mapData['data']['geojson'])}
+                  color={"#16599a"}
+                />}
+
               </LeafletMap>) : (<LeafletMap
                 position={position}
                 zoom={zoomLevel}

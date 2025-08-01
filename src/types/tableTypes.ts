@@ -47,6 +47,7 @@ export type MapTableTypes<T> = {
   useClientPagination?: boolean;
   customHeight?: any;
   setClickedGeom?: null | Function;
+  setGeojson?: null | Function;
 };
 export type DummyDataType = {
   id:number;

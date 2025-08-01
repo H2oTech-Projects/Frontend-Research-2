@@ -40,7 +40,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
         subArr[1] === 0
     );
 }
-   const showInfo = (Id: String) => {
+   const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
       id: "popup-" + Id,
       class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-[#16599a] text-slate-50 bg-opacity-65",
@@ -48,7 +48,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
     // Insert a headline into that popup
     var hed = $("<div></div>", {
     //  text: "Parcel: " + Id,
-      text: "Parcel: XXX-XXX-XXX",
+      text: `${Label}: XXX-XXX-XXX`,
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
     // Add the popup to the map
@@ -89,7 +89,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
             <div>Carryover (AF): 20.3</div>
             <div> Zone Abbreviation: MEN</div>
 </div>);
-        showInfo(auxLayer.feature.properties.apn);
+        showInfo('APN: ', auxLayer.feature.properties.apn);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -111,7 +111,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
   } = {
     mouseover(e: L.LeafletMouseEvent) {
       const { id } = e.target.options;
-      showInfo(id);
+      showInfo('APN: ',id);
     },
     mouseout(e: L.LeafletMouseEvent) {
       const { id } = e.target.options;
