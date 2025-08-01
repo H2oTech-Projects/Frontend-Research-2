@@ -344,7 +344,7 @@ const CustomerField = () => {
       if (location.state?.wapId) {
         setDefaultWap(location.state.wapId)
       } else {
-        setDefaultWap(wapsOptions?.data[0]?.value)
+        setDefaultWap(wapsOptions?.currentWap?.value)
       }
     }
   }, [wapsOptions])
