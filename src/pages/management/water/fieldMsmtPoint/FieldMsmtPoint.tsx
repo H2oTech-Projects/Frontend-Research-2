@@ -75,7 +75,7 @@ const FieldMsmtPoint = () => {
   const wapId= params.get("wapId");
   const msmtPointId= params.get("msmtpoint");
 
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData, search: msmtPointId })
+  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData, search: msmtPointId || "" })
   const [collapse, setCollapse] = useState("default");
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
@@ -84,7 +84,7 @@ const FieldMsmtPoint = () => {
   const [clickedField, setClickedField] = useState(null);
   const [searchText, setSearchText] = useState(msmtPointId || "");
   const timerRef = useRef<number | null>(null);
-  const [defaultWap, setDefaultWap] = useState<any>(27 || "")
+  const [defaultWap, setDefaultWap] = useState<any>(wapId || "")
   const [viewBound, setViewBound] = useState<any>()
   const [enableLink, setEnableLink] = useState(false);
   const [open, setOpen] = useState(false);

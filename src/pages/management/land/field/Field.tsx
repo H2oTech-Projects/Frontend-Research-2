@@ -241,7 +241,7 @@ const Field = () => {
     () => ({
       mouseover(e: any) {
         const { id } = e.target.options;
-        showInfo(id);
+        showInfo('FieldID: ',id);
       },
       mouseout(e: any) {
         const { id } = e.target.options;

@@ -71,6 +71,10 @@ const formSchema = z.object({
   comment: z.string().optional(),
 });
 type FormValues = z.infer<typeof formSchema>;
+
+function roundTo(value: number, decimals: number) {
+  return Math.round(value * 10 ** decimals) / 10 ** decimals;
+}
 const CustomerField = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -345,8 +349,6 @@ const CustomerField = () => {
     }
   }, [wapsOptions])
 
-
-
   const EditModel = () => {
     const [showForm, setShowForm] = useState<boolean>(false);
     const form = useForm<FormValues>({
@@ -366,6 +368,37 @@ const CustomerField = () => {
         setShowForm(true)
       }
     }, [fieldCustomerData])
+
+    useEffect(() => {
+      const subscription = form.watch((value, { name }) => {
+        if (!name) return;
+        let fieldCustomerIndex = Number(name?.split('.')[1])
+        if (!fieldCustomerIndex) return;
+
+        let editedFieldId = form.getValues(`customers.${fieldCustomerIndex}.fieldId`)
+        let editedCustomerId = form.getValues(`customers.${fieldCustomerIndex}.customerId`)
+        let editedPctFarmed = form.getValues(`customers.${fieldCustomerIndex}.pctFarmed`) || 0
+        let requiredCustomers = form.getValues('customers').filter((fieldCustomer) => fieldCustomer.fieldId?.toString() == editedFieldId && fieldCustomer.customerId?.toString() != editedCustomerId)
+        let poportionSum = requiredCustomers.reduce((accumulator, currentValue: any) => accumulator + currentValue['pctFarmed'], 0);
+
+        let renewCustomers = form.getValues('customers')
+          .map((customer: any) =>
+              {
+                if (customer.fieldId != editedFieldId) return customer
+                if (customer.customerId == editedCustomerId) return customer
+                customer['pctFarmed'] = roundTo((customer['pctFarmed']/poportionSum)*(100-editedPctFarmed),2)
+                return customer
+              }
+          )
+
+        setTimeout(() => {
+          form.setValue('customers', renewCustomers)
+        }, 1000);
+      });
+
+      //return () => subscription.unsubscribe();
+    }, [form]);
+
     const onSubmit = (data: FormValues) => {
       const formData ={wapId:defaultWap, customerId: id, data: data}
             updateCustomerField(formData, {
@@ -377,7 +410,7 @@ const CustomerField = () => {
               refetch();
               toast.success(data?.message);
               setId("");
-            
+
             },
             onError: (error) => {
               showErrorToast(error?.response?.data?.message || "Failed to create Link");
@@ -409,7 +442,7 @@ const CustomerField = () => {
               return <div className="mb-3 flex gap-2" key={field?.id}>
                 <div className="w-[100px]">{field?.fieldName}</div>
                 <div className="w-[200px]" >{field?.customerName}</div>
-                <div> <FormInput control={form.control} label="Percentage Farm" name={`customers.${index}.pctFarmed`} type="number" placeholder="Enter Percentage" showLabel={false} /></div>
+                <div> <FormInput control={form.control} label="Percentage Farm" name={`customers.${index}.pctFarmed`} type="number" placeholder="Enter Percentage" showLabel={false} disabled={field?.customerId?.toString()!= id}/></div>
               </div>
             })}
           </div>
