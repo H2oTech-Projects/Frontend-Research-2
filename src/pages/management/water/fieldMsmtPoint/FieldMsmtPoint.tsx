@@ -125,8 +125,9 @@ const FieldMsmtPoint = () => {
 
 
   useEffect(() => {
-    if (!!mapData?.data && !!mapData['data']['view_bounds'])
+    if (!!mapData?.data && !!mapData['data']['view_bounds'] && !mpId){
       setViewBound(mapData['data']['view_bounds'])
+    }
   }, [mapData]);
 
   useEffect(() => {
