@@ -155,7 +155,7 @@ const FieldMsmtPoint = () => {
     if (!!msmtPointFields) {
       setSelectedFields(msmtPointFields.data)
       setViewBound(msmtPointFields.viewBounds)
-      setPosition({...position, center: msmtPointFields.center, point: msmtPointFields.center, fields: msmtPointFields.fields})
+      setPosition({...position, center: msmtPointFields.center, point: msmtPointFields.center, fields: msmtPointFields.data})
       setEnableLink(true)
     }
 
