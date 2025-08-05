@@ -113,6 +113,7 @@ const MapTable = <T,>({
       if (type == 'point') {
         const parseData = JSON.parse(row.original.geompoint)
         const coordinates = parseData.coordinates
+        const fields = row.original.fields.split(',').map((item: string) => item.trim())
         // @ts-ignore
         setPosition({
           // @ts-ignore
@@ -123,7 +124,7 @@ const MapTable = <T,>({
           msmtPointId: row.original.id || null,
           // @ts-ignore
           features: row.original,
-          fields: row.original.fields
+          fields: fields
         });
         return;
       }
