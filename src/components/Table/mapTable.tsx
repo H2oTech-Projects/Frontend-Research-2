@@ -95,11 +95,11 @@ const MapTable = <T,>({
 
     const handleOnClick = ((row: any, type: any) => {
       if(type === "relation") {
-      setGeojson && setGeojson({fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds});
-}
+        setGeojson && setGeojson({id: row.original?.customerId, fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds});
+      }
       if(type === "conveyance") {
         setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});
-     }
+      }
       if (type=="parcel") {
         // @ts-ignore
         setSelectedParcel(row.original?.parcel_id)

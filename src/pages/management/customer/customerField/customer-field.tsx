@@ -80,12 +80,14 @@ const CustomerField = () => {
   const location = useLocation();
   const queryClient = useQueryClient();
   const timerRef = useRef<number | null>(null);
+  const [selectedFields, setSelectedFields] = useState<any>([]);
+  const selectedFieldsRef = useRef(selectedFields);
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  const [geojson, setGeojson] = useState<any>({ fieldGeojson: null, msmtPoint: null, viewBounds: null })
+  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[]})
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
@@ -224,6 +226,16 @@ const CustomerField = () => {
         });
         removeInfo(auxLayer.feature.properties.field_id);
       },
+      click: function (e: any) {
+        const auxLayer = e.target;
+        removeInfo(auxLayer.feature.properties.field_id)
+        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_id)) {
+          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_id);
+          setSelectedFields(arr)
+        } else {
+          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_id]);
+        }
+      }
     });
   }
 
@@ -248,6 +260,16 @@ const CustomerField = () => {
         });
         removeInfo(auxLayer.feature.properties.customer_field_ids);
       },
+      click: function (e: any) {
+        const auxLayer = e.target;
+        removeInfo(auxLayer.feature.properties.field_pct_farmed)
+        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_pct_farmed)) {
+          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_pct_farmed);
+          setSelectedFields(arr)
+        } else {
+          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_pct_farmed]);
+        }
+      }
     });
   }
   const pointLayerEvents = (feature: any, layer: any) => {
@@ -277,65 +299,68 @@ const CustomerField = () => {
       },
     });
   }
-
+  useEffect(() => {
+    if (!!geojson){
+      setSelectedFields(geojson.existingFieldIds)
+      selectedFieldsRef.current = geojson.existingFieldIds;
+      setId(geojson)
+    }
+  }, [geojson])
 
   useEffect(() => {
-    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null })
+    if (!!selectedFields){
+      selectedFieldsRef.current = selectedFields;
+    }
+  }, [selectedFields])
+
+  useEffect(() => {
+    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [] })
   }, [defaultWap])
 
-  const ReturnChildren = useMemo(() => {
-
-    const geoJsonStyle = (features: any) => {
+  const geoJsonStyle = (feature: any) => {
+    if (selectedFields.includes(feature.properties.field_id)) {
       return {
         color: "#16599A", // Border color
-        fillColor: "transparent", // Fill color for normal areas
-        fillOpacity: 0.5,
+        fillColor: "red", // Fill color for the highlighted area
+        fillOpacity: .4,
         weight: 2,
+        zIndex: 150, // Ensure it is above the RtPoint
       };
     }
-    const fieldGeojsonStyle = (features: any) => {
+    return {
+      color: "#16599A", // Border color
+      fillColor: "transparent", // Fill color for normal areas
+      fillOpacity: 0.5,
+      weight: 2,
+    };
+  }
+  const fieldGeojsonStyle = (feature: any) => {
+    if (selectedFields.includes(feature.properties.field_id)) {
       return {
-        color: "red",
-        fillColor: "red", // Fill color for normal areas
-        fillOpacity: 0.3,
+        color: "#16599A", // Border color
+        fillColor: "red", // Fill color for the highlighted area
+        fillOpacity: .4,
         weight: 2,
+        zIndex: 150, // Ensure it is above the RtPoint
       };
     }
-    const pointGeojsonStyle = (features: any) => {
-      return {
-        color: "white",
-        fillColor: "blue", // Fill color for normal areas
-        fillOpacity: 1,
-        weight: 2,
-      };
-    }
-    return (
-      <>
-        {mapData?.data && <RtGeoJson
-          key={"fields"}
-          layerEvents={geoJsonLayerEvents}
-          style={geoJsonStyle}
-          data={JSON.parse(mapData['data'])}
-          color={"#16599a"}
-        />}
-        {geojson?.fieldGeojson && <RtGeoJson
-          key={"msmtPoints"}
-          layerEvents={fieldJsonLayerEvents}
-          style={fieldGeojsonStyle}
-          data={JSON.parse(geojson?.fieldGeojson)}
-          color={"#16599a"}
-        />}
-        {geojson?.msmtPoint && <RtGeoJson
-          key={"msmtPoints"}
-          layerEvents={pointLayerEvents}
-          style={pointGeojsonStyle}
-          data={JSON.parse(geojson?.msmtPoint)}
-          color={"#16599a"}
-        />}
-      </>
-    )
+    return {
+      color: "#16599A", // Border color
+      fillColor: "transparent", // Fill color for normal areas
+      fillOpacity: 0.5,
+      weight: 2,
+    };
+  }
+  const pointGeojsonStyle = (features: any) => {
+    return {
+      color: "white",
+      fillColor: "blue", // Fill color for normal areas
+      fillOpacity: 1,
+      weight: 2,
+    };
+  }
 
-  }, [mapLoading, position, mapData, geojson])
+  // }, [mapLoading, mapData, geojson, selectedFields])
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
@@ -398,6 +423,26 @@ const CustomerField = () => {
 
       //return () => subscription.unsubscribe();
     }, [form]);
+
+    const handleAssociatePopUp = () => {
+      const formData ={wapId:defaultWap, customerId: id, data: data}
+        updateCustomerField(formData, {
+        onSuccess: (data: any) => {
+          setOpen(false);
+          queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+          refetchMap();
+          refetch();
+          toast.success(data?.message);
+          setId("");
+
+        },
+        onError: (error) => {
+          showErrorToast(error?.response?.data?.message || "Failed to create Link");
+          queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+        },
+      });
+    }
 
     const onSubmit = (data: FormValues) => {
       const formData ={wapId:defaultWap, customerId: id, data: data}
@@ -493,9 +538,7 @@ const CustomerField = () => {
           <Button
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate(`/customer-field/add`)
-            }}
+            //onClick={handleAssociatePopUp}
           >
             <Plus size={4} />
             Add Links
@@ -545,7 +588,27 @@ const CustomerField = () => {
                 configurations={mapConfiguration}
                 viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
               >
-                {ReturnChildren}
+                {mapData?.data && <RtGeoJson
+                    key={"fields"}
+                    layerEvents={geoJsonLayerEvents}
+                    style={geoJsonStyle}
+                    data={JSON.parse(mapData['data'])}
+                    color={"#16599a"}
+                  />}
+                  {geojson?.fieldGeojson && <RtGeoJson
+                    key={"msmtPoints"}
+                    layerEvents={fieldJsonLayerEvents}
+                    style={fieldGeojsonStyle}
+                    data={JSON.parse(geojson?.fieldGeojson)}
+                    color={"#16599a"}
+                  />}
+                  {geojson?.msmtPoint && <RtGeoJson
+                    key={"msmtPoints"}
+                    layerEvents={pointLayerEvents}
+                    style={pointGeojsonStyle}
+                    data={JSON.parse(geojson?.msmtPoint)}
+                    color={"#16599a"}
+                  />}
               </LeafletMap>) : (<LeafletMap
                 position={position}
                 zoom={zoomLevel}
