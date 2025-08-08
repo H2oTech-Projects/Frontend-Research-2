@@ -60,7 +60,8 @@ export const queryCustomerFieldService = {
         "Content-Type": "application/json",
       }
     });
-    return response.data;
+    const respo = convertKeysToCamelCase(toJson(response.data));
+    return respo;
   }
 
 }

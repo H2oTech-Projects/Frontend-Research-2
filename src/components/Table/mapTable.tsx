@@ -95,7 +95,7 @@ const MapTable = <T,>({
 
     const handleOnClick = ((row: any, type: any) => {
       if(type === "relation") {
-        setGeojson && setGeojson({id: row.original?.customerId, fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds});
+        setGeojson && setGeojson({id: row.original?.customerId, fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName});
       }
       if(type === "conveyance") {
         setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});

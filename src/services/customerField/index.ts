@@ -1,6 +1,6 @@
 import { initialTableDataTypes } from "@/types/tableTypes";
 import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
-import { queryConfig } from "@/utils/reactQueryConfig";
+import { noCacheQueryConfig, queryConfig } from "@/utils/reactQueryConfig";
 import { RegisterResponse } from "../registration/service";
 import { AxiosError } from "axios";
 import { queryCustomerFieldService } from "./services";
@@ -39,12 +39,14 @@ export const useGetCustomerFieldMapByWAP = (wapId:number):UseQueryResult<any> =>
 })
 }
 
-export const useGetCustomerFieldDetailByWAP = (wapId:string,customerId:string):UseQueryResult<any> => {
+export const useGetCustomerFieldDetailByWAP = (wapId:string,customerId:any):UseQueryResult<any> => {
+    let customerid = typeof(customerId) == 'object'? customerId.id.toString() : customerId
     return useQuery({
       queryKey:[GET_BY_ID_CUSTOMER_FIELD,customerId,wapId],
-      queryFn:()=>  queryCustomerFieldService.getCustomerFieldDetailByWAP(customerId,wapId),
+      queryFn:()=>  queryCustomerFieldService.getCustomerFieldDetailByWAP(customerid,wapId),
       enabled: !!wapId && !!customerId,
-    ...queryConfig
+      ...queryConfig,
+      ...noCacheQueryConfig,
 })
 }
 
