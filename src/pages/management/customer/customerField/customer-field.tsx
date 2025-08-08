@@ -42,6 +42,7 @@ import { error } from "console";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
 import { de } from "zod/dist/types/v4/locales";
 import { set } from "date-fns";
+import CustomerFieldModal from "./CustomerFieldModal";
 
 interface initialTableDataTypes {
   search: string;
@@ -72,9 +73,6 @@ const formSchema = z.object({
 });
 type FormValues = z.infer<typeof formSchema>;
 
-function roundTo(value: number, decimals: number) {
-  return Math.round(value * 10 ** decimals) / 10 ** decimals;
-}
 const CustomerField = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -87,7 +85,7 @@ const CustomerField = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[]})
+  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: ""})
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
@@ -105,6 +103,8 @@ const CustomerField = () => {
   const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWap!, id!)
   const { mutate: updateCustomerField, isPending: isCustomerFieldUpdating } = usePutCustomerField();
   const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
+  const [conflictFields, setConflictFields] = useState([]);
+  const [processConflictFields, setProcessConflictFields] = useState(false)
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -208,6 +208,7 @@ const CustomerField = () => {
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(feature.properties));
+
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -300,10 +301,10 @@ const CustomerField = () => {
     });
   }
   useEffect(() => {
-    if (!!geojson){
+    if (!!geojson.fieldGeojson){
       setSelectedFields(geojson.existingFieldIds)
       selectedFieldsRef.current = geojson.existingFieldIds;
-      setId(geojson)
+      setId(geojson.id)
     }
   }, [geojson])
 
@@ -314,7 +315,7 @@ const CustomerField = () => {
   }, [selectedFields])
 
   useEffect(() => {
-    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [] })
+    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], customerName: "" })
   }, [defaultWap])
 
   const geoJsonStyle = (feature: any) => {
@@ -374,129 +375,172 @@ const CustomerField = () => {
     }
   }, [wapsOptions])
 
-  const EditModel = () => {
-    const [showForm, setShowForm] = useState<boolean>(false);
-    const form = useForm<FormValues>({
-      resolver: zodResolver(formSchema),
-      defaultValues: {
-        customers: []
-      },
+  // const EditModel = () => {
+  //   const [showForm, setShowForm] = useState<boolean>(!!conflictFields);
+  //   const form = useForm<FormValues>({
+  //     resolver: zodResolver(formSchema),
+  //     defaultValues: {
+  //       customers: conflictFields
+  //     },
+  //   });
+  //   const { fields, append, remove } = useFieldArray({
+  //     control: form.control,
+  //     name: "customers"
+  //   })
+
+  //   useEffect(() => {
+  //     if (fieldCustomerData?.data) {
+  //       form.setValue("customers", fieldCustomerData?.data)
+  //       setConflictFields([])
+  //       setShowForm(true)
+  //     }
+  //   }, [fieldCustomerData])
+
+  //   useEffect(() => {
+  //     if (!!conflictFields) {
+  //       form.setValue("customers", conflictFields)
+  //       setShowForm(true)
+  //     }
+  //   }, [conflictFields])
+
+  //   useEffect(() => {
+  //     const subscription = form.watch((value, { name }) => {
+  //       if (!name) return;
+  //       let fieldCustomerIndex = Number(name?.split('.')[1])
+  //       if (!fieldCustomerIndex) return;
+
+  //       let editedFieldId = form.getValues(`customers.${fieldCustomerIndex}.fieldId`)
+  //       let editedCustomerId = form.getValues(`customers.${fieldCustomerIndex}.customerId`)
+  //       let editedPctFarmed = form.getValues(`customers.${fieldCustomerIndex}.pctFarmed`) || 0
+  //       let requiredCustomers = form.getValues('customers').filter((fieldCustomer) => fieldCustomer.fieldId?.toString() == editedFieldId && fieldCustomer.customerId?.toString() != editedCustomerId)
+  //       let poportionSum = requiredCustomers.reduce((accumulator, currentValue: any) => accumulator + currentValue['pctFarmed'], 0);
+
+  //       let renewCustomers = form.getValues('customers')
+  //         .map((customer: any) =>
+  //             {
+  //               if (customer.fieldId != editedFieldId) return customer
+  //               if (customer.customerId == editedCustomerId) return customer
+  //               customer['pctFarmed'] = roundTo((customer['pctFarmed']/poportionSum)*(100-editedPctFarmed),2)
+  //               return customer
+  //             }
+  //         )
+
+  //       setTimeout(() => {
+  //         form.setValue('customers', renewCustomers)
+  //       }, 1000);
+  //     });
+
+  //     //return () => subscription.unsubscribe();
+  //   }, [form]);
+
+  //   const handleAssociatePopUp = () => {
+  //     const formData ={wapId:defaultWap, customerId: id, data: data}
+  //       updateCustomerField(formData, {
+  //       onSuccess: (data: any) => {
+  //         setOpen(false);
+  //         queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+  //         queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+  //         refetchMap();
+  //         refetch();
+  //         toast.success(data?.message);
+  //         setId("");
+
+  //       },
+  //       onError: (error) => {
+  //         showErrorToast(error?.response?.data?.message || "Failed to create Link");
+  //         queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+  //       },
+  //     });
+  //   }
+
+  //   const onSubmit = (data: FormValues) => {
+  //     const formData ={wapId:defaultWap, customerId: id, data: data}
+  //           updateCustomerField(formData, {
+  //           onSuccess: (data: any) => {
+  //             setOpen(false);
+  //             queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+  //             queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+  //             refetchMap();
+  //             refetch();
+  //             toast.success(data?.message);
+  //             setId("");
+
+  //           },
+  //           onError: (error) => {
+  //             showErrorToast(error?.response?.data?.message || "Failed to create Link");
+  //             queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+  //           },
+  //         });
+  //   }
+  //   return <CustomModal
+  //     isOpen={open}
+  //     onClose={() => {
+  //       setOpen(false)
+  //     }}
+  //     title="Edit Link Customer and Field"
+  //     confirmText="Link"
+  //     isDeleteModal={false}
+  //     showActionButton={false}
+  //   >
+  //     {showForm && <Form {...form}>
+  //       <form onSubmit={form.handleSubmit(onSubmit, (error) => { console.log(error, "error") })} className="h-[30rem] w-auto flex flex-col gap-2 " >
+
+  //         <div className="mb-3 flex gap-2" >
+  //           <div className="w-[100px]">Field Name</div>
+  //           <div className="w-[200px]" >Customer Name</div>
+  //           <div>Farmed Percentage(%) </div>
+  //         </div>
+  //         <div className="h-[90%] overflow-y-auto p-2">
+
+  //           {fields && fields?.map((field, index) => {
+  //             return <div className="mb-3 flex gap-2" key={field?.id}>
+  //               <div className="w-[100px]">{field?.fieldName}</div>
+  //               <div className="w-[200px]" >{field?.customerName}</div>
+  //               <div> <FormInput control={form.control} label="Percentage Farm" name={`customers.${index}.pctFarmed`} type="number" placeholder="Enter Percentage" showLabel={false} disabled={field?.customerId?.toString()!= id}/></div>
+  //             </div>
+  //           })}
+  //         </div>
+  //         <div className="flex gap-2  items-center justify-end">
+  //           <Button type="submit">Update</Button> <Button type="button" onClick={() => setOpen(false)} >Cancel</Button>
+  //         </div>
+  //       </form>
+  //     </Form>}
+  //   </CustomModal>
+  // }
+  const handleAssociatePopUp2 = () => {
+    if (selectedFields.length < 1) return;
+
+    const fieldPctMapper: { [key: string]: any } = {};
+    geojson.existingFieldIds.forEach((key: string, index: number) => {
+      fieldPctMapper[key.toString()] = geojson.existingPcts[index];
     });
-    const { fields, append, remove } = useFieldArray({
-      control: form.control,
-      name: "customers"
+
+    let data = selectedFields.map((field: string) => {
+      let pctFarmed = fieldPctMapper.hasOwnProperty(field) ? fieldPctMapper[field] : 100
+      return ({'field_id': field,'pct_farmed': pctFarmed})
     })
 
-    useEffect(() => {
-      if (fieldCustomerData?.data) {
-        form.setValue("customers", fieldCustomerData?.data)
-        setShowForm(true)
+    const formData ={wapId:defaultWap, customerId: geojson.id, data: {customers: data}}
+    updateCustomerField(formData, {
+    onSuccess: (data: any) => {
+      if (!data?.success){
+        setConflictFields(data?.data)
+        setProcessConflictFields(true)
+        setOpen(true)
+      } else{
+        queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+        refetchMap();
+        refetch();
+        toast.success(data?.message);
+        setId("");
       }
-    }, [fieldCustomerData])
-
-    useEffect(() => {
-      const subscription = form.watch((value, { name }) => {
-        if (!name) return;
-        let fieldCustomerIndex = Number(name?.split('.')[1])
-        if (!fieldCustomerIndex) return;
-
-        let editedFieldId = form.getValues(`customers.${fieldCustomerIndex}.fieldId`)
-        let editedCustomerId = form.getValues(`customers.${fieldCustomerIndex}.customerId`)
-        let editedPctFarmed = form.getValues(`customers.${fieldCustomerIndex}.pctFarmed`) || 0
-        let requiredCustomers = form.getValues('customers').filter((fieldCustomer) => fieldCustomer.fieldId?.toString() == editedFieldId && fieldCustomer.customerId?.toString() != editedCustomerId)
-        let poportionSum = requiredCustomers.reduce((accumulator, currentValue: any) => accumulator + currentValue['pctFarmed'], 0);
-
-        let renewCustomers = form.getValues('customers')
-          .map((customer: any) =>
-              {
-                if (customer.fieldId != editedFieldId) return customer
-                if (customer.customerId == editedCustomerId) return customer
-                customer['pctFarmed'] = roundTo((customer['pctFarmed']/poportionSum)*(100-editedPctFarmed),2)
-                return customer
-              }
-          )
-
-        setTimeout(() => {
-          form.setValue('customers', renewCustomers)
-        }, 1000);
-      });
-
-      //return () => subscription.unsubscribe();
-    }, [form]);
-
-    const handleAssociatePopUp = () => {
-      const formData ={wapId:defaultWap, customerId: id, data: data}
-        updateCustomerField(formData, {
-        onSuccess: (data: any) => {
-          setOpen(false);
-          queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-          queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-          refetchMap();
-          refetch();
-          toast.success(data?.message);
-          setId("");
-
-        },
-        onError: (error) => {
-          showErrorToast(error?.response?.data?.message || "Failed to create Link");
-          queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-        },
-      });
-    }
-
-    const onSubmit = (data: FormValues) => {
-      const formData ={wapId:defaultWap, customerId: id, data: data}
-            updateCustomerField(formData, {
-            onSuccess: (data: any) => {
-              setOpen(false);
-              queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-              queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-              refetchMap();
-              refetch();
-              toast.success(data?.message);
-              setId("");
-
-            },
-            onError: (error) => {
-              showErrorToast(error?.response?.data?.message || "Failed to create Link");
-              queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-            },
-          });
-    }
-    return <CustomModal
-      isOpen={open}
-      onClose={() => {
-        setOpen(false)
-      }}
-      title="Edit Link Customer and Field"
-      confirmText="Link"
-      isDeleteModal={false}
-      showActionButton={false}
-    >
-      {showForm && <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit, (error) => { console.log(error, "error") })} className="h-[30rem] w-auto flex flex-col gap-2 " >
-
-          <div className="mb-3 flex gap-2" >
-            <div className="w-[100px]">Field Name</div>
-            <div className="w-[200px]" >Customer Name</div>
-            <div>Farmed Percentage(%) </div>
-          </div>
-          <div className="h-[90%] overflow-y-auto p-2">
-
-            {fields && fields?.map((field, index) => {
-              return <div className="mb-3 flex gap-2" key={field?.id}>
-                <div className="w-[100px]">{field?.fieldName}</div>
-                <div className="w-[200px]" >{field?.customerName}</div>
-                <div> <FormInput control={form.control} label="Percentage Farm" name={`customers.${index}.pctFarmed`} type="number" placeholder="Enter Percentage" showLabel={false} disabled={field?.customerId?.toString()!= id}/></div>
-              </div>
-            })}
-          </div>
-          <div className="flex gap-2  items-center justify-end">
-            <Button type="submit">Update</Button> <Button type="button" onClick={() => setOpen(false)} >Cancel</Button>
-          </div>
-        </form>
-      </Form>}
-    </CustomModal>
+    },
+    onError: (error) => {
+      showErrorToast(error?.response?.data?.message || "Failed to create Link");
+      queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+    },
+  });
   }
 
   return (
@@ -506,7 +550,20 @@ const CustomerField = () => {
         pageHeaderTitle="Customer-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
       />
-      <EditModel />
+      {/* <EditModel /> */}
+      {open && <CustomerFieldModal
+        customerId={id || geojson.id}
+        wap_id={defaultWap}
+        customerfields={processConflictFields ? conflictFields : fieldCustomerData?.data}
+        isConflictFields={processConflictFields}
+        setOpen={setOpen}
+        refetchMap={refetchMap}
+        refetch={refetch}
+        setId={setId}
+        setConflictFields={setConflictFields}
+        setProcessConflictFields={setProcessConflictFields}
+        customerName={processConflictFields ? geojson.customerName : ""}
+      />}
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex gap-2">
@@ -538,7 +595,7 @@ const CustomerField = () => {
           <Button
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
-            //onClick={handleAssociatePopUp}
+            onClick={handleAssociatePopUp2}
           >
             <Plus size={4} />
             Add Links
@@ -596,7 +653,7 @@ const CustomerField = () => {
                     color={"#16599a"}
                   />}
                   {geojson?.fieldGeojson && <RtGeoJson
-                    key={"msmtPoints"}
+                    key={"customerFields"}
                     layerEvents={fieldJsonLayerEvents}
                     style={fieldGeojsonStyle}
                     data={JSON.parse(geojson?.fieldGeojson)}
