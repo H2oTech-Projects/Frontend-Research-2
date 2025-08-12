@@ -192,6 +192,10 @@ const CustomerField = {
   url: "/customer-field",
   name: "CustomerField",
 }
+const CustomerParcel = {
+  url: "/customer-parcel",
+  name: "CustomerParcel",
+}
 const AddCustomerField = {
   url: "/customer-field/add",
   name: "CustomerField",
@@ -266,6 +270,7 @@ export {
   AddConveyance,
   EditConveyance,
   CustomerField,
+  CustomerParcel,
   AddCustomerField,
   EditCustomerField,
   ViewCustomerField,

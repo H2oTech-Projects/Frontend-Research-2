@@ -96,7 +96,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Field ID {tableInfo?.sort !== "parcelName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Parcel ID {tableInfo?.sort !== "parcelName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },

@@ -76,7 +76,8 @@ const menuLinks = [
         type: "group",
         Children: [
           { label: "Customers", path: routeUrl?.Customers?.url, name: routeUrl?.Customers?.name },
-          { label: "Customer-Field", path: routeUrl?.CustomerField?.url, name: routeUrl?.CustomerField?.name }],
+          { label: "Customer-Field", path: routeUrl?.CustomerField?.url, name: routeUrl?.CustomerField?.name },
+          { label: "Customer-Parcel", path: routeUrl?.CustomerParcel?.url, name: routeUrl?.CustomerParcel?.name }],
       },
       {
         label: "Crops",
