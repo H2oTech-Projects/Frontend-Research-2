@@ -100,15 +100,22 @@ const MapTable = <T,>({
       if(type === "conveyance") {
         setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});
       }
-      if (type=="parcel") {
-        // @ts-ignore
-        setSelectedParcel(row.original?.parcel_id)
-        return;
-      }
       if (type=="farm") {
         // @ts-ignore
         setSelectedFarm(row.original?.farm_unit_zone)
         return;
+      }
+      if (type=="parcel") {
+        setPosition &&  setPosition({
+          // @ts-ignore
+          center: [row.original?.center_latitude || 38.86902846413033, row.original?.center_longitude || -121.729324818604],
+          // @ts-ignore
+          polygon: row.original?.coords || [],
+          // @ts-ignore
+          parcelId: row.original?.ParcelID || null,
+          // @ts-ignore
+          features: row.original
+        });
       }
       if (type == 'point') {
         const parseData = JSON.parse(row.original.geompoint)

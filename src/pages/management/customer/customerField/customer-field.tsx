@@ -42,6 +42,7 @@ import { error } from "console";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
 import { de } from "zod/dist/types/v4/locales";
 import { set } from "date-fns";
+// @ts-ignore
 import CustomerFieldModal from "./CustomerFieldModal";
 
 interface initialTableDataTypes {

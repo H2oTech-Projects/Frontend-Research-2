@@ -25,6 +25,13 @@ export const RouteList = [
     ),
   },
   {
+    path: routeUrl.Parcel?.url,
+    name: routeUrl.Parcel?.name,
+    Component: lazy(
+      async () => await import("../pages/management/land/parcel/Parcel")
+    ),
+  },
+  {
     path: routeUrl.FieldMsmtPoint?.url,
     name:routeUrl.FieldMsmtPoint?.name,
     Component: lazy(

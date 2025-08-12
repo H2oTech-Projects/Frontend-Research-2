@@ -51,7 +51,7 @@ const menuLinks = [
         Children: [
           { label: "Fields", path: routeUrl?.Field?.url, name: routeUrl?.Field?.name },
           // { label: "Field-MsmtPoint", path: routeUrl?.FieldMsmtPoint?.url, name: routeUrl?.FieldMsmtPoint?.name },
-          { label: "Parcels", path: routeUrl?.FieldParcel?.url, name: routeUrl?.FieldParcel?.name },
+          { label: "Parcels", path: routeUrl?.Parcel?.url, name: routeUrl?.Parcel?.name },
           { label: "Regions", path: routeUrl?.Region?.url, name: routeUrl?.Region?.name },
           { label: "Subregions", path: routeUrl?.SubRegion?.url, name: routeUrl?.SubRegion?.name },
         ],
