@@ -22,11 +22,11 @@ export const useGetFieldList = (wayId: number | undefined) => {
   });
 }
 
-export const useGetCustomerFieldListByWAP = (tableInfo: initialTableDataTypes, wapId: number): UseQueryResult<any> => {
+export const useGetCustomerParcelListByWAY = (tableInfo: initialTableDataTypes, wayId: number): UseQueryResult<any> => {
   return useQuery({
-    queryKey: [GET_ALL_CUSTOMER_FIELD, wapId, tableInfo?.page_no, tableInfo?.page_size, tableInfo?.search, tableInfo?.sort, tableInfo?.sort_order],
-    queryFn: () => queryCustomerFieldService.getCustomerFieldListByWAP(tableInfo, wapId),
-    enabled: !!wapId,
+    queryKey: [GET_ALL_CUSTOMER_FIELD, wayId, tableInfo?.page_no, tableInfo?.page_size, tableInfo?.search, tableInfo?.sort, tableInfo?.sort_order],
+    queryFn: () => queryCustomerFieldService.getCustomerParcelListByWAY(tableInfo, wayId),
+    enabled: !!wayId,
     ...queryConfig
   })
 }
@@ -56,9 +56,9 @@ export const usePostCustomerField = () => {
     mutationFn: queryCustomerFieldService.postCustomerField,
   });
 }
-export const usePutCustomerField = () => {
+export const usePutCustomerParcel = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [PUT_CUSTOMER_FIELD],
-    mutationFn: queryCustomerFieldService.putCustomerField,
+    mutationFn: queryCustomerFieldService.putCustomerParcel,
   });
 }

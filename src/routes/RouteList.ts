@@ -25,6 +25,13 @@ export const RouteList = [
     ),
   },
   {
+    path: routeUrl.Parcel?.url,
+    name: routeUrl.Parcel?.name,
+    Component: lazy(
+      async () => await import("../pages/management/land/parcel/Parcel")
+    ),
+  },
+  {
     path: routeUrl.FieldMsmtPoint?.url,
     name:routeUrl.FieldMsmtPoint?.name,
     Component: lazy(
@@ -235,6 +242,11 @@ export const RouteList = [
     path: routeUrl?.CustomerField?.url,
     name: routeUrl?.CustomerField?.name,
     Component: lazy(async () => import("../pages/management/customer/customerField/customer-field"))
+  },
+  {
+    path: routeUrl?.CustomerParcel?.url,
+    name: routeUrl?.CustomerParcel?.name,
+    Component: lazy(async () => import("../pages/management/customer/customerParcel/customer_parcel"))
   },
   {
     path: routeUrl?.AddCustomerField?.url,

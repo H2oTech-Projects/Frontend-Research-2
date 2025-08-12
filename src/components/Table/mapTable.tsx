@@ -95,20 +95,30 @@ const MapTable = <T,>({
 
     const handleOnClick = ((row: any, type: any) => {
       if(type === "relation") {
-      setGeojson && setGeojson({fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds});
-}
+        setGeojson && setGeojson({id: row.original?.customerId, fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName});
+      }
+      if(type === "customerParcel") {
+        setGeojson && setGeojson({id: row.original?.customerId, parcelGeojson:row.original?.parcelGeojson, viewBounds: row.original?.viewBounds, existingParcelIds: row.original?.parcelId, customerName: row.original?.customerName});
+      }
       if(type === "conveyance") {
         setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});
-     }
-      if (type=="parcel") {
-        // @ts-ignore
-        setSelectedParcel(row.original?.parcel_id)
-        return;
       }
       if (type=="farm") {
         // @ts-ignore
         setSelectedFarm(row.original?.farm_unit_zone)
         return;
+      }
+      if (type=="parcel") {
+        setPosition &&  setPosition({
+          // @ts-ignore
+          center: [row.original?.center_latitude || 38.86902846413033, row.original?.center_longitude || -121.729324818604],
+          // @ts-ignore
+          polygon: row.original?.coords || [],
+          // @ts-ignore
+          parcelId: row.original?.ParcelID || null,
+          // @ts-ignore
+          features: row.original
+        });
       }
       if (type == 'point') {
         const parseData = JSON.parse(row.original.geompoint)

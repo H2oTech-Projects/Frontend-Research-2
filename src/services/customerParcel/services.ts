@@ -19,8 +19,8 @@ export const queryCustomerFieldService = {
     return data?.data;
   },
 
-  getCustomerFieldListByWAP: async (tableInfo: initialTableDataTypes, wapId: number) => {
-    const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/field_customers/", {
+  getCustomerParcelListByWAY: async (tableInfo: initialTableDataTypes, wayId: number) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wayId + "/customer_parcels/", {
       params: {
         page_no: tableInfo?.page_no,
         page_size: tableInfo?.page_size,
@@ -53,9 +53,9 @@ export const queryCustomerFieldService = {
     });
     return response.data;
   },
-  putCustomerField: async (formData: any) => {
-    const data = convertKeysToSnakeCase(formData.data?.customers)
-    const response = await axiosInstance.put(BASE_API_URL + "/waps/" + formData?.wapId + "/customers/" + formData?.customerId + "/fields/", data, {
+  putCustomerParcel: async (formData: any) => {
+    const data = convertKeysToSnakeCase(formData.data?.parcels)
+    const response = await axiosInstance.put(BASE_API_URL + "/ways/" + formData?.wayId + "/customers/" + formData?.customerId + "/parcels/", data, {
       headers: {
         "Content-Type": "application/json",
       }

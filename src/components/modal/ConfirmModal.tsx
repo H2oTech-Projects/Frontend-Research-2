@@ -12,6 +12,7 @@ interface CustomModalProps {
   onConfirm?: () => void
   isDeleteModal?: boolean
   showActionButton?:boolean
+  titleStyle?: string;
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -25,14 +26,15 @@ const CustomModal: React.FC<CustomModalProps> = ({
   onConfirm,
   isDeleteModal = true,
   showActionButton = true,
+  titleStyle="",
 }) => {
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-[1111] flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-lg w-auto p-6 animate-fade-in dark:bg-slate-800 dark:text-slate-50">
+      <div className={`bg-white rounded-xl shadow-lg w-auto p-6 animate-fade-in dark:bg-slate-800 dark:text-slate-50`}>
         <h2 className="text-lg font-semibold">{title}</h2>
-        {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+        {description && <p className={`text-sm text-gray-500 mt-1 ${titleStyle}`}>{description}</p>}
 
         <div className="mt-4">{children}</div>
         {
@@ -55,7 +57,7 @@ showActionButton && <div className="mt-6 flex justify-end gap-2">
         </div>
 
 }
-        
+
       </div>
     </div>
   )

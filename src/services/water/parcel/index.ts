@@ -23,20 +23,20 @@ export const useGetFieldMapList = () => {
   });
 }
 
-export const useGetFieldListByWAP = (tableInfo:initialTableDataTypes,wapId:number):UseQueryResult<any> => {
+export const useGetParcelListByWAY = (tableInfo:initialTableDataTypes,wapId:number):UseQueryResult<any> => {
     return useQuery({
     queryKey: [GET_FIELD_LIST_KEY_BY_WAP,wapId,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
-    queryFn: ()=> queryFieldService.getFieldListByWAP(tableInfo,wapId),
+    queryFn: ()=> queryFieldService.getParcelListByWAY(tableInfo,wapId),
     enabled: !!wapId,
     ...queryConfig
 })
 }
 
-export const useGetFieldMapByWAP = (wapId:number):UseQueryResult<any> => {
+export const useGetParcelMapByWAY = (wayId:number):UseQueryResult<any> => {
   return useQuery({
-      queryKey: [GET_FIELD_MAP_KEY,wapId],
-    queryFn: ()=> queryFieldService.getFieldMapByWAP(wapId),
-     enabled: !!wapId,
+      queryKey: [GET_FIELD_MAP_KEY,wayId],
+    queryFn: ()=> queryFieldService.getParcelMapByWAY(wayId),
+     enabled: !!wayId,
     ...queryConfig,
 })
 }

@@ -27,23 +27,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
 import { useGetWaps, useGetWaysOptions } from "@/services/timeSeries";
 import { showErrorToast } from "@/utils/tools";
-import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
-import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP, usePutCustomerField } from "@/services/customerField";
-import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
+import { useGetCustomerFieldDetailByWAP, useGetCustomerParcelListByWAY, useGetCustomerFieldMapByWAP, usePutCustomerParcel } from "@/services/customerParcel";
+import { useGetParcelMapByWAY } from "@/services/water/parcel";
+// import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormInput } from "@/components/FormComponent/FormInput";
-import { error } from "console";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
-import { de } from "zod/dist/types/v4/locales";
-import { set } from "date-fns";
-// @ts-ignore
-import CustomerFieldModal from "./CustomerFieldModal";
 
 interface initialTableDataTypes {
   search: string;
@@ -65,7 +56,7 @@ const formSchema = z.object({
     z.object({
       fieldName: z.string().optional(),
       customerName: z.string().optional(),
-      fieldId: z.coerce.number().optional(),
+      parcelId: z.coerce.number().optional(),
       customerId: z.coerce.number().optional(),
       pctFarmed: z.coerce.number().optional(), // optional range check
     })
@@ -74,7 +65,7 @@ const formSchema = z.object({
 });
 type FormValues = z.infer<typeof formSchema>;
 
-const CustomerField = () => {
+const CustomerParcel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -83,12 +74,12 @@ const CustomerField = () => {
   const selectedFieldsRef = useRef(selectedFields);
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [collapse, setCollapse] = useState("default");
-  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
+  const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], parcelId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: ""})
+  const [geojson, setGeojson] = useState<any>({ id: null, parcelGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: ""})
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
-  const [defaultWap, setDefaultWap] = useState<any>("")
+  const [defaultWay, setDefaultWay] = useState<any>("")
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
@@ -99,13 +90,12 @@ const CustomerField = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
-  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWap);
-  const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWap!, id!)
-  const { mutate: updateCustomerField, isPending: isCustomerFieldUpdating } = usePutCustomerField();
-  const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
-  const [conflictFields, setConflictFields] = useState([]);
-  const [processConflictFields, setProcessConflictFields] = useState(false)
+  const { data: customerFieldData, isLoading } = useGetCustomerParcelListByWAY(tableInfo, defaultWay);
+  //const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWay);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(defaultWay);
+  // const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWay!, id!)
+  const { mutate: updateCustomerParcel } = usePutCustomerParcel();
+  const { data: waysOptions, isLoading: waysLoading } = useGetWaysOptions()
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -133,20 +123,20 @@ const CustomerField = () => {
       cell: ({ row }) => <div className="lowercase">{row.getValue("customerName")}</div>,
     },
     {
-      accessorKey: "fieldPctFarmed",
+      accessorKey: "parcelIds",
       header: ({ column }) => {
         return (
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_pct_farmed", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_ids", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Fields   {tableInfo?.sort !== "field_pct_farmed" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Parcels   {tableInfo?.sort !== "parcel_ids" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("fieldPctFarmed")}</div>,
+      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("parcelIds")}</div>,
     },
     {
       id: "actions",
@@ -166,7 +156,7 @@ const CustomerField = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}> */}
+            {/* <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWay}/edit/${row.original.fieldId}`) }}> */}
             <DropdownMenuItem onClick={() => { setId(row.original.customerId); setOpen(true) }} >
               <FilePenLine /> Edit
             </DropdownMenuItem>
@@ -217,7 +207,7 @@ const CustomerField = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo("FieldID: ", auxLayer.feature.properties.field_id);
+        showInfo("parcelID: ", auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -226,16 +216,17 @@ const CustomerField = () => {
           //color: "#9370DB",
           fillOpacity: 0.5,
         });
-        removeInfo(auxLayer.feature.properties.field_id);
+        removeInfo(auxLayer.feature.properties.parcel_id);
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        removeInfo(auxLayer.feature.properties.field_id)
-        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_id)) {
-          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_id);
+        debugger
+        removeInfo(auxLayer.feature.properties.parcel_id)
+        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.parcel_id)) {
+          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.parcel_id);
           setSelectedFields(arr)
         } else {
-          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_id]);
+          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.parcel_id]);
         }
       }
     });
@@ -250,7 +241,7 @@ const CustomerField = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo("FieldID: ", auxLayer.feature.properties.customer_field_ids);
+        showInfo("parcelID: ", auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -260,51 +251,26 @@ const CustomerField = () => {
           fillColor: "red",
           fillOpacity: 0.3,
         });
-        removeInfo(auxLayer.feature.properties.customer_field_ids);
+        removeInfo(auxLayer.feature.properties.parcel_id);
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        removeInfo(auxLayer.feature.properties.field_pct_farmed)
-        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_pct_farmed)) {
-          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_pct_farmed);
+        debugger
+        removeInfo(auxLayer.feature.properties.parcel_id)
+        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.parcel_id)) {
+          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.parcel_id);
           setSelectedFields(arr)
         } else {
-          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_pct_farmed]);
+          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.parcel_id]);
         }
       }
     });
   }
-  const pointLayerEvents = (feature: any, layer: any) => {
-    // layer.bindPopup(buildPopupMessage(feature.properties));
-    const popupDiv = document.createElement('div');
-    popupDiv.className = 'popup-map';
-    // @ts-ignore
-    popupDiv.style = "border-radius:8px; overflow:hidden";
-    popupDiv.id = feature.properties?.msmt_point_id;
-    layer.bindPopup(popupDiv, { maxHeight: 30, maxWidth: 70, className: 'customer-field-msmtpoint' });
 
-    layer.on({
-      mouseover: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-        });
-        createRoot(popupDiv).render(<MsmtPointInfo mpId={auxLayer.feature.properties.mp_id} msmtPointId={auxLayer.feature.properties.msmt_point_id} wapId={defaultWap} />);
-        showInfo('MsmtPoint: ', auxLayer.feature.properties.msmt_point_id);
-      },
-      mouseout: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2,
-        });
-        removeInfo(auxLayer.feature.properties.msmt_point_id);
-      },
-    });
-  }
   useEffect(() => {
-    if (!!geojson.fieldGeojson){
-      setSelectedFields(geojson.existingFieldIds)
-      selectedFieldsRef.current = geojson.existingFieldIds;
+    if (!!geojson.parcelGeojson){
+      setSelectedFields(geojson.existingParcelIds)
+      selectedFieldsRef.current = geojson.existingParcelIds;
       setId(geojson.id)
     }
   }, [geojson])
@@ -316,17 +282,16 @@ const CustomerField = () => {
   }, [selectedFields])
 
   useEffect(() => {
-    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], customerName: "" })
-  }, [defaultWap])
+    setGeojson({ parcelGeojson: null, viewBounds: null, existingParcelIds: [], customerName: "" })
+  }, [defaultWay])
 
   const geoJsonStyle = (feature: any) => {
-    if (selectedFields.includes(feature.properties.field_id)) {
+    if (selectedFields.includes(feature.properties.parcel_id)) {
       return {
         color: "#16599A", // Border color
         fillColor: "red", // Fill color for the highlighted area
         fillOpacity: .4,
         weight: 2,
-        zIndex: 150, // Ensure it is above the RtPoint
       };
     }
     return {
@@ -337,7 +302,7 @@ const CustomerField = () => {
     };
   }
   const fieldGeojsonStyle = (feature: any) => {
-    if (selectedFields.includes(feature.properties.field_id)) {
+    if (selectedFields.includes(feature.properties.parcel_id)) {
       return {
         color: "#16599A", // Border color
         fillColor: "red", // Fill color for the highlighted area
@@ -367,175 +332,27 @@ const CustomerField = () => {
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
   useEffect(() => {
-    if (!!wapsOptions) {
-      if (location.state?.wapId) {
-        setDefaultWap(location.state.wapId)
+    if (!!waysOptions) {
+      if (location.state?.wayId) {
+        setDefaultWay(location.state.wayId)
       } else {
-        setDefaultWap(wapsOptions?.currentWap?.value)
+        setDefaultWay(waysOptions?.data[0]?.value)
       }
     }
-  }, [wapsOptions])
+  }, [waysOptions])
 
-  // const EditModel = () => {
-  //   const [showForm, setShowForm] = useState<boolean>(!!conflictFields);
-  //   const form = useForm<FormValues>({
-  //     resolver: zodResolver(formSchema),
-  //     defaultValues: {
-  //       customers: conflictFields
-  //     },
-  //   });
-  //   const { fields, append, remove } = useFieldArray({
-  //     control: form.control,
-  //     name: "customers"
-  //   })
-
-  //   useEffect(() => {
-  //     if (fieldCustomerData?.data) {
-  //       form.setValue("customers", fieldCustomerData?.data)
-  //       setConflictFields([])
-  //       setShowForm(true)
-  //     }
-  //   }, [fieldCustomerData])
-
-  //   useEffect(() => {
-  //     if (!!conflictFields) {
-  //       form.setValue("customers", conflictFields)
-  //       setShowForm(true)
-  //     }
-  //   }, [conflictFields])
-
-  //   useEffect(() => {
-  //     const subscription = form.watch((value, { name }) => {
-  //       if (!name) return;
-  //       let fieldCustomerIndex = Number(name?.split('.')[1])
-  //       if (!fieldCustomerIndex) return;
-
-  //       let editedFieldId = form.getValues(`customers.${fieldCustomerIndex}.fieldId`)
-  //       let editedCustomerId = form.getValues(`customers.${fieldCustomerIndex}.customerId`)
-  //       let editedPctFarmed = form.getValues(`customers.${fieldCustomerIndex}.pctFarmed`) || 0
-  //       let requiredCustomers = form.getValues('customers').filter((fieldCustomer) => fieldCustomer.fieldId?.toString() == editedFieldId && fieldCustomer.customerId?.toString() != editedCustomerId)
-  //       let poportionSum = requiredCustomers.reduce((accumulator, currentValue: any) => accumulator + currentValue['pctFarmed'], 0);
-
-  //       let renewCustomers = form.getValues('customers')
-  //         .map((customer: any) =>
-  //             {
-  //               if (customer.fieldId != editedFieldId) return customer
-  //               if (customer.customerId == editedCustomerId) return customer
-  //               customer['pctFarmed'] = roundTo((customer['pctFarmed']/poportionSum)*(100-editedPctFarmed),2)
-  //               return customer
-  //             }
-  //         )
-
-  //       setTimeout(() => {
-  //         form.setValue('customers', renewCustomers)
-  //       }, 1000);
-  //     });
-
-  //     //return () => subscription.unsubscribe();
-  //   }, [form]);
-
-  //   const handleAssociatePopUp = () => {
-  //     const formData ={wapId:defaultWap, customerId: id, data: data}
-  //       updateCustomerField(formData, {
-  //       onSuccess: (data: any) => {
-  //         setOpen(false);
-  //         queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-  //         queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-  //         refetchMap();
-  //         refetch();
-  //         toast.success(data?.message);
-  //         setId("");
-
-  //       },
-  //       onError: (error) => {
-  //         showErrorToast(error?.response?.data?.message || "Failed to create Link");
-  //         queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-  //       },
-  //     });
-  //   }
-
-  //   const onSubmit = (data: FormValues) => {
-  //     const formData ={wapId:defaultWap, customerId: id, data: data}
-  //           updateCustomerField(formData, {
-  //           onSuccess: (data: any) => {
-  //             setOpen(false);
-  //             queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-  //             queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-  //             refetchMap();
-  //             refetch();
-  //             toast.success(data?.message);
-  //             setId("");
-
-  //           },
-  //           onError: (error) => {
-  //             showErrorToast(error?.response?.data?.message || "Failed to create Link");
-  //             queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-  //           },
-  //         });
-  //   }
-  //   return <CustomModal
-  //     isOpen={open}
-  //     onClose={() => {
-  //       setOpen(false)
-  //     }}
-  //     title="Edit Link Customer and Field"
-  //     confirmText="Link"
-  //     isDeleteModal={false}
-  //     showActionButton={false}
-  //   >
-  //     {showForm && <Form {...form}>
-  //       <form onSubmit={form.handleSubmit(onSubmit, (error) => { console.log(error, "error") })} className="h-[30rem] w-auto flex flex-col gap-2 " >
-
-  //         <div className="mb-3 flex gap-2" >
-  //           <div className="w-[100px]">Field Name</div>
-  //           <div className="w-[200px]" >Customer Name</div>
-  //           <div>Farmed Percentage(%) </div>
-  //         </div>
-  //         <div className="h-[90%] overflow-y-auto p-2">
-
-  //           {fields && fields?.map((field, index) => {
-  //             return <div className="mb-3 flex gap-2" key={field?.id}>
-  //               <div className="w-[100px]">{field?.fieldName}</div>
-  //               <div className="w-[200px]" >{field?.customerName}</div>
-  //               <div> <FormInput control={form.control} label="Percentage Farm" name={`customers.${index}.pctFarmed`} type="number" placeholder="Enter Percentage" showLabel={false} disabled={field?.customerId?.toString()!= id}/></div>
-  //             </div>
-  //           })}
-  //         </div>
-  //         <div className="flex gap-2  items-center justify-end">
-  //           <Button type="submit">Update</Button> <Button type="button" onClick={() => setOpen(false)} >Cancel</Button>
-  //         </div>
-  //       </form>
-  //     </Form>}
-  //   </CustomModal>
-  // }
   const handleAssociatePopUp2 = () => {
     if (selectedFields.length < 1) return;
 
-    const fieldPctMapper: { [key: string]: any } = {};
-    geojson.existingFieldIds.forEach((key: string, index: number) => {
-      fieldPctMapper[key.toString()] = geojson.existingPcts[index];
-    });
-
-    let data = selectedFields.map((field: string) => {
-      let pctFarmed = fieldPctMapper.hasOwnProperty(field) ? fieldPctMapper[field] : 100
-      return ({'field_id': field,'pct_farmed': pctFarmed})
-    })
-
-    const formData ={wapId:defaultWap, customerId: geojson.id, data: {customers: data}}
-    updateCustomerField(formData, {
+    const formData ={wayId:defaultWay, customerId: geojson.id, data: {parcels: selectedFields}}
+    updateCustomerParcel(formData, {
     onSuccess: (data: any) => {
-      if (!data?.success){
-        setConflictFields(data?.data)
-        setProcessConflictFields(true)
-        setOpen(true)
-      } else{
-        queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-        refetchMap();
-        refetch();
-        toast.success(data?.message);
-        setId("");
-      }
+      queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+      queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+      refetchMap();
+      //refetch();
+      toast.success(data?.message);
+      setId("");
     },
     onError: (error) => {
       showErrorToast(error?.response?.data?.message || "Failed to create Link");
@@ -548,23 +365,9 @@ const CustomerField = () => {
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
       <PageHeader
-        pageHeaderTitle="Customer-Field"
+        pageHeaderTitle="Customer-Parcel"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
       />
-      {/* <EditModel /> */}
-      {open && <CustomerFieldModal
-        customerId={id || geojson.id}
-        wap_id={defaultWap}
-        customerfields={processConflictFields ? conflictFields : fieldCustomerData?.data}
-        isConflictFields={processConflictFields}
-        setOpen={setOpen}
-        refetchMap={refetchMap}
-        refetch={refetch}
-        setId={setId}
-        setConflictFields={setConflictFields}
-        setProcessConflictFields={setProcessConflictFields}
-        customerName={processConflictFields ? geojson.customerName : ""}
-      />}
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex gap-2">
@@ -605,8 +408,8 @@ const CustomerField = () => {
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
             <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
-              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
-              <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={wapsOptions?.data} showLabel={false} label="wap" /></div>
+              <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
+              <div className="px-2"><BasicSelect setValue={setDefaultWay} Value={defaultWay!} itemList={waysOptions?.data} showLabel={false} label="wap" /></div>
             </div>
             <div className={cn(" h-[calc(100vh-312px) w-full")}>
               <MapTable
@@ -621,7 +424,7 @@ const CustomerField = () => {
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-312px)]"
                 setGeojson={setGeojson as Function}
-                tableType={"relation"}
+                tableType={"customerParcel"}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
@@ -653,18 +456,11 @@ const CustomerField = () => {
                     data={JSON.parse(mapData['data'])}
                     color={"#16599a"}
                   />}
-                  {geojson?.fieldGeojson && <RtGeoJson
+                  {geojson?.parcelGeojson && <RtGeoJson
                     key={"customerFields"}
                     layerEvents={fieldJsonLayerEvents}
                     style={fieldGeojsonStyle}
-                    data={JSON.parse(geojson?.fieldGeojson)}
-                    color={"#16599a"}
-                  />}
-                  {geojson?.msmtPoint && <RtGeoJson
-                    key={"msmtPoints"}
-                    layerEvents={pointLayerEvents}
-                    style={pointGeojsonStyle}
-                    data={JSON.parse(geojson?.msmtPoint)}
+                    data={JSON.parse(geojson?.parcelGeojson)}
                     color={"#16599a"}
                   />}
               </LeafletMap>) : (<LeafletMap
@@ -693,4 +489,4 @@ const CustomerField = () => {
   );
 };
 
-export default CustomerField;
+export default CustomerParcel;
