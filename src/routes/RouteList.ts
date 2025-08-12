@@ -246,7 +246,7 @@ export const RouteList = [
   {
     path: routeUrl?.CustomerParcel?.url,
     name: routeUrl?.CustomerParcel?.name,
-    Component: lazy(async () => import("../pages/management/customer/CustomerParcel/customer_parcel"))
+    Component: lazy(async () => import("../pages/management/customer/customerParcel/customer_parcel"))
   },
   {
     path: routeUrl?.AddCustomerField?.url,
