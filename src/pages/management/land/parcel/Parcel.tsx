@@ -225,7 +225,7 @@ const Parcel = () => {
 
   const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
-      id: `${Label}${Id}`,
+      id: `popup-${Id}`,
       class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
@@ -266,23 +266,6 @@ const Parcel = () => {
     });
   }
 
-  // const geoJsonStyle = (features: any) => {
-  //   if (features?.properties?.FieldID === clickedField) {
-  //     return {
-  //       color: "red", // Border color
-  //       fillColor: "#transparent", // Fill color for the highlighted area
-  //       fillOpacity: 0.5,
-  //       weight: 2,
-  //     };
-  //   }
-  //   return {
-  //     color: "#16599A", // Border color
-  //     fillColor: "transparent", // Fill color for normal areas
-  //     fillOpacity: 0.5,
-  //     weight: 2,
-  //   };
-  // }
-
   useEffect(() => {
     setClickedField({ id: "", viewBounds: null })
   }, [defaultWay])
@@ -296,7 +279,7 @@ const Parcel = () => {
         return {
           color: "red", // Border color
           fillColor: "transparent", // Fill color for the highlighted area
-          fillOpacity: 0.5,
+          fillOpacity: 0.8,
           weight: 2,
         };
       }

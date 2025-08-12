@@ -19,6 +19,11 @@ const Field = {
   name: "Field",
 };
 
+const Parcel = {
+  url: "/parcel",
+  name: "Parcel",
+};
+
 const AddField = {
   url: "/field/addField",
   name: "AddField",
@@ -225,6 +230,7 @@ export {
   Insight,
   Dashboard,
   Field,
+  Parcel,
   FieldMsmtPoint,
   AddField,
   EditField,

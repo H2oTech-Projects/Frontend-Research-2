@@ -30,7 +30,7 @@ export const useGetFieldListByWAP = (tableInfo:initialTableDataTypes,wapId:numbe
     enabled: !!wapId,
     ...queryConfig
 })
-} 
+}
 
 export const useGetFieldMapByWAP = (wapId:number):UseQueryResult<any> => {
   return useQuery({
