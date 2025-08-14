@@ -19,16 +19,19 @@ import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { usePostLogoutUser } from "@/services/registration";
 import { showErrorToast } from "@/utils/tools";
-import TableLineChartInfo from '@/utils/tableLineChartInfo';
+import TableLineChartInfo, {ColusaTableLineChartInfo} from '@/utils/tableLineChartInfo';
 import { createRoot } from 'react-dom/client';
+import { useGetParcelListByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
 // const popupDiv = document.createElement('div');
 // popupDiv.id = 'chart-popup';
 // popupDiv.style.width = '500px';
 // popupDiv.style.height = '500px';
 const Map = () => {
     const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
+    const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user
     const refreshToken = useSelector((state: any) => state.auth.refresh);
     const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
+    const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(12);
     const parcels: any = parcelsData as any;
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -101,16 +104,6 @@ const Map = () => {
   }
 
   const maderaLayerEvents = (feature: Feature, layer: L.Layer) => {
-    // const popupOptions = {
-    //   minWidth: 500,
-    //   maxWidth: 500,
-    //   className: "popup-classname"
-    // };
-    // const popupContentNode = <RTLineChart />;
-    // const popupContentHtml = ReactDOMServer.renderToString(popupContentNode);
-    // console.log(popupContentHtml)
-    // @ts-ignore
-    //layer.bindPopup(buildPopupMessage(parcels[feature.properties.apn]));
     const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
@@ -127,6 +120,37 @@ const Map = () => {
         });
 
         createRoot(popupDiv).render(<TableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.apn], 'chartInfo': []}}/>);
+        showInfo('Parcel Id', auxLayer.feature.properties.apn);
+      },
+      mouseout: function (e) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+            weight: 2.5,
+            fillOpacity: 0,
+            opacity: 1,
+        });
+        removeInfo(auxLayer.feature.properties.apn);
+      },
+    });
+  }
+
+  const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
+    const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
+    popupDiv.id = feature.properties?.apn;
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700});
+
+    layer.on({
+      mouseover: function (e) {
+        const auxLayer = e.target;
+        auxLayer.setStyle({
+            weight: 4,
+            //color: "#800080"
+        });
+
+        createRoot(popupDiv).render(<ColusaTableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.apn], 'chartInfo': []}}/>);
         showInfo('Parcel Id', auxLayer.feature.properties.apn);
       },
       mouseout: function (e) {
@@ -167,6 +191,16 @@ const Map = () => {
       weight: 2,
     };
   }
+
+  const showMapGeojson = () => {
+    if (loggedUser == 'colusa@wateraccounts.com') {
+      return mapLoading ? "" : <RtGeoJson key={'50003'} layerEvents={colusaLayerEvents} style={maderaJsonStyle} data={JSON.parse(mapData['data'])} color={"#16599a"}/>
+    }
+    return <RtGeoJson key={'50003'} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"}/>
+  }
+
+  let viewBound = loggedUser == 'colusa@wateraccounts.com' ? [[38.92390769485239, -122.45505718324472], [39.7991536823128, -121.79550745742236]] : [[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]]
+  debugger
   return (
     <div id="map" className="relative flex h-screen w-full">
        <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
@@ -180,7 +214,7 @@ const Map = () => {
             type="text"
             name="search"
             id="search"
-            placeholder="Search..."
+            placeholder="Search ..."
             className="w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
             autoComplete="off"
           />
@@ -233,10 +267,10 @@ const Map = () => {
           </div>
       )}
 
-      <LeafletMap position={position} viewBound={[[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]]} zoom={11} configurations={{'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
+      <LeafletMap position={position} viewBound={viewBound} zoom={11} configurations={{'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true}}>
         {/* <RtGeoJson key={'irrigated'} layerEvents={geoJsonLayerEvents} style={irrigatedgeoJsonStyle} data={irrigatedFields} color={"#16599a"}/>
         <RtGeoJson key={'nonirrigated'} layerEvents={geoJsonLayerEvents} style={nonIrrigatedgeoJsonStyle} data={nonIrrigatedFields} color={"red"}/> */}
-        <RtGeoJson key={'50003'} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"}/>
+        {showMapGeojson()}
       </LeafletMap>
     </div>
   );
