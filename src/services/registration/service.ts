@@ -1,6 +1,7 @@
 // src/api/registerUser.ts
 import axios from "axios";
 import { BASE_API_URL } from "@/utils/constant";
+import axiosInstance from "@/services/axiosInstance";
 
 const REGISTER_URL = BASE_API_URL + '/auth/register/';
 const CHECK_TOKEN_URL = BASE_API_URL + '/auth/verify-registration/';
@@ -81,6 +82,14 @@ export const queryRegisterUser = {
       }
     });
     return response.data;
+  },
+  associateClient: async (clientId:any) =>{
+    const response = await axiosInstance.put(BASE_API_URL + "/clients/" + clientId + "/associate", {
+        headers: {
+           "Content-Type": "application/json",
+        },
+      })
+    return response?.data
   }
 
 }
