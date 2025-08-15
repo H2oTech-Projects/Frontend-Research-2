@@ -19,6 +19,7 @@ const layerMapper: any ={
   'rt_2023:wy2023_202309_etaw_accumulation_in': {'id': 'ETAW', 'name': 'Evapotranspiration of Applied Water (ETAW)'},
   'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR', 'name': 'Evapotranspiration of Precipitation (ETPR)'},
   'rt_2023:wy2023_p_total_in': {'id': 'P_TOTAL', 'name': 'Precipitation (P)'},
+  'rt_2023:colusa_ETa_WY2023_EPSG_6414': {'id': 'Colusa ETA', 'name': 'Evapotranspiration (ET)'},
 }
 
 type LeafletMapTypes = {
@@ -52,6 +53,28 @@ const sld =`<StyledLayerDescriptor version="1.0.0">
   </NamedLayer>
 </StyledLayerDescriptor>`
 
+const colusaSld =`<StyledLayerDescriptor version="1.0.0">
+  <NamedLayer>
+    <Name>rt_2023:colusa_ETa_WY2023_EPSG_6414</Name> <!-- Replace with actual layer name -->
+    <UserStyle>
+      <FeatureTypeStyle>
+        <Rule>
+          <RasterSymbolizer>
+            <ColorMap type="ramp">
+              <ColorMapEntry quantity="0" label="0" color="#9e6212"/>
+              <ColorMapEntry quantity="10" label="10" color="#bfa22d"/>
+              <ColorMapEntry quantity="20" label="20" color="#d7db47"/>
+              <ColorMapEntry quantity="30" label="30" color="#86c456"/>
+              <ColorMapEntry quantity="40" label="40" color="#44b26b"/>
+              <ColorMapEntry quantity="50" label="50" color="#4dc2a3"/>
+            </ColorMap>
+          </RasterSymbolizer>
+        </Rule>
+      </FeatureTypeStyle>
+    </UserStyle>
+  </NamedLayer>
+</StyledLayerDescriptor>`
+
 const removeLineBars = <style>{`
       .noUi-handle::before, .noUi-handle::after
         { display: none;}
@@ -66,6 +89,7 @@ const removeLineBars = <style>{`
 
 const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
   const { center } = position;
+  const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const [opacity, setOpacity] = useState(1)
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
@@ -122,15 +146,19 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
 
     const addLegends = () => {
       if (addedLayers.length <= 0) return ;
-      const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=${addedLayers[addedLayers.length-1]}`;
-      if (addedLayers[addedLayers.length-1] != 'rt_2023:wy2023_202309_eta_accumulation_in') {
-        return (
-          <div className="absolute top-20 right-2 z-[1002] h-auto  w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65">
-          <label className="text-center">{layerMapper[addedLayers[addedLayers.length-1]].id}</label>
-          <img src={url} alt="Legend" style={{ width: "80px", height: "150px" }} />
-          </div>
-        )
+      let selectedLayer = addedLayers[addedLayers.length-1]
+      if (loggedUser == 'colusa@wateraccounts.com') {
+        selectedLayer = 'rt_2023:colusa_ETa_WY2023_EPSG_6414'
       }
+      const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=${selectedLayer}`;
+      // if ((selectedLayer != 'rt_2023:wy2023_202309_eta_accumulation_in') || (selectedLayer != 'rt_2023:colusa_ETa_WY2023_EPSG_6414')) {
+      //   return (
+      //     <div className="absolute top-20 right-2 z-[1002] h-auto  w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65">
+      //     <label className="text-center">{layerMapper[selectedLayer].id}</label>
+      //     <img src={url} alt="Legend" style={{ width: "80px", height: "150px" }} />
+      //     </div>
+      //   )
+      // }
       return (
         <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-1 rounded-[8px] bg-black text-slate-50">
         <div  className="flex flex-col">
@@ -233,8 +261,26 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       )
     }
 
-
+    const colusaRaster = () => {
+      return <>
+      <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer=='Evapotranspiration (ET)'}>
+        <WMSTileLayer
+          url={`${geoserverUrl}`}
+          opacity= {opacity}
+          params={{
+            format:"image/png",
+            layers:"rt_2023:colusa_ETa_WY2023_EPSG_6414",
+            transparent: true,
+            ...( { sld_body: colusaSld } as Record<string, any> ),
+          }}
+        />
+      </LayersControl.Overlay>
+    </>
+    }
     const addLayers = () => {
+      if (loggedUser == "colusa@wateraccounts.com") {
+        return colusaRaster()
+      }
       return (
         <>
           <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer=='Evapotranspiration (ET)'}>

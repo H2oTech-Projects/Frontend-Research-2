@@ -200,7 +200,7 @@ const Map = () => {
   }
 
   let viewBound = loggedUser == 'colusa@wateraccounts.com' ? [[38.92390769485239, -122.45505718324472], [39.7991536823128, -121.79550745742236]] : [[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]]
-  debugger
+
   return (
     <div id="map" className="relative flex h-screen w-full">
        <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">

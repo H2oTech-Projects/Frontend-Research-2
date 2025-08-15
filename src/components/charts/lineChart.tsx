@@ -5,10 +5,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 interface ChartParameters {
   data?: any;
   way?: string;
+  isColusa?: boolean;
 }
 
-const RTLineChart = ({ data, way }: ChartParameters) => {
-  data = [
+const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
+  data = !isColusa ? [
     {
       name: 'Jan',
       acc_2024: 0.0,
@@ -141,6 +142,139 @@ const RTLineChart = ({ data, way }: ChartParameters) => {
       total_allocation: 206.2,
       allocation_2024: 173.4
     },
+  ] : [
+    {
+      name: 'Jan',
+      acc_2025: 0.0,
+      acc_2023: 0.0,
+      acc_2022: 0.0,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Feb',
+      acc_2025: 1.6,
+      acc_2023: 1.6,
+      acc_2022: 1.3,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Mar',
+      acc_2025: 5.8,
+      acc_2023: 6,
+      acc_2022: 5.4,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Apr',
+      acc_2025: 19.0,
+      acc_2023: 19.9,
+      acc_2022: 16.3,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'May',
+      acc_2025: 43.6,
+      acc_2023: 47.8,
+      acc_2022: 40.3,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Jun',
+      acc_2025: 77.7,
+      acc_2023: 82.6,
+      acc_2022: 71.9,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Jul',
+      acc_2025: 113.0,
+      acc_2023: 121.7,
+      acc_2022: 106.2,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Aug',
+      acc_2025: 142.7,
+      acc_2023: 153.7,
+      acc_2022: 131.9,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Sep',
+      acc_2025: 162.3,
+      acc_2023: 175.2,
+      acc_2022: 149.7,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Oct',
+      acc_2025: 174.1,
+      acc_2023: 188.3,
+      acc_2022: 159.9,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Nov',
+      acc_2025: 179.9,
+      acc_2023: 194.8,
+      acc_2022: 165.4,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
+    {
+      name: 'Dec',
+      acc_2025: 182.5,
+      acc_2023: 197.7,
+      acc_2022: 167.6,
+      total_allocation_2025: 197.7,
+      total_allocation_2023: 182.5,
+      total_allocation_2022: 167.6,
+      total_allocation: 206.2,
+      allocation_2024: 173.4
+    },
   ];
   return (
     <ResponsiveContainer width="100%" height="100%" >
@@ -158,7 +292,7 @@ const RTLineChart = ({ data, way }: ChartParameters) => {
         <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft', style: { fill: 'white' } }} tick={{ fill: 'white' }} />
         <Tooltip
           labelFormatter={(label) => {
-            return <div className='text-black font-bold underline '>{`${label} ${way}`}</div>; 
+            return <div className='text-black font-bold underline '>{`${label} ${way}`}</div>;
           }}
           formatter={(value: any, name: any) => [`${value}`, name]}
           contentStyle={{ border: '1px solid #ccc', borderRadius: '8px' }}
