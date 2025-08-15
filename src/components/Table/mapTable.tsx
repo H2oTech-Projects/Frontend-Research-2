@@ -150,9 +150,11 @@ const MapTable = <T,>({
         features: row.original
       });
       // @ts-ignore
-      setZoomLevel(13);
+      tableType!=='parcel' && setZoomLevel(13);
       // @ts-ignore
-     setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
+      tableType == 'parcel' && setSelectedParcel(row.original.parcel_id)
+      // @ts-ignore
+      setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
     });
 
     const tableHeader = () => {
