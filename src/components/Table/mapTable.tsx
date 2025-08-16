@@ -138,6 +138,22 @@ const MapTable = <T,>({
         });
         return;
       }
+      if (type == 'clientPoint') {
+        const parseData =row.original
+        const coordinates = parseData.coordinates
+        // @ts-ignore
+        setPosition({
+          // @ts-ignore
+          center: [coordinates[1], coordinates[0]],
+          // @ts-ignore
+          point: [coordinates[1], coordinates[0]],
+          // @ts-ignore
+          msmtPointId: row.original.id || null,
+          // @ts-ignore
+          features: row.original,
+        });
+        return;
+      }
       // @ts-ignore
       setPosition &&  setPosition({
         // @ts-ignore

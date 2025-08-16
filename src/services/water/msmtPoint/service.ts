@@ -78,4 +78,22 @@ putMsmtPointFields: async (data: any) => {
   });
   return response.data;
 },
+getClientMsmtPointList: async (tableInfo:initialTableDataTypes) => {
+  const response = await axiosInstance.get(GET_MSMTPOINT_LIST+"/msmt_points/",{
+    params:{
+              page_no:tableInfo?.page_no,
+              page_size:tableInfo?.page_size,
+              search:tableInfo?.search,
+              sort_by:tableInfo?.sort,
+              sort_order:tableInfo?.sort_order}
+    }).catch((err) => console.log(err));
+  return convertKeysToCamelCase(toJson(response?.data));
+},
+
+getMsmtPointMap : async () =>{
+  const response = await axiosInstance.get(BASE_API_URL + "/msmt_points/map/",
+  ).catch((err) => console.log(err));
+  const data = convertKeysToCamelCase(toJson(response));
+  return toJson(data?.data);
+}
 };

@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult, useMutation } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryFieldService, RegisterResponse  } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
-import { GET_APPORTION_METHOD_TYPE, GET_CLIENT_FIELD_MAP_KEY, GET_MESMT_POINT_FIELD_DETAIL, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY } from "./constant";
+import { GET_APPORTION_METHOD_TYPE, GET_CLIENT_FIELD_MAP_KEY, GET_MESMT_POINT_FIELD_DETAIL, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY, GET_CLIENT_MSMT_POINTS, GET_CLIENT_MSMT_POINTS_MAP } from "./constant";
 import { MsmtPointListResponseType } from "@/types/apiResponseType";
 import { AxiosError } from "axios";
 
@@ -56,4 +56,20 @@ export const useGetMsmtPointFieldDetail = (id:any,wapId:any) => {
       ...queryConfig
 })
 
+}
+
+export const useGetClientMsmtPoints = (tableInfo:initialTableDataTypes) => {
+  return useQuery({
+   queryKey:[GET_MESMT_POINT_FIELD_DETAIL],
+    queryFn: ()=> queryFieldService.getClientMsmtPointList(tableInfo),
+    ...queryConfig
+})
+}
+
+export const useGetClientMsmtPoinMap = ():UseQueryResult<any> => {
+  return useQuery({
+      queryKey: [GET_CLIENT_MSMT_POINTS_MAP],
+    queryFn: ()=> queryFieldService.getMsmtPointMap(),
+    ...queryConfig,
+})
 }

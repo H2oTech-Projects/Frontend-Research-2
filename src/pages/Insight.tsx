@@ -25,7 +25,7 @@ interface EmailProps {
 
 const Insight = () => {
   const [selectedEmailValue, setSelectedEmailValue] = useState<string | null>(null);
-  const [selectedYearValue, setSelectedYearValue] = useState<string>("2024");
+  const [selectedYearValue, setSelectedYearValue] = useState<string>("2025");
   const [selectedFarm, setSelectedFarm] = useState<string | null>(null);
   const [selectedFarmGeoJson, setSelectedFarmGeoJson] = useState<string | null>(null);
   const [selectedParcelGeom, setSelectedParcelGeom] = useState<[] | null>(null);
@@ -66,7 +66,6 @@ const Insight = () => {
     if (!!selectedFarm) {
 
       let selectFarm = accountFarmUnits?.data?.find((farm_unit: any) => farm_unit['farm_unit_zone'] == selectedFarm)
-
       // @ts-ignore
       selectFarm['farm_parcel_geojson'] && setSelectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
       // @ts-ignore
@@ -88,8 +87,6 @@ const Insight = () => {
     }
   }, [selectedParcel])
 
-
-
   const yearList: EmailProps[] = [
     {
       value: "2024",
@@ -110,6 +107,10 @@ const Insight = () => {
     {
       value: "2020",
       label: "2020"
+    },
+    {
+      value: "2025",
+      label: "2025"
     }
   ]
 
@@ -494,7 +495,7 @@ const Insight = () => {
               id="map2"
             >
               {
-                accountDetail?.data && accountParcels?.data?.parcel_id_mapper ? <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson!} accountDetail={accountDetail?.data} collapse={collapse} selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm} selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom!} parcelInfo={accountParcels?.data?.parcel_id_mapper} /> : <LeafletMap
+                !!accountDetail?.data ? <InsightMap viewBoundFarmGeoJson={viewBoundFarmGeoJson!} accountDetail={accountDetail?.data} collapse={collapse} selectedEmailValue={selectedEmailValue} selectedFarmGeoJson={selectedFarmGeoJson} selectedFarm={selectedFarm} selectedParcel={selectedParcel} selectedParcelGeom={selectedParcelGeom!} parcelInfo={accountParcels?.data?.parcel_id_mapper || {}} /> : <LeafletMap
                   position={InsightMapPosition}
                   zoom={14}
                   // viewBound={ accountDetail?.data?.view_bounds }
