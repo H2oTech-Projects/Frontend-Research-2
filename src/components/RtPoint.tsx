@@ -23,9 +23,9 @@ const RtPoint = ({ position, children,  handleMouseDown, cancel}: RtTypes) => {
         pathOptions={{ color: 'white', fillColor: 'blue', fillOpacity: 1 }}
         eventHandlers={handleMouseDown && {
           mousedown: handleMouseDown,
-          mouseup: cancel 
+          mouseup: cancel
         }}
-        pane="markerPane" 
+        pane="markerPane"
       >
         {children}
       </CircleMarker>

@@ -45,19 +45,15 @@ const initialTableData = {
 
 const measurementPoint = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryClient = useQueryClient()
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: "", fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
   };
@@ -66,21 +62,16 @@ const measurementPoint = () => {
   };
   const { data: msmtPointData, isLoading } = useGetClientMsmtPoints(tableInfo);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetClientMsmtPoinMap();
-  //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
-  // const { data: waps, isLoading: wapsLoading } = useGetWaps()
-  // const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
     }, 500),
     []
   );
-  // const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
   const columns: ColumnDef<DummyDataType>[] = [
     {
       accessorKey: "conveyId",
-      // header: "Field ID",
       header: ({ column }) => {
         return (
           <Button
@@ -93,14 +84,10 @@ const measurementPoint = () => {
       },
 
       size: 100, // this size value is in px
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldId")}</div>,
-      //filterFn: 'includesString',
+      cell: ({ row }) => <div className="capitalize">{row.getValue("conveyId")}</div>,
     },
     {
       accessorKey: "msmtPointId",
-      // header: () => {
-      //     return <>Field Description</>;
-      // },
       header: ({ column }) => {
         return (
           <Button
@@ -193,17 +180,18 @@ const measurementPoint = () => {
         const auxLayer = e.target;
         auxLayer.setStyle({
           weight: 4,
-          //color: "#800080"
+          color: "#16599A",
+          fillColor: "#5a76a380",
+          opacity: 1,
         });
         showInfo("MsmtPoint ID: ",auxLayer.feature.properties.msmt_point_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
         auxLayer.setStyle({
-          weight: 2.5,
-          //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
+          weight: 2,
+          color: "#16599A",
+          fillColor: "#5a76a380",
           opacity: 1,
         });
         removeInfo(auxLayer.feature.properties.msmt_point_id);
@@ -211,47 +199,20 @@ const measurementPoint = () => {
     });
   }
 
-  // const geoJsonStyle = (features: any) => {
-  //   if (features?.properties?.FieldID === clickedField) {
-  //     return {
-  //       color: "red", // Border color
-  //       fillColor: "#transparent", // Fill color for the highlighted area
-  //       fillOpacity: 0.5,
-  //       weight: 2,
-  //     };
-  //   }
-  //   return {
-  //     color: "#16599A", // Border color
-  //     fillColor: "transparent", // Fill color for normal areas
-  //     fillOpacity: 0.5,
-  //     weight: 2,
-  //   };
-  // }
-
   useEffect(() => {
     setClickedField({ id: "", viewBounds: null })
   }, [defaultWap])
 
+  const geoJsonStyle = (features: any) => {
+    // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
+    return {
+      color: "#16599A", // Border color
+      fillColor: "#5a76a380", // Fill color for normal areas
+      fillOpacity: 1,
+      weight: 2,
+    };
+  }
   const ReturnChildren = useMemo(() => {
-
-    const geoJsonStyle = (features: any) => {
-      // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
-      if (features?.properties?.field_id === clickedField?.id?.toString()) {
-
-        return {
-          color: "red", // Border color
-          fillColor: "transparent", // Fill color for the highlighted area
-          fillOpacity: 0.5,
-          weight: 2,
-        };
-      }
-      return {
-        color: "#16599A", // Border color
-        fillColor: "transparent", // Fill color for normal areas
-        fillOpacity: 0.5,
-        weight: 2,
-      };
-    }
     return (
       <>
       {mapData?.data && <RtGeoJson
@@ -265,7 +226,7 @@ const measurementPoint = () => {
           <RtPoint
             position={position.point}
           >
-            </RtPoint>
+          </RtPoint>
           ) : null}
     </>
   )
@@ -273,7 +234,7 @@ const measurementPoint = () => {
   }, [mapLoading, position, mapData])
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
-
+  console.log(tableInfo)
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 

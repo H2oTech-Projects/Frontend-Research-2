@@ -62,7 +62,7 @@ postFieldByWap : async (formData:any) =>{
       headers: {
          "Content-Type": "multipart/form-data",
       },
-    }) 
+    })
   return response?.data
 },
 putFieldByWap : async (formData:any) =>{
@@ -70,7 +70,7 @@ putFieldByWap : async (formData:any) =>{
       headers: {
          "Content-Type": "multipart/form-data",
       },
-    }) 
+    })
   return response?.data
 }
 };
