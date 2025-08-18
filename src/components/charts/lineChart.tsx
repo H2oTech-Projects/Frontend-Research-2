@@ -233,10 +233,8 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
     },
     {
       name: 'Sep',
-      acc_2025: 162.3,
       acc_2023: 175.2,
       acc_2022: 149.7,
-      total_allocation_2025: 197.7,
       total_allocation_2023: 182.5,
       total_allocation_2022: 167.6,
       total_allocation: 206.2,
@@ -244,10 +242,8 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
     },
     {
       name: 'Oct',
-      acc_2025: 174.1,
       acc_2023: 188.3,
       acc_2022: 159.9,
-      total_allocation_2025: 197.7,
       total_allocation_2023: 182.5,
       total_allocation_2022: 167.6,
       total_allocation: 206.2,
@@ -255,10 +251,8 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
     },
     {
       name: 'Nov',
-      acc_2025: 179.9,
       acc_2023: 194.8,
       acc_2022: 165.4,
-      total_allocation_2025: 197.7,
       total_allocation_2023: 182.5,
       total_allocation_2022: 167.6,
       total_allocation: 206.2,
@@ -266,10 +260,8 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
     },
     {
       name: 'Dec',
-      acc_2025: 182.5,
       acc_2023: 197.7,
       acc_2022: 167.6,
-      total_allocation_2025: 197.7,
       total_allocation_2023: 182.5,
       total_allocation_2022: 167.6,
       total_allocation: 206.2,

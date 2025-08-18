@@ -67,6 +67,9 @@ const colusaSld =`<StyledLayerDescriptor version="1.0.0">
               <ColorMapEntry quantity="30" label="30" color="#86c456"/>
               <ColorMapEntry quantity="40" label="40" color="#44b26b"/>
               <ColorMapEntry quantity="50" label="50" color="#4dc2a3"/>
+              <ColorMapEntry quantity="60" label="60" color="#4c87bd"/>
+              <ColorMapEntry quantity="70" label="70" color="#077fec"/>
+              <ColorMapEntry quantity="80" label="80" color="#1a6db9"/>
             </ColorMap>
           </RasterSymbolizer>
         </Rule>
@@ -159,33 +162,39 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       //     </div>
       //   )
       // }
+      const additionalLegendsColusa = <>
+        <div className="flex flex-row pb-1">
+              <span style={{position: 'absolute',display: 'block',left: '35px'}}>80</span>
+              <i style={{
+              background: "#1a6db9",
+              height: "17px",
+              width: "17px",
+              }}
+              ></i>
+            </div>
+        <div className="flex flex-row pb-1">
+          <span style={{position: 'absolute',display: 'block',left: '35px'}}>70</span>
+          <i style={{
+          background: "#077fec",
+          height: "17px",
+          width: "17px",
+          }}
+          ></i>
+        </div>
+        <div className="flex flex-row pb-1">
+          <span style={{position: 'absolute',display: 'block',left: '35px'}}>60</span>
+          <i style={{
+          background: "#4c87bd",
+          height: "17px",
+          width: "17px",
+          }}
+          ></i>
+        </div>
+      </>
       return (
         <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-1 rounded-[8px] bg-black text-slate-50">
         <div  className="flex flex-col">
-          {/* <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>80</span>
-            <i style={{
-              background: "#2a3f65",
-              height: "17px",
-              width: "17px",
-            }}></i>
-          </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>70</span>
-            <i style={{
-              background: "#3b788f",
-              height: "17px",
-              width: "17px",
-            }}></i>
-          </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>60</span>
-            <i style={{
-              background: "#50bdc1",
-              height: "17px",
-              width: "17px",
-            }}></i>
-          </div> */}
+          {loggedUser == "colusa@wateraccounts.com" &&  additionalLegendsColusa || ''}
           <div className="flex flex-row pb-1">
             <span style={{position: 'absolute',display: 'block',left: '35px'}}>50</span>
             <i style={{
