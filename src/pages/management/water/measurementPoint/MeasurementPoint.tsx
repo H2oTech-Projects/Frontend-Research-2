@@ -289,7 +289,7 @@ const measurementPoint = () => {
         </div>
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className={cn(" h-[calc(100vh-312px) w-full")}>
+            <div className={cn(" h-[calc(100vh-180px) w-full")}>
               <MapTable
                 defaultData={msmtPointData?.data || []}
                 columns={columns}
@@ -302,7 +302,7 @@ const measurementPoint = () => {
                 totalData={msmtPointData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
-                customHeight="h-[calc(100vh-312px)]"
+                customHeight="h-[calc(100vh-210px)]"
                 tableType={"clientPoint"}
               />
               <CollapseBtn
