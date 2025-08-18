@@ -122,7 +122,7 @@ export const RouteList = [
   {
     path: routeUrl.Crops?.url,
     name: routeUrl.Crops?.name,
-    Component: lazy(async () => await import("../pages/management/crops/Crops")),
+    Component: lazy(async () => await import("../pages/management/crops/crops/index")),
   },
   {
     path: routeUrl.Billings?.url,
