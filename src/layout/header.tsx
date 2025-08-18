@@ -1,4 +1,5 @@
 import { Bell, ChevronsLeft, Moon, Search, Sun, LogOut } from "lucide-react";
+import { useQueryClient } from '@tanstack/react-query';
 import profileImg from "../assets/profile-image.jpg";
 import { logout } from "../redux/slice/authSlice";
 import { useTheme } from "../hooks/useTheme";
@@ -13,13 +14,14 @@ interface HeaderProps {
     setCollapsed: (collapsed: Boolean) => void;
 }
 export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
+    const queryClient = useQueryClient();
     const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
      const refreshToken = useSelector((state: any) => state.auth.refresh);
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
-    
+
     const handleCollapse = ()=> {
       setCollapsed(!collapsed);
       localStorage.setItem("isMenuCollapsed",JSON.stringify(!collapsed))
@@ -27,12 +29,13 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
 
     const handleLogout = () => {
       mutate({refresh_token: refreshToken},{
-        onSuccess: (data) => {  
+        onSuccess: (data) => {
           dispatch(logout());
           setIsModalOpen(false);
-          toast.success("Logout successful");
+          toast.success("Logout successful.");
+          queryClient.removeQueries();
         },
-        onError: (err) => {     
+        onError: (err) => {
            showErrorToast(err?.response?.data.message)
         },
 
