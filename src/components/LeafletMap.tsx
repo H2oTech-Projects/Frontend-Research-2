@@ -254,7 +254,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
             start={100}
             tooltips= {false}
             range= {{ min: 0, max: 100 }}
-            step= {50}
+            step= {25}
             onUpdate={(num) => {setOpacity(parseFloat(num[0])/100)}}
           />
         </div>
