@@ -282,5 +282,11 @@ export const RouteList = [
     path: routeUrl?.ViewConveyance?.url,
     name: routeUrl?.ViewConveyance?.name,
     Component: lazy(async () => import("./../pages/management/water/conveyances/ConveyanceForm"))
+  },
+  {
+    path: routeUrl?.CropField?.url,
+    name: routeUrl?.CropField?.name,
+    Component: lazy(async () => import("../pages/management/crops/cropFields/index"))
   }
+
 ];

@@ -84,6 +84,10 @@ const Crops = {
   url: "/crops",
   name: "Crops",
 };
+const CropField = {
+  url: "/crop-fields",
+  name: "Crop Fields",
+};
 
 const CustomReport = {
   url: "/customReport",
@@ -277,5 +281,6 @@ export {
   Region,
   SubRegion,
   FieldParcel,
-  ViewConveyance
+  ViewConveyance,
+  CropField
 };

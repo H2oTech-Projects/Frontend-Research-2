@@ -72,8 +72,8 @@ const Crops = () => {
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
       <PageHeader
-        pageHeaderTitle="Customer-Field"
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Crops", menuPath: "" }]}
+        pageHeaderTitle="Crops"
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">

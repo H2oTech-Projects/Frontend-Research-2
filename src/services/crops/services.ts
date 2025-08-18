@@ -32,5 +32,11 @@ export const queryCropsService = {
     return toJson(data?.data);
   },
  
+    getCropFieldMapByWAP: async (wapId: number) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/cropfields/map/",
+    ).catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return toJson(data?.data);
+  },
 
 }
