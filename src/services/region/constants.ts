@@ -1,0 +1,2 @@
+export const GET_REGION_LIST = "GET_REGION_LIST";
+export const GET_REGION_MAP = "GET_REGION_MAP";
