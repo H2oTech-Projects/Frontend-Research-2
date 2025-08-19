@@ -53,7 +53,7 @@ const info = "One or more of the fields you have linked to customer are already 
 const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConflictFields,setProcessConflictFields, refetchMap, refetch, setId, setConflictFields, customerName}: CustomerFieldModalProps) => {
   const queryClient = useQueryClient();
   const { mutate: updateCustomerField, isPending: isCustomerFieldUpdating } = usePutCustomerField();
-  debugger
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,7 +92,7 @@ const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConf
               return customer
             }
         )
-      debugger
+
       setTimeout(() => {
         form.setValue('customers', renewCustomers)
       }, 1000);

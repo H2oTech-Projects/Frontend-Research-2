@@ -1,7 +1,7 @@
 import { BASE_API_URL } from "@/utils/constant";
 import axiosInstance from "../axiosInstance";
 import { toJson } from "@/utils/reactQueryConfig";
-import { convertKeysToCamelCase } from "@/utils/stringConversion";
+import { convertKeysToCamelCase, convertKeysToSnakeCase } from "@/utils/stringConversion";
 import { initialTableDataTypes } from "@/types/tableTypes";
 
 export const queryCropsService = {
@@ -31,10 +31,28 @@ export const queryCropsService = {
     const data = convertKeysToCamelCase(toJson(response));
     return toJson(data?.data);
   },
- 
-    getCropFieldMapByWAP: async (wapId: number) => {
+
+  getCropFieldMapByWAP: async (wapId: number) => {
     const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/cropfields/map/",
     ).catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return toJson(data?.data);
+  },
+
+  putCropsField: async (formData: any) => {
+    const data = convertKeysToSnakeCase(formData.data?.crops)
+    console.log(formData)
+    const response = await axiosInstance.put(BASE_API_URL + "/waps/" + formData?.wapId + "/crops/" + formData?.cropId + "/fields/", data, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    const respo = convertKeysToCamelCase(toJson(response.data));
+    return respo;
+  },
+
+  getCropFieldDetailByWAP: async (cropId: string, wapId: string) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/crops/" + cropId + "/fields/").catch((err) => console.log(err));
     const data = convertKeysToCamelCase(toJson(response));
     return toJson(data?.data);
   },

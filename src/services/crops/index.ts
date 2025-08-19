@@ -1,8 +1,10 @@
 import { initialTableDataTypes } from "@/types/tableTypes";
 import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
-import { GET_ALL_CROP_FIELDS_LIST, GET_ALL_CROP_FIELDS_MAP, GET_CROPS_LIST } from "./constants";
+import { GET_ALL_CROP_FIELDS_LIST, GET_ALL_CROP_FIELDS_MAP, GET_BY_ID_CROP_FIELD, GET_CROPS_LIST, PUT_CROPS_FIELD } from "./constants";
 import { queryCropsService } from "./services";
-import { queryConfig } from "@/utils/reactQueryConfig";
+import { noCacheQueryConfig, queryConfig } from "@/utils/reactQueryConfig";
+import { RegisterResponse } from "../registration/service";
+import { AxiosError } from "axios";
 
 export const useGetCropList = (tableInfo:initialTableDataTypes):UseQueryResult<any> => {
   return useQuery({
@@ -30,3 +32,20 @@ export const useGetCropFieldMapByWAP = (wapId:number):UseQueryResult<any> => {
 })
 }
 
+export const usePutCropField = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [PUT_CROPS_FIELD],
+    mutationFn: queryCropsService.putCropsField,
+  });
+}
+
+export const useGetCropFieldDetailByWAP = (wapId:string,cropId:any):UseQueryResult<any> => {
+    let cropid = typeof(cropId) == 'object'? cropId.id.toString() : cropId
+    return useQuery({
+      queryKey:[GET_BY_ID_CROP_FIELD,cropId,wapId],
+      queryFn:()=>  queryCropsService.getCropFieldDetailByWAP(cropid,wapId),
+      enabled: !!wapId && !!cropId,
+      ...queryConfig,
+      ...noCacheQueryConfig,
+})
+}

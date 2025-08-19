@@ -10,14 +10,14 @@ import {
 } from "@/components/ui/form"
 
 import CustomModal from "@/components/modal/ConfirmModal";
-import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP, usePutCustomerField } from "@/services/customerField";
-import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
 import { FormInput } from "@/components/FormComponent/FormInput";
 import { showErrorToast } from "@/utils/tools";
+import { usePutCropField } from "@/services/crops";
+import { GET_ALL_CROP_FIELDS_LIST } from "@/services/crops/constants";
 
-type CustomerFieldModalProps = {
-  customerId: string;
-  customerfields: [];
+type CropFieldModalProps = {
+  cropId: string;
+  cropfields: [];
   wap_id: string;
   isConflictFields: boolean;
   setOpen: (value: boolean) => void;
@@ -26,18 +26,18 @@ type CustomerFieldModalProps = {
   setId: (value: string) => void;
   setConflictFields: (value:[]) => void;
   setProcessConflictFields: (value: boolean) => void;
-  customerName: string;
+  cropName: string;
 }
 
 
 
 const formSchema = z.object({
-  customers: z.array(
+  crops: z.array(
     z.object({
       fieldName: z.string().optional(),
-      customerName: z.string().optional(),
-      fieldId: z.coerce.number().optional(),
-      customerId: z.coerce.number().optional(),
+      cropName: z.string().optional(),
+      fieldId: z.string().optional(),
+      cropId: z.coerce.number().optional(),
       pctFarmed: z.coerce.number().optional(), // optional range check
       hidden: z.coerce.boolean().optional(),
     })
@@ -49,52 +49,52 @@ type FormValues = z.infer<typeof formSchema>;
 function roundTo(value: number, decimals: number) {
   return Math.round(value * 10 ** decimals) / 10 ** decimals;
 }
-const info = "One or more of the fields you have linked to customer are already shared with another customer. Use Farmed % below to set how the fields are shared. Enter shared field details below for ";
-const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConflictFields,setProcessConflictFields, refetchMap, refetch, setId, setConflictFields, customerName}: CustomerFieldModalProps) => {
+const info = "One or more of the fields you have linked to crop are already shared with another crop. Use Farmed % below to set how the fields are shared. Enter shared field details below for ";
+const CropFieldModal = ({cropId, wap_id, cropfields, setOpen, isConflictFields,setProcessConflictFields, refetchMap, refetch, setId, setConflictFields, cropName}: CropFieldModalProps) => {
   const queryClient = useQueryClient();
-  const { mutate: updateCustomerField, isPending: isCustomerFieldUpdating } = usePutCustomerField();
-  debugger
+  const { mutate: updateCropField, isPending: isCropFieldUpdating } = usePutCropField();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      customers: customerfields
+      crops: cropfields
     },
   });
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "customers"
+    name: "crops"
   })
 
   useEffect(() => {
-    if (!!customerfields && customerfields.length >0) {
-      form.setValue("customers", customerfields)
+    if (!!cropfields && cropfields.length >0) {
+      form.setValue("crops", cropfields)
     }
-  }, [customerfields])
+  }, [cropfields])
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (!name) return;
-      let fieldCustomerIndex = Number(name?.split('.')[1])
-      if (!fieldCustomerIndex) return;
-      let editedFieldId = form.getValues(`customers.${fieldCustomerIndex}.fieldId`)
-      let editedCustomerId = form.getValues(`customers.${fieldCustomerIndex}.customerId`)
-      let editedPctFarmed = form.getValues(`customers.${fieldCustomerIndex}.pctFarmed`) || 0
+      let fieldCropIndex = Number(name?.split('.')[1])
+      if (!fieldCropIndex) return;
+      let editedFieldId = form.getValues(`crops.${fieldCropIndex}.fieldId`)
+      let editedCropId = form.getValues(`crops.${fieldCropIndex}.cropId`)
+      let editedPctFarmed = form.getValues(`crops.${fieldCropIndex}.pctFarmed`) || 0
 
-      let requiredCustomers = form.getValues('customers').filter((fieldCustomer) => fieldCustomer.fieldId?.toString() == editedFieldId?.toString() && fieldCustomer.customerId?.toString() != editedCustomerId?.toString())
-      let poportionSum = requiredCustomers.reduce((accumulator, currentValue: any) => accumulator + currentValue['pctFarmed'], 0);
+      let requiredCrops = form.getValues('crops').filter((fieldCrop) => fieldCrop.fieldId?.toString() == editedFieldId?.toString() && fieldCrop.cropId?.toString() != editedCropId?.toString())
+      let poportionSum = requiredCrops.reduce((accumulator, currentValue: any) => accumulator + currentValue['pctFarmed'], 0);
 
-      let renewCustomers = form.getValues('customers')
-        .map((customer: any) =>
+      let renewCrops = form.getValues('crops')
+        .map((crop: any) =>
             {
-              if (customer.fieldId != editedFieldId) return customer
-              if (customer.customerId == editedCustomerId) return customer
-              customer['pctFarmed'] = roundTo((customer['pctFarmed']/poportionSum)*(100-editedPctFarmed),2)
-              return customer
+              if (crop.fieldId != editedFieldId) return crop
+              if (crop.cropId == editedCropId) return crop
+              crop['pctFarmed'] = roundTo((crop['pctFarmed']/poportionSum)*(100-editedPctFarmed),2)
+              return crop
             }
         )
-      debugger
+
       setTimeout(() => {
-        form.setValue('customers', renewCustomers)
+        form.setValue('crops', renewCrops)
       }, 1000);
     });
 
@@ -102,12 +102,13 @@ const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConf
   }, [form]);
 
   const onSubmit = (data: FormValues) => {
-    const formData ={wapId:wap_id, customerId: customerId, data: data}
-          updateCustomerField(formData, {
+    console.log("called")
+    const formData ={wapId:wap_id, cropId: cropId, data: data}
+          updateCropField(formData, {
           onSuccess: (data: any) => {
             setOpen(false);
-            queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-            queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+            // queryClient.invalidateQueries({ queryKey: [POST_CROP_FIELD] })
+            queryClient.invalidateQueries({ queryKey: [GET_ALL_CROP_FIELDS_LIST] });
             refetchMap();
             refetch();
             toast.success(data?.message);
@@ -117,15 +118,15 @@ const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConf
           },
           onError: (error) => {
             showErrorToast(error?.response?.data?.message || "Failed to create Link");
-            queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+            queryClient.invalidateQueries({ queryKey: [GET_ALL_CROP_FIELDS_LIST] });
             setConflictFields([]);
             setProcessConflictFields(false);
           },
         });
   }
-  console.log(customerId)
-  let title = isConflictFields ? `Enter shared field details below for ${customerName}` : 'Edit Link Customer and Field'
-  let italicInfo = isConflictFields ? `${info} ${customerName}` : ""
+  // console.log(customerId)
+  let title = isConflictFields ? `Enter shared field details below for ${cropName}` : 'Edit Link Crop and Field'
+  let italicInfo = isConflictFields ? `${info} ${cropName}` : ""
   return <CustomModal
     isOpen={true}
     onClose={() => {
@@ -143,26 +144,26 @@ const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConf
 
         <div className="mb-3 flex gap-2" >
           <div className="w-[100px]">Field Name</div>
-          <div className="w-[200px]" >Customer Name</div>
+          <div className="w-[200px]" >Crop Name</div>
           <div>Farmed Percentage(%) </div>
         </div>
         <div className="h-[90%] overflow-y-auto p-2">
 
           {fields && fields?.map((field, index) => {
             let hide = field.hidden ? 'hidden ' : ''
-            let grayOut = field?.customerId?.toString()!= customerId.toString() ? 'bg-[#e3e3ec] rounded-md' : ''
+            let grayOut = field?.cropId?.toString()!= cropId.toString() ? 'bg-[#e3e3ec] rounded-md' : ''
             return <div className={`mb-3 flex gap-2 ${hide} ${grayOut}`} key={field?.id} >
               <div className="w-[100px]">{field?.fieldName}</div>
-              <div className="w-[200px]" >{field?.customerName}</div>
+              <div className="w-[200px]" >{field?.cropName}</div>
               <div>
                 <FormInput
                   control={form.control}
                   label="Percentage Farm"
-                  name={`customers.${index}.pctFarmed`}
+                  name={`crops.${index}.pctFarmed`}
                   type="number"
                   placeholder="Enter Percentage"
                   showLabel={false}
-                  disabled={field?.customerId?.toString()!= customerId.toString()}
+                  disabled={field?.cropId?.toString()!= cropId.toString()}
                 />
               </div>
             </div>
@@ -176,4 +177,4 @@ const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConf
   </CustomModal>
 }
 
-export default CustomerFieldModal;
+export default CropFieldModal;
