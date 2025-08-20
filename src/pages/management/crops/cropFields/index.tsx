@@ -224,14 +224,12 @@ const CropField = () => {
         auxLayer.setStyle({
           weight: 2.5,
           //color: "#9370DB",
-          fillOpacity: 0.5,
+          // fillOpacity: 0.5,
         });
         removeInfo(auxLayer.feature.properties.field_id);
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        removeInfo(auxLayer.feature.properties.field_id)
-         console.log(auxLayer.feature.properties,"test")
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_id)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_id);
           setSelectedFields(arr)
@@ -258,51 +256,26 @@ const CropField = () => {
         auxLayer.setStyle({
           weight: 2.5,
           //color: "#9370DB",
-          fillColor: "red",
-          fillOpacity: 0.3,
+          // fillColor: "red",
+          // fillOpacity: 0.3,
         });
         removeInfo(auxLayer.feature.properties.crop_field_ids);
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        removeInfo(auxLayer.feature.properties.field_pct_farmed)
-       
-        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_pct_farmed)) {
-          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_pct_farmed);
+
+        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_pct_farmed.split(' ')[0])) {
+          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_pct_farmed.split(' ')[0]);
+          selectedFieldsRef.current = arr
           setSelectedFields(arr)
         } else {
-          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_pct_farmed]);
+          const arr = [...selectedFieldsRef.current, auxLayer.feature.properties.field_pct_farmed.split(' ')[0]]
+          setSelectedFields((prev: any) => arr);
         }
       }
     });
   }
-  const pointLayerEvents = (feature: any, layer: any) => {
-    // layer.bindPopup(buildPopupMessage(feature.properties));
-    const popupDiv = document.createElement('div');
-    popupDiv.className = 'popup-map';
-    // @ts-ignore
-    popupDiv.style = "border-radius:8px; overflow:hidden";
-    popupDiv.id = feature.properties?.msmt_point_id;
-    layer.bindPopup(popupDiv, { maxHeight: 30, maxWidth: 70, className: 'customer-field-msmtpoint' });
 
-    layer.on({
-      mouseover: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-        });
-        createRoot(popupDiv).render(<MsmtPointInfo mpId={auxLayer.feature.properties.mp_id} msmtPointId={auxLayer.feature.properties.msmt_point_id} wapId={defaultWap} />);
-        showInfo('MsmtPoint: ', auxLayer.feature.properties.msmt_point_id);
-      },
-      mouseout: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2,
-        });
-        removeInfo(auxLayer.feature.properties.msmt_point_id);
-      },
-    });
-  }
   useEffect(() => {
     if (!!geojson.fieldGeojson) {
       setSelectedFields(geojson.existingFieldIds)
@@ -354,14 +327,6 @@ const CropField = () => {
       weight: 2,
     };
   }
-  const pointGeojsonStyle = (features: any) => {
-    return {
-      color: "white",
-      fillColor: "blue", // Fill color for normal areas
-      fillOpacity: 1,
-      weight: 2,
-    };
-  }
 
   // }, [mapLoading, mapData, geojson, selectedFields])
 
@@ -378,7 +343,10 @@ const CropField = () => {
   }, [wapsOptions])
 
   const handleAssociatePopUp2 = () => {
-    if (selectedFields.length < 1) return;
+    if (selectedFields.length < 1) {
+      showErrorToast({"Error": ["None Field is selected."]});
+      return;
+    };
 
     const fieldPctMapper: { [key: string]: any } = {};
     geojson.existingFieldIds.forEach((key: string, index: number) => {
@@ -390,7 +358,7 @@ const CropField = () => {
       return ({ 'field_id': field, 'pct_farmed': pctFarmed })
     })
     console.log(geojson.id, defaultWap, data,"test")
-    const formData = { wapId: defaultWap, cropId: geojson.id, data: { crops: data } }
+    const formData = { wapId: defaultWap, cropId: geojson.id, data: { crops: data, checkValidation: true }  }
     updateCropField(formData, {
       onSuccess: (data: any) => {
         if (!data?.success) {
@@ -404,6 +372,7 @@ const CropField = () => {
           refetchMap();
           refetch();
           toast.success(data?.message);
+          setProcessConflictFields(false)
           setId("");
         }
       },
@@ -413,7 +382,6 @@ const CropField = () => {
       },
     });
   }
-console.log(geojson)
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">

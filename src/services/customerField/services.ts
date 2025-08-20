@@ -54,7 +54,7 @@ export const queryCustomerFieldService = {
     return response.data;
   },
   putCustomerField: async (formData: any) => {
-    const data = convertKeysToSnakeCase(formData.data?.customers)
+    const data = convertKeysToSnakeCase(formData.data)
     const response = await axiosInstance.put(BASE_API_URL + "/waps/" + formData?.wapId + "/customers/" + formData?.customerId + "/fields/", data, {
       headers: {
         "Content-Type": "application/json",

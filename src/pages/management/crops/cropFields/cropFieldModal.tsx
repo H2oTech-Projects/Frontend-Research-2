@@ -103,7 +103,7 @@ const CropFieldModal = ({cropId, wap_id, cropfields, setOpen, isConflictFields,s
 
   const onSubmit = (data: FormValues) => {
     console.log("called")
-    const formData ={wapId:wap_id, cropId: cropId, data: data}
+    const formData ={wapId:wap_id, cropId: cropId, data: { crops: data.crops, checkValidation: false } }
           updateCropField(formData, {
           onSuccess: (data: any) => {
             setOpen(false);

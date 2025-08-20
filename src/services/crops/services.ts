@@ -40,7 +40,7 @@ export const queryCropsService = {
   },
 
   putCropsField: async (formData: any) => {
-    const data = convertKeysToSnakeCase(formData.data?.crops)
+    const data = convertKeysToSnakeCase(formData.data)
     console.log(formData)
     const response = await axiosInstance.put(BASE_API_URL + "/waps/" + formData?.wapId + "/crops/" + formData?.cropId + "/fields/", data, {
       headers: {

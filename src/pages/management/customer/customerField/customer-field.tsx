@@ -1,15 +1,12 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import $, { data } from "jquery";
+import $ from "jquery";
 import { ColumnDef } from "@tanstack/react-table";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
 import { createRoot } from 'react-dom/client';
-import {
-  Form
-} from "@/components/ui/form"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,28 +17,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useDeleteFieldByWAP, useGetFieldList, useGetFieldListByWAP, useGetFieldMapByWAP, useGetFieldMapList } from "@/services/water/field";
-import { debounce, UnitSystemName } from "@/utils";
+import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
-import { useGetWaps, useGetWaysOptions } from "@/services/timeSeries";
+import { useGetWaps } from "@/services/timeSeries";
 import { showErrorToast } from "@/utils/tools";
-import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
 import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP, usePutCustomerField } from "@/services/customerField";
 import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormInput } from "@/components/FormComponent/FormInput";
-import { error } from "console";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
-import { de } from "zod/dist/types/v4/locales";
-import { set } from "date-fns";
 import CustomerFieldModal from "./customerFieldModal";
 
 interface initialTableDataTypes {
@@ -85,7 +73,7 @@ const CustomerField = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: ""})
+  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: "", fieldIids: []})
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
@@ -112,8 +100,6 @@ const CustomerField = () => {
     }, 500),
     []
   );
-
-
 
   const columns: ColumnDef<any>[] = [
     {
@@ -232,9 +218,12 @@ const CustomerField = () => {
         removeInfo(auxLayer.feature.properties.field_id)
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_id)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_id);
+          selectedFieldsRef.current = arr
           setSelectedFields(arr)
         } else {
-          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_id]);
+          const arr = [...selectedFieldsRef.current, auxLayer.feature.properties.field_id]
+          selectedFieldsRef.current = arr
+          setSelectedFields((prev: any) => arr);
         }
       }
     });
@@ -375,152 +364,23 @@ const CustomerField = () => {
     }
   }, [wapsOptions])
 
-  // const EditModel = () => {
-  //   const [showForm, setShowForm] = useState<boolean>(!!conflictFields);
-  //   const form = useForm<FormValues>({
-  //     resolver: zodResolver(formSchema),
-  //     defaultValues: {
-  //       customers: conflictFields
-  //     },
-  //   });
-  //   const { fields, append, remove } = useFieldArray({
-  //     control: form.control,
-  //     name: "customers"
-  //   })
-
-  //   useEffect(() => {
-  //     if (fieldCustomerData?.data) {
-  //       form.setValue("customers", fieldCustomerData?.data)
-  //       setConflictFields([])
-  //       setShowForm(true)
-  //     }
-  //   }, [fieldCustomerData])
-
-  //   useEffect(() => {
-  //     if (!!conflictFields) {
-  //       form.setValue("customers", conflictFields)
-  //       setShowForm(true)
-  //     }
-  //   }, [conflictFields])
-
-  //   useEffect(() => {
-  //     const subscription = form.watch((value, { name }) => {
-  //       if (!name) return;
-  //       let fieldCustomerIndex = Number(name?.split('.')[1])
-  //       if (!fieldCustomerIndex) return;
-
-  //       let editedFieldId = form.getValues(`customers.${fieldCustomerIndex}.fieldId`)
-  //       let editedCustomerId = form.getValues(`customers.${fieldCustomerIndex}.customerId`)
-  //       let editedPctFarmed = form.getValues(`customers.${fieldCustomerIndex}.pctFarmed`) || 0
-  //       let requiredCustomers = form.getValues('customers').filter((fieldCustomer) => fieldCustomer.fieldId?.toString() == editedFieldId && fieldCustomer.customerId?.toString() != editedCustomerId)
-  //       let poportionSum = requiredCustomers.reduce((accumulator, currentValue: any) => accumulator + currentValue['pctFarmed'], 0);
-
-  //       let renewCustomers = form.getValues('customers')
-  //         .map((customer: any) =>
-  //             {
-  //               if (customer.fieldId != editedFieldId) return customer
-  //               if (customer.customerId == editedCustomerId) return customer
-  //               customer['pctFarmed'] = roundTo((customer['pctFarmed']/poportionSum)*(100-editedPctFarmed),2)
-  //               return customer
-  //             }
-  //         )
-
-  //       setTimeout(() => {
-  //         form.setValue('customers', renewCustomers)
-  //       }, 1000);
-  //     });
-
-  //     //return () => subscription.unsubscribe();
-  //   }, [form]);
-
-  //   const handleAssociatePopUp = () => {
-  //     const formData ={wapId:defaultWap, customerId: id, data: data}
-  //       updateCustomerField(formData, {
-  //       onSuccess: (data: any) => {
-  //         setOpen(false);
-  //         queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-  //         queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-  //         refetchMap();
-  //         refetch();
-  //         toast.success(data?.message);
-  //         setId("");
-
-  //       },
-  //       onError: (error) => {
-  //         showErrorToast(error?.response?.data?.message || "Failed to create Link");
-  //         queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-  //       },
-  //     });
-  //   }
-
-  //   const onSubmit = (data: FormValues) => {
-  //     const formData ={wapId:defaultWap, customerId: id, data: data}
-  //           updateCustomerField(formData, {
-  //           onSuccess: (data: any) => {
-  //             setOpen(false);
-  //             queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-  //             queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-  //             refetchMap();
-  //             refetch();
-  //             toast.success(data?.message);
-  //             setId("");
-
-  //           },
-  //           onError: (error) => {
-  //             showErrorToast(error?.response?.data?.message || "Failed to create Link");
-  //             queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-  //           },
-  //         });
-  //   }
-  //   return <CustomModal
-  //     isOpen={open}
-  //     onClose={() => {
-  //       setOpen(false)
-  //     }}
-  //     title="Edit Link Customer and Field"
-  //     confirmText="Link"
-  //     isDeleteModal={false}
-  //     showActionButton={false}
-  //   >
-  //     {showForm && <Form {...form}>
-  //       <form onSubmit={form.handleSubmit(onSubmit, (error) => { console.log(error, "error") })} className="h-[30rem] w-auto flex flex-col gap-2 " >
-
-  //         <div className="mb-3 flex gap-2" >
-  //           <div className="w-[100px]">Field Name</div>
-  //           <div className="w-[200px]" >Customer Name</div>
-  //           <div>Farmed Percentage(%) </div>
-  //         </div>
-  //         <div className="h-[90%] overflow-y-auto p-2">
-
-  //           {fields && fields?.map((field, index) => {
-  //             return <div className="mb-3 flex gap-2" key={field?.id}>
-  //               <div className="w-[100px]">{field?.fieldName}</div>
-  //               <div className="w-[200px]" >{field?.customerName}</div>
-  //               <div> <FormInput control={form.control} label="Percentage Farm" name={`customers.${index}.pctFarmed`} type="number" placeholder="Enter Percentage" showLabel={false} disabled={field?.customerId?.toString()!= id}/></div>
-  //             </div>
-  //           })}
-  //         </div>
-  //         <div className="flex gap-2  items-center justify-end">
-  //           <Button type="submit">Update</Button> <Button type="button" onClick={() => setOpen(false)} >Cancel</Button>
-  //         </div>
-  //       </form>
-  //     </Form>}
-  //   </CustomModal>
-  // }
   const handleAssociatePopUp2 = () => {
-    if (selectedFields.length < 1) return;
-
+    if (selectedFields.length < 1) {
+      showErrorToast({"Error": ["None Field is selected."]});
+      return;
+    };
     const fieldPctMapper: { [key: string]: any } = {};
+    const fieldIdMapper: { [key: string]: any } = {};
     geojson.existingFieldIds.forEach((key: string, index: number) => {
       fieldPctMapper[key.toString()] = geojson.existingPcts[index];
+      fieldIdMapper[key.toString()] = geojson.fieldIids[index];
     });
-
     let data = selectedFields.map((field: string) => {
       let pctFarmed = fieldPctMapper.hasOwnProperty(field) ? fieldPctMapper[field] : 100
-      return ({'field_id': field,'pct_farmed': pctFarmed})
+      let farmIid = fieldIdMapper.hasOwnProperty(field) ? fieldIdMapper[field] : 100
+      return ({'field_name': field,'pct_farmed': pctFarmed, 'field_id': farmIid})
     })
-
-    const formData ={wapId:defaultWap, customerId: geojson.id, data: {customers: data}}
+    const formData ={wapId:defaultWap, customerId: geojson.id, data: {customers: data, checkValidation: true}}
     updateCustomerField(formData, {
     onSuccess: (data: any) => {
       if (!data?.success){

@@ -102,7 +102,8 @@ const CustomerFieldModal = ({customerId, wap_id, customerfields, setOpen, isConf
   }, [form]);
 
   const onSubmit = (data: FormValues) => {
-    const formData ={wapId:wap_id, customerId: customerId, data: data}
+
+    const formData ={wapId:wap_id, customerId: customerId, data: {customers: data.customers, checkValidation: false}}
           updateCustomerField(formData, {
           onSuccess: (data: any) => {
             setOpen(false);

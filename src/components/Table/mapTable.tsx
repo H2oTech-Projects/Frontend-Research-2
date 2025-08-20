@@ -95,7 +95,7 @@ const MapTable = <T,>({
 
     const handleOnClick = ((row: any, type: any) => {
       if(type === "relation") {
-        setGeojson && setGeojson({id: row.original?.customerId || row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName});
+        setGeojson && setGeojson({id: row.original?.customerId || row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName, fieldIids: row.original?.fieldIids});
       }
       if(type === "cropField") {
         setGeojson && setGeojson({id:  row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, cropName: row.original?.cropName});
