@@ -156,7 +156,7 @@ const MapTable = <T,>({
       // @ts-ignore
       tableType!=='parcel' && setZoomLevel(13);
       // @ts-ignore
-      tableType == 'parcel' && setSelectedParcel(row.original.parcel_id)
+      //tableType == 'parcel' && setSelectedParcel(row.original.parcel_id)
       // @ts-ignore
       setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
     });
