@@ -465,7 +465,7 @@ const Insight = () => {
                         fullHeight={true}
                         customHeight={'h-[calc(100vh-348px)]'}
                         columnProperties={parcelColumnProperties}
-                        tableType={"parcel"}
+                        tableType={"insightParcel"}
                         setSelectedParcel={setSelectedParcel}
                         isLoading={accountParcelsLoading}
                         useClientPagination={true}
