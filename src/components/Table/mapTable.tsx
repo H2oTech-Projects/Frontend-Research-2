@@ -95,8 +95,12 @@ const MapTable = <T,>({
 
     const handleOnClick = ((row: any, type: any) => {
       if(type === "relation") {
-        setGeojson && setGeojson({id: row.original?.customerId, fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName});
+        setGeojson && setGeojson({id: row.original?.customerId || row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName, fieldIids: row.original?.fieldIids});
       }
+      if(type === "cropField") {
+        setGeojson && setGeojson({id:  row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, cropName: row.original?.cropName});
+      }
+
       if(type === "customerParcel") {
         setGeojson && setGeojson({id: row.original?.customerId, parcelGeojson:row.original?.parcelGeojson, viewBounds: row.original?.viewBounds, existingParcelIds: row.original?.parcelId, customerName: row.original?.customerName});
       }
@@ -168,7 +172,7 @@ const MapTable = <T,>({
       // @ts-ignore
       tableType!=='parcel' && setZoomLevel(13);
       // @ts-ignore
-      tableType == 'parcel' && setSelectedParcel(row.original.parcel_id)
+      //tableType == 'parcel' && setSelectedParcel(row.original.parcel_id)
       // @ts-ignore
       setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
     });

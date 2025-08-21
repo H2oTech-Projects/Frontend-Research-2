@@ -1,12 +1,15 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import $ from "jquery";
+import $, { data } from "jquery";
 import { ColumnDef } from "@tanstack/react-table";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
 import { createRoot } from 'react-dom/client';
+import {
+  Form
+} from "@/components/ui/form"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,20 +20,32 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { debounce } from "@/utils";
+import { useDeleteFieldByWAP, useGetFieldList, useGetFieldListByWAP, useGetFieldMapByWAP, useGetFieldMapList } from "@/services/water/field";
+import { debounce, UnitSystemName } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
-import { useGetWaps } from "@/services/timeSeries";
+import { useGetWaps, useGetWaysOptions } from "@/services/timeSeries";
 import { showErrorToast } from "@/utils/tools";
+import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
 import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP, usePutCustomerField } from "@/services/customerField";
 import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
 import { z } from "zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormInput } from "@/components/FormComponent/FormInput";
+import { error } from "console";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
-import CustomerFieldModal from "./customerFieldModal";
+import { de } from "zod/dist/types/v4/locales";
+import { set } from "date-fns";
+import CustomerFieldModal from "./cropFieldModal";
+import { useGetCropFieldDetailByWAP, useGetCropFieldMapByWAP, useGetCropsFieldListByWAP, usePutCropField } from "@/services/crops";
+import { GET_ALL_CROP_FIELDS_LIST, GET_ALL_CROP_FIELDS_MAP, PUT_CROPS_FIELD } from "@/services/crops/constants";
+import CropFieldModal from "./cropFieldModal";
 
 interface initialTableDataTypes {
   search: string;
@@ -48,12 +63,12 @@ const initialTableData = {
 }
 
 const formSchema = z.object({
-  customers: z.array(
+  crops: z.array(
     z.object({
       fieldName: z.string().optional(),
-      customerName: z.string().optional(),
+      cropName: z.string().optional(),
       fieldId: z.coerce.number().optional(),
-      customerId: z.coerce.number().optional(),
+      cropId: z.coerce.number().optional(),
       pctFarmed: z.coerce.number().optional(), // optional range check
     })
   ),
@@ -61,7 +76,7 @@ const formSchema = z.object({
 });
 type FormValues = z.infer<typeof formSchema>;
 
-const CustomerField = () => {
+const CropField = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -73,7 +88,7 @@ const CustomerField = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: "", fieldIids: []})
+  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], existingPcts: [], cropName: "" })
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [searchText, setSearchText] = useState("");
@@ -86,10 +101,10 @@ const CustomerField = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
-  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWap);
-  const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWap!, id!)
-  const { mutate: updateCustomerField, isPending: isCustomerFieldUpdating } = usePutCustomerField();
+  const { data: cropsFieldData, isLoading } = useGetCropsFieldListByWAP(tableInfo, defaultWap);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCropFieldMapByWAP(defaultWap);
+  const { data: fieldCropData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCropFieldDetailByWAP(defaultWap!, id!)
+  const { mutate: updateCropField, isPending: isCustomerFieldUpdating } = usePutCropField();
   const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
   const [conflictFields, setConflictFields] = useState([]);
   const [processConflictFields, setProcessConflictFields] = useState(false)
@@ -103,19 +118,19 @@ const CustomerField = () => {
 
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "customerName",
+      accessorKey: "cropName",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "customer_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Customer Name {tableInfo?.sort !== "customer_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Crop Name {tableInfo?.sort !== "crop_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("customerName")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("cropName")}</div>,
     },
     {
       accessorKey: "fieldPctFarmed",
@@ -131,7 +146,7 @@ const CustomerField = () => {
         );
       },
       size: 180,
-      cell: ({ row }:any) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("fieldPctFarmed")?.map((item:any)=>{return <div key={item}>{item},</div>})}</div>,
+      cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{row.getValue("fieldPctFarmed")?.map((item: any) => { return <div key={item}>{item},</div> })}</div>,
     },
     {
       id: "actions",
@@ -152,7 +167,7 @@ const CustomerField = () => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {/* <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}> */}
-            <DropdownMenuItem onClick={() => { setId(row.original.customerId); setOpen(true) }} >
+            <DropdownMenuItem onClick={() => { setId(row.original.cropId); setOpen(true) }} >
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
@@ -209,21 +224,17 @@ const CustomerField = () => {
         auxLayer.setStyle({
           weight: 2.5,
           //color: "#9370DB",
-          fillOpacity: 0.5,
+          // fillOpacity: 0.5,
         });
         removeInfo(auxLayer.feature.properties.field_id);
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        removeInfo(auxLayer.feature.properties.field_id)
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_id)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_id);
-          selectedFieldsRef.current = arr
           setSelectedFields(arr)
         } else {
-          const arr = [...selectedFieldsRef.current, auxLayer.feature.properties.field_id]
-          selectedFieldsRef.current = arr
-          setSelectedFields((prev: any) => arr);
+          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_id]);
         }
       }
     });
@@ -238,59 +249,35 @@ const CustomerField = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo("FieldID: ", auxLayer.feature.properties.customer_field_ids);
+        showInfo("FieldID: ", auxLayer.feature.properties.crop_field_ids);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
         auxLayer.setStyle({
           weight: 2.5,
           //color: "#9370DB",
-          fillColor: "red",
-          fillOpacity: 0.3,
+          // fillColor: "red",
+          // fillOpacity: 0.3,
         });
-        removeInfo(auxLayer.feature.properties.customer_field_ids);
+        removeInfo(auxLayer.feature.properties.crop_field_ids);
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        removeInfo(auxLayer.feature.properties.field_pct_farmed)
-        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_pct_farmed)) {
-          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_pct_farmed);
+
+        if (selectedFieldsRef.current.includes(auxLayer.feature.properties.field_pct_farmed.split(' ')[0])) {
+          const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.field_pct_farmed.split(' ')[0]);
+          selectedFieldsRef.current = arr
           setSelectedFields(arr)
         } else {
-          setSelectedFields((prev: any) => [...selectedFieldsRef.current, auxLayer.feature.properties.field_pct_farmed]);
+          const arr = [...selectedFieldsRef.current, auxLayer.feature.properties.field_pct_farmed.split(' ')[0]]
+          setSelectedFields((prev: any) => arr);
         }
       }
     });
   }
-  const pointLayerEvents = (feature: any, layer: any) => {
-    // layer.bindPopup(buildPopupMessage(feature.properties));
-    const popupDiv = document.createElement('div');
-    popupDiv.className = 'popup-map';
-    // @ts-ignore
-    popupDiv.style = "border-radius:8px; overflow:hidden";
-    popupDiv.id = feature.properties?.msmt_point_id;
-    layer.bindPopup(popupDiv, { maxHeight: 30, maxWidth: 70, className: 'customer-field-msmtpoint' });
 
-    layer.on({
-      mouseover: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-        });
-        createRoot(popupDiv).render(<MsmtPointInfo mpId={auxLayer.feature.properties.mp_id} msmtPointId={auxLayer.feature.properties.msmt_point_id} wapId={defaultWap} />);
-        showInfo('MsmtPoint: ', auxLayer.feature.properties.msmt_point_id);
-      },
-      mouseout: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2,
-        });
-        removeInfo(auxLayer.feature.properties.msmt_point_id);
-      },
-    });
-  }
   useEffect(() => {
-    if (!!geojson.fieldGeojson){
+    if (!!geojson.fieldGeojson) {
       setSelectedFields(geojson.existingFieldIds)
       selectedFieldsRef.current = geojson.existingFieldIds;
       setId(geojson.id)
@@ -298,17 +285,16 @@ const CustomerField = () => {
   }, [geojson])
 
   useEffect(() => {
-    if (!!selectedFields){
+    if (!!selectedFields) {
       selectedFieldsRef.current = selectedFields;
     }
   }, [selectedFields])
-
   useEffect(() => {
-    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], customerName: "" })
+    setGeojson({ fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], cropName: "" })
   }, [defaultWap])
 
   const geoJsonStyle = (feature: any) => {
-    if (selectedFields.includes(feature.properties.field_id)) {
+    if (selectedFields.includes(feature.properties.crop_field_ids || feature.properties.field_id)) {
       return {
         color: "#16599A", // Border color
         fillColor: "red", // Fill color for the highlighted area
@@ -325,7 +311,7 @@ const CustomerField = () => {
     };
   }
   const fieldGeojsonStyle = (feature: any) => {
-    if (selectedFields.includes(feature.properties.field_id)) {
+    if (selectedFields.includes(feature.properties.crop_field_ids)) {
       return {
         color: "#16599A", // Border color
         fillColor: "red", // Fill color for the highlighted area
@@ -338,14 +324,6 @@ const CustomerField = () => {
       color: "#16599A", // Border color
       fillColor: "transparent", // Fill color for normal areas
       fillOpacity: 0.5,
-      weight: 2,
-    };
-  }
-  const pointGeojsonStyle = (features: any) => {
-    return {
-      color: "white",
-      fillColor: "blue", // Fill color for normal areas
-      fillOpacity: 1,
       weight: 2,
     };
   }
@@ -369,52 +347,54 @@ const CustomerField = () => {
       showErrorToast({"Error": ["None Field is selected."]});
       return;
     };
+
     const fieldPctMapper: { [key: string]: any } = {};
-    const fieldIdMapper: { [key: string]: any } = {};
     geojson.existingFieldIds.forEach((key: string, index: number) => {
       fieldPctMapper[key.toString()] = geojson.existingPcts[index];
-      fieldIdMapper[key.toString()] = geojson.fieldIids[index];
     });
+
     let data = selectedFields.map((field: string) => {
       let pctFarmed = fieldPctMapper.hasOwnProperty(field) ? fieldPctMapper[field] : 100
-      let farmIid = fieldIdMapper.hasOwnProperty(field) ? fieldIdMapper[field] : 100
-      return ({'field_name': field,'pct_farmed': pctFarmed, 'field_id': farmIid})
+      return ({ 'field_id': field, 'pct_farmed': pctFarmed })
     })
-    const formData ={wapId:defaultWap, customerId: geojson.id, data: {customers: data, checkValidation: true}}
-    updateCustomerField(formData, {
-    onSuccess: (data: any) => {
-      if (!data?.success){
-        setConflictFields(data?.data)
-        setProcessConflictFields(true)
-        setOpen(true)
-      } else{
-        queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-        refetchMap();
-        refetch();
-        toast.success(data?.message);
-        setId("");
-      }
-    },
-    onError: (error) => {
-      showErrorToast(error?.response?.data?.message || "Failed to create Link");
-      queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-    },
-  });
+    console.log(geojson.id, defaultWap, data,"test")
+    const formData = { wapId: defaultWap, cropId: geojson.id, data: { crops: data, checkValidation: true }  }
+    updateCropField(formData, {
+      onSuccess: (data: any) => {
+        if (!data?.success) {
+          setConflictFields(data?.data)
+          setProcessConflictFields(true)
+          setOpen(true)
+        } else {
+          queryClient.invalidateQueries({ queryKey: [PUT_CROPS_FIELD] })
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_CROP_FIELDS_LIST] });
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_CROP_FIELDS_MAP] });
+          refetchMap();
+          refetch();
+          toast.success(data?.message);
+          setProcessConflictFields(false)
+          setId("");
+        }
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data?.message || "Failed to create Link");
+        queryClient.invalidateQueries({ queryKey: [PUT_CROPS_FIELD] });
+      },
+    });
   }
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
       <PageHeader
-        pageHeaderTitle="Customer-Field"
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
+        pageHeaderTitle="Crop-Fields"
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Crops", menuPath: "/crops" }]}
       />
       {/* <EditModel /> */}
-      {open && <CustomerFieldModal
-        customerId={id || geojson.id}
+      {open && <CropFieldModal
+        cropId={id || geojson.id}
         wap_id={defaultWap}
-        customerfields={processConflictFields ? conflictFields : fieldCustomerData?.data}
+        cropfields={processConflictFields ? conflictFields : fieldCropData?.data}
         isConflictFields={processConflictFields}
         setOpen={setOpen}
         refetchMap={refetchMap}
@@ -422,7 +402,7 @@ const CustomerField = () => {
         setId={setId}
         setConflictFields={setConflictFields}
         setProcessConflictFields={setProcessConflictFields}
-        customerName={processConflictFields ? geojson.customerName : ""}
+        cropName={processConflictFields ? geojson.cropName : ""}
       />}
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
@@ -469,18 +449,18 @@ const CustomerField = () => {
             </div>
             <div className={cn(" h-[calc(100vh-312px) w-full")}>
               <MapTable
-                defaultData={customerFieldData?.data || []}
+                defaultData={cropsFieldData?.data || []}
                 columns={columns}
                 setPosition={setPosition as Function}
                 setZoomLevel={setZoomLevel as Function}
                 tableInfo={tableInfo}
                 setTableInfo={setTableInfo}
-                totalData={customerFieldData?.totalRecords || 1}
+                totalData={cropsFieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-312px)]"
                 setGeojson={setGeojson as Function}
-                tableType={"relation"}
+                tableType={"cropField"}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
@@ -506,26 +486,19 @@ const CustomerField = () => {
                 viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
               >
                 {mapData?.data && <RtGeoJson
-                    key={"fields"}
-                    layerEvents={geoJsonLayerEvents}
-                    style={geoJsonStyle}
-                    data={JSON.parse(mapData['data'])}
-                    color={"#16599a"}
-                  />}
-                  {geojson?.fieldGeojson && <RtGeoJson
-                    key={"customerFields"}
-                    layerEvents={fieldJsonLayerEvents}
-                    style={fieldGeojsonStyle}
-                    data={JSON.parse(geojson?.fieldGeojson)}
-                    color={"#16599a"}
-                  />}
-                  {geojson?.msmtPoint && <RtGeoJson
-                    key={"msmtPoints"}
-                    layerEvents={pointLayerEvents}
-                    style={pointGeojsonStyle}
-                    data={JSON.parse(geojson?.msmtPoint)}
-                    color={"#16599a"}
-                  />}
+                  key={"fields"}
+                  layerEvents={geoJsonLayerEvents}
+                  style={geoJsonStyle}
+                  data={JSON.parse(mapData['data'])}
+                  color={"#16599a"}
+                />}
+                {geojson?.fieldGeojson && <RtGeoJson
+                  key={"cropFields"}
+                  layerEvents={fieldJsonLayerEvents}
+                  style={fieldGeojsonStyle}
+                  data={JSON.parse(geojson?.fieldGeojson)}
+                  color={"#16599a"}
+                />}
               </LeafletMap>) : (<LeafletMap
                 position={position}
                 zoom={zoomLevel}
@@ -552,4 +525,4 @@ const CustomerField = () => {
   );
 };
 
-export default CustomerField;
+export default CropField;

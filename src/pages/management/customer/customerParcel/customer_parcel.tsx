@@ -59,6 +59,7 @@ const formSchema = z.object({
       parcelId: z.coerce.number().optional(),
       customerId: z.coerce.number().optional(),
       pctFarmed: z.coerce.number().optional(), // optional range check
+      parcelIds: z.string().optional(),
     })
   ),
   comment: z.string().optional(),
@@ -135,8 +136,10 @@ const CustomerParcel = () => {
           </Button>
         );
       },
+
       size: 180,
-      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("parcelIds")}</div>,
+      // @ts-ignore
+      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("parcelIds")?.map((item: any) => { return <div key={item}>{item}, </div> })}</div>,
     },
     {
       id: "actions",

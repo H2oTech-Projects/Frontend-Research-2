@@ -86,7 +86,7 @@ const menuLinks = [
         type: "group",
         Children: [
           { label: "Crops", path: routeUrl?.Crops?.url, name: routeUrl?.Crops?.name },
-          { label: "Crop-Field", path: routeUrl?.CustomerField?.url, name: routeUrl?.CustomerField?.name }],
+          { label: "Crop-Field", path: routeUrl?.CropField?.url, name: routeUrl?.CropField?.name }],
       },
       {
         label: "Billing",
