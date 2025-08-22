@@ -3,7 +3,7 @@ import LeafletMap from '@/components/LeafletMap';
 import PageHeader from '@/components/PageHeader'
 import Spinner from '@/components/Spinner';
 import { Button } from '@/components/ui/button';
-import { useDeleteConveyance, useGetConveyanceList, useGetConveyanceMap } from '@/services/convayance';
+import $ from "jquery";
 import { conveyanceDataType, initialTableDataTypes } from '@/types/tableTypes';
 import { cn } from '@/utils/cn';
 import { ColumnDef } from '@tanstack/react-table';
@@ -80,7 +80,24 @@ const Conveyances = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
+    const showInfo = (label: String, Id: String) => {
+      var popup = $("<div></div>", {
+        id: "popup-" + Id,
+        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50",
+      });
+      // Insert a headline into that popup
+      var hed = $("<div></div>", {
+        text: ` ${label}` ,
+        // text: `${label}: ` + Id,
+        css: { fontSize: "16px", marginBottom: "3px" },
+      }).appendTo(popup);
+      // Add the popup to the map
+      popup.appendTo("#map");
+    };
 
+    const removeInfo = (Id: String) => {
+      $("#popup-" + Id).remove();
+    };
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
     layer.on({
@@ -90,7 +107,7 @@ const Conveyances = () => {
           weight: 4,
           //color: "#800080"
         });
-        // showInfo(auxLayer.feature.properties.apn);
+        showInfo(auxLayer.feature.properties?.sub_region_name,auxLayer.feature.properties?.id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -101,7 +118,7 @@ const Conveyances = () => {
           fillOpacity: 0,
           opacity: 1,
         });
-        // removeInfo(auxLayer.feature.properties.apn);
+        removeInfo(auxLayer.feature.properties.id);
       },
     })
   };

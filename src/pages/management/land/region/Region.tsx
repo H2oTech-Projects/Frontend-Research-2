@@ -8,6 +8,7 @@ import { cn } from '@/utils/cn';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react'
+import $ from "jquery";
 import { useNavigate } from 'react-router-dom';
 import MapTable from '@/components/Table/mapTable';
 import { useQueryClient } from '@tanstack/react-query';
@@ -47,7 +48,7 @@ const SubRegion = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "region_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Region Name{tableInfo?.sort !== "region_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Region IDs{tableInfo?.sort !== "region_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -62,7 +63,7 @@ const SubRegion = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "region_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-           Sub Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+           Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -78,6 +79,24 @@ const SubRegion = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
+    const showInfo = (label: String, Id: String) => {
+      var popup = $("<div></div>", {
+        id: "popup-" + Id,
+        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50",
+      });
+      // Insert a headline into that popup
+      var hed = $("<div></div>", {
+        text: ` ${label} : ${Id}` ,
+        // text: `${label}: ` + Id,
+        css: { fontSize: "16px", marginBottom: "3px" },
+      }).appendTo(popup);
+      // Add the popup to the map
+      popup.appendTo("#map");
+    };
+
+    const removeInfo = (Id: String) => {
+      $("#popup-" + Id).remove();
+    };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
@@ -88,7 +107,7 @@ const SubRegion = () => {
           weight: 4,
           //color: "#800080"
         });
-        // showInfo(auxLayer.feature.properties.apn);
+        showInfo("Region Id",auxLayer.feature.properties.region_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -99,7 +118,7 @@ const SubRegion = () => {
           fillOpacity: 0,
           opacity: 1,
         });
-        // removeInfo(auxLayer.feature.properties.apn);
+        removeInfo(auxLayer.feature.properties.region_id);
       },
     })
   };
