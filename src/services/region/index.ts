@@ -25,13 +25,13 @@ export const useGetRegionMap = ()=>{
     return useQuery({
     queryKey: [GET_REGION_MAP],
     queryFn: ()=> queryRegionService.getRegionMap(),
-    ...queryConfig, 
+    ...queryConfig,
   });
 }
 export const useGetSubRegionMap = ()=>{
     return useQuery({
     queryKey: [GET_SUB_REGION_MAP],
     queryFn: ()=> queryRegionService.getSubRegionMap(),
-    ...queryConfig, 
+    ...queryConfig,
   });
 }

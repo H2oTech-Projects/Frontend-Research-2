@@ -79,14 +79,14 @@ const SubRegion = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
-    const showInfo = (label: String, Id: String) => {
+    const showInfo = (label: String, Id: String, name: String) => {
       var popup = $("<div></div>", {
         id: "popup-" + Id,
-        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50",
+        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
       });
       // Insert a headline into that popup
       var hed = $("<div></div>", {
-        text: ` ${label} : ${Id}` ,
+        text: ` ${label} : ${name}` ,
         // text: `${label}: ` + Id,
         css: { fontSize: "16px", marginBottom: "3px" },
       }).appendTo(popup);
@@ -107,7 +107,7 @@ const SubRegion = () => {
           weight: 4,
           //color: "#800080"
         });
-        showInfo("Region Id",auxLayer.feature.properties.region_id);
+        showInfo("Region",auxLayer.feature.properties.region_id, auxLayer.feature.properties.region_name);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -144,9 +144,9 @@ const SubRegion = () => {
         weight: 2,
       };
     }
-  
+
     return (
-      
+
       <>
         {isMapLoading ? (
           <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
