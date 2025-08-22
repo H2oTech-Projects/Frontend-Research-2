@@ -20,6 +20,7 @@ const layerMapper: any ={
   'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR', 'name': 'Evapotranspiration of Precipitation (ETPR)'},
   'rt_2023:wy2023_p_total_in': {'id': 'P_TOTAL', 'name': 'Precipitation (P)'},
   'rt_2023:colusa_ETa_WY2023_EPSG_6414': {'id': 'Colusa ETA', 'name': 'Evapotranspiration (ET)'},
+  'rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414': {'id': 'Colusa ETA', 'name': 'Evapotranspiration (mm)'},
 }
 
 type LeafletMapTypes = {
@@ -55,7 +56,7 @@ const sld =`<StyledLayerDescriptor version="1.0.0">
 
 const colusaSld =`<StyledLayerDescriptor version="1.0.0">
   <NamedLayer>
-    <Name>rt_2023:colusa_ETa_WY2023_EPSG_6414</Name> <!-- Replace with actual layer name -->
+    <Name>rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414</Name> <!-- Replace with actual layer name -->
     <UserStyle>
       <FeatureTypeStyle>
         <Rule>
@@ -151,7 +152,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       if (addedLayers.length <= 0) return ;
       let selectedLayer = addedLayers[addedLayers.length-1]
       if (loggedUser == 'colusa@wateraccounts.com') {
-        selectedLayer = 'rt_2023:colusa_ETa_WY2023_EPSG_6414'
+        selectedLayer = 'rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414'
       }
       const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=${selectedLayer}`;
       // if ((selectedLayer != 'rt_2023:wy2023_202309_eta_accumulation_in') || (selectedLayer != 'rt_2023:colusa_ETa_WY2023_EPSG_6414')) {
@@ -248,7 +249,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <p className="[writing-mode:vertical-rl] text-center">Cumulative ET (IN)</p>
+          <p className="[writing-mode:vertical-rl] text-center">Cumulative ET (mm)</p>
         </div>
       </div>
       )
@@ -278,7 +279,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
           opacity= {opacity}
           params={{
             format:"image/png",
-            layers:"rt_2023:colusa_ETa_WY2023_EPSG_6414",
+            layers:"rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414",
             transparent: true,
             ...( { sld_body: colusaSld } as Record<string, any> ),
           }}
