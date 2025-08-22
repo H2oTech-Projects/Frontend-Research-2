@@ -2,7 +2,7 @@ import { initialTableDataTypes } from "@/types/tableTypes";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { queryRegionService } from "./services";
 import { queryConfig } from "@/utils/reactQueryConfig";
-import { GET_REGION_LIST, GET_REGION_MAP } from "./constants";
+import { GET_REGION_LIST, GET_REGION_MAP, GET_SUB_REGION_LIST, GET_SUB_REGION_MAP } from "./constants";
 
 export const useGetRegionList = (tableInfo:initialTableDataTypes):UseQueryResult<any> => {
   return useQuery({
@@ -14,7 +14,7 @@ export const useGetRegionList = (tableInfo:initialTableDataTypes):UseQueryResult
 }
 export const useGetSubRegionList = (tableInfo:initialTableDataTypes):UseQueryResult<any> => {
   return useQuery({
-    queryKey: [GET_REGION_LIST,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
+    queryKey: [GET_SUB_REGION_LIST,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
     queryFn: ()=> queryRegionService.getSubRegionList(tableInfo),
     ...queryConfig,
 
@@ -30,7 +30,7 @@ export const useGetRegionMap = ()=>{
 }
 export const useGetSubRegionMap = ()=>{
     return useQuery({
-    queryKey: [GET_REGION_MAP],
+    queryKey: [GET_SUB_REGION_MAP],
     queryFn: ()=> queryRegionService.getSubRegionMap(),
     ...queryConfig, 
   });
