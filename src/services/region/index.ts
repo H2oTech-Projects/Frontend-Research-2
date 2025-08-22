@@ -12,11 +12,26 @@ export const useGetRegionList = (tableInfo:initialTableDataTypes):UseQueryResult
 
   });
 }
+export const useGetSubRegionList = (tableInfo:initialTableDataTypes):UseQueryResult<any> => {
+  return useQuery({
+    queryKey: [GET_REGION_LIST,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
+    queryFn: ()=> queryRegionService.getSubRegionList(tableInfo),
+    ...queryConfig,
+
+  });
+}
 
 export const useGetRegionMap = ()=>{
     return useQuery({
     queryKey: [GET_REGION_MAP],
     queryFn: ()=> queryRegionService.getRegionMap(),
+    ...queryConfig, 
+  });
+}
+export const useGetSubRegionMap = ()=>{
+    return useQuery({
+    queryKey: [GET_REGION_MAP],
+    queryFn: ()=> queryRegionService.getSubRegionMap(),
     ...queryConfig, 
   });
 }

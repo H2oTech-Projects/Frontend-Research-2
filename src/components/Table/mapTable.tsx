@@ -106,6 +106,9 @@ const MapTable = <T,>({
       if(type === "region") {
         setClickedGeom && setClickedGeom({regionId: row.original?.regionId, viewBound: row.original?.viewBounds});
       }
+      if(type === "subregion") {
+        setClickedGeom && setClickedGeom({id: row.original?.id, viewBound: row.original?.viewBounds});
+      }
       if (type=="farm") {
         // @ts-ignore
         setSelectedFarm(row.original?.farm_unit_zone)

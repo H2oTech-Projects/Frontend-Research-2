@@ -3,7 +3,6 @@ import LeafletMap from '@/components/LeafletMap';
 import PageHeader from '@/components/PageHeader'
 import Spinner from '@/components/Spinner';
 import { Button } from '@/components/ui/button';
-import { useDeleteConveyance, useGetConveyanceList, useGetConveyanceMap } from '@/services/convayance';
 import { conveyanceDataType, initialTableDataTypes } from '@/types/tableTypes';
 import { cn } from '@/utils/cn';
 import { ColumnDef } from '@tanstack/react-table';
@@ -22,7 +21,7 @@ const initialTableData = {
   sort: '',
   sort_order: ''
 }
-const Conveyances = () => {
+const SubRegion = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
@@ -48,7 +47,7 @@ const Conveyances = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "region_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Region ID{tableInfo?.sort !== "region_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Region Name{tableInfo?.sort !== "region_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -63,7 +62,7 @@ const Conveyances = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "region_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+           Sub Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -241,4 +240,4 @@ const Conveyances = () => {
   )
 }
 
-export default Conveyances
+export default SubRegion
