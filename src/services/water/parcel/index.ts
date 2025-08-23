@@ -69,3 +69,12 @@ export const useDeleteFieldByWAP = () => {
      mutationFn:queryFieldService.deleteFieldByWAP,
    });
 }
+
+export const useGetSearchParcelMapByWAY = (wayId:number, search: string):UseQueryResult<any> => {
+  return useQuery({
+      queryKey: [GET_FIELD_MAP_KEY,wayId, search],
+    queryFn: ()=> queryFieldService.getSearchParcelMapByWAY(wayId, search),
+     enabled: !!search && search.length >= 3,
+    ...queryConfig,
+})
+}

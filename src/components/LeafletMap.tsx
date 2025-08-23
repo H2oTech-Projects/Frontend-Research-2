@@ -62,15 +62,13 @@ const colusaSld =`<StyledLayerDescriptor version="1.0.0">
         <Rule>
           <RasterSymbolizer>
             <ColorMap type="ramp">
-              <ColorMapEntry quantity="0" label="0" color="#9e6212"/>
-              <ColorMapEntry quantity="10" label="10" color="#bfa22d"/>
-              <ColorMapEntry quantity="20" label="20" color="#d7db47"/>
-              <ColorMapEntry quantity="30" label="30" color="#86c456"/>
-              <ColorMapEntry quantity="40" label="40" color="#44b26b"/>
-              <ColorMapEntry quantity="50" label="50" color="#4dc2a3"/>
-              <ColorMapEntry quantity="60" label="60" color="#4c87bd"/>
-              <ColorMapEntry quantity="70" label="70" color="#077fec"/>
-              <ColorMapEntry quantity="80" label="80" color="#1a6db9"/>
+              <ColorMapEntry quantity="150.00" label="0" color="#9e6212"/>
+              <ColorMapEntry quantity="341.67" label="10" color="#bfa22d"/>
+              <ColorMapEntry quantity="533.33" label="20" color="#d7db47"/>
+              <ColorMapEntry quantity="725.00" label="30" color="#86c456"/>
+              <ColorMapEntry quantity="916.67" label="40" color="#44b26b"/>
+              <ColorMapEntry quantity="1108.33" label="50" color="#4dc2a3"/>
+              <ColorMapEntry quantity="1300.00" label="60" color="#4c87bd"/>
             </ColorMap>
           </RasterSymbolizer>
         </Rule>
@@ -165,24 +163,6 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       // }
       const additionalLegendsColusa = <>
         <div className="flex flex-row pb-1">
-              <span style={{position: 'absolute',display: 'block',left: '35px'}}>80</span>
-              <i style={{
-              background: "#1a6db9",
-              height: "17px",
-              width: "17px",
-              }}
-              ></i>
-            </div>
-        <div className="flex flex-row pb-1">
-          <span style={{position: 'absolute',display: 'block',left: '35px'}}>70</span>
-          <i style={{
-          background: "#077fec",
-          height: "17px",
-          width: "17px",
-          }}
-          ></i>
-        </div>
-        <div className="flex flex-row pb-1">
           <span style={{position: 'absolute',display: 'block',left: '35px'}}>60</span>
           <i style={{
           background: "#4c87bd",
@@ -249,7 +229,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <p className="[writing-mode:vertical-rl] text-center">Cumulative ET (mm)</p>
+          <p className="[writing-mode:vertical-rl] text-center">Cumulative ET (IN)</p>
         </div>
       </div>
       )
