@@ -40,12 +40,11 @@ const Map = () => {
     const { theme, setTheme } = useTheme();
     const dispatch = useDispatch();
 
-    const debouncedSearch = useCallback(
-      debounce((value: string) => {
-        setSearch(value);
-      }, 1000),
-      []
-    );
+    const handleKeyDown = (e : any) => {
+      if (e.key === "Enter") {
+        setSearch(e.target.value)
+      }
+    };
 
     const handleLogout = () => {
           mutate({refresh_token: refreshToken},{
@@ -216,9 +215,7 @@ const Map = () => {
             placeholder="Search ..."
             className="text-white w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 "
             autoComplete="off"
-            onChange={(e) => {
-              debouncedSearch(e.target.value);
-            }}
+            onKeyDown={handleKeyDown}
           />
         </div>
         <div className="flex items-center gap-x-3 z-[450]" >
