@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { debounce } from '@/utils';
 import { TileLayer } from "react-leaflet";
 import { Feature } from "geojson";
 import L from "leaflet";
@@ -38,6 +39,14 @@ const Map = () => {
     const parcels: any = parcelsData as any;
     const { theme, setTheme } = useTheme();
     const dispatch = useDispatch();
+
+    const debouncedSearch = useCallback(
+      debounce((value: string) => {
+        setSearch(value);
+      }, 1000),
+      []
+    );
+
     const handleLogout = () => {
           mutate({refresh_token: refreshToken},{
             onSuccess: (data) => {
@@ -66,7 +75,7 @@ const Map = () => {
     };
 
     const removeInfo = (Id: String) => {
-      $("#popup-" + Id).remove();
+      document.querySelectorAll('[id^="popup-"]').forEach(el => el.remove());
     };
     // Close modal when clicking outside
     useEffect(() => {
@@ -208,7 +217,7 @@ const Map = () => {
             className="text-white w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 "
             autoComplete="off"
             onChange={(e) => {
-              setSearch(String(e.target.value));
+              debouncedSearch(e.target.value);
             }}
           />
         </div>
