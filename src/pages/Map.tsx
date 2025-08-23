@@ -154,27 +154,26 @@ const Map = () => {
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-            weight: 4,
-            //color: "#800080"
-        });
 
         createRoot(popupDiv).render(<ColusaTableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.parcel_id], 'chartInfo': [], 'parcelId': auxLayer.feature.properties.parcel_id}}/>);
         showInfo('Parcel Id', auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-            weight: 2.5,
-            fillOpacity: 0,
-            opacity: 1,
-        });
         removeInfo(auxLayer.feature.properties.parcel_id);
       },
     });
   }
 
   const maderaJsonStyle = (features: Feature) => {
+    if (!!searchedParcels && searchedParcels?.parcelIds.includes(features?.properties?.parcel_id)){
+      return {
+        color: "red", // Border color
+        fillColor: "transparent", // Fill color for the highlighted area
+        fillOpacity: 0.5,
+        weight: 2,
+      };
+    }
     return {
       color: "#16599A", // Border color
       fillColor: "transparent", // Fill color for normal areas
