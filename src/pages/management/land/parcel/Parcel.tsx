@@ -116,7 +116,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_geom_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Parcel Geom Ha {tableInfo?.sort !== "parcel_geom_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Parcel Geom ({UnitSystemName()}) {tableInfo?.sort !== "parcel_geom_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
