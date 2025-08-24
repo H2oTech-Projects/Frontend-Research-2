@@ -115,7 +115,7 @@ const CustomerField = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("customerName")}</div>,
+      cell: ({ row }) => <div>{row.getValue("customerName")}</div>,
     },
     {
       accessorKey: "fieldPctFarmed",
