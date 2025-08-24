@@ -36,7 +36,7 @@ const Crops = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Customer Name {tableInfo?.sort !== "crop_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Crop Name {tableInfo?.sort !== "crop_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
