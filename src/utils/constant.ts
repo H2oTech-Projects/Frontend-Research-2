@@ -62,3 +62,38 @@ export const clientColumnProperties = {
   "street": "str",
   "subpremise": "str",
 };
+
+export const customerParcelColumnProperties = {
+    customerName: "str",
+    parcelIds: "str",
+};
+export const customerFieldColumnProperties = {
+    customerName: "str",
+    fieldPctFarmed: "str",
+};
+export const cropFieldColumnProperties = {
+    cropName: "str",
+    fieldPctFarmed: "str",
+};
+export const cropColumnProperties = {
+    cropName: "str",
+    cropDesc: "str",
+};
+export const fieldColumnProperties = {
+    cropName: "str",
+    cropDesc: "str",
+};
+
+export const parcelPageColumnProperties = {
+    parcelName: "str",
+    parcelGeomHa: "number",
+    parcelIrrigHa: "number",
+    parcelLegalHa: "number",
+};
+export const fieldPageColumnProperties = {
+    fieldName: "str",
+    fieldIrrigHa: "number",
+    fieldLegalHa: "number",
+    geomHa: "number",
+    fieldActBool:"str"
+};

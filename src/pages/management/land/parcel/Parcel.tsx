@@ -37,6 +37,7 @@ import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
+import { parcelPageColumnProperties } from "@/utils/constant";
 
 interface initialTableDataTypes {
   search: string;
@@ -101,7 +102,7 @@ const Parcel = () => {
         );
       },
 
-      size: 100, // this size value is in px
+      size: 150, // this size value is in px
       cell: ({ row }) => <div className="capitalize">{row.getValue("parcelName")}</div>,
       //filterFn: 'includesString',
     },
@@ -404,6 +405,7 @@ const Parcel = () => {
                 isLoading={isLoading}
                 tableType={"parcel"}
                 customHeight="h-[calc(100vh-312px)]"
+                columnProperties={parcelPageColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

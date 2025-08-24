@@ -3,6 +3,7 @@ import MapTable from "@/components/Table/mapTable";
 import { Button } from "@/components/ui/button";
 import { useGetCropList } from "@/services/crops";
 import { debounce } from "@/utils";
+import { cropColumnProperties } from "@/utils/constant";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -41,7 +42,7 @@ const Crops = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("cropName")}</div>,
+      cell: ({ row }) => <div className=" px-3">{row.getValue("cropName")}</div>,
     },
     {
       accessorKey: "cropDesc",
@@ -57,7 +58,7 @@ const Crops = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("cropDesc")}</div>,
+      cell: ({ row }) => <div className=" px-3">{row.getValue("cropDesc")}</div>,
     },
 
   ];
@@ -114,6 +115,7 @@ const Crops = () => {
               totalData={cropList?.totalRecords || 1}
               isLoading={isCropLoading}
               customHeight="h-[calc(100vh-210px)]"
+              columnProperties={cropColumnProperties}
             />
           </div>
         </div>

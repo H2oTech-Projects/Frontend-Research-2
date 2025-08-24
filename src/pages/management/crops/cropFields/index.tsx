@@ -46,6 +46,7 @@ import CustomerFieldModal from "./cropFieldModal";
 import { useGetCropFieldDetailByWAP, useGetCropFieldMapByWAP, useGetCropsFieldListByWAP, usePutCropField } from "@/services/crops";
 import { GET_ALL_CROP_FIELDS_LIST, GET_ALL_CROP_FIELDS_MAP, PUT_CROPS_FIELD } from "@/services/crops/constants";
 import CropFieldModal from "./cropFieldModal";
+import { cropFieldColumnProperties } from "@/utils/constant";
 
 interface initialTableDataTypes {
   search: string;
@@ -146,7 +147,7 @@ const CropField = () => {
         );
       },
       size: 180,
-      cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{row.getValue("fieldPctFarmed")?.map((item: any) => { return <div key={item}>{item},</div> })}</div>,
+      cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.join(", ")}</div>}</div>,
     },
     {
       id: "actions",
@@ -461,6 +462,7 @@ const CropField = () => {
                 customHeight="h-[calc(100vh-312px)]"
                 setGeojson={setGeojson as Function}
                 tableType={"cropField"}
+                columnProperties={cropFieldColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

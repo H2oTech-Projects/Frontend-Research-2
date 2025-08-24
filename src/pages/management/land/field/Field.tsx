@@ -36,6 +36,7 @@ import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
+import { fieldPageColumnProperties } from "@/utils/constant";
 
 interface initialTableDataTypes {
   search: string;
@@ -122,7 +123,7 @@ const Field = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("fieldName")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("fieldName")}</div>,
     },
     {
       accessorKey: "fieldIrrigHa",
@@ -137,7 +138,7 @@ const Field = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldIrrigHa")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("fieldIrrigHa")}</div>,
     },
     {
       accessorKey: "fieldLegalHa",
@@ -152,7 +153,7 @@ const Field = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("fieldLegalHa")}</div>,
     },
     {
       accessorKey: "geomHa",
@@ -167,7 +168,7 @@ const Field = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fieldLegalHa")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("fieldLegalHa")}</div>,
     },
     {
       accessorKey: "fieldActBool",
@@ -452,6 +453,7 @@ const Field = () => {
                 collapse={collapse}
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-312px)]"
+                columnProperties={fieldPageColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

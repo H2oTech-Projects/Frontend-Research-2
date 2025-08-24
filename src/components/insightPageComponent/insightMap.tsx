@@ -78,7 +78,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
         {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
         <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
-          <div>Parcel ID: { auxLayer.feature.properties.parcel_id}</div>
+          <div>Parcel ID: { auxLayer.feature.properties.parcel_id || feature.properties.apn}</div>
           <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div>
             <div>Total Allocation (AF): 66.5</div>
             <div>ETAW (AF): 46.5</div>
@@ -90,7 +90,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
             <div>Carryover (AF): 20.3</div>
             <div> Zone Abbreviation: MEN</div>
 </div>);
-        showInfo('Parcel Id: ', auxLayer.feature.properties.parcel_id);
+        showInfo('Parcel Id: ', auxLayer.feature.properties.parcel_id || feature.properties.apn);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;

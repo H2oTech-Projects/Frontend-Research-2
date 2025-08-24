@@ -35,6 +35,7 @@ import { useGetParcelMapByWAY } from "@/services/water/parcel";
 // import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
 import { z } from "zod";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
+import { customerParcelColumnProperties } from "@/utils/constant";
 
 interface initialTableDataTypes {
   search: string;
@@ -121,7 +122,7 @@ const CustomerParcel = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div >{row.getValue("customerName")}</div>,
+      cell: ({ row }) => <div className="px-3" >{row.getValue("customerName")}</div>,
     },
     {
       accessorKey: "parcelIds",
@@ -139,7 +140,7 @@ const CustomerParcel = () => {
 
       size: 180,
       // @ts-ignore
-      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto">{row.getValue("parcelIds")?.map((item: any) => { return <div key={item}>{item}, </div> })}</div>,
+      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto px-3">{<div className="flex gap-2">{row.getValue("parcelIds")?.join(", ")}</div>}</div>,
     },
     {
       id: "actions",
@@ -428,6 +429,7 @@ const CustomerParcel = () => {
                 customHeight="h-[calc(100vh-312px)]"
                 setGeojson={setGeojson as Function}
                 tableType={"customerParcel"}
+                columnProperties={customerParcelColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
