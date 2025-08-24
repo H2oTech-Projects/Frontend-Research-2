@@ -238,7 +238,8 @@ const Parcel = () => {
   };
 
   const removeInfo = (Id: String) => {
-    $("#popup-" + Id).remove();
+    // $("#popup-" + Id).remove();
+       $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {

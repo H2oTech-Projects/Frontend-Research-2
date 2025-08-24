@@ -197,7 +197,7 @@ const CustomerParcel = () => {
   };
 
   const removeInfo = (Id: String) => {
-    $("#popup-" + Id).remove();
+      $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {

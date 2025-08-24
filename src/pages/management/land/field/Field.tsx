@@ -245,7 +245,7 @@ const Field = () => {
       },
       mouseout(e: any) {
         const { id } = e.target.options;
-        removeInfo(id);
+        removeInfo();
       },
       click: (e: any) => {
         e.target.openPopup(); // Opens popup when clicked
@@ -268,8 +268,9 @@ const Field = () => {
     popup.appendTo("#map");
   };
 
-  const removeInfo = (Id: String) => {
-    $("#popup-" + Id).remove();
+  const removeInfo = () => {
+    // $("#popup-" + Id).remove();
+      $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -292,7 +293,7 @@ const Field = () => {
           fillOpacity: 0,
           opacity: 1,
         });
-        removeInfo(auxLayer.feature.properties.field_id);
+        removeInfo();
       },
     });
   }

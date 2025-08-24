@@ -118,7 +118,7 @@ const Conveyances = () => {
           fillOpacity: 0,
           opacity: 1,
         });
-        removeInfo(auxLayer.feature.properties?.id);
+          $("[id^='popup-']").remove();
       },
     })
   };

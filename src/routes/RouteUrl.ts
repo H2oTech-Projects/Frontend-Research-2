@@ -20,7 +20,7 @@ const Field = {
 };
 
 const Parcel = {
-  url: "/parcels",
+  url: "/parcel",
   name: "Parcel",
 };
 

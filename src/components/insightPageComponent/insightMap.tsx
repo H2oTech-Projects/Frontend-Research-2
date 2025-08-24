@@ -1,5 +1,5 @@
 import $ from "jquery";
-import React from 'react'
+import React, { useEffect } from 'react'
 import LeafletMap from '../LeafletMap'
 import RtGeoJson from '../RtGeoJson'
 import RtPolygon from '../RtPolygon'
@@ -48,7 +48,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
     // Insert a headline into that popup
     var hed = $("<div></div>", {
     //  text: "Parcel: " + Id,
-      text: `${Label}: XXX-XXX-XXX`,
+      text: `${Label}: ${Id}`,
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
     // Add the popup to the map
@@ -56,7 +56,8 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
   };
 
   const removeInfo = (Id: String) => {
-    $("#popup-" + Id).remove();
+    $("[id^='popup-']").remove();
+    // $("#popup-" + Id).remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -77,7 +78,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
         {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
         <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
-          <div>Parcel ID: XXX-XXX-XXX</div>
+          <div>Parcel ID: { auxLayer.feature.properties.parcel_id}</div>
           <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div>
             <div>Total Allocation (AF): 66.5</div>
             <div>ETAW (AF): 46.5</div>
@@ -89,7 +90,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
             <div>Carryover (AF): 20.3</div>
             <div> Zone Abbreviation: MEN</div>
 </div>);
-        showInfo('APN: ', auxLayer.feature.properties.apn);
+        showInfo('Parcel Id: ', auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -100,7 +101,7 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
         //   fillOpacity: 0,
         //   opacity: 1,
         // });
-        removeInfo(auxLayer.feature.properties.apn);
+        removeInfo(auxLayer.feature.properties.parcel_id);
       },
     })};
 
@@ -134,6 +135,8 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
           ></LeafletMap>)
 
     }
+
+
 
   return (<LeafletMap
             position={InsightMapPosition}

@@ -18,6 +18,7 @@ import ChartContainer from "@/components/insightPageComponent/chartContainer";
 import LeafletMap from "@/components/LeafletMap";
 import { InsightMapPosition, LeafletMapConfig } from "@/utils/mapConstant";
 import Spinner from "@/components/Spinner";
+import { useSelector } from "react-redux";
 interface EmailProps {
   value: string;
   label: string;
@@ -35,6 +36,7 @@ const Insight = () => {
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   const [collapse, setCollapse] = useState("default");
+  const Name = useSelector((state: any) => state.auth.user)?.split("@")?.[0];
 
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -50,7 +52,7 @@ const Insight = () => {
   const { data: accountAllocationChart, isLoading: chartLoading } = useGetAccountAllocationChart(selectedEmailValue);
 
   useEffect(() => {
-    isFetched && !!accountList?.data[0]?.value && setSelectedEmailValue(accountList?.data[0]?.value)
+    isFetched && !!accountList?.data?.[0]?.value && setSelectedEmailValue(accountList?.data[0]?.value)
   }, [isFetched]);
 
   useEffect(() => {
@@ -208,7 +210,7 @@ const Insight = () => {
           </div>
         );
       },
-      cell: ({ row }) => <div>XXX-XXX-XXX</div>,
+      cell: ({ row }) => <div>{row.getValue("parcel_id")}</div>,
     },
     {
       accessorKey: "primary_crop",
@@ -381,7 +383,7 @@ const Insight = () => {
   else {
     return (
       <div className="flex flex-col px-3 py-2 ">
-        <div className="text-xl font-medium text-royalBlue dark:text-white">Madera Allocation Report</div>
+        <div className="text-xl font-medium text-royalBlue dark:text-white">{Name === 'demo' ? "Madera" : Name.charAt(0).toUpperCase() + Name.slice(1)} Allocation Report</div>
         <div className="flex flex-col items-start  mt-2 gap-2 dark:text-slate-50 ">
           <RtSelect selectedValue={selectedEmailValue as string} dropdownList={accountList?.data ?? []} label="Account" setSelectedValue={()=>console.log("test")} />
           <RtSelect selectedValue={selectedReportTypeValue} dropdownList={ReportTypeList} label="Report Type" setSelectedValue={setSelectedReportTypeValue} showSearch={false} />
