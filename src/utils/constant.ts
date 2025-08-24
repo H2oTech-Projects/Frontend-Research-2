@@ -97,3 +97,31 @@ export const fieldPageColumnProperties = {
     geomHa: "number",
     fieldActBool:"str"
 };
+
+export const measurementPointColumnProperties = {
+    conveyId: "str",
+    msmtPointId: "str",
+    msmtPointName: "str",
+};
+export const measurementPointFieldColumnProperties = {
+    msmtPointId: "str",
+    fields: "str",
+    msmtPointName: "str",
+};
+export const conveyColumnProperties = {
+    conveyName: "str",
+    conveyId: "str",
+    conveyTypeName: "str",
+    conveyParentName: "str",
+    conveySeepageCms: "str",
+};
+export const regionColumnProperties = {
+    regionId: "str",
+    regionName: "str",
+ 
+};
+export const subregionColumnProperties = {
+    subRegionName: "str",
+    regionName: "str",
+ 
+};

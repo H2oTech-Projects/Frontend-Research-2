@@ -15,6 +15,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import RtGeoJson from '@/components/RtGeoJson';
 import { debounce } from '@/utils';
 import { useGetRegionList, useGetRegionMap } from '@/services/region';
+import { regionColumnProperties } from '@/utils/constant';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -53,7 +54,7 @@ const SubRegion = () => {
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("regionId")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("regionId")}</div>,
     },
     {
       accessorKey: "regionName",
@@ -68,7 +69,7 @@ const SubRegion = () => {
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("regionName")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("regionName")}</div>,
     },
 
   ];
@@ -217,7 +218,7 @@ const SubRegion = () => {
                 totalData={regionData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={conveyLoading}
-              // columnProperties={clientColumnProperties}
+              columnProperties={regionColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

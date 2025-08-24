@@ -27,6 +27,7 @@ import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
+import { measurementPointColumnProperties } from "@/utils/constant";
 
 interface initialTableDataTypes {
   search: string;
@@ -84,7 +85,7 @@ const measurementPoint = () => {
       },
 
       size: 100, // this size value is in px
-      cell: ({ row }) => <div className="capitalize">{row.getValue("conveyId")}</div>,
+      cell: ({ row }) => <div className="px-4" >{row.getValue("conveyId")}</div>,
     },
     {
       accessorKey: "msmtPointId",
@@ -99,7 +100,7 @@ const measurementPoint = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("msmtPointId")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("msmtPointId")}</div>,
     },
     {
       accessorKey: "msmtPointName",
@@ -114,7 +115,7 @@ const measurementPoint = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("msmtPointName")}</div>,
+      cell: ({ row }) => <div className="px-4" >{row.getValue("msmtPointName")}</div>,
     },
     {
       id: "actions",
@@ -305,6 +306,7 @@ const measurementPoint = () => {
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-210px)]"
                 tableType={"clientPoint"}
+                columnProperties={measurementPointColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

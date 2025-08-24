@@ -38,6 +38,7 @@ import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/FormComponent/FormInput";
 import { convertKeysToSnakeCase } from "@/utils/stringConversion";
 import { useLocation } from 'react-router-dom';
+import { measurementPointFieldColumnProperties } from "@/utils/constant";
 
 interface initialTableDataTypes {
   search: string;
@@ -207,7 +208,7 @@ const FieldMsmtPoint = () => {
         );
       },
       size: 300,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("msmtPointId")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("msmtPointId")}</div>,
     },
     {
       accessorKey: "msmtPointName",
@@ -222,7 +223,7 @@ const FieldMsmtPoint = () => {
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("msmtPointName")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("msmtPointName")}</div>,
     },
     {
       accessorKey: "fields",
@@ -238,7 +239,7 @@ const FieldMsmtPoint = () => {
       },
 
       size: 100, // this size value is in px
-      cell: ({ row }) => <div className="capitalize">{row.getValue("fields")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("fields")}</div>,
       //filterFn: 'includesString',
     },
     {
@@ -618,6 +619,7 @@ const FieldMsmtPoint = () => {
                 collapse={collapse}
                 isLoading={isLoading}
                 customHeight="h-[calc(100vh-308px)]" // increase h-[calc(100vh-160px)] to h-[calc(100vh-308px)] by adding 48px
+                columnProperties={measurementPointFieldColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-1 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

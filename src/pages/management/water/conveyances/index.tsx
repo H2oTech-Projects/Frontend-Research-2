@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 import CustomModal from '@/components/modal/ConfirmModal';
 import RtGeoJson from '@/components/RtGeoJson';
 import { debounce } from '@/utils';
+import { conveyColumnProperties } from '@/utils/constant';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -83,7 +84,7 @@ const Conveyances = () => {
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("conveyName")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("conveyName")}</div>,
     },
     {
       accessorKey: "conveyId",
@@ -98,7 +99,7 @@ const Conveyances = () => {
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("conveyId")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("conveyId")}</div>,
     },
     {
       accessorKey: "conveyTypeName",
@@ -113,7 +114,7 @@ const Conveyances = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("conveyTypeName")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("conveyTypeName")}</div>,
     },
     {
       accessorKey: "conveyParentName",
@@ -128,7 +129,7 @@ const Conveyances = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("conveyParentName")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("conveyParentName")}</div>,
     },
     {
       accessorKey: "conveySeepageCms",        // header: "Field ID",
@@ -143,7 +144,7 @@ const Conveyances = () => {
         );
       },
       size: 150,
-      cell: ({ row }) => <div className="capitalize">{row.getValue("conveySeepageCms")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("conveySeepageCms")}</div>,
     },
     {
       id: "actions",
@@ -268,7 +269,7 @@ const Conveyances = () => {
     )
 
   }, [isMapLoading,clickedGeom,mapGeoJson])
-  console.log(clickedGeom)
+
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
       <CustomModal
@@ -338,7 +339,7 @@ const Conveyances = () => {
                 totalData={conveyData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={conveyLoading}
-              // columnProperties={clientColumnProperties}
+              columnProperties={conveyColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
