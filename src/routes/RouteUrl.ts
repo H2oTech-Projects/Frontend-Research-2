@@ -44,12 +44,12 @@ const MeasurementPoint = {
 };
 
 const AddMeasurementPoint = {
-  url: "/measurementPoint/addMeasurementPoint",
+  url: "/measurementPoints/addMeasurementPoint",
   name: "AddMeasurementPoint",
 };
 
 const EditMeasurementPoint = {
-  url: "/measurementPoint/editMeasurementPoint",
+  url: "/measurementPoints/editMeasurementPoint",
   name: "EditMeasurementPoint",
 };
 

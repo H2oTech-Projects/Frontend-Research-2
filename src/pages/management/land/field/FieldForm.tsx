@@ -169,7 +169,7 @@ const FieldForm = () => {
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
         pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Field`}
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Field", menuPath: "/field" }]}
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Field", menuPath: "/fields" }]}
       />
 
       <Form {...form}>

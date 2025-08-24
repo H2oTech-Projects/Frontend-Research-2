@@ -783,12 +783,12 @@ export const MsmtPointInfo = ({mpId, msmtPointId, wapId}: MsmtPointDetailTypes) 
       </div>
       <div className="w-full flex flex-row justify-between">
         <Button className="text-white bg-slate-900/90 h-6 px-2 text-xs" onClick={() => {
-          window.open(`/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
+          window.open(`/msmtPointsField?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
         }}>
           View Detail
         </Button>
         <Button className="text-white bg-slate-900/90 h-6 px-2 text-xs" onClick={() => {
-          window.open(`/field_msmtpoint?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
+          window.open(`/msmtPointsField?mpId=${mpId}&&wapId=${wapId}&&msmtpoint=${msmtPointId}`, '_blank');
         }}>
           xyz........
         </Button>
