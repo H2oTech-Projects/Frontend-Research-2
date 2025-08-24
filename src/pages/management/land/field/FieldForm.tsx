@@ -33,7 +33,7 @@ import { UnitSystemName } from '@/utils'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
-  wapId: z.number().nullable().optional(),
+  wapId: z.string().nullable().optional(),
   fieldId: z.string().optional(),
   fieldName: z.string().min(5, "Field Name must be at least 5 characters"),
   fieldDesc: z.string().optional(),
@@ -62,7 +62,7 @@ const FieldForm = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      wapId: Number(''),
+      wapId: undefined,
       fieldId: "",
       fieldName: "",
       fieldIrrigArea: undefined,
@@ -98,7 +98,7 @@ const FieldForm = () => {
       form.setValue("wapId", waps?.data[0].value)
     }
     else {
-      form.setValue("wapId", Number(wapId))
+      form.setValue("wapId", wapId)
     }
 
   }, [waps])
@@ -106,7 +106,7 @@ const FieldForm = () => {
   useEffect(() => {
     if (fieldDetailData && id) {
       form.reset({ ...fieldDetailData?.data[0], fieldActBool: fieldDetailData?.data[0]?.fieldActBool ? "True" : "False", fieldIrrigArea: fieldDetailData?.data[0]?.fieldIrrigHa, fieldLegalArea: fieldDetailData?.data[0]?.fieldLegalHa });
-      form.setValue("wapId", Number(wapId));
+      form.setValue("wapId", wapId);
       form.setValue("fieldCoordinates", JSON.stringify(fieldDetailData?.fieldCoordinates));
       setPreviewMapData({ data: fieldDetailData?.fieldGeojson,coordinates: fieldDetailData?.fieldCoordinates,   view_bounds: fieldDetailData?.viewBounds ? fieldDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
     }
@@ -124,7 +124,7 @@ const FieldForm = () => {
           queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
           queryClient.invalidateQueries({ queryKey: [GET_FIELD_MAP_KEY] });
           toast.success(data?.message);
-          navigate("/field", {
+          navigate("/fields", {
             state: {
               wapId: formData?.wap_id
             }
@@ -145,7 +145,7 @@ const FieldForm = () => {
           queryClient.invalidateQueries({ queryKey: [PUT_FIELD_KEY_BY_WAP] });
           queryClient.invalidateQueries({ queryKey: [GET_FIELD_MAP_KEY] });
           toast.success(data?.message);
-          navigate("/field", {
+          navigate("/fields", {
             state: {
               wapId: formData?.wap_id
             }
