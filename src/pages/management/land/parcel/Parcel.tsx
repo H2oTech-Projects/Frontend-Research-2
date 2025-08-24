@@ -96,7 +96,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Parcel ID {tableInfo?.sort !== "parcelName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Parcel ID {tableInfo?.sort !== "parcel_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -116,7 +116,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_geom_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Parcel Geom Ha {tableInfo?.sort !== "parcelGeomHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Parcel Geom Ha {tableInfo?.sort !== "parcel_geom_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -131,7 +131,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_irrig_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Parcel Irrig ({UnitSystemName()})  {tableInfo?.sort !== "parcelIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Parcel Irrig ({UnitSystemName()})  {tableInfo?.sort !== "parcel_irrig_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -146,7 +146,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "parcelLegalHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "parcel_legal_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
