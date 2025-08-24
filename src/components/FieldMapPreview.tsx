@@ -1,4 +1,4 @@
-import { FeatureGroup, MapContainer, Marker, Polygon, Polyline, TileLayer, useMap } from "react-leaflet"
+import { FeatureGroup, LayersControl, MapContainer, Marker, Polygon, Polyline, TileLayer, useMap } from "react-leaflet"
 import CustomZoomControl from './MapController'
 import Spinner from '@/components/Spinner';
 import L, { LatLng, LeafletEvent, Layer,FeatureGroup as LeafletFeatureGroup,LatLngTuple } from "leaflet"
@@ -83,7 +83,6 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
       },
     })
   };
-  console.log(data)
   return (
     <div className="w-full h-[calc(100vh-228px)] ">
       {isLoading || !data || !refLayer ? (<><MapContainer
@@ -93,7 +92,26 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
         scrollWheelZoom={true}
         zoomControl={false} // Disable default zoom control
         minZoom={2}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <LayersControl position="bottomleft">
+        
+                        <LayersControl.BaseLayer
+                            checked
+                            name="Satellite"
+                        >
+                            <TileLayer
+                                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                                attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
+                            />
+                        </LayersControl.BaseLayer>
+        
+                        <LayersControl.BaseLayer name="Street Map">
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            />
+                        </LayersControl.BaseLayer>
+                     
+                    </LayersControl>
         <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
           <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
         </div>
@@ -106,7 +124,26 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
         scrollWheelZoom={true}
         zoomControl={false} // Disable default zoom control
         minZoom={2}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <LayersControl position="bottomleft">
+        
+                        <LayersControl.BaseLayer
+                            checked
+                            name="Satellite"
+                        >
+                            <TileLayer
+                                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                                attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
+                            />
+                        </LayersControl.BaseLayer>
+        
+                        <LayersControl.BaseLayer name="Street Map">
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            />
+                        </LayersControl.BaseLayer>
+                     
+                    </LayersControl>
           <FeatureGroup ref={refLayer}>
               <EditControl
                 position="topright"
