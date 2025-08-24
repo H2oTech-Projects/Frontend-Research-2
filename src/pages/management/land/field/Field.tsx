@@ -257,7 +257,7 @@ const Field = () => {
 
   const showInfo = (Label: String, Id: String) => {
     var popup = $("<div></div>", {
-      id: `${Label}${Id}`,
+      id: `popup-${Id}`,
       class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
     });
     // Insert a headline into that popup
