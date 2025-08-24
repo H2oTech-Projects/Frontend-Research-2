@@ -329,12 +329,11 @@ const Parcel = () => {
   }, [ways])
 
 
-  console.log(fieldData)
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
       <PageHeader
-        pageHeaderTitle="Parcel"
+        pageHeaderTitle="Parcels"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
 <CustomModal

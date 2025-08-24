@@ -382,7 +382,7 @@ const Field = () => {
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
       <PageHeader
-        pageHeaderTitle="Field"
+        pageHeaderTitle="Fields"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
 <CustomModal

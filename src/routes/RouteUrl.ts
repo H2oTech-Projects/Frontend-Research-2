@@ -15,12 +15,12 @@ const Dashboard = {
 };
 
 const Field = {
-  url: "/field",
+  url: "/fields",
   name: "Field",
 };
 
 const Parcel = {
-  url: "/parcel",
+  url: "/parcels",
   name: "Parcel",
 };
 
@@ -39,7 +39,7 @@ const ViewField = {
 };
 
 const MeasurementPoint = {
-  url: "/measurementPoint",
+  url: "/measurementPoints",
   name: "MeasurementPoint",
 };
 
@@ -168,7 +168,7 @@ const DistrictInfo = {
 };
 
 const FieldMsmtPoint = {
-  url: "/field_msmtpoint",
+  url: "/msmtPointsField",
   name: "Field-MsmtPoint",
 };
 
@@ -214,12 +214,12 @@ const ViewCustomerField = {
 }
 
 const Region = {
-  url: "/region",
+  url: "/regions",
   name: "Region",
 }
 
 const SubRegion = {
-  url: "/sub-region",
+  url: "/subregions",
   name: "Sub-Region",
 };
 

@@ -170,7 +170,7 @@ const SubRegion = () => {
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
       <PageHeader
-        pageHeaderTitle="Region"
+        pageHeaderTitle="Regions"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Land", menuPath: "" }]}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">

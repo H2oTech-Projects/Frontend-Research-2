@@ -170,7 +170,7 @@ const Conveyances = () => {
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
       <PageHeader
-        pageHeaderTitle="Sub Regions"
+        pageHeaderTitle="Subregions"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Land", menuPath: "" }]}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
