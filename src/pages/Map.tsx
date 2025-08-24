@@ -118,7 +118,7 @@ const Map = () => {
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.apn;
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700});
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false});
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
@@ -149,8 +149,8 @@ const Map = () => {
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.apn;
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700});
 
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false});
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
@@ -197,7 +197,6 @@ const Map = () => {
   }, [viewBound, mapData])
 
   const mapConfigurations = useMemo(() => { return {'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true} }, []);
-  console.log(searchedParcels)
   return (
     <div id="map" className="relative flex h-screen w-full">
        <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
@@ -212,7 +211,7 @@ const Map = () => {
             name="search"
             id="search"
             placeholder="Search ..."
-            className="text-white w-full bg-transparent text-xs text-slate-900 outline-0 placeholder:text-slate-300 "
+            className="text-white w-full bg-transparent text-xs outline-0 placeholder:text-slate-300 "
             autoComplete="off"
             onKeyDown={handleKeyDown}
           />
