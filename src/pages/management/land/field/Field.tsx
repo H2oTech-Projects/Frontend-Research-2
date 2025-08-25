@@ -148,7 +148,7 @@ const Field = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Stand by Acres ({UnitSystemName()}) {tableInfo?.sort !== "field_legal_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Legal Area ({UnitSystemName()}) {tableInfo?.sort !== "field_legal_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -163,7 +163,7 @@ const Field = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Geometric Area ({UnitSystemName()}) {tableInfo?.sort !== "field_legal_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Geom Area ({UnitSystemName()}) {tableInfo?.sort !== "field_legal_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
