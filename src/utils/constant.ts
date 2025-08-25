@@ -125,3 +125,9 @@ export const subregionColumnProperties = {
     regionName: "str",
  
 };
+
+export const customerPageColumnProperties = { 
+    name: "str",
+    email: "str",
+    phone: "str"
+};
