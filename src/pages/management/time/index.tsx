@@ -618,7 +618,7 @@ const Time = () => {
                                 name={`wapList.${index}.waStartDate`}
                                 label='Start Date'
                                 showDateIcon={true}
-                                disabled={index !== 0}
+                                disabled={index === 0}
                                 minDate={index === 0 ? new Date(selectedWAYdetail[0]?.waStartDate ?? "") : form.watch(`wapList.${index - 1}.waEndDate`) ? new Date(form.watch(`wapList.${index - 1}.waEndDate`)!) : new Date()}
                                 maxDate={new Date(selectedWAYdetail[0]?.waEndDate ?? "")}
                               />
