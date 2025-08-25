@@ -627,7 +627,7 @@ const Time = () => {
                               <FormDatePicker
                                 control={form.control}
                                 name={`wapList.${index}.waEndDate`}
-                                label="End date"
+                                label="End Date"
                                 showDateIcon={true}
                                 disabled={index + 1 === fields.length ? true : false}
                                 minDate={
