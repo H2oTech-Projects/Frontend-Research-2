@@ -477,7 +477,7 @@ const FieldMsmtPoint = () => {
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
       <PageHeader
-        pageHeaderTitle="Measurement Point-Field"
+        pageHeaderTitle="Msmt Point-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
       <CustomModal

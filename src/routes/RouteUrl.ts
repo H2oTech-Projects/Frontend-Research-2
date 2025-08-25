@@ -20,7 +20,7 @@ const Field = {
 };
 
 const Parcel = {
-  url: "/parcel",
+  url: "/parcels",
   name: "Parcel",
 };
 
@@ -81,12 +81,12 @@ const Allocations = {
   name: "Allocations",
 };
 const Crops = {
-  url: "/crops",
-  name: "Crops",
+  url: "/crop",
+  name: "Crop",
 };
 const CropField = {
-  url: "/crop-fields",
-  name: "Crop Fields",
+  url: "/crop-field",
+  name: "Crop Field",
 };
 
 const CustomReport = {
@@ -168,7 +168,7 @@ const DistrictInfo = {
 };
 
 const FieldMsmtPoint = {
-  url: "/msmtPointsField",
+  url: "/msmtPoint-field",
   name: "Field-MsmtPoint",
 };
 

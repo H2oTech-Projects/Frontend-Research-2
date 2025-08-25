@@ -236,12 +236,11 @@ const measurementPoint = () => {
   }, [mapLoading, position, mapData])
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
-  console.log(tableInfo)
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
       <PageHeader
-        pageHeaderTitle="MsmtPoint"
+        pageHeaderTitle="Measurement Points"
         breadcrumbPathList={[{ menuName: "Water", menuPath: "" }]}
       />
 <CustomModal
