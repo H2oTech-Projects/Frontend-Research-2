@@ -156,19 +156,19 @@ const Field = () => {
       cell: ({ row }) => <div className="px-4">{row.getValue("fieldLegalHa")}</div>,
     },
     {
-      accessorKey: "geomHa",
+      accessorKey: "fieldGeomHa",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_geom_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Geom Area ({UnitSystemName()}) {tableInfo?.sort !== "field_legal_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Geom Area ({UnitSystemName()}) {tableInfo?.sort !== "field_geom_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="px-4">{row.getValue("fieldLegalHa")}</div>,
+      cell: ({ row }) => <div className="px-4">{row.getValue("fieldGeomHa")}</div>,
     },
     {
       accessorKey: "fieldActBool",
