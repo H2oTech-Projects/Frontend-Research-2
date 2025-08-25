@@ -93,7 +93,7 @@ const Allocations = {
   name: "Allocations",
 };
 const Crops = {
-  url: "/crop",
+  url: "/crops",
   name: "Crop",
 };
 const CropField = {
