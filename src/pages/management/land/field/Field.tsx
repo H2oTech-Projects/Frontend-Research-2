@@ -76,7 +76,7 @@ const Field = () => {
   };
   // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
   const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo, defaultWap);
-  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetFieldMapByWAP(defaultWap);
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap, isFetching: mapFetching } = useGetFieldMapByWAP(defaultWap);
   //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
   const { data: waps, isLoading: wapsLoading } = useGetWaps()
   const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
@@ -470,7 +470,7 @@ const Field = () => {
               className={cn("relative flex h-[calc(100vh-160px)] w-full")}
               id="map"
             >
-              {!mapLoading ? (<LeafletMap
+              {!mapFetching ? (<LeafletMap
                 position={position}
                 zoom={zoomLevel}
                 collapse={collapse}
