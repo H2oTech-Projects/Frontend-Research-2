@@ -137,6 +137,27 @@ export const RouteList = [
     ),
   },
   {
+    path: routeUrl.AddCustomers?.url,
+    name: routeUrl.AddCustomers?.name,
+    Component: lazy(
+      async () => await import("../pages/management/customer/CustomerForm")
+    ),
+  },
+  {
+    path: routeUrl.EditCustomers?.url,
+    name: routeUrl.EditCustomers?.name,
+    Component: lazy(
+      async () => await import("../pages/management/customer/CustomerForm")
+    ),
+  },
+  {
+    path: routeUrl.ViewCustomers?.url,
+    name: routeUrl.ViewCustomers?.name,
+    Component: lazy(
+      async () => await import("../pages/management/customer/CustomerForm")
+    ),
+  },
+  {
     path: routeUrl.CustomReport?.url,
     name: routeUrl.CustomReport?.name,
     Component: lazy(

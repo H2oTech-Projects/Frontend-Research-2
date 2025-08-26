@@ -72,6 +72,18 @@ const Customers = {
   url: "/customers",
   name: "Customers",
 };
+const AddCustomers = {
+  url: "/Customers/add",
+  name: "Customers",
+};
+const EditCustomers = {
+  url: "/Customers/:id/edit",
+  name: "Customers",
+};
+const ViewCustomers = {
+  url: "/Customers/:id/view",
+  name: "Customers",
+};
 const Billings = {
   url: "/billings",
   name: "Billings",
@@ -81,7 +93,7 @@ const Allocations = {
   name: "Allocations",
 };
 const Crops = {
-  url: "/crop",
+  url: "/crops",
   name: "Crop",
 };
 const CropField = {
@@ -282,5 +294,8 @@ export {
   SubRegion,
   FieldParcel,
   ViewConveyance,
-  CropField
+  CropField,
+  AddCustomers,
+  EditCustomers,
+  ViewCustomers
 };
