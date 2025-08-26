@@ -34,11 +34,11 @@ export const queryTimeSeries = {
   },
 
   putWapt: async (formValue: any) => {
-    console.log(formValue)
     const data = {
       client_id: userData?.client_id,
       wa_period_type: formValue?.waptName,
-      wa_period_type_name: formValue?.waptName
+      wa_period_type_name: formValue?.waptName,
+      rank: formValue?.rank
     }
     const response = await axiosInstance.put(BASE_API_URL + "/ways/"  + formValue?.wapYearId + "/wapts/" + formValue?.id + "/",data, {
       headers: {

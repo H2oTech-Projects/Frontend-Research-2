@@ -538,7 +538,7 @@ const Time = () => {
                           <div className="flex flex-grow text-xl">{item?.waPeriodTypeName}</div>
                           <Button
                             onPointerDown={(e) => e.stopPropagation()}
-                            onClick={() => setWaptEditElement({ id: item?.id, waptName: item?.waPeriodTypeName })}>
+                            onClick={() => setWaptEditElement({ id: item?.id, waptName: item?.waPeriodTypeName,rank:item?.rank })}>
                             <Pencil />
                           </Button>
                           <Button
@@ -554,7 +554,7 @@ const Time = () => {
                               type="text"
                               value={waptEditElement?.waptName}
                               onPointerDown={(e) => e.stopPropagation()}
-                              onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value })}
+                              onChange={(e) => setWaptEditElement({ id: item?.id, waptName: e.target.value,rank:item?.rank })}
                               className="flex-grow rounded px-2 py-1 text-black dark:text-white bg-white dark:bg-slate-700"
                             />
                             <Button
