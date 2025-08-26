@@ -56,7 +56,7 @@ const Time = () => {
 
   const { data: waysOptions, isLoading: waysOptionsLoading } = useGetWaysOptions();
   const { data: wapTypeOptions, isLoading: isWapTypeOptionsLoading } = useGetWaptOptions(wapYear)
-  const { data: wayDetail, isLoading: isWayDetailLoading } = useGetWaysDetails(wapYear)
+  const { data: wayDetail, isLoading: isWayDetailLoading,refetch } = useGetWaysDetails(wapYear)
   const { mutate: createWays, isPending: isWaysCreatePending } = usePutWays();
   const { mutate: postWapt, isPending: isWaptCreating } = usePostWapt();
   const { mutate: updateWapt, isPending: isWaptUpdating } = usePutWapt()
@@ -373,6 +373,9 @@ const Time = () => {
           queryClient.invalidateQueries({ queryKey: [PUT_WAPTS] });
           queryClient.invalidateQueries({ queryKey: [GET_WAYS_DETAILS, wapYear] });
           setWaptEditElement(null);
+          // this will show the list of wap and remove unsaved wapList in form 
+          form.setValue("wapList", wayDetail?.data?.map((item: any) => { return { ...item, pId: item?.id } }))
+          setEnableSubmit(false);
         },
         onError: (error) => {
           showErrorToast(error?.response?.data.message);
