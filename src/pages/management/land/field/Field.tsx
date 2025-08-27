@@ -14,7 +14,7 @@ import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
 import swmcFields from "../../../../geojson/SMWC_Fields.json";
 import { buildPopupMessage } from "@/utils/map";
-
+import { createRoot } from "react-dom/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -275,14 +275,29 @@ const Field = () => {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    layer.bindPopup(buildPopupMessage(feature.properties));
+    const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; overflow:hidden";
+    popupDiv.id = feature.properties?.id;
+    layer.bindPopup(popupDiv);
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
+        // auxLayer.setStyle({
+        //   weight: 4,
+        //   //color: "#800080"
+        // });
+                createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+                {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
+                <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
+                  <div>Field Id: { auxLayer.feature.properties.field_id}</div>
+                  <div>Irrig Area: { auxLayer.feature.properties.field_irrig_ha}</div>
+                  <div>Legal Area: { auxLayer.feature.properties.field_legal_ha}</div>
+                  <div>Geom Area: { auxLayer.feature.properties.field_geom_ha}</div>
+                  <div>Status: { auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
+                  
+        </div>);
         showInfo("FieldID: ",auxLayer.feature.properties.field_id);
       },
       mouseout: function (e: any) {
@@ -467,7 +482,7 @@ const Field = () => {
 
           <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
             <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
               id="map"
             >
               {!mapFetching ? (<LeafletMap

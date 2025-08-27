@@ -38,7 +38,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { parcelPageColumnProperties } from "@/utils/constant";
-
+import { createRoot } from "react-dom/client";
 interface initialTableDataTypes {
   search: string;
   page_no: number,
@@ -244,14 +244,25 @@ const Parcel = () => {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    layer.bindPopup(buildPopupMessage(feature.properties));
+       const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; overflow:hidden";
+    popupDiv.id = feature.properties?.id;
+    layer.bindPopup(popupDiv);
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
+            createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+            {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
+            <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
+              <div>Parcel Id: { auxLayer.feature.properties.parcel_id}</div>
+              <div>Irrig Area: { auxLayer.feature.properties.field_irrig_ha}</div>
+              <div>Legal Area: { auxLayer.feature.properties.field_legal_ha}</div>
+              <div>Geom Area: { auxLayer.feature.properties.field_geom_ha}</div>
+              <div>Status: { auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
+                          
+                </div>);
         showInfo("ParcelID: ",auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e: any) {
@@ -275,9 +286,8 @@ const Parcel = () => {
   const ReturnChildren = useMemo(() => {
 
     const geoJsonStyle = (features: any) => {
-      // console.log(features?.properties?.field_id,clickedField?.id?.toString(),"test")
-      if (features?.properties?.parcel_id === clickedField?.id?.toString()) {
-
+      if (features?.properties?.parcel_id.toString() === clickedField?.id?.toString()) {
+          console.log("here")
         return {
           color: "red", // Border color
           fillColor: "transparent", // Fill color for the highlighted area
@@ -295,7 +305,7 @@ const Parcel = () => {
     return (
       <>
       {mapData?.data && <RtGeoJson
-        key={"fields"}
+        key={"parcels"}
         layerEvents={geoJsonLayerEvents}
         style={geoJsonStyle}
         data={JSON.parse(mapData['data'])}
@@ -419,7 +429,7 @@ const Parcel = () => {
 
           <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
             <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
               id="map"
             >
               {!mapLoading ? (<LeafletMap

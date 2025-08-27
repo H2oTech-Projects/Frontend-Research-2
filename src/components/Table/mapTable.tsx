@@ -183,7 +183,7 @@ const MapTable = <T,>({
       // @ts-ignore
       tableType!=='parcel' && setZoomLevel(13);
       // @ts-ignore
-      setClickedField && setClickedField({id:row.original?.fieldId,viewBounds:row.original?.viewBounds});
+      setClickedField && setClickedField({id:row.original?.fieldId || row.original?.parcelId ,viewBounds:row.original?.viewBounds});
     });
 
     const tableHeader = () => {
