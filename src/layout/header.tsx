@@ -16,7 +16,8 @@ interface HeaderProps {
 export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
     const queryClient = useQueryClient();
     const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
-     const refreshToken = useSelector((state: any) => state.auth.refresh);
+    const refreshToken = useSelector((state: any) => state.auth.refresh);
+    const Name = useSelector((state: any) => state.auth.user)?.split("@")?.[0];
     const { theme, setTheme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
@@ -85,6 +86,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-x-3">
+                    <span className="text-[16px] font-medium dark:text-slate-50">{Name === 'demo' ? "MADERA" : Name.toUpperCase()}</span>
                     <Button
                         variant={"default"}
                         className="dark:bg-royalBlue h-8 !w-6"
