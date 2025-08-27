@@ -79,7 +79,7 @@ const measurementPoint = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Convey ID {tableInfo?.sort !== "FieldID" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Convey ID {tableInfo?.sort !== "field_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -93,9 +93,9 @@ const measurementPoint = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "field_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "msmt_point_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            MsmtPoint ID {tableInfo?.sort !== "fieldName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            MsmtPoint ID {tableInfo?.sort !== "msmt_point_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -110,7 +110,7 @@ const measurementPoint = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "field_irrig_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            MsmtPoint Name {tableInfo?.sort !== "fieldIrrigHa" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            MsmtPoint Name {tableInfo?.sort !== "field_irrig_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },

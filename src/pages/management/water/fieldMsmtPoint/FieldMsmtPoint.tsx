@@ -203,7 +203,7 @@ const FieldMsmtPoint = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "msmt_point_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Msmt Point ID {tableInfo?.sort !== "msmtPointId" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Msmt Point ID {tableInfo?.sort !== "msmt_point_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -218,7 +218,7 @@ const FieldMsmtPoint = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "msmt_point_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Msmt Point Name {tableInfo?.sort !== "msmtPointName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Msmt Point Name {tableInfo?.sort !== "msmt_point_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -232,8 +232,9 @@ const FieldMsmtPoint = () => {
         return (
           <Button
             variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "fields", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Fields {tableInfo?.sort !== "canal" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Fields {tableInfo?.sort !== "fields" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
