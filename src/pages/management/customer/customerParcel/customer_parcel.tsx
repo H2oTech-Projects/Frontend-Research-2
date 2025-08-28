@@ -224,7 +224,6 @@ const CustomerParcel = () => {
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        debugger
         removeInfo(auxLayer.feature.properties.parcel_id)
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.parcel_id)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.parcel_id);
@@ -259,7 +258,6 @@ const CustomerParcel = () => {
       },
       click: function (e: any) {
         const auxLayer = e.target;
-        debugger
         removeInfo(auxLayer.feature.properties.parcel_id)
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.parcel_id)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.parcel_id);
