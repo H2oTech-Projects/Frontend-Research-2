@@ -80,8 +80,10 @@ html.dark .insight-Map .leaflet-popup-content-wrapper {
 }
 .Mable-Map .leaflet-popup-content {
   background-color:#16599a !important; /* Set a background color for the popup content */
-  max-height: 208px !important; /* Set a maximum height for the popup content */
-  max-width: 280px !important;
+  max-height: 280px !important; /* Set a maximum height for the popup content */
+  height: auto !important;
+  max-width: 300px !important;
+  min-width: 250 !important;
   scrollbar-width: thin !important; /* For Firefox */
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
 }
