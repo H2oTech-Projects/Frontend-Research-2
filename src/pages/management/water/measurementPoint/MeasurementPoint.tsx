@@ -28,6 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { measurementPointColumnProperties } from "@/utils/constant";
+import { createRoot } from "react-dom/client";
 
 interface initialTableDataTypes {
   search: string;
@@ -176,7 +177,12 @@ const measurementPoint = () => {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    layer.bindPopup(buildPopupMessage(feature.properties));
+    const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; overflow:hidden";
+    popupDiv.id = feature.properties?.id;
+    layer.bindPopup(popupDiv);
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
@@ -186,6 +192,9 @@ const measurementPoint = () => {
           fillColor: "#5a76a380",
           opacity: 1,
         });
+           createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+                            <div>Measurement Point Id: { auxLayer.feature.properties.msmt_point_id}</div>                            
+                  </div>);
         showInfo("MsmtPoint ID: ",auxLayer.feature.properties.msmt_point_id);
       },
       mouseout: function (e: any) {
@@ -319,7 +328,7 @@ const measurementPoint = () => {
 
           <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
             <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
               id="map"
             >
               {!mapLoading ? (<LeafletMap

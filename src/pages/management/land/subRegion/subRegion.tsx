@@ -16,6 +16,7 @@ import RtGeoJson from '@/components/RtGeoJson';
 import { debounce } from '@/utils';
 import { useGetRegionList, useGetRegionMap, useGetSubRegionList, useGetSubRegionMap } from '@/services/region';
 import { subregionColumnProperties } from '@/utils/constant';
+import { createRoot } from 'react-dom/client';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -100,15 +101,20 @@ const Conveyances = () => {
       $("#popup-" + Id).remove();
     };
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
+       const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; overflow:hidden";
+    popupDiv.id = feature.properties?.id;
+    layer.bindPopup(popupDiv);
     layer.on({
-      mouseover: function (e: any) {
+    mouseover: function (e: any) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
-        showInfo("SubRegion", auxLayer.feature.properties?.id, auxLayer.feature.properties?.sub_region_name);
+                createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+                  <div>Region Id: { auxLayer.feature.properties.region_id}</div>
+                  <div>Subregion Name: { auxLayer.feature.properties.sub_region_name}</div>                             
+        </div>);
+        showInfo("SubRegion",auxLayer.feature.properties.region_id, auxLayer.feature.properties.sub_region_name);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -232,7 +238,7 @@ const Conveyances = () => {
 
           <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
             <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
               id="map"
             >
               <LeafletMap

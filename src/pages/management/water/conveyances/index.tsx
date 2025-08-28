@@ -27,6 +27,7 @@ import CustomModal from '@/components/modal/ConfirmModal';
 import RtGeoJson from '@/components/RtGeoJson';
 import { debounce } from '@/utils';
 import { conveyColumnProperties } from '@/utils/constant';
+import { createRoot } from 'react-dom/client';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -56,21 +57,7 @@ const Conveyances = () => {
   const { mutate: deleteConveyance, isPending: isConveyanceDeleting } = useDeleteConveyance();
   const { data: mapGeoJson, isLoading: isMapLoading } = useGetConveyanceMap();
   const columns: ColumnDef<conveyanceDataType>[] = [
-    // {
-    //   accessorKey: "clientName",
-    //   header: ({ column }) => {
-    //     return (
-    //       <Button
-    //         variant="ghost"
-    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "client_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-    //       >
-    //         Client Name{tableInfo?.sort !== "clientName" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-    //       </Button>
-    //     );
-    //   },
-    //   size: 120,
-    //   cell: ({ row }) => <div className="capitalize">{row.getValue("clientName")}</div>,
-    // },
+
     {
       accessorKey: "conveyName",
       header: ({ column }) => {
@@ -204,16 +191,41 @@ const Conveyances = () => {
     });
   };
 
+    const showInfo = (label: String, Id: String, name: String) => {
+      var popup = $("<div></div>", {
+        id: "popup-" + Id,
+        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+      });
+      // Insert a headline into that popup
+      var hed = $("<div></div>", {
+        text: ` ${label} : ${name}` ,
+        // text: `${label}: ` + Id,
+        css: { fontSize: "16px", marginBottom: "3px" },
+      }).appendTo(popup);
+      // Add the popup to the map
+      popup.appendTo("#map");
+    };
+
+    const removeInfo = (Id: String) => {
+         $("[id^='popup-']").remove();
+    };
+
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-    // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
+    const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; overflow:hidden";
+    popupDiv.id = feature.properties?.id;
+    layer.bindPopup(popupDiv);
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 4,
-          //color: "#800080"
-        });
-        // showInfo(auxLayer.feature.properties.apn);
+        createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+                  <div>Conveyance Id: { auxLayer.feature.properties.convey_id}</div>
+                  <div>Conveyance Name: { auxLayer.feature.properties.convey_name}</div>                             
+                  <div>Seepage: { auxLayer.feature.properties.convey_seepage_cms}</div>                             
+        </div>);
+        showInfo("Conveyance Name",auxLayer.feature.properties.convey_id, auxLayer.feature.properties.convey_name);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -224,7 +236,7 @@ const Conveyances = () => {
           fillOpacity: 0,
           opacity: 1,
         });
-        // removeInfo(auxLayer.feature.properties.apn);
+        removeInfo(auxLayer.feature.properties.convey_id);
       },
     })
   };
@@ -353,7 +365,7 @@ const Conveyances = () => {
 
           <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
             <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
+              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
               id="map"
             >
               <LeafletMap
