@@ -29,6 +29,7 @@ const Map = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [search, setSearch] = useState("");
     const modalRef = useRef<HTMLDivElement>(null);
+    const [zoomLevel, setZoomLevel] = useState(10);
     const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
     const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user
     const wayId = JSON.parse(localStorage.getItem("auth") as string)?.way_id
@@ -36,6 +37,7 @@ const Map = () => {
     const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
     const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(wayId);
     const { data: searchedParcels, isLoading: isSearching, refetch: refetchSearchParcelMap } = useGetSearchParcelMapByWAY(wayId, search);
+    const [searchParcelData, setSearchParcelData] = useState<any>(null);
     const parcels: any = parcelsData as any;
     const { theme, setTheme } = useTheme();
     const dispatch = useDispatch();
@@ -45,6 +47,13 @@ const Map = () => {
         setSearch(e.target.value)
       }
     };
+
+    useEffect(() => {
+      if(searchedParcels){
+      setSearchParcelData(searchedParcels);
+}
+
+}, [isSearching, searchedParcels]);
 
     const handleLogout = () => {
           mutate({refresh_token: refreshToken},{
@@ -142,13 +151,12 @@ const Map = () => {
       },
     });
   }
-
-  const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
+      const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
     const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
-    popupDiv.id = feature.properties?.apn;
+    popupDiv.id = feature.properties?.parcel_id;
 
     layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false});
     layer.on({
@@ -165,11 +173,20 @@ const Map = () => {
     });
   }
 
+
+  // const viewBound = useMemo(() => {
+  //     return loggedUser == 'colusa@wateraccounts.com' ?
+  //     !!searchedParcels && searchedParcels.viewBound || [[38.92390769485239, -122.45505718324472], [39.7991536823128, -121.79550745742236]] :
+  //     !!searchedParcels && searchedParcels.viewBound || [[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]] }, [searchedParcels]);
+
+  const ReturnChildren = useMemo(() => {
+
+
   const maderaJsonStyle = (features: Feature) => {
-    if (!!searchedParcels && searchedParcels?.parcelIds?.includes(features?.properties?.parcel_id)){
+    if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)){
       return {
         color: "red", // Border color
-        fillColor: "transparent", // Fill color for the highlighted area
+        fillColor: "red", // Fill color for the highlighted area
         fillOpacity: 0.5,
         weight: 2,
       };
@@ -182,19 +199,13 @@ const Map = () => {
     };
   }
 
-  const viewBound = useMemo(() => {
-      return loggedUser == 'colusa@wateraccounts.com' ?
-      !!searchedParcels && searchedParcels.viewBound || [[38.92390769485239, -122.45505718324472], [39.7991536823128, -121.79550745742236]] :
-      !!searchedParcels && searchedParcels.viewBound || [[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]] }, [searchedParcels]);
-
-  const ReturnChildren = useMemo(() => {
     if (loggedUser == 'colusa@wateraccounts.com') {
       return mapLoading ? <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
       <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
     </div> : <RtGeoJson key={'50003'} layerEvents={colusaLayerEvents} style={maderaJsonStyle} data={JSON.parse(mapData['data'])} color={"#16599a"}/>
     }
     return <RtGeoJson key={'50003'} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"}/>
-  }, [viewBound, mapData])
+  }, [searchParcelData, mapData])
 
   const mapConfigurations = useMemo(() => { return {'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true} }, []);
   return (
@@ -265,7 +276,7 @@ const Map = () => {
           </div>
       )}
 
-      <LeafletMap position={position} viewBound={viewBound} zoom={11} configurations={mapConfigurations}>
+      <LeafletMap position={position} viewBound={searchParcelData?.viewBound ?? mapData?.viewBounds} zoom={zoomLevel} configurations={mapConfigurations}>
         {ReturnChildren}
       </LeafletMap>
     </div>
