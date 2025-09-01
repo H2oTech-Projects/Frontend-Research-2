@@ -166,7 +166,7 @@ const Map = () => {
   }
 
   const maderaJsonStyle = (features: Feature) => {
-    if (!!searchedParcels && searchedParcels?.parcelIds.includes(features?.properties?.parcel_id)){
+    if (!!searchedParcels && searchedParcels?.parcelIds?.includes(features?.properties?.parcel_id)){
       return {
         color: "red", // Border color
         fillColor: "transparent", // Fill color for the highlighted area
