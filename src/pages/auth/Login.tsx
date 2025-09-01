@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, Loader } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../redux/slice/authSlice";
 // import AuthLayout from "@/layout/authLayout";
-import { lazy, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Login = () => {
+  const isAuthenticated = useSelector((state: any) => state.auth.isLoggedIn);
+  const navigation = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const { mutate, isPending, isError, error, isSuccess, data } = usePostLoginUser();
@@ -34,14 +36,26 @@ const Login = () => {
   const onSubmit = (values: FormData) => {
     mutate(values, {
       onSuccess: (data) => {
-        dispatch(login(data)); // Dispatch Redux action with full response
         toast.success("Login successful!");
+        navigation("/map");
+        dispatch(login(data)); // Dispatch Redux action with full response
       },
       onError: (err) => {
         showErrorToast(err?.response?.data.message)
       },
     });
   };
+
+  if(isSuccess){
+     return (<div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">
+      Loading <Loader size={20} />
+    </div>)
+}
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation("/map");
+    }}, [isAuthenticated, navigation]);
 
   return (
     <AuthLayout

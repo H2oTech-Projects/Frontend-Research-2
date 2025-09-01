@@ -35,7 +35,7 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
         <>
           <Route
             path="/auth/login"
-            element={isAuthenticated ? <Navigate to={"/map"} /> : <Login />}
+            element={ <Login />}
           />
           <Route
             path="/auth/forgotPassword"
