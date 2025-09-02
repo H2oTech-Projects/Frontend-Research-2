@@ -77,7 +77,7 @@ getSearchParcelMapByWAY : async (wapId:number, search: string) =>{
   const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wapId + "/search_parcels/map/",{
     params:{
             search:search}
-    }).catch((err) => console.log(err));
+    })
   const data = convertKeysToCamelCase(toJson(response));
   return toJson(data?.data);
 },
