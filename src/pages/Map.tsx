@@ -24,8 +24,10 @@ import { showErrorToast } from "@/utils/tools";
 import TableLineChartInfo, {ColusaTableLineChartInfo} from '@/utils/tableLineChartInfo';
 import { createRoot } from 'react-dom/client';
 import { useGetSearchParcelMapByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Map = () => {
+    const queryClient = useQueryClient();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [search, setSearch] = useState("");
     const modalRef = useRef<HTMLDivElement>(null);
@@ -64,10 +66,13 @@ const Map = () => {
               dispatch(logout());
               setIsModalOpen(false);
               toast.success("Logout successful");
+              queryClient.removeQueries();
             },
-            onError: (err) => {
-               showErrorToast(err?.response?.data.message)
-            },
+             onError: (err) => {
+              dispatch(logout());
+              toast.success("Logout successful.");
+              queryClient.removeQueries();
+        },
 
     })}
     const showInfo = (label: String, Id: String) => {
