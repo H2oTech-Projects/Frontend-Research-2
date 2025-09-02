@@ -51,9 +51,12 @@ const Map = () => {
     useEffect(() => {
       if(searchedParcels){
       setSearchParcelData(searchedParcels);
-}
+      }
+       
+     else {
+        toast.info("No parcels found");}
+      }, [isSearching, searchedParcels]);
 
-}, [isSearching, searchedParcels]);
 
     const handleLogout = () => {
           mutate({refresh_token: refreshToken},{
