@@ -43,21 +43,21 @@ const Conveyances = () => {
   const { data: mapGeoJson, isLoading: isMapLoading } = useGetSubRegionMap();
   const columns: ColumnDef<conveyanceDataType>[] = [
 
-    {
-      accessorKey: "regionName",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "region_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
-          >
-            Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
-          </Button>
-        );
-      },
-      size: 150,
-      cell: ({ row }) => <div className="px-4">{row.getValue("regionName")}</div>,
-    },
+    // {
+    //   accessorKey: "regionName",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => { setTableInfo({ ...tableInfo, sort: "region_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+    //       >
+    //         Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+    //       </Button>
+    //     );
+    //   },
+    //   size: 150,
+    //   cell: ({ row }) => <div className="px-4">{row.getValue("regionName")}</div>,
+    // },
     {
       accessorKey: "subRegionName",
       header: ({ column }) => {
@@ -117,14 +117,14 @@ const Conveyances = () => {
         showInfo("SubRegion",auxLayer.feature.properties.region_id, auxLayer.feature.properties.sub_region_name);
       },
       mouseout: function (e: any) {
-        const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2.5,
-          //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
-          opacity: 1,
-        });
+        // const auxLayer = e.target;
+        // auxLayer.setStyle({
+        //   weight: 2.5,
+        //   //color: "#9370DB",
+        //   //fillColor: "lightblue",
+        //   fillOpacity: 0,
+        //   opacity: 1,
+        // });
           $("[id^='popup-']").remove();
       },
     })
@@ -139,8 +139,8 @@ const Conveyances = () => {
 
         return {
           color: "red", // Border color
-          fillColor: "transparent", // Fill color for the highlighted area
-          fillOpacity: 0.5,
+          fillColor: "red", // Fill color for the highlighted area
+          fillOpacity: 0.7,
           weight: 2,
         };
       }
