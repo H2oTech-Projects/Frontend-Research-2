@@ -25,6 +25,7 @@ html.dark .popup-classname {
 } */
 
 .leaflet-popup-content-wrapper {
+  pointer-events: auto !important;  /*allow clicks inside popup */
   background-color: #16599a !important; /* Make the popup background transparent */
   border: none;
                   /* Remove the border */
