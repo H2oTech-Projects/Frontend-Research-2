@@ -41,10 +41,58 @@ const Crops = () => {
           </Button>
         );
       },
-      size: 180,
       cell: ({ row }) => <div className=" px-3">{row.getValue("cropName")}</div>,
     },
     {
+      accessorKey: "cropCode",
+      header: ({ column }) => {
+        return (
+          <Button
+            className="flex items-start justify-start"
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_code", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+            Crop Code  {tableInfo?.sort !== "crop_code" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+  
+      cell: ({ row }) => <div className=" px-3">{row.getValue("cropCode")}</div>,
+    },
+
+    {
+      accessorKey: "cropAbbrev",
+      header: ({ column }) => {
+        return (
+          <Button
+            className="flex items-start justify-start"
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_abbrev", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+            Crop Abbreviation  {tableInfo?.sort !== "crop_abbrev" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+ 
+      cell: ({ row }) => <div className=" px-3">{row.getValue("cropAbbrev")}</div>,
+    },
+    {
+      accessorKey: "cropGroupName",
+      header: ({ column }) => {
+        return (
+          <Button
+            className="flex items-start justify-start"
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_group_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+            Crop Group Name  {tableInfo?.sort !== "crop_group_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+
+      cell: ({ row }) => <div className=" px-3">{row.getValue("cropGroupName")}</div>,
+    },
+{
       accessorKey: "cropDesc",
       header: ({ column }) => {
         return (
@@ -57,9 +105,26 @@ const Crops = () => {
           </Button>
         );
       },
-      size: 180,
+      size: 300,
       cell: ({ row }) => <div className=" px-3">{row.getValue("cropDesc")}</div>,
     },
+    {
+      accessorKey: "cropAppDepthM",
+      header: ({ column }) => {
+        return (
+          <Button
+            className="flex items-start justify-start"
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_app_depth_m", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+            Crop App Depth  {tableInfo?.sort !== "crop_app_depth_m" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+
+      cell: ({ row }) => <div className=" px-3">{row.getValue("cropAppDepthM")}</div>,
+    },
+    
 
   ];
 
