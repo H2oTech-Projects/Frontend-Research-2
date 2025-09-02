@@ -36,7 +36,7 @@ const Map = () => {
     const refreshToken = useSelector((state: any) => state.auth.refresh);
     const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
     const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(wayId);
-    const { data: searchedParcels, isLoading: isSearching, refetch: refetchSearchParcelMap } = useGetSearchParcelMapByWAY(wayId, search);
+    const { data: searchedParcels, isLoading: isSearching, refetch: refetchSearchParcelMap,isError:isSearchError } = useGetSearchParcelMapByWAY(wayId, search);
     const [searchParcelData, setSearchParcelData] = useState<any>(null);
     const parcels: any = parcelsData as any;
     const { theme, setTheme } = useTheme();
@@ -49,13 +49,13 @@ const Map = () => {
     };
 
     useEffect(() => {
-      if(searchedParcels){
-      setSearchParcelData(searchedParcels);
-      }
-       
-     else {
+      if (searchedParcels && Object.keys(searchedParcels).length > 0) {
+        setSearchParcelData(searchedParcels);
+      }  
+  
+     if( isSearchError ){
         toast.info("No parcels found");}
-      }, [isSearching, searchedParcels]);
+      }, [searchedParcels,isSearchError]);
 
 
     const handleLogout = () => {
@@ -183,8 +183,6 @@ const Map = () => {
   //     !!searchedParcels && searchedParcels.viewBound || [[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]] }, [searchedParcels]);
 
   const ReturnChildren = useMemo(() => {
-
-
   const maderaJsonStyle = (features: Feature) => {
     if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)){
       return {
