@@ -159,14 +159,14 @@ const Map = () => {
       },
     });
   }
-      const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
+    const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
     const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.parcel_id;
 
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false});
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(54, 128),autoPanPaddingBottomRight: L.point(128, 48) });
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
