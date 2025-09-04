@@ -1,13 +1,25 @@
 import PageHeader from "@/components/PageHeader";
 import MapTable from "@/components/Table/mapTable";
 import { Button } from "@/components/ui/button";
-import { useGetCropList } from "@/services/crops";
+import { useDeleteCrops, useGetCropList } from "@/services/crops";
 import { debounce } from "@/utils";
 import { cropColumnProperties } from "@/utils/constant";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useCallback, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { showErrorToast } from "@/utils/tools";
+import CustomModal from "@/components/modal/ConfirmModal";
 
 interface initialTableDataTypes {
   search: string;
@@ -25,9 +37,14 @@ const initialTableData = {
 }
 
 const Crops = () => {
+  const navigate = useNavigate();
+  const [id, setId] = useState<string>("");
+  const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const { data: cropList, isLoading: isCropLoading } = useGetCropList(tableInfo);
+  const { data: cropList, isLoading: isCropLoading, refetch } = useGetCropList(tableInfo);
+  const { mutate: deleteCrop } = useDeleteCrops();
+  const queryClient = useQueryClient();
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "cropName",
@@ -56,7 +73,7 @@ const Crops = () => {
           </Button>
         );
       },
-  
+
       cell: ({ row }) => <div className=" px-3">{row.getValue("cropCode")}</div>,
     },
 
@@ -73,7 +90,7 @@ const Crops = () => {
           </Button>
         );
       },
- 
+      size: 200,
       cell: ({ row }) => <div className=" px-3">{row.getValue("cropAbbrev")}</div>,
     },
     {
@@ -92,7 +109,7 @@ const Crops = () => {
 
       cell: ({ row }) => <div className=" px-3">{row.getValue("cropGroupName")}</div>,
     },
-{
+    {
       accessorKey: "cropDesc",
       header: ({ column }) => {
         return (
@@ -113,7 +130,7 @@ const Crops = () => {
       header: ({ column }) => {
         return (
           <Button
-            className="flex items-start justify-start"
+            className="flex items-start justify-start "
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_app_depth_m", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
@@ -121,12 +138,60 @@ const Crops = () => {
           </Button>
         );
       },
-
+      size: 150,
       cell: ({ row }) => <div className=" px-3">{row.getValue("cropAppDepthM")}</div>,
     },
-    
+    {
+      id: "actions",
+      header: "",
+      size: 60,
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+            >
+              <span className="sr-only">Open menu</span>
+              <MoreVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => { navigate(`/crops/${row.original.id}/edit/`) }}>
+              <FilePenLine /> Edit
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { navigate(`/crops/${row.original.id}/view/`) }}>
+              <Eye />
+              View
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+      meta: {
+        className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slateLight-500 ",
+      },
+    },
 
   ];
+
+  const handleDelete = () => {
+    deleteCrop(id, {
+      onSuccess: () => {
+        refetch();
+        toast.success("Crop deleted successfully");
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data.message);
+      },
+    });
+  };
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -140,6 +205,14 @@ const Crops = () => {
       <PageHeader
         pageHeaderTitle="Crops"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
+      />
+
+      <CustomModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Delete Crop"
+        description="Are you sure you want to delete this Crop? This action cannot be undone."
+        onConfirm={handleDelete}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
@@ -169,6 +242,16 @@ const Crops = () => {
               <X />
             </Button>}
           </div>
+          <Button
+            variant={"default"}
+            className="h-7 w-auto px-2 text-sm"
+            onClick={() => {
+              navigate(`/crops/add`)
+            }}
+          >
+            <Plus size={4} />
+            Add Crops
+          </Button>
         </div>
         <div className="flex w-full">
           <div className="w-full h-[calc(100vh-160px)]">
