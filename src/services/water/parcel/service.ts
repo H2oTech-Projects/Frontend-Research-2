@@ -111,5 +111,10 @@ getRegionOptions : async () =>{
   const data = convertKeysToCamelCase(toJson(response));
   return toJson(data?.data);
 
-}
+},
+ deleteParcelByWAY : async ({ parcelId, wayId }: { parcelId: string; wayId: number }) => {
+  const response = await axiosInstance.delete(BASE_API_URL + "/ways/" + wayId + "/parcels/" + parcelId + "/").catch((err) => console.log(err));
+  const data = convertKeysToCamelCase(toJson(response));
+  return toJson(data?.data);    
+},
 }

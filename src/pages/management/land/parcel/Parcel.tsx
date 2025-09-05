@@ -26,7 +26,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
 import { useDeleteFieldByWAP } from "@/services/water/field";
-import { useGetParcelListByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
+import { deleteParcelByWAY, useGetParcelListByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
 import { debounce, UnitSystemName } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { parcelPageColumnProperties } from "@/utils/constant";
 import { createRoot } from "react-dom/client";
+import { DELETE_PARCEL_KEY_BY_WAY, GET_PARCEL_MAP_KEY_BY_WAY } from "@/services/water/parcel/constant";
 interface initialTableDataTypes {
   search: string;
   page_no: number,
@@ -76,10 +77,10 @@ const Parcel = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
-  const { data: fieldData, isLoading } = useGetParcelListByWAY(tableInfo, defaultWay);
+  const { data: fieldData, isLoading, refetch:refetchParcel } = useGetParcelListByWAY(tableInfo, defaultWay);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(defaultWay);
   const { data: ways, isLoading: waysLoading } = useGetWaysOptions()
-  const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
+  const { mutate: deleteParcel, isPending: isFieldDeleting } = deleteParcelByWAY()
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
@@ -212,15 +213,17 @@ const Parcel = () => {
   ];
 
   const handleDelete = () => {
-    deleteField({ fieldId: id, wapId: defaultWay }, {
+    deleteParcel({ parcelId: id, wayId: defaultWay }, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
-        refetchMap();
-        queryClient.invalidateQueries({ queryKey: [DELETE_FIELD_KEY_BY_FIELD] });
-        toast.success("Field deleted successfully");
+        refetchParcel();
+        queryClient.invalidateQueries({ queryKey: [GET_PARCEL_MAP_KEY_BY_WAY] });
+        queryClient.invalidateQueries({ queryKey: [DELETE_PARCEL_KEY_BY_WAY] });
+        setClickedField({ id: "", viewBounds: null })
+        toast.success("Parcel deleted successfully");
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
+        queryClient.invalidateQueries({ queryKey: [DELETE_PARCEL_KEY_BY_WAY] });
       },
     });
   };
@@ -305,7 +308,6 @@ const Parcel = () => {
 
     const geoJsonStyle = (features: any) => {
       if (features?.properties?.parcel_id.toString() === clickedField?.id?.toString()) {
-          console.log("here")
         return {
           color: "red", // Border color
           fillColor: "transparent", // Fill color for the highlighted area
@@ -337,7 +339,7 @@ const Parcel = () => {
           eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
         >
           <Popup>
-            <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+            <div key={position.parcelId} dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
           </Popup>
         </RtPolygon>
       ) : null}
