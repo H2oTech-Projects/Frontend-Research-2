@@ -290,6 +290,21 @@ export const RouteList = [
     Component: lazy(async () => import("./../pages/management/land/region/Region"))
   },
   {
+    path: routeUrl?.AddRegion?.url,
+    name: routeUrl?.AddRegion?.name,
+    Component: lazy(async () => import("./../pages/management/land/region/RegionForm"))
+  },
+  {
+    path: routeUrl?.ViewRegion?.url,
+    name: routeUrl?.ViewRegion?.name,
+    Component: lazy(async () => import("./../pages/management/land/region/RegionForm"))
+  },
+  {
+    path: routeUrl?.EditRegion?.url,
+    name: routeUrl?.EditRegion?.name,
+    Component: lazy(async () => import("./../pages/management/land/region/RegionForm"))
+  },
+  {
     path: routeUrl?.SubRegion?.url,
     name: routeUrl?.SubRegion?.name,
     Component: lazy(async () => import("./../pages/management/land/subRegion/subRegion"))

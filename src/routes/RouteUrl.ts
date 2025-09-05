@@ -230,6 +230,19 @@ const Region = {
   name: "Region",
 }
 
+const AddRegion = {
+  url: "/regions/add",
+  name: "AddRegion",
+}
+const EditRegion = {
+  url: "/regions/:id/edit",
+  name: "EditRegion",
+} 
+const ViewRegion = {
+  url: "/regions/:id/view",
+  name: "ViewRegion",
+}
+
 const SubRegion = {
   url: "/subregions",
   name: "Sub-Region",
@@ -291,6 +304,9 @@ export {
   EditCustomerField,
   ViewCustomerField,
   Region,
+  AddRegion,
+  EditRegion,
+  ViewRegion,
   SubRegion,
   FieldParcel,
   ViewConveyance,
