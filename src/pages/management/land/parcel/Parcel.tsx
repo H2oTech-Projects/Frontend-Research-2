@@ -89,6 +89,24 @@ const Parcel = () => {
 
   const columns: ColumnDef<DummyDataType>[] = [
     {
+      accessorKey: "parcelId",
+      // header: "Field ID",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+          >
+            Parcel ID {tableInfo?.sort !== "parcel_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+          </Button>
+        );
+      },
+
+      size: 150, // this size value is in px
+      cell: ({ row }) => <div className="capitalize">{row.getValue("parcelId")}</div>,
+      //filterFn: 'includesString',
+    },
+    {
       accessorKey: "parcelName",
       // header: "Field ID",
       header: ({ column }) => {
@@ -97,7 +115,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-            Parcel ID {tableInfo?.sort !== "parcel_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Parcel Name {tableInfo?.sort !== "parcel_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -172,7 +190,7 @@ const Parcel = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/parcel/${row.original.id}/edit/${defaultWay}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/parcels/${row.original.id}/edit/${defaultWay}`) }}>
               <FilePenLine /> Edit
             </DropdownMenuItem>
 
@@ -180,7 +198,7 @@ const Parcel = () => {
               <Trash2 />
               Delete
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/parcel/${row.original.id}/view/${defaultWay}`) }}>
+            <DropdownMenuItem onClick={() => { navigate(`/parcels/${row.original.id}/view/${defaultWay}`) }}>
               <Eye />
               View
             </DropdownMenuItem>
@@ -387,7 +405,7 @@ const Parcel = () => {
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={() => {
-              navigate(`/field/addField`)
+              navigate(`/parcels/add`, { state: { wayId: defaultWay } })
             }}
           >
             <Plus size={4} />

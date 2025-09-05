@@ -32,6 +32,27 @@ export const RouteList = [
     ),
   },
   {
+    path: routeUrl.AddParcel?.url,
+    name: routeUrl.AddParcel?.name,
+    Component: lazy(
+      async () => await import("../pages/management/land/parcel/ParcelForm")
+    ),
+  },
+  {
+    path: routeUrl.EditParcel?.url,
+    name: routeUrl.EditParcel?.name,
+    Component: lazy(
+      async () => await import("../pages/management/land/parcel/ParcelForm")
+    ),
+  },
+  {
+    path: routeUrl.ViewParcel?.url,
+    name: routeUrl.ViewParcel?.name,
+    Component: lazy(
+      async () => await import("../pages/management/land/parcel/ParcelForm")
+    ),
+  },
+  {
     path: routeUrl.FieldMsmtPoint?.url,
     name:routeUrl.FieldMsmtPoint?.name,
     Component: lazy(
