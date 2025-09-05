@@ -9,7 +9,7 @@ import { createFormData } from "@/utils/createFormData";
 const GET_FIELD_LIST = BASE_API_URL + "/fields/";
 const GET_FIELD_MAP_LIST = BASE_API_URL + "/fields/map/";
 
-export const queryFieldService = {
+export const queryParcelService = {
   getFieldList: async (tableInfo:initialTableDataTypes) => {
     const response = await axiosInstance.get(GET_FIELD_LIST,{
       params:{
@@ -26,6 +26,8 @@ export const queryFieldService = {
     const response  = await axiosInstance.get(GET_FIELD_MAP_LIST).catch((err) => console.log(err));
     return toJson(response);
 },
+
+  
 
 getParcelListByWAY : async (tableInfo:initialTableDataTypes,wayId:number) =>{
     const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wayId + "/parcels/",{
@@ -82,4 +84,32 @@ getSearchParcelMapByWAY : async (wapId:number, search: string) =>{
   return toJson(data?.data);
 },
 
-};
+getParcelDetailByWAY : async (parcelId:string ,wayId:string) => {
+  const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wayId + "/parcels/" + parcelId + "/").catch((err) => console.log(err));
+  const data = convertKeysToCamelCase(toJson(response));
+  return toJson(data?.data);
+},
+
+postParcelByWAY : async (formData:any) =>{
+const response = await axiosInstance.post(BASE_API_URL + "/ways/" + formData.way_id + "/parcels/",createFormData(formData,"parcel_geometry_file"), {
+    headers: {
+       "Content-Type": "multipart/form-data",
+    },
+  })
+return response?.data
+},
+putParcelByWAY : async (formData:any) =>{
+const response = await axiosInstance.put(BASE_API_URL + "/ways/" + formData.way_id + "/parcels/" + formData?.id + "/",createFormData(formData,"parcel_geometry_file"), {
+    headers: {
+       "Content-Type": "multipart/form-data",
+    },
+  })
+return response?.data
+},
+getRegionOptions : async () =>{
+  const response = await axiosInstance.get(BASE_API_URL + "/regions/options/").catch((err) => console.log(err));
+  const data = convertKeysToCamelCase(toJson(response));
+  return toJson(data?.data);
+
+}
+}
