@@ -2,7 +2,7 @@ import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryParcelService } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
-import { DELETE_FIELD_KEY_BY_FIELD, DELETE_PARCEL_KEY_BY_WAY, GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, GET_PARCEL_DETAIL_KEY_BY_WAY, GET_PARCEL_MAP_KEY_BY_WAY, GET_REGION_OPTIONS, POST_FIELD_KEY_BY_WAP, POST_PARCEL_KEY_BY_WAY, PUT_FIELD_KEY_BY_WAP, PUT_PARCEL_KEY_BY_WAY } from "./constant";
+import { DELETE_FIELD_KEY_BY_FIELD, DELETE_PARCEL_KEY_BY_WAY, GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, GET_PARCEL_DETAIL_KEY_BY_WAY, GET_PARCEL_LIST_KEY_BY_WAY, GET_PARCEL_MAP_KEY_BY_WAY, GET_REGION_OPTIONS, POST_FIELD_KEY_BY_WAP, POST_PARCEL_KEY_BY_WAY, PUT_FIELD_KEY_BY_WAP, PUT_PARCEL_KEY_BY_WAY } from "./constant";
 import { FieldListResponseType } from "@/types/apiResponseType";
 import { RegisterResponse } from "../msmtPoint/service";
 import { AxiosError } from "axios";
@@ -25,7 +25,7 @@ export const useGetFieldMapList = () => {
 
 export const useGetParcelListByWAY = (tableInfo:initialTableDataTypes,wapId:number):UseQueryResult<any> => {
     return useQuery({
-    queryKey: [GET_FIELD_LIST_KEY_BY_WAP,wapId,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
+    queryKey: [GET_PARCEL_LIST_KEY_BY_WAY,wapId,tableInfo?.page_no,tableInfo?.page_size,tableInfo?.search,tableInfo?.sort,tableInfo?.sort_order],
     queryFn: ()=> queryParcelService.getParcelListByWAY(tableInfo,wapId),
     enabled: !!wapId,
     ...queryConfig
