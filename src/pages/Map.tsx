@@ -186,7 +186,7 @@ const Map = () => {
     if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)){
       return {
         color: "red", // Border color
-        fillColor: "red", // Fill color for the highlighted area
+        fillColor: "transparent", // Fill color for the highlighted area
         fillOpacity: 0.5,
         weight: 2,
       };
