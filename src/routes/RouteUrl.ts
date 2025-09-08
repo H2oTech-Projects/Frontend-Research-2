@@ -248,6 +248,19 @@ const SubRegion = {
   name: "Sub-Region",
 };
 
+const AddSubregion = {
+  url: "/subregions/add",
+  name: "AddSubregion",
+}
+const EditSubregion = {
+  url: "/subregions/:id/edit",
+  name: "EditSubregion",
+} 
+const ViewSubregion = {
+  url: "/subregions/:id/view",
+  name: "ViewSubregion",
+}
+
 const FieldParcel = {
   url: "/field-parcel",
   name: "Field-Parcel",
@@ -308,6 +321,9 @@ export {
   EditRegion,
   ViewRegion,
   SubRegion,
+  AddSubregion,
+  EditSubregion,
+  ViewSubregion,
   FieldParcel,
   ViewConveyance,
   CropField,

@@ -35,7 +35,7 @@ const initialTableData = {
   sort: '',
   sort_order: ''
 }
-const SubRegion = () => {
+const Region = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
@@ -348,4 +348,4 @@ const SubRegion = () => {
   )
 }
 
-export default SubRegion
+export default Region
