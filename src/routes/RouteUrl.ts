@@ -24,6 +24,21 @@ const Parcel = {
   name: "Parcel",
 };
 
+const AddParcel = {
+  url: "/parcels/add",
+  name: "Parcel",
+};
+
+const EditParcel = {
+  url: "/parcels/:id/edit/:wayId",
+  name: "Parcel",
+};
+
+const ViewParcel = {
+  url: "/parcels/:id/view/:wayId",
+  name: "Parcel",
+};
+
 const AddField = {
   url: "/field/addField",
   name: "AddField",
@@ -263,6 +278,9 @@ export {
   Dashboard,
   Field,
   Parcel,
+  AddParcel,
+  EditParcel,
+  ViewParcel,
   FieldMsmtPoint,
   AddField,
   EditField,

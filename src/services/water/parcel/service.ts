@@ -9,7 +9,7 @@ import { createFormData } from "@/utils/createFormData";
 const GET_FIELD_LIST = BASE_API_URL + "/fields/";
 const GET_FIELD_MAP_LIST = BASE_API_URL + "/fields/map/";
 
-export const queryFieldService = {
+export const queryParcelService = {
   getFieldList: async (tableInfo:initialTableDataTypes) => {
     const response = await axiosInstance.get(GET_FIELD_LIST,{
       params:{
@@ -25,61 +25,100 @@ export const queryFieldService = {
   getFieldMapList :async()=>{
     const response  = await axiosInstance.get(GET_FIELD_MAP_LIST).catch((err) => console.log(err));
     return toJson(response);
-},
+  },
 
-getParcelListByWAY : async (tableInfo:initialTableDataTypes,wayId:number) =>{
-    const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wayId + "/parcels/",{
+
+
+  getParcelListByWAY : async (tableInfo:initialTableDataTypes,wayId:number) =>{
+      const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wayId + "/parcels/",{
+        params:{
+                  page_no:tableInfo?.page_no,
+                  page_size:tableInfo?.page_size,
+                  search:tableInfo?.search,
+                  sort_by:tableInfo?.sort,
+                  sort_order:tableInfo?.sort_order}
+        }).catch((err) => console.log(err));
+      const data = convertKeysToCamelCase(toJson(response));
+      return toJson(data?.data);
+  },
+  getParcelMapByWAY : async (wapId:number) =>{
+      const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wapId + "/parcels/map/",
+      ).catch((err) => console.log(err));
+      const data = convertKeysToCamelCase(toJson(response));
+      return toJson(data?.data);
+  },
+
+  getFieldDetailByWAP : async (fieldId:string ,wapId:string) => {
+      const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/fields/" + fieldId + "/").catch((err) => console.log(err));
+      const data = convertKeysToCamelCase(toJson(response));
+      return toJson(data?.data);
+  },
+  deleteFieldByWAP : async ({ fieldId, wapId }: { fieldId: string; wapId: number }) => {
+      const response = await axiosInstance.delete(BASE_API_URL + "/waps/" + wapId + "/fields/" + fieldId + "/").catch((err) => console.log(err));
+      const data = convertKeysToCamelCase(toJson(response));
+      return toJson(data?.data);
+  },
+
+  postFieldByWap : async (formData:any) =>{
+    const response = await axiosInstance.post(BASE_API_URL + "/waps/" + formData.wap_id + "/fields/",createFormData(formData,"field_geometry_file"), {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+    return response?.data
+  },
+
+  putFieldByWap : async (formData:any) =>{
+    const response = await axiosInstance.put(BASE_API_URL + "/waps/" + formData.wap_id + "/fields/" + formData?.id + "/",createFormData(formData,"field_geometry_file"), {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+    return response?.data
+  },
+
+  getSearchParcelMapByWAY : async (wapId:number, search: string) =>{
+    const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wapId + "/search_parcels/map/",{
       params:{
-                page_no:tableInfo?.page_no,
-                page_size:tableInfo?.page_size,
-                search:tableInfo?.search,
-                sort_by:tableInfo?.sort,
-                sort_order:tableInfo?.sort_order}
-      }).catch((err) => console.log(err));
+              search:search}
+      })
     const data = convertKeysToCamelCase(toJson(response));
     return toJson(data?.data);
-},
-getParcelMapByWAY : async (wapId:number) =>{
-    const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wapId + "/parcels/map/",
-    ).catch((err) => console.log(err));
-    const data = convertKeysToCamelCase(toJson(response));
-    return toJson(data?.data);
-},
+  },
 
-getFieldDetailByWAP : async (fieldId:string ,wapId:string) => {
-    const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/fields/" + fieldId + "/").catch((err) => console.log(err));
+  getParcelDetailByWAY : async (parcelId:string ,wayId:string) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wayId + "/parcels/" + parcelId + "/").catch((err) => console.log(err));
     const data = convertKeysToCamelCase(toJson(response));
     return toJson(data?.data);
-},
-deleteFieldByWAP : async ({ fieldId, wapId }: { fieldId: string; wapId: number }) => {
-    const response = await axiosInstance.delete(BASE_API_URL + "/waps/" + wapId + "/fields/" + fieldId + "/").catch((err) => console.log(err));
-    const data = convertKeysToCamelCase(toJson(response));
-    return toJson(data?.data);
-},
+  },
 
-postFieldByWap : async (formData:any) =>{
-  const response = await axiosInstance.post(BASE_API_URL + "/waps/" + formData.wap_id + "/fields/",createFormData(formData,"field_geometry_file"), {
+  postParcelByWAY : async (formData:any) =>{
+  const response = await axiosInstance.post(BASE_API_URL + "/ways/" + formData.way_id + "/parcels/",createFormData(formData,"parcel_geometry_file"), {
       headers: {
-         "Content-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     })
   return response?.data
-},
-putFieldByWap : async (formData:any) =>{
-  const response = await axiosInstance.put(BASE_API_URL + "/waps/" + formData.wap_id + "/fields/" + formData?.id + "/",createFormData(formData,"field_geometry_file"), {
+  },
+
+  putParcelByWAY : async (formData:any) =>{
+  const response = await axiosInstance.put(BASE_API_URL + "/ways/" + formData.way_id + "/parcels/" + formData?.id + "/",createFormData(formData,"parcel_geometry_file"), {
       headers: {
-         "Content-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     })
   return response?.data
-},
-getSearchParcelMapByWAY : async (wapId:number, search: string) =>{
-  const response = await axiosInstance.get(BASE_API_URL + "/ways/" + wapId + "/search_parcels/map/",{
-    params:{
-            search:search}
-    })
-  const data = convertKeysToCamelCase(toJson(response));
-  return toJson(data?.data);
-},
+  },
 
-};
+  getRegionOptions : async () =>{
+    const response = await axiosInstance.get(BASE_API_URL + "/regions/options/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return toJson(data?.data);
+  },
+
+  deleteParcelByWAY : async ({ parcelId, wayId }: { parcelId: string; wayId: number }) => {
+    const response = await axiosInstance.delete(BASE_API_URL + "/ways/" + wayId + "/parcels/" + parcelId + "/").catch((err) => console.log(err));
+    const data = convertKeysToCamelCase(toJson(response));
+    return toJson(data?.data);
+  },
+}
