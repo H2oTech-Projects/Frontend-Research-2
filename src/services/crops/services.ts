@@ -18,6 +18,41 @@ export const queryCropsService = {
     return convertKeysToCamelCase(toJson(response?.data));
   },
 
+  getCropGroupNameDropdown: async () => {
+    const response = await axiosInstance.get(BASE_API_URL + "/cropgroups/options/").catch((err) => console.log(err));
+    return convertKeysToCamelCase(toJson(response?.data));
+  },
+
+  getCropById : async (cropId: string) => {
+    const response = await axiosInstance.get(BASE_API_URL + "/crops/" + cropId + "/").catch((err) => console.log(err));
+    return convertKeysToCamelCase(toJson(response?.data));
+  },
+
+  postCrops: async (formData: any) => {
+    const data = convertKeysToSnakeCase(formData)
+    const response = await axiosInstance.post(BASE_API_URL + "/crops/", data, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    return convertKeysToCamelCase(toJson(response.data));
+  },
+
+  putCrops: async ({cropId, formData}:{cropId:number,formData:any}) => {
+    const data = convertKeysToSnakeCase(formData)
+    const response = await axiosInstance.put(BASE_API_URL + "/crops/" + cropId + "/", data, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    return convertKeysToCamelCase(toJson(response.data));
+  },
+
+  deleteCrops: async (cropId: string) => {
+    const response = await axiosInstance.delete(BASE_API_URL + "/crops/" + cropId + "/");
+    return convertKeysToCamelCase(toJson(response.data));
+  },
+
   getCropsFieldListByWAP: async (tableInfo: initialTableDataTypes, wapId: number) => {
     const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/cropfields/", {
       params: {

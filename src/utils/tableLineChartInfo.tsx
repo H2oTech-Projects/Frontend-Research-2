@@ -720,10 +720,126 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
       </table>
     )
   }
+  const table_2024 = () => {
+    return (
+      <table className="dataframe text-white  border-separate border-spacing-x-3 -ml-2">
+        <thead>
+           <tr >
+            <th className='text-left'>Year</th>
+            <th className='text-left'>Month</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
+            <th className='text-right'>Remaining (AF)</th>
+            <th className='text-right'>Remaining (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Jan</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">206.2</td>
+            <td className="text-right">100.0%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Feb</td>
+            <td className="text-right">1.3</td>
+            <td className="text-right">1.3</td>
+            <td className="text-right">204.9</td>
+            <td className="text-right">99.12%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Mar</td>
+            <td className="text-right">3.9</td>
+            <td className="text-right">5.2</td>
+            <td className="text-right">201</td>
+            <td className="text-right">97.47%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Apr</td>
+            <td className="text-right">13.1</td>
+            <td className="text-right">18.3</td>
+            <td className="text-right">187.9</td>
+            <td className="text-right">91.12%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">May</td>
+            <td className="text-right">23.0</td>
+            <td className="text-right">41.3</td>
+            <td className="text-right">164.9</td>
+            <td className="text-right">79.97%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Jun</td>
+            <td className="text-right">29.3</td>
+            <td className="text-right">70.5</td>
+            <td className="text-right">135.7</td>
+            <td className="text-right">65.8%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Jul</td>
+            <td className="text-right">34.3</td>
+            <td className="text-right">104.9</td>
+            <td className="text-right">101.3</td>
+            <td className="text-right">49.12%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Aug</td>
+            <td className="text-right">26.5</td>
+            <td className="text-right">131.4</td>
+            <td className="text-right">74.8</td>
+            <td className="text-right">36.27%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Sep</td>
+            <td className="text-right">16.7</td>
+            <td className="text-right">148.2</td>
+            <td className="text-right">58</td>
+            <td className="text-right">28.12%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Oct</td>
+            <td className="text-right">11.1</td>
+            <td className="text-right">159.3</td>
+            <td className="text-right">46.9</td>
+            <td className="text-right">22.7%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Nov</td>
+            <td className="text-right">5.8</td>
+            <td className="text-right">165.1</td>
+            <td className="text-right">41.1</td>
+            <td className="text-right">19.9%</td>
+          </tr>
+          <tr>
+            <td className="text-left">2024</td>
+            <td className="text-left">Dec</td>
+            <td className="text-right">2.4</td>
+            <td className="text-right">167.5</td>
+            <td className="text-right">38.7</td>
+            <td className="text-right">18.7%</td>
+          </tr>
+        </tbody>
+
+      </table>
+    )
+  }
   const showTable = () => {
     if (way == '2022') return table_2022();
     if (way == '2023') return table_2023();
     if (way == '2025') return table_2025();
+    if (way == '2024') return table_2024();
   }
   return (
     <div className='p-1 h-full w-full flex gap-4'>
@@ -732,6 +848,10 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
           [{
             value: "2025",
             label: "2025"
+          },
+          {
+            value: "2024",
+            label: "2024"
           },
           {
             value: '2023',

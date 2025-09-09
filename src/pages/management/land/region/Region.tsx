@@ -118,13 +118,13 @@ const SubRegion = () => {
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
-        auxLayer.setStyle({
-          weight: 2.5,
-          //color: "#9370DB",
-          //fillColor: "lightblue",
-          fillOpacity: 0,
-          opacity: 1,
-        });
+        // auxLayer.setStyle({
+        //   weight: 2.5,
+        //   //color: "#9370DB",
+        //   //fillColor: "lightblue",
+        //   fillOpacity: 0,
+        //   opacity: 1,
+        // });
         removeInfo(auxLayer.feature.properties.region_id);
       },
     })
@@ -139,8 +139,8 @@ const SubRegion = () => {
 
         return {
           color: "red", // Border color
-          fillColor: "transparent", // Fill color for the highlighted area
-          fillOpacity: 0.5,
+          fillColor: "red", // Fill color for the highlighted area
+          fillOpacity: 0.7,
           weight: 2,
         };
       }

@@ -24,8 +24,10 @@ import { showErrorToast } from "@/utils/tools";
 import TableLineChartInfo, {ColusaTableLineChartInfo} from '@/utils/tableLineChartInfo';
 import { createRoot } from 'react-dom/client';
 import { useGetSearchParcelMapByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Map = () => {
+    const queryClient = useQueryClient();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [search, setSearch] = useState("");
     const modalRef = useRef<HTMLDivElement>(null);
@@ -36,7 +38,7 @@ const Map = () => {
     const refreshToken = useSelector((state: any) => state.auth.refresh);
     const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
     const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(wayId);
-    const { data: searchedParcels, isLoading: isSearching, refetch: refetchSearchParcelMap } = useGetSearchParcelMapByWAY(wayId, search);
+    const { data: searchedParcels, isLoading: isSearching, refetch: refetchSearchParcelMap,isError:isSearchError } = useGetSearchParcelMapByWAY(wayId, search);
     const [searchParcelData, setSearchParcelData] = useState<any>(null);
     const parcels: any = parcelsData as any;
     const { theme, setTheme } = useTheme();
@@ -49,11 +51,14 @@ const Map = () => {
     };
 
     useEffect(() => {
-      if(searchedParcels){
-      setSearchParcelData(searchedParcels);
-}
+      if (searchedParcels && Object.keys(searchedParcels).length > 0) {
+        setSearchParcelData(searchedParcels);
+      }  
+  
+     if( isSearchError ){
+        toast.info("No parcels found");}
+      }, [searchedParcels,isSearchError]);
 
-}, [isSearching, searchedParcels]);
 
     const handleLogout = () => {
           mutate({refresh_token: refreshToken},{
@@ -61,10 +66,13 @@ const Map = () => {
               dispatch(logout());
               setIsModalOpen(false);
               toast.success("Logout successful");
+              queryClient.removeQueries();
             },
-            onError: (err) => {
-               showErrorToast(err?.response?.data.message)
-            },
+             onError: (err) => {
+              dispatch(logout());
+              toast.success("Logout successful.");
+              queryClient.removeQueries();
+        },
 
     })}
     const showInfo = (label: String, Id: String) => {
@@ -151,14 +159,14 @@ const Map = () => {
       },
     });
   }
-      const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
+    const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
     const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.parcel_id;
 
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false});
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(54, 128),autoPanPaddingBottomRight: L.point(128, 48) });
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
@@ -180,8 +188,6 @@ const Map = () => {
   //     !!searchedParcels && searchedParcels.viewBound || [[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]] }, [searchedParcels]);
 
   const ReturnChildren = useMemo(() => {
-
-
   const maderaJsonStyle = (features: Feature) => {
     if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)){
       return {

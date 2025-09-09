@@ -125,6 +125,21 @@ export const RouteList = [
     Component: lazy(async () => await import("../pages/management/crops/crops/index")),
   },
   {
+    path: routeUrl.AddCrops?.url,
+    name: routeUrl.AddCrops?.name,
+    Component: lazy(async () => await import("../pages/management/crops/crops/CropForm")),
+  },
+  {
+    path: routeUrl.EditCrops?.url,
+    name: routeUrl.EditCrops?.name,
+    Component: lazy(async () => await import("../pages/management/crops/crops/CropForm")),
+  },
+  {
+    path: routeUrl.ViewCrops?.url,
+    name: routeUrl.ViewCrops?.name,
+    Component: lazy(async () => await import("../pages/management/crops/crops/CropForm")),
+  },
+  {
     path: routeUrl.Billings?.url,
     name: routeUrl.Billings?.name,
     Component: lazy(async () => await import("../pages/management/billing/Billings")),

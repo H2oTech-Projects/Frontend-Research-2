@@ -78,6 +78,11 @@ export const cropFieldColumnProperties = {
 export const cropColumnProperties = {
     cropName: "str",
     cropDesc: "str",
+    cropGroupName: "str",
+    cropAbbrev: "str",
+    cropCode: "str",
+    cropAppDepthM: "number",
+    
 };
 export const fieldColumnProperties = {
     cropName: "str",

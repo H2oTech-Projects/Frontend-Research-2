@@ -37,7 +37,9 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
           queryClient.removeQueries();
         },
         onError: (err) => {
-           showErrorToast(err?.response?.data.message)
+           dispatch(logout());
+          toast.success("Logout successful.");
+          queryClient.removeQueries();
         },
 
 })

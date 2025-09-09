@@ -96,6 +96,18 @@ const Crops = {
   url: "/crops",
   name: "Crop",
 };
+const AddCrops = {
+  url: "/crops/add",
+  name: "AddCrop",
+};
+const EditCrops = {
+  url: "/crops/:id/edit",
+  name: "AddCrop",
+};
+const ViewCrops = {
+  url: "/crops/:id/view",
+  name: "AddCrop",
+};
 const CropField = {
   url: "/crop-field",
   name: "Crop Field",
@@ -265,6 +277,9 @@ export {
   Billings,
   Allocations,
   Crops,
+  AddCrops,
+  EditCrops,
+  ViewCrops,
   CustomReport,
   DailyReport,
   Settings,
