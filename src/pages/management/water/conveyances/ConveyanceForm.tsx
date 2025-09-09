@@ -71,7 +71,6 @@ const ConveyancesForm = () => {
     const cleaned = Object.fromEntries(
       Object.entries(formData).filter(([_, value]) => value !== undefined)
     );
-    console.log(cleaned, "Form Data");
     if (id) {
       updateConveyance(formData, {
         onSuccess: (response) => {
