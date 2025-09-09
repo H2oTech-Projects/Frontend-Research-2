@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult, useMutation } from "@tanstack/react-query";
 import { noCacheQueryConfig, queryConfig } from "@/utils/reactQueryConfig";
 import { queryFieldService, RegisterResponse  } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
-import { GET_APPORTION_METHOD_TYPE, GET_CLIENT_FIELD_MAP_KEY, GET_MESMT_POINT_FIELD_DETAIL, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY, GET_CLIENT_MSMT_POINTS, GET_CLIENT_MSMT_POINTS_MAP } from "./constant";
+import { GET_APPORTION_METHOD_TYPE, GET_CLIENT_FIELD_MAP_KEY, GET_MESMT_POINT_FIELD_DETAIL, GET_MSMTPOINT_LIST_KEY, PUT_MSMTPOINT_FIELDS_KEY, GET_CLIENT_MSMT_POINTS, GET_CLIENT_MSMT_POINTS_MAP, POST_MSMTPOINT_LIST, PUT_MSMTPOINT, GET_MSMTPOINT_DETAIL_KEY } from "./constant";
 import { MsmtPointListResponseType } from "@/types/apiResponseType";
 import { AxiosError } from "axios";
 
@@ -72,5 +72,35 @@ export const useGetClientMsmtPoinMap = ():UseQueryResult<any> => {
       queryKey: [GET_CLIENT_MSMT_POINTS_MAP],
     queryFn: ()=> queryFieldService.getMsmtPointMap(),
     ...queryConfig,
+})
+}
+
+export const usePostmsmtPoint = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [POST_MSMTPOINT_LIST],
+    mutationFn:queryFieldService.postMsmtPoint,
+  }); 
+}
+
+export const useDeletemsmtPoint = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: ['DELETE_MSMTPOINT'],
+    mutationFn:queryFieldService.deleteMsmtPoint,
+  }); 
+}
+
+export const usePutmsmtPoint = () => {
+  return useMutation<RegisterResponse, AxiosError<any>, any>({
+    mutationKey: [PUT_MSMTPOINT], 
+    mutationFn:queryFieldService.putMsmtPoint,
+  }); 
+}
+
+export const useGetMsmtPointById = (id:string):UseQueryResult<any> => {
+  return useQuery({
+    queryKey:[GET_MSMTPOINT_DETAIL_KEY],
+    queryFn:()=>  queryFieldService.getMsmtPointById(id),
+    enabled: !!id,
+  ...queryConfig
 })
 }

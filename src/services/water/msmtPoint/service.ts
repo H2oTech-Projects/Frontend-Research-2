@@ -95,5 +95,35 @@ getMsmtPointMap : async () =>{
   ).catch((err) => console.log(err));
   const data = convertKeysToCamelCase(toJson(response));
   return toJson(data?.data);
-}
+},
+
+ getMsmtPointById: async (id:any) => {
+  const response = await axiosInstance.get<any>(BASE_API_URL + "/msmt_points/" + id + "/");
+  const data = convertKeysToCamelCase(toJson(response));
+  return data?.data   
+},
+
+  postMsmtPoint: async (data: any) => { 
+    const response = await axiosInstance.post<any>(BASE_API_URL + "/msmt_points/", data, {
+      headers: {
+        "Content-Type": "application/json",   
+      },
+    });
+    return response.data;
+  },
+
+  putMsmtPoint: async (data: any) => {
+    const response = await axiosInstance.put<any>(BASE_API_URL + "/msmt_points/" + data?.id + "/", data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  },
+
+  deleteMsmtPoint: async (id: string) => {
+    const response = await axiosInstance.delete<any>(BASE_API_URL + "/msmt_points/" + id + "/");
+    return response.data;
+  }
+
 };
