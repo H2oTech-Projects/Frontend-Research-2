@@ -104,7 +104,7 @@ export const fieldPageColumnProperties = {
 };
 
 export const measurementPointColumnProperties = {
-    conveyId: "str",
+    conveyName: "str",
     msmtPointId: "str",
     msmtPointName: "str",
 };

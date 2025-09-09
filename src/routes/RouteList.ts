@@ -96,7 +96,17 @@ export const RouteList = [
     Component: lazy(
       async () =>
         await import(
-          "./../pages/management/water/measurementPoint/EditMeasurementPoint"
+          "./../pages/management/water/measurementPoint/MsmtPointForm"
+        )
+    ),
+  },
+  {
+    path: routeUrl.ViewMeasurementPoint?.url,
+    name: routeUrl.ViewMeasurementPoint?.name,
+    Component: lazy(
+      async () =>
+        await import(
+          "./../pages/management/water/measurementPoint/MsmtPointForm"
         )
     ),
   },
@@ -106,7 +116,7 @@ export const RouteList = [
     Component: lazy(
       async () =>
         await import(
-          "./../pages/management/water/measurementPoint/AddMeasurementPoint"
+          "./../pages/management/water/measurementPoint/MsmtPointForm"
         )
     ),
   },

@@ -59,12 +59,17 @@ const MeasurementPoint = {
 };
 
 const AddMeasurementPoint = {
-  url: "/measurementPoints/addMeasurementPoint",
+  url: "/measurementPoints/add",
   name: "AddMeasurementPoint",
 };
 
 const EditMeasurementPoint = {
-  url: "/measurementPoints/editMeasurementPoint",
+  url: "/measurementPoints/:id/edit",
+  name: "EditMeasurementPoint",
+};
+
+const ViewMeasurementPoint = {
+  url: "/measurementPoints/:id/view",
   name: "EditMeasurementPoint",
 };
 
@@ -288,6 +293,7 @@ export {
   MeasurementPoint,
   AddMeasurementPoint,
   EditMeasurementPoint,
+  ViewMeasurementPoint,
   District,
   AddDistrict,
   EditDistrict,
