@@ -171,32 +171,30 @@ const ParcelForm = () => {
     form.setValue("parcelCoordinates", JSON.stringify(coordinates));
   }
 
+  const viewMode = location.pathname.includes("view")
+
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
         pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Parcel`}
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Parcel", menuPath: "/parcels" }]}
       />
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
-
-
-
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
             <FormComboBox control={form.control} name='wayId' label='Water Accounting Year' options={ways?.data} disabled={id ? true : false} />
-            <FormInput control={form.control} name='parcelId' label='Parcel ID' placeholder='Enter Parcel ID' type='text' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='parcelName' label='Parcel Name' placeholder='Enter Parcel Name' type='text' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='parcelIrrigArea' label={'Irrigable Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Irrigable  Area' type='number' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='parcelLegalArea' label={'Stand By Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Stand By  Area' type='number' disabled={location.pathname.includes("view")} />
-            <FormComboBox control={form.control} name='regionId' label='Select Region' options={regions?.data} disabled={location.pathname.includes("view")} />
+            <FormInput control={form.control} name='parcelId' label='Parcel ID' placeholder='Enter Parcel ID' type='text' disabled={viewMode} />
+            <FormInput control={form.control} name='parcelName' label='Parcel Name' placeholder='Enter Parcel Name' type='text' disabled={viewMode} />
+            <FormInput control={form.control} name='parcelIrrigArea' label={'Irrigable Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Irrigable  Area' type='number' disabled={viewMode} />
+            <FormInput control={form.control} name='parcelLegalArea' label={'Stand By Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Stand By  Area' type='number' disabled={viewMode} />
+            <FormComboBox control={form.control} name='regionId' label='Select Region' options={regions?.data} disabled={viewMode} />
             {/* <FormInput control={form.control} name= 'parcelLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
-            <FormTextbox control={form.control} name='parcelDesc' label='Parcel Description' placeholder='Enter Parcel Description' disabled={location.pathname.includes("view")} />
-            <FormTextbox control={form.control} name='parcelDesc' label='Parcel Comment' placeholder='Enter Parcel comment' disabled={location.pathname.includes("view")} />
-            <FormTextbox control={form.control} name='parcelWayComnt' label='Parcel Way Comment' placeholder='Enter comment' disabled={location.pathname.includes("view")} />
-            <FormRadioGroup control={form.control} name='parcelActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={location.pathname.includes("view")} />
+            <FormTextbox control={form.control} name='parcelDesc' label='Parcel Description' placeholder='Enter Parcel Description' disabled={viewMode} />
+            <FormTextbox control={form.control} name='parcelDesc' label='Parcel Comment' placeholder='Enter Parcel comment' disabled={viewMode} />
+            <FormTextbox control={form.control} name='parcelWayComnt' label='Parcel Way Comment' placeholder='Enter comment' disabled={viewMode} />
+            <FormRadioGroup control={form.control} name='parcelActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={viewMode} />
 
-            {!location.pathname.includes("view") && <BasicSelect
+            {!viewMode && <BasicSelect
               itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
               label="Choose Geometric File Type"
               Value={shapeType}
@@ -207,7 +205,7 @@ const ParcelForm = () => {
                 setShapeType(newValue);
               }} />}
 
-            {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
+            {!viewMode && <div className='flex flex-col gap-2 w-full'>
               {shapeType === "geojson" ? <FormFileReader
                 control={form.control}
                 name="parcelGeometryFile"
@@ -223,13 +221,9 @@ const ParcelForm = () => {
                 multiple={true}
                 accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
             </div>}
-
           </div>
           <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} />
-
-
-          {/* <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/> */}
-          {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={creatingField || updatingField} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
+          {!viewMode && <Button className='w-24 mt-4' disabled={creatingField || updatingField} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
         </form>
       </Form>
     </div>

@@ -1,18 +1,15 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import $ from "jquery";
-import { Circle, Popup } from "react-leaflet";
+import { Popup } from "react-leaflet";
 import { cn } from "../../../../utils/cn";
 import { ColumnDef } from "@tanstack/react-table";
-import dayjs from "dayjs";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtPolygon from "@/components/RtPolygon";
 import RtGeoJson from "@/components/RtGeoJson";
-import DummyData from "../../../../../mapleData.json";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
-import swmcFields from "../../../../geojson/SMWC_Fields.json";
 import { buildPopupMessage } from "@/utils/map";
 
 import {
@@ -25,7 +22,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useDeleteFieldByWAP } from "@/services/water/field";
 import { deleteParcelByWAY, useGetParcelListByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
 import { debounce, UnitSystemName } from "@/utils";
 import Spinner from "@/components/Spinner";
@@ -36,7 +32,6 @@ import { showErrorToast } from "@/utils/tools";
 import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { parcelPageColumnProperties } from "@/utils/constant";
 import { createRoot } from "react-dom/client";
 import { DELETE_PARCEL_KEY_BY_WAY, GET_PARCEL_MAP_KEY_BY_WAY } from "@/services/water/parcel/constant";
@@ -96,7 +91,7 @@ const Parcel = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_id", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_id", sort_order: !tableInfo.sort_order || tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Parcel ID {tableInfo?.sort !== "parcel_id" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -114,7 +109,7 @@ const Parcel = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_name", sort_order: !tableInfo.sort_order || tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Parcel Name {tableInfo?.sort !== "parcel_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -134,7 +129,7 @@ const Parcel = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_geom_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_geom_ha", sort_order: !tableInfo.sort_order || tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
              Geom Area ({UnitSystemName()}) {tableInfo?.sort !== "parcel_geom_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -149,7 +144,7 @@ const Parcel = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_irrig_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_irrig_ha", sort_order: !tableInfo.sort_order || tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Irrig Area ({UnitSystemName()})  {tableInfo?.sort !== "parcel_irrig_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -164,7 +159,7 @@ const Parcel = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_legal_ha", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_legal_ha", sort_order: !tableInfo.sort_order || tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
             Legal Area ({UnitSystemName()}) {tableInfo?.sort !== "parcel_legal_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -255,13 +250,11 @@ const Parcel = () => {
       text: "ParcelID: " + Id,
       css: { fontSize: "16px", marginBottom: "3px" },
     }).appendTo(popup);
-    // Add the popup to the map
     popup.appendTo("#map");
   };
 
   const removeInfo = (Id: String) => {
-    // $("#popup-" + Id).remove();
-       $("[id^='popup-']").remove();
+    $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -274,16 +267,14 @@ const Parcel = () => {
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-            createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-            {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
-            <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
-              <div>Parcel Id: { auxLayer.feature.properties.parcel_id}</div>
-              <div>Irrig Area: { auxLayer.feature.properties.field_irrig_ha}</div>
-              <div>Legal Area: { auxLayer.feature.properties.field_legal_ha}</div>
-              <div>Geom Area: { auxLayer.feature.properties.field_geom_ha}</div>
-              <div>Status: { auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
-                          
-                </div>);
+            createRoot(popupDiv).render(
+              <div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+                <div>Parcel Id: { auxLayer.feature.properties.parcel_id}</div>
+                <div>Irrig Area: { auxLayer.feature.properties.field_irrig_ha}</div>
+                <div>Legal Area: { auxLayer.feature.properties.field_legal_ha}</div>
+                <div>Geom Area: { auxLayer.feature.properties.field_geom_ha}</div>
+                <div>Status: { auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
+              </div>);
         showInfo("ParcelID: ",auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e: any) {
@@ -363,12 +354,11 @@ const Parcel = () => {
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
-
       <PageHeader
         pageHeaderTitle="Parcels"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
-<CustomModal
+      <CustomModal
         isOpen={open}
         onClose={() => setOpen(false)}
         title="Delete Parcel"
