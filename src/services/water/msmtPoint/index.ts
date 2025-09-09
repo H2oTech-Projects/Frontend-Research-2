@@ -79,26 +79,26 @@ export const usePostmsmtPoint = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: [POST_MSMTPOINT_LIST],
     mutationFn:queryFieldService.postMsmtPoint,
-  }); 
+  });
 }
 
 export const useDeletemsmtPoint = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
     mutationKey: ['DELETE_MSMTPOINT'],
     mutationFn:queryFieldService.deleteMsmtPoint,
-  }); 
+  });
 }
 
 export const usePutmsmtPoint = () => {
   return useMutation<RegisterResponse, AxiosError<any>, any>({
-    mutationKey: [PUT_MSMTPOINT], 
+    mutationKey: [PUT_MSMTPOINT],
     mutationFn:queryFieldService.putMsmtPoint,
-  }); 
+  });
 }
 
 export const useGetMsmtPointById = (id:string):UseQueryResult<any> => {
   return useQuery({
-    queryKey:[GET_MSMTPOINT_DETAIL_KEY],
+    queryKey:[GET_MSMTPOINT_DETAIL_KEY, id],
     queryFn:()=>  queryFieldService.getMsmtPointById(id),
     enabled: !!id,
   ...queryConfig
