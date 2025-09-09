@@ -52,7 +52,7 @@ const Crops = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_name", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
           >
             Crop Name {tableInfo?.sort !== "crop_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -67,7 +67,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_code", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_code", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
           >
             Crop Code  {tableInfo?.sort !== "crop_code" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -84,7 +84,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_abbrev", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_abbrev", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
           >
             Crop Abbreviation  {tableInfo?.sort !== "crop_abbrev" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -100,7 +100,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_group_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_group_name", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
           >
             Crop Group Name  {tableInfo?.sort !== "crop_group_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -116,7 +116,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_desc", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_desc", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
           >
             Crop Description  {tableInfo?.sort !== "crop_desc" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -132,7 +132,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start "
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_app_depth_m", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_app_depth_m", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
           >
             Crop App Depth  {tableInfo?.sort !== "crop_app_depth_m" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -178,14 +178,13 @@ const Crops = () => {
         className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slateLight-500 ",
       },
     },
-
   ];
 
   const handleDelete = () => {
     deleteCrop(id, {
       onSuccess: () => {
         refetch();
-        toast.success("Crop deleted successfully");
+        toast.success("Crop deleted successfully.");
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
@@ -250,7 +249,7 @@ const Crops = () => {
             }}
           >
             <Plus size={4} />
-            Add Crops
+              Add Crops
           </Button>
         </div>
         <div className="flex w-full">

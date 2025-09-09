@@ -32,18 +32,17 @@ export const queryCropsService = {
     const data = convertKeysToSnakeCase(formData)
     const response = await axiosInstance.post(BASE_API_URL + "/crops/", data, {
       headers: {
-        "Content-Type": "application/json", 
+        "Content-Type": "application/json",
       }
     });
     return convertKeysToCamelCase(toJson(response.data));
   },
 
   putCrops: async ({cropId, formData}:{cropId:number,formData:any}) => {
-    console.log(cropId)
     const data = convertKeysToSnakeCase(formData)
-    const response = await axiosInstance.put(BASE_API_URL + "/crops/" + cropId + "/", data, { 
+    const response = await axiosInstance.put(BASE_API_URL + "/crops/" + cropId + "/", data, {
       headers: {
-        "Content-Type": "application/json", 
+        "Content-Type": "application/json",
       }
     });
     return convertKeysToCamelCase(toJson(response.data));
