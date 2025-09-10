@@ -47,6 +47,7 @@ import { useGetCropFieldDetailByWAP, useGetCropFieldMapByWAP, useGetCropsFieldLi
 import { GET_ALL_CROP_FIELDS_LIST, GET_ALL_CROP_FIELDS_MAP, PUT_CROPS_FIELD } from "@/services/crops/constants";
 import CropFieldModal from "./cropFieldModal";
 import { cropFieldColumnProperties } from "@/utils/constant";
+import AllFieldList from "./AllFieldList";
 
 interface initialTableDataTypes {
   search: string;
@@ -95,6 +96,7 @@ const CropField = () => {
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
+  const [fields,setFields] = useState<any>(null)
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -147,7 +149,7 @@ const CropField = () => {
         );
       },
       size: 180,
-      cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.join(", ")}</div>}</div>,
+ cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0,5)?.join(", ")} <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setFields(row.original)}}>View All</button> </div>}</div>,
     },
     {
       id: "actions",
@@ -390,6 +392,13 @@ const CropField = () => {
       <PageHeader
         pageHeaderTitle="Crop-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Crops", menuPath: "/crops" }]}
+      />
+      <CustomModal
+        isOpen={fields ? true : false}
+        onClose={() => setFields(null)}
+        title={`Linked with ${fields?.cropName}`}
+        showActionButton={false}
+        children={<AllFieldList fields={fields}/>}
       />
       {/* <EditModel /> */}
       {open && <CropFieldModal
