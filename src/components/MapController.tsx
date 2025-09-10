@@ -27,6 +27,7 @@ const CustomZoomControl = () => {
                     className="flex items-center justify-center border-b border-black border-opacity-50 pb-1 dark:border-white"
                     onClick={zoomIn}
                     disabled={zoomLevel === 18}
+                    type="button"   // prevent form submission
                 >
                     <Plus size={20} />
                 </button>
@@ -34,6 +35,7 @@ const CustomZoomControl = () => {
                     className="flex items-center justify-center pt-1"
                     onClick={zoomOut}
                     disabled={zoomLevel === 5}
+                    type="button"   // prevent form submission
                 >
                     <Minus size={20} />
                 </button>
