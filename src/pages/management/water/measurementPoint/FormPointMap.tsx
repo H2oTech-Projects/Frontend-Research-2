@@ -11,7 +11,7 @@ type FormPointMapProps = {
   onPointChange: (lat: number, lng: number) => void;
 };
 
-const FormPointMap = ({ latitude, longitude, onPointChange }: FormPointMapProps) => {
+const FormPointMap = ({ latitude, longitude, onPointChange}: FormPointMapProps) => {
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
 
   const MapClickHandler = () => {
@@ -28,13 +28,18 @@ const FormPointMap = ({ latitude, longitude, onPointChange }: FormPointMapProps)
       }, 300)
     }, [isMenuCollapsed]);
 
+   useEffect(() => {
+  if (latitude && longitude) {
+    map.setView([latitude, longitude], map.getZoom()); // keep current zoom
+  }
+}, [latitude, longitude, map]);
 
     return null;
   };
 
   return (
     <MapContainer
-      center={[latitude || 38.86902846413033, longitude || -121.729324818604]} // fallback center
+      center={[ 38.86902846413033, -121.729324818604]} // fallback center
       zoom={13}
       style={{ height: "400px", width: "100%", borderRadius: "8px" }}
       scrollWheelZoom={true}
