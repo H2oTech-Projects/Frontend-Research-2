@@ -149,7 +149,7 @@ const CropField = () => {
         );
       },
       size: 180,
- cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0,5)?.join(", ")} <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setFields(row.original)}}>View All</button> </div>}</div>,
+ cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0,5)?.join(", ")} {row.getValue("fieldPctFarmed")?.length > 5 && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setFields(row.original)}}>View All</button>}  </div>}</div>,
     },
     {
       id: "actions",
