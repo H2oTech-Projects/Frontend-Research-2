@@ -7,7 +7,7 @@ import { conveyanceDataType, initialTableDataTypes } from '@/types/tableTypes';
 import { cn } from '@/utils/cn';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import $ from "jquery";
 import { useNavigate } from 'react-router-dom';
 import MapTable from '@/components/Table/mapTable';
@@ -17,6 +17,8 @@ import { debounce } from '@/utils';
 import { useGetRegionList, useGetRegionMap } from '@/services/region';
 import { regionColumnProperties } from '@/utils/constant';
 import { createRoot } from 'react-dom/client';
+import { useMediaQuery } from '@uidotdev/usehooks';
+import { useSwipe } from '@/utils/customHooks/useSwipe';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -27,12 +29,17 @@ const initialTableData = {
 const SubRegion = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
   const [collapse, setCollapse] = useState("default");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedGeom, setClickedGeom] = useState<any>({ regionId: "", viewBounds: null });
   const [searchText, setSearchText] = useState("");
+  const { handleTouchStart, handleTouchEnd } = useSwipe({
+    onSwipeLeft: () => setCollapse("table"),
+    // onSwipeRight: () => setCollapse("map"),
+  });
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
@@ -65,7 +72,7 @@ const SubRegion = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "region_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-           Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -75,30 +82,38 @@ const SubRegion = () => {
 
   ];
   const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
+    if (!isDesktopDevice) {
+      setCollapse("map")
+    } else {
+      setCollapse((prev) => (prev === "default" ? "table" : "default"));
+    }
   };
   const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
+    if (!isDesktopDevice) {
+      setCollapse("table")
+    } else {
+      setCollapse((prev) => (prev === "default" ? "map" : "default"));
+    }
   };
 
-    const showInfo = (label: String, Id: String, name: String) => {
-      var popup = $("<div></div>", {
-        id: "popup-" + Id,
-        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
-      });
-      // Insert a headline into that popup
-      var hed = $("<div></div>", {
-        text: ` ${label} : ${name}` ,
-        // text: `${label}: ` + Id,
-        css: { fontSize: "16px", marginBottom: "3px" },
-      }).appendTo(popup);
-      // Add the popup to the map
-      popup.appendTo("#map");
-    };
+  const showInfo = (label: String, Id: String, name: String) => {
+    var popup = $("<div></div>", {
+      id: "popup-" + Id,
+      class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+    });
+    // Insert a headline into that popup
+    var hed = $("<div></div>", {
+      text: ` ${label} : ${name}`,
+      // text: `${label}: ` + Id,
+      css: { fontSize: "16px", marginBottom: "3px" },
+    }).appendTo(popup);
+    // Add the popup to the map
+    popup.appendTo("#map");
+  };
 
-    const removeInfo = (Id: String) => {
-         $("[id^='popup-']").remove();
-    };
+  const removeInfo = (Id: String) => {
+    $("[id^='popup-']").remove();
+  };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     const popupDiv = document.createElement('div');
@@ -111,10 +126,10 @@ const SubRegion = () => {
       mouseover: function (e: any) {
         const auxLayer = e.target;
         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-                  <div>Region Id: { auxLayer.feature.properties.region_id}</div>
-                  <div>Region Name: { auxLayer.feature.properties.region_name}</div>                             
+          <div>Region Id: {auxLayer.feature.properties.region_id}</div>
+          <div>Region Name: {auxLayer.feature.properties.region_name}</div>
         </div>);
-        showInfo("Region",auxLayer.feature.properties.region_id, auxLayer.feature.properties.region_name);
+        showInfo("Region", auxLayer.feature.properties.region_id, auxLayer.feature.properties.region_name);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -129,6 +144,12 @@ const SubRegion = () => {
       },
     })
   };
+
+  useEffect(() => {
+    if (!isDesktopDevice && collapse === "default") {
+      setCollapse("map")
+    }
+  }, [isDesktopDevice])
 
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
 
@@ -211,7 +232,10 @@ const SubRegion = () => {
         </div>
         <div className="flex flex-grow">
           <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
+            <div className={cn("relative h-[calc(100vh-160px)] w-full")}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
               <MapTable
                 defaultData={regionData?.data || []}
                 columns={columns}
@@ -224,7 +248,7 @@ const SubRegion = () => {
                 totalData={regionData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={conveyLoading}
-              columnProperties={regionColumnProperties}
+                columnProperties={regionColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
