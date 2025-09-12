@@ -10,17 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import Spinner from "@/components/Spinner";
 import { logout } from "../redux/slice/authSlice";
 import { toast } from "react-toastify";
-import irrigatedFields from "../geojson/Irrigated_Fields.json";
-import nonIrrigatedFields from "../geojson/NonIrrigated_Fields.json";
 import rt30_data from "../../rt30_data.json"
 import parcelsData from "../../parcels1.json"
-import { buildPopupMessage } from "@/utils/map";
 import $ from "jquery";
 import { Button } from "@/components/ui/button";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { usePostLogoutUser } from "@/services/registration";
-import { showErrorToast } from "@/utils/tools";
 import TableLineChartInfo, {ColusaTableLineChartInfo} from '@/utils/tableLineChartInfo';
 import { createRoot } from 'react-dom/client';
 import { useGetSearchParcelMapByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
@@ -53,8 +49,8 @@ const Map = () => {
     useEffect(() => {
       if (searchedParcels && Object.keys(searchedParcels).length > 0) {
         setSearchParcelData(searchedParcels);
-      }  
-  
+      }
+
      if( isSearchError ){
         toast.info("No parcels found");}
       }, [searchedParcels,isSearchError]);
