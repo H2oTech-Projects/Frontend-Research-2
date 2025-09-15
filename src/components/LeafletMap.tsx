@@ -173,7 +173,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
         </div>
       </>
       return (
-        <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-1 rounded-[8px] bg-black text-slate-50">
+        <div className="flex flex-row gap-7  absolute top-20 right-2 z-[1002] h-auto   p-2 m-1 rounded-[8px] bg-black text-slate-50">
         <div  className="flex flex-col">
           {loggedUser == "colusa@wateraccounts.com" &&  additionalLegendsColusa || ''}
           <div className="flex flex-row pb-1">

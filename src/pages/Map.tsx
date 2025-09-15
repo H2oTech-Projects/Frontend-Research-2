@@ -25,9 +25,11 @@ import TableLineChartInfo, {ColusaTableLineChartInfo} from '@/utils/tableLineCha
 import { createRoot } from 'react-dom/client';
 import { useGetSearchParcelMapByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 const Map = () => {
     const queryClient = useQueryClient();
+    const isDesktopDevice = useMediaQuery("(min-width: 768px)");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [search, setSearch] = useState("");
     const modalRef = useRef<HTMLDivElement>(null);
@@ -166,7 +168,7 @@ const Map = () => {
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.parcel_id;
 
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(54, 128),autoPanPaddingBottomRight: L.point(128, 48) });
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: isDesktopDevice ? L.point(54, 128) : L.point(54,280),autoPanPaddingBottomRight: L.point(128, 48) });
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;

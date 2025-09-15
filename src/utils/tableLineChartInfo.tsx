@@ -3,6 +3,7 @@ import RTLineChart from '../components/charts/lineChart';
 import BasicSelect, { GeneralSelect } from "@/components/BasicSelect";
 import { Download } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useMediaQuery } from '@uidotdev/usehooks';
 interface ChartParameters {
   data?: any;
 }
@@ -360,6 +361,10 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
     if (way == '2023') return table_2023();
     if (way == '2024') return table_2024();
   }
+
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+
+  if(isDesktopDevice){
   return (
     <div className='p-1 h-full w-full flex gap-4'>
       <div className='flex w-2/5 justify-end flex-col gap-2 text-black dark:text-white '>
@@ -401,6 +406,31 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
       </div>
     </div>
   );
+} else {
+  return ( 
+  <div className='flex flex-col gap-2'>
+
+    <span className='text-white font-semibold text-xl'>Parcel Information</span>
+    <div className='flex flex-col gap-1 pl-1 text-white pb-[20px]'>
+          <div>Parcel ID: XXX-XXX-XXX</div>
+          <div>Account ID: MAD_MA_XXXXX</div>
+          <div>Farm Unit Zone: {data?.tableInfo?.zone_name}</div>
+          <div>Primary Crop: Pistachios</div>
+          <div>2024 Allocation (AF): 173.4</div>
+          <div>Carryover (AF): 22.5</div>
+          <div>Total Allocation (AF): 206.2</div>
+          <div>Sustainable Yield Acreage (AC): 75.9</div>
+          <div>Transitional Water Acreage (AC): 74.3</div>  
+        </div>
+        <div className='flex justify-center items-center -mt-2'>
+    <Button className="text-white bg-slate-900/90 h-auto px-4 text-sm w-fit" onClick={() => {}}>
+          View More Details
+        </Button>
+</div>
+</div>
+)
+}
+
 };
 
 export default TableLineChartInfo;
@@ -841,7 +871,11 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
     if (way == '2025') return table_2025();
     if (way == '2024') return table_2024();
   }
-  return (
+
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+
+  if(isDesktopDevice){
+        return (
     <div className='p-1 h-full w-full flex gap-4'>
       <div className='flex w-2/5 flex-col gap-2 text-black dark:text-white '>
         <div className='flex justify-between items-center'>   <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
@@ -886,6 +920,34 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
       </div>
     </div>
   );
+} else {
+  return ( 
+  <div className='flex flex-col gap-2'>
+
+    <span className='text-white font-semibold text-xl'>Parcel Information</span>
+    <div className='flex flex-col gap-1 pl-1 text-white pb-[20px]'>
+          <div>Parcel ID: {data['parcelId']}</div>
+          <div>Account ID: COL_MA_XXXXX</div>
+          <div>Farm Unit Zone: {data?.tableInfo?.zone_name}</div>
+          <div>Primary Crop: Pistachios</div>
+          <div>2024 Allocation (AF): 173.4</div>
+          <div>Carryover (AF): 22.5</div>
+          <div>Total Allocation (AF): 206.2</div>
+          <div>Sustainable Yield Acreage (AC): 75.9</div>
+          <div>Transitional Water Acreage (AC): 74.3</div>  
+        </div>
+        <div className='flex justify-center items-center -mt-2'>
+    <Button className="text-white bg-slate-900/90 h-auto px-4 text-sm w-fit" onClick={() => {}}>
+          View More Details
+        </Button>
+</div>
+</div>
+)
+}
+
+
+
+
 };
 
 

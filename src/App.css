@@ -44,6 +44,13 @@ html.dark .leaflet-popup-content-wrapper {
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
 }
 
+@media (max-width: 768px) {
+  .leaflet-popup-content {
+    max-height: 280px; /* Adjust max height for smaller screens */
+    max-width: 250px; /* Adjust max width for smaller screens */
+  }
+}
+
 .customer-field-msmtpoint {
   background-color:#16599a !important; /* Set a background color for the popup content */
   max-height: 85px; /* Set a maximum height for the popup content */

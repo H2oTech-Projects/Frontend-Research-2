@@ -31,7 +31,7 @@ const SubRegion = () => {
   const queryClient = useQueryClient();
   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+   const [collapse, setCollapse] = useState(isDesktopDevice ? "default" : "map");
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedGeom, setClickedGeom] = useState<any>({ regionId: "", viewBounds: null });
