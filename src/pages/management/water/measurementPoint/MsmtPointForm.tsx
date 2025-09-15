@@ -27,7 +27,7 @@ const formSchema = z.object({
   msmtPointId: z.string().optional(),
   msmtPointName: z.string().optional(),
   conveyId: z.coerce.number().optional(),
-  gateBrand: z.string().optional(),
+  // gateBrand: z.string().optional(),
   lat: z.coerce
     .number({
       required_error: "Latitude is required",
@@ -65,7 +65,7 @@ const MsmtPoint = () => {
       conveyId: undefined,
       lat: 0,
       lon: 0,
-      gateBrand: "True",
+      // gateBrand: "True",
     },
   });
 
@@ -85,7 +85,7 @@ const MsmtPoint = () => {
           form.reset(); // Reset the form after successful submission
         },
         onError: (error) => {
-          showErrorToast(error?.response?.data?.message || "Failed to create field");
+          showErrorToast(error?.response?.data?.message || "Failed to create Measurement point");
           queryClient.invalidateQueries({ queryKey: [POST_MSMTPOINT_LIST] });
         },
       });
@@ -102,17 +102,16 @@ const MsmtPoint = () => {
           form.reset(); // Reset the form after successful submission
         },
         onError: (error) => {
-          showErrorToast(error?.response?.data?.message || "Failed to create field");
+          showErrorToast(error?.response?.data?.message || "Failed to update Measurement point");
           queryClient.invalidateQueries({ queryKey: [PUT_MSMTPOINT] });
         },
       });
     }
-
   };
 
   useEffect(() => {
     if (msmtPointData && id) {
-      form.reset({ ...msmtPointData?.data[0], gateBrand: msmtPointData?.data[0]?.gateBrand ? "True" : "False" });
+      form.reset({ ...msmtPointData?.data[0] });
     }
   }, [msmtPointData]);
 
@@ -121,7 +120,7 @@ const MsmtPoint = () => {
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
-        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Parcel`}
+        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Measurement Point`}
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Measurement-Points", menuPath: "/measurementPoints" }]}
       />
       <Form {...form}>
@@ -130,9 +129,10 @@ const MsmtPoint = () => {
             <FormInput control={form.control} name='msmtPointId' label='Measurement Point ID' placeholder='Enter Measurement Point ID' type='text' disabled={viewMode} />
             <FormInput control={form.control} name='msmtPointName' label='Measurement Point Name' placeholder='Enter Measurement Point Name' type='text' disabled={viewMode} />
             <FormComboBox control={form.control} label='Select conveyance ' name='conveyId' options={conveyanceParentOptions || []} disabled={location.pathname.includes("view")} />
-            <FormRadioGroup control={form.control} name='gateBrand' label='Gate Brand' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='lat' label='Latitude' placeholder='Enter Parcel ID' type='number' disabled={viewMode} />
-            <FormInput control={form.control} name='lon' label='Longitude' placeholder='Enter Parcel ID' type='number' disabled={viewMode} />
+           <div></div>
+ {/* <FormRadioGroup control={form.control} name='gateBrand' label='Gate Brand' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={location.pathname.includes("view")} /> */}
+            <FormInput control={form.control} name='lat' label='Latitude' placeholder='Enter latitude' type='number' disabled={viewMode} />
+            <FormInput control={form.control} name='lon' label='Longitude' placeholder='Enter Longitude' type='number' disabled={viewMode} />
 
           </div>
           <FormPointMap
