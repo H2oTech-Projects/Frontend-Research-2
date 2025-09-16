@@ -184,24 +184,24 @@ const Map = () => {
   //     !!searchedParcels && searchedParcels.viewBound || [[36.76607448393658,-120.54487255571125],[37.183858352296326,-119.71052800353432]] }, [searchedParcels]);
 
   const ReturnChildren = useMemo(() => {
-  const maderaJsonStyle = (features: Feature) => {
-    if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)){
+    const maderaJsonStyle = (features: Feature) => {
+      if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)){
+        return {
+          color: "red", // Border color
+          fillColor: "transparent", // Fill color for the highlighted area
+          fillOpacity: 0.5,
+          weight: 2,
+        };
+      }
       return {
-        color: "red", // Border color
-        fillColor: "transparent", // Fill color for the highlighted area
+        color: "#16599A", // Border color
+        fillColor: "transparent", // Fill color for normal areas
         fillOpacity: 0.5,
         weight: 2,
       };
     }
-    return {
-      color: "#16599A", // Border color
-      fillColor: "transparent", // Fill color for normal areas
-      fillOpacity: 0.5,
-      weight: 2,
-    };
-  }
 
-    if (loggedUser == 'colusa@wateraccounts.com') {
+    if (loggedUser == 'colusa@wateraccounts.com' || loggedUser == 'colusagrower@wateraccounts.com') {
       return mapLoading ? <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
       <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
     </div> : <RtGeoJson key={'50003'} layerEvents={colusaLayerEvents} style={maderaJsonStyle} data={JSON.parse(mapData['data'])} color={"#16599a"}/>
@@ -278,7 +278,7 @@ const Map = () => {
           </div>
       )}
 
-      <LeafletMap position={position} viewBound={searchParcelData?.viewBound ?? mapData?.viewBounds} zoom={zoomLevel} configurations={mapConfigurations}>
+      <LeafletMap position={position} viewBound={searchParcelData?.viewBound ?? mapData?.viewBounds} zoom={zoomLevel} configurations={mapConfigurations} userPolygon={mapLoading ? '': mapData['userPolygon']}>
         {ReturnChildren}
       </LeafletMap>
     </div>
