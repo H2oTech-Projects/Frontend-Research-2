@@ -14,9 +14,20 @@ import MapTable from '@/components/Table/mapTable';
 import { useQueryClient } from '@tanstack/react-query';
 import RtGeoJson from '@/components/RtGeoJson';
 import { debounce } from '@/utils';
-import { useGetRegionList, useGetRegionMap, useGetSubRegionList, useGetSubRegionMap } from '@/services/region';
 import { subregionColumnProperties } from '@/utils/constant';
 import { createRoot } from 'react-dom/client';
+import { useDeleteSubregion, useGetSubRegionList, useGetSubRegionMap } from '@/services/subregion';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from 'react-toastify';
+import { showErrorToast } from '@/utils/tools';
+import CustomModal from '@/components/modal/ConfirmModal';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -24,7 +35,7 @@ const initialTableData = {
   sort: '',
   sort_order: ''
 }
-const Conveyances = () => {
+const Subregions = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
@@ -33,14 +44,17 @@ const Conveyances = () => {
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedGeom, setClickedGeom] = useState<any>({ id: "", viewBounds: null });
   const [searchText, setSearchText] = useState("");
+  const [id, setId] = useState<string>("");
+  const [open, setOpen] = useState(false);
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setTableInfo((prev) => ({ ...prev, search: value }));
     }, 500),
     []
   );
-  const { data: subRegionData, isLoading: conveyLoading } = useGetSubRegionList(tableInfo);
-  const { data: mapGeoJson, isLoading: isMapLoading } = useGetSubRegionMap();
+  const { data: subRegionData, isLoading: conveyLoading ,refetch} = useGetSubRegionList(tableInfo);
+  const { data: mapGeoJson, isLoading: isMapLoading ,refetch:refetchMap} = useGetSubRegionMap();
+  const { mutate: deleteSubregion } = useDeleteSubregion();
   const columns: ColumnDef<conveyanceDataType>[] = [
 
     // {
@@ -72,6 +86,44 @@ const Conveyances = () => {
       },
       size: 150,
       cell: ({ row }) => <div className="px-4">{row.getValue("subRegionName")}</div>,
+    },
+
+     {
+      id: "actions",
+      header: "",
+      size: 60,
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+            >
+              <span className="sr-only">Open menu</span>
+              <MoreVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => { navigate(`/subregions/${row.original.id}/edit/`) }}>
+              <FilePenLine /> Edit
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => { navigate(`/subregions/${row.original.id}/view/`) }}>
+              <Eye />
+              View
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+      meta: {
+        className: "sticky right-0 !z-9 !bg-white !transition-colors dark:!bg-slateLight-500 ",
+      },
     },
 
   ];
@@ -130,6 +182,21 @@ const Conveyances = () => {
     })
   };
 
+  const handleDelete = () => {
+    deleteSubregion(id, {
+      onSuccess: () => {
+        refetch();
+        refetchMap();
+        setOpen(false);
+        setId("");
+        toast.success("Region deleted successfully");
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data.message);
+      },
+    });
+  };
+
   const mapConfiguration = useMemo(() => { return { 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } } }, []);
   const ReturnChildren = useMemo(() => {
 
@@ -180,6 +247,13 @@ const Conveyances = () => {
         pageHeaderTitle="Subregions"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Land", menuPath: "" }]}
       />
+      <CustomModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Delete Subregion"
+        description="Are you sure you want to delete this Subregion? This action cannot be undone."
+        onConfirm={handleDelete}
+      />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex gap-2">
@@ -208,6 +282,16 @@ const Conveyances = () => {
               <X />
             </Button>}
           </div>
+                    <Button
+                      variant={"default"}
+                      className="h-7 w-auto px-2 text-sm"
+                      onClick={() => {
+                        navigate(`/subregions/add`)
+                      }}
+                    >
+                      <Plus size={4} />
+                      Add Subregion
+                    </Button>
         </div>
         <div className="flex flex-grow">
           <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
@@ -266,4 +350,4 @@ const Conveyances = () => {
   )
 }
 
-export default Conveyances
+export default Subregions

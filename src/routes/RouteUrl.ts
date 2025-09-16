@@ -262,10 +262,36 @@ const Region = {
   name: "Region",
 }
 
+const AddRegion = {
+  url: "/regions/add",
+  name: "AddRegion",
+}
+const EditRegion = {
+  url: "/regions/:id/edit",
+  name: "EditRegion",
+} 
+const ViewRegion = {
+  url: "/regions/:id/view",
+  name: "ViewRegion",
+}
+
 const SubRegion = {
   url: "/subregions",
   name: "Sub-Region",
 };
+
+const AddSubregion = {
+  url: "/subregions/add",
+  name: "AddSubregion",
+}
+const EditSubregion = {
+  url: "/subregions/:id/edit",
+  name: "EditSubregion",
+} 
+const ViewSubregion = {
+  url: "/subregions/:id/view",
+  name: "ViewSubregion",
+}
 
 const FieldParcel = {
   url: "/field-parcel",
@@ -330,7 +356,13 @@ export {
   EditCustomerField,
   ViewCustomerField,
   Region,
+  AddRegion,
+  EditRegion,
+  ViewRegion,
   SubRegion,
+  AddSubregion,
+  EditSubregion,
+  ViewSubregion,
   FieldParcel,
   ViewConveyance,
   CropField,

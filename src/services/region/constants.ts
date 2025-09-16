@@ -2,3 +2,6 @@ export const GET_REGION_LIST = "GET_REGION_LIST";
 export const GET_SUB_REGION_LIST = "GET_SUB_REGION_LIST";
 export const GET_REGION_MAP = "GET_REGION_MAP";
 export const GET_SUB_REGION_MAP = "GET_SUB_REGION_MAP";
+export const POST_REGION = "POST_REGION";
+export const PUT_REGION = "PUT_REGION";
+export const DELETE_REGION = "DELETE_REGION";
