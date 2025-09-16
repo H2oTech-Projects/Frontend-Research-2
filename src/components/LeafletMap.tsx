@@ -28,6 +28,7 @@ type LeafletMapTypes = {
     position: any;
     collapse?: string;
     configurations?: mapConfiguration;
+    userPolygon?: string;
     children?: any;
     viewBound?: any;
 };
@@ -89,7 +90,7 @@ const removeLineBars = <style>{`
       .noUi-target { width: 100%}
       `}</style>
 
-const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children }: LeafletMapTypes) => {
+const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children, userPolygon }: LeafletMapTypes) => {
   const { center } = position;
   const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
@@ -252,10 +253,12 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
     }
 
     const colusaRaster = () => {
+      const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
       return <>
       <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer=='Evapotranspiration (ET)'}>
         <WMSTileLayer
-          url={`${geoserverUrl}`}
+          key={userPolygon}
+          url={`${geoUrl}`}
           opacity= {opacity}
           params={{
             format:"image/png",
@@ -268,7 +271,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
     </>
     }
     const addLayers = () => {
-      if (loggedUser == "colusa@wateraccounts.com") {
+      if (loggedUser == "colusa@wateraccounts.com" || loggedUser == 'colusagrower@wateraccounts.com') {
         return colusaRaster()
       }
       return (
