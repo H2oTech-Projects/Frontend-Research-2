@@ -88,7 +88,7 @@ export const Header = ({ collapsed, setCollapsed }: HeaderProps) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-x-3">
-                    <span className="text-[16px] font-medium dark:text-slate-50">{Name === 'demo' ? "MADERA" : Name.toUpperCase()}</span>
+                    <span className="text-[16px] font-medium dark:text-slate-50">{Name === 'demo' ? "MADERA" : Name?.toUpperCase()}</span>
                     <Button
                         variant={"default"}
                         className="dark:bg-royalBlue h-8 !w-6"

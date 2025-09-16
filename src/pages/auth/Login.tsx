@@ -37,8 +37,8 @@ const Login = () => {
     mutate(values, {
       onSuccess: (data) => {
         toast.success("Login successful!");
-        navigation("/map");
         dispatch(login(data)); // Dispatch Redux action with full response
+        navigation(data?.user_details?.redirect_url)
       },
       onError: (err) => {
         showErrorToast(err?.response?.data.message)

@@ -14,7 +14,7 @@ export function debounce<T extends (...args: any[]) => void>(
 
 export const UnitSystemName = () => {
   const unitSystemName = useSelector((state: any) => state.auth.unitSystemName);
-  if (unitSystemName.toLowerCase().trim() === "metric") {
+  if (unitSystemName?.toLowerCase().trim() === "metric") {
     return "HA";
   } else return "AC"
 }

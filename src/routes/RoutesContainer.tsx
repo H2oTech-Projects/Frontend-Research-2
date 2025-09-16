@@ -17,6 +17,7 @@ interface RoutesContainerProps {
 
 const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
   const isAuthenticated = useSelector((state: any) => state.auth.isLoggedIn);
+  const landingPageRoute  = useSelector((state: any) => state.auth.landingPageRoute);
 
   if (isLoadingData)
     return (<div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">
@@ -77,7 +78,7 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
             path="/"
             element={
               <Navigate
-                to="/map"
+                to={landingPageRoute}
                 replace
               />
             }

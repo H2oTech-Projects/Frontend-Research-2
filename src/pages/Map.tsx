@@ -45,7 +45,6 @@ const Map = () => {
         setSearch(e.target.value)
       }
     };
-
     useEffect(() => {
       if (searchedParcels && Object.keys(searchedParcels).length > 0) {
         setSearchParcelData(searchedParcels);
@@ -230,7 +229,7 @@ const Map = () => {
           />
         </div>
         <div className="flex items-center gap-x-3 z-[450]" >
-        <span className="text-[16px] font-medium text-slate-50">{Name === 'demo' ? "MADERA" : Name.toUpperCase()}</span>
+        <span className="text-[16px] font-medium text-slate-50">{ Name?.toUpperCase()}</span>
         <Button
           variant={"default"}
           className="size-8"

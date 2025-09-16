@@ -383,7 +383,7 @@ const Insight = () => {
   else {
     return (
       <div className="flex flex-col px-3 py-2 ">
-        <div className="text-xl font-medium text-royalBlue dark:text-white">{Name === 'demo' ? "Madera" : Name.charAt(0).toUpperCase() + Name.slice(1)} Allocation Report</div>
+        <div className="text-xl font-medium text-royalBlue dark:text-white">{ Name?.charAt(0).toUpperCase() + Name?.slice(1)} Allocation Report</div>
         <div className="flex flex-col items-start  mt-2 gap-2 dark:text-slate-50 ">
           <RtSelect selectedValue={selectedEmailValue as string} dropdownList={accountList?.data ?? []} label="Account" setSelectedValue={()=>console.log("test")} />
           <RtSelect selectedValue={selectedReportTypeValue} dropdownList={ReportTypeList} label="Report Type" setSelectedValue={setSelectedReportTypeValue} showSearch={false} />

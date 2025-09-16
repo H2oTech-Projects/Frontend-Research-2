@@ -40,6 +40,9 @@ export type AuthResponse = {
     first_name: string;
     last_name: string;
   };
+  user_details:{
+    redirect_url:string;
+}
 };
 
 export type LogoutData = {
