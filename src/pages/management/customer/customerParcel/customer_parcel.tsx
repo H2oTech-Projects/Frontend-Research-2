@@ -6,10 +6,6 @@ import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
-import { createRoot } from 'react-dom/client';
-import {
-  Form
-} from "@/components/ui/form"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,23 +16,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useDeleteFieldByWAP, useGetFieldList, useGetFieldListByWAP, useGetFieldMapByWAP, useGetFieldMapList } from "@/services/water/field";
-import { debounce, UnitSystemName } from "@/utils";
+import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
-import { useGetWaps, useGetWaysOptions } from "@/services/timeSeries";
-import { showErrorToast } from "@/utils/tools";
+import { useGetWaysOptions } from "@/services/timeSeries";
+import CustomModal from "@/components/modal/ConfirmModal";
+import { showErrorToast, AgroItems } from "@/utils/tools";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
-import { useGetCustomerFieldDetailByWAP, useGetCustomerParcelListByWAY, useGetCustomerFieldMapByWAP, usePutCustomerParcel } from "@/services/customerParcel";
+import { useGetCustomerParcelListByWAY, usePutCustomerParcel } from "@/services/customerParcel";
 import { useGetParcelMapByWAY } from "@/services/water/parcel";
 // import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
 import { z } from "zod";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
 import { customerParcelColumnProperties } from "@/utils/constant";
 
+const MAX_ITEMS_LENGTH = 5;
 interface initialTableDataTypes {
   search: string;
   page_no: number,
@@ -85,6 +82,7 @@ const CustomerParcel = () => {
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
+  const [agroItems,setAgroItems] = useState<any>(null)
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -140,7 +138,13 @@ const CustomerParcel = () => {
 
       size: 180,
       // @ts-ignore
-      cell: ({ row }) => <div className=" flex flex-wrap h-auto w-auto px-3">{<div className="flex gap-2">{row.getValue("parcelIds")?.join(", ")}</div>}</div>,
+      cell: ({ row }: any) =>
+        <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">
+          <div className="flex gap-2">
+            {row.getValue("parcelIds")?.slice(0,MAX_ITEMS_LENGTH)?.join(", ")}
+            {row.getValue("parcelIds")?.length > MAX_ITEMS_LENGTH && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setAgroItems(row.original)}}>View All</button>}
+          </div>
+        </div>,
     },
     {
       id: "actions",
@@ -369,6 +373,13 @@ const CustomerParcel = () => {
       <PageHeader
         pageHeaderTitle="Customer-Parcel"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
+      />
+      <CustomModal
+        isOpen={!!(agroItems)}
+        onClose={() => setAgroItems(null)}
+        title={`Linked with ${agroItems?.customerName}`}
+        showActionButton={false}
+        children={<AgroItems fields={agroItems?.parcelIds}/>}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
