@@ -32,7 +32,7 @@ import { GET_REGION_LIST, GET_REGION_MAP, POST_REGION, PUT_REGION } from '@/serv
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
- 
+
   regionId: z.string().optional(),
   regionName: z.string().optional(),
   regionGeometryFile: z.array(z.instanceof(File)).optional(),
@@ -135,7 +135,7 @@ const RegionForm = () => {
   const updateFieldCoordinates = (coordinates: any) => {
     form.setValue("regionCoordinates", JSON.stringify(coordinates));
   }
-
+  const mode = location.pathname.includes("edit") ? 'edit' : 'add'
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
@@ -149,10 +149,10 @@ const RegionForm = () => {
 
 
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
-        
+
             <FormInput control={form.control} name='regionId' label='Region ID' placeholder='Enter Region ID' type='text' disabled={location.pathname.includes("view")} />
             <FormInput control={form.control} name='regionName' label='Region Name' placeholder='Enter Region Name' type='text' disabled={location.pathname.includes("view")} />
-            
+
 
             {!location.pathname.includes("view") && <BasicSelect
               itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
@@ -183,10 +183,7 @@ const RegionForm = () => {
             </div>}
 
           </div>
-          <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} />
-
-
-          {/* <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/> */}
+          <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} mode={mode}/>
           {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={creatingRegion || updatingRegion} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
         </form>
       </Form>

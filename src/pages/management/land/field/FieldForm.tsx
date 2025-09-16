@@ -8,8 +8,7 @@ import {
 } from "@/components/ui/form"
 import { FormInput } from '@/components/FormComponent/FormInput'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
-import { LatLng, LeafletEvent, Layer, FeatureGroup as LeafletFeatureGroup, LatLngBounds } from "leaflet"
-import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap'
+import { LatLngBounds } from "leaflet"
 import { useEffect, useRef, useState } from 'react'
 import { FormTextbox } from '@/components/FormComponent/FormTextbox'
 import { FormRadioGroup } from '@/components/FormComponent/FormRadio'
@@ -164,19 +163,15 @@ const FieldForm = () => {
   const updateFieldCoordinates = (coordinates: any) => {
     form.setValue("fieldCoordinates", JSON.stringify(coordinates));
   }
-
+  const mode = location.pathname.includes("edit") ? 'edit' : 'add'
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
         pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Field`}
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Field", menuPath: "/fields" }]}
       />
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
-
-
-
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
             <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data} disabled={id ? true : false} />
             <FormInput control={form.control} name='fieldId' label='Field ID' placeholder='Enter Field ID' type='text' disabled={location.pathname.includes("view")} />
@@ -216,10 +211,7 @@ const FieldForm = () => {
             </div>}
 
           </div>
-          <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} />
-
-
-          {/* <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/> */}
+          <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} mode={mode}/>
           {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={creatingField || updatingField} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
         </form>
       </Form>

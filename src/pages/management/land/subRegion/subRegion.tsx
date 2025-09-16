@@ -164,7 +164,7 @@ const Subregions = () => {
         const auxLayer = e.target;
                 createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
                   <div>Region Id: { auxLayer.feature.properties.region_id}</div>
-                  <div>Subregion Name: { auxLayer.feature.properties.sub_region_name}</div>                             
+                  <div>Subregion Name: { auxLayer.feature.properties.sub_region_name}</div>
         </div>);
         showInfo("SubRegion",auxLayer.feature.properties.region_id, auxLayer.feature.properties.sub_region_name);
       },
@@ -220,7 +220,6 @@ const Subregions = () => {
     }
 
     return (
-
       <>
         {isMapLoading ? (
           <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
@@ -238,7 +237,6 @@ const Subregions = () => {
         )}
       </>
     )
-
   }, [isMapLoading, clickedGeom, mapGeoJson])
 
   return (
@@ -290,7 +288,7 @@ const Subregions = () => {
                       }}
                     >
                       <Plus size={4} />
-                      Add Subregion
+                      Add Subregionss
                     </Button>
         </div>
         <div className="flex flex-grow">

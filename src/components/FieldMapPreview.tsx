@@ -9,7 +9,7 @@ import RtGeoJson from "./RtGeoJson";
 import "leaflet/dist/leaflet.css"
 import "leaflet-draw/dist/leaflet.draw.css"
 
-const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
+const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates, mode='add' }: any) => {
   const refLayer = useRef<LeafletFeatureGroup>(null);
   const MapSizeHandler = () => {
     // This component is used to handle the map size when the side menu is collapsed or expanded
@@ -83,9 +83,10 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
       },
     })
   };
+  const addMode = mode=='add'
   return (
     <div className="w-full h-[calc(100vh-228px)] ">
-      {isLoading || !data || !refLayer ? (<><MapContainer
+      {isLoading || (!addMode && !data) || !refLayer ? (<><MapContainer
         center={[51.505, -0.09]}
         zoom={13}
         style={{ height: "100%", width: "100%" }}
@@ -93,7 +94,7 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
         zoomControl={false} // Disable default zoom control
         minZoom={2}>
           <LayersControl position="bottomleft">
-        
+
                         <LayersControl.BaseLayer
                             checked
                             name="Satellite"
@@ -103,14 +104,14 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
                                 attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
                             />
                         </LayersControl.BaseLayer>
-        
+
                         <LayersControl.BaseLayer name="Street Map">
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
                         </LayersControl.BaseLayer>
-                     
+
                     </LayersControl>
         <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
           <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
@@ -125,7 +126,7 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
         zoomControl={false} // Disable default zoom control
         minZoom={2}>
                 <LayersControl position="bottomleft">
-        
+
                         <LayersControl.BaseLayer
                             checked
                             name="Satellite"
@@ -135,14 +136,14 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
                                 attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
                             />
                         </LayersControl.BaseLayer>
-        
+
                         <LayersControl.BaseLayer name="Street Map">
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
                         </LayersControl.BaseLayer>
-                     
+
                     </LayersControl>
           <FeatureGroup ref={refLayer}>
               <EditControl
@@ -162,7 +163,7 @@ const FieldMapPreview = ({ data, isLoading, updateFieldCoordinates }: any) => {
                   remove: false
               }}
               />
-              <Polygon positions={data.coordinates} />
+              {!!data && <Polygon positions={data.coordinates} />}
             </FeatureGroup>
         <MapSizeHandler />
         <CustomZoomControl />
