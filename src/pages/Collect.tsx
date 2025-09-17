@@ -21,7 +21,7 @@ const Collect = () => {
             <TooltipTrigger asChild>
               <button
                 onClick={refreshIframe}
-                className="absolute top-2 right-5 z-10 rounded bg-blue-600 p-2 text-white hover:bg-blue-700 transition"
+                className="absolute top-2 right-5 z-10 rounded bg-royalBlue p-2 text-white hover:bg-blue-700 transition"
               >
                 <RefreshCcw size={16} />
               </button>
