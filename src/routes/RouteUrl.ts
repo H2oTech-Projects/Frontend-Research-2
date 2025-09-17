@@ -26,17 +26,17 @@ const Parcel = {
 
 const AddParcel = {
   url: "/parcels/add",
-  name: "Parcel",
+  name: "AddParcel",
 };
 
 const EditParcel = {
   url: "/parcels/:id/edit/:wayId",
-  name: "Parcel",
+  name: "EditParcel",
 };
 
 const ViewParcel = {
   url: "/parcels/:id/view/:wayId",
-  name: "Parcel",
+  name: "ViewParcel",
 };
 
 const AddField = {
@@ -46,11 +46,11 @@ const AddField = {
 
 const EditField = {
   url: "/field/:id/edit/:wapId",
-  name: "Edit Field",
+  name: "EditField",
 };
 const ViewField = {
     url: "/field/:id/view/:wapId",
-    name: "View Field",
+    name: "ViewField",
 };
 
 const MeasurementPoint = {
@@ -70,7 +70,7 @@ const EditMeasurementPoint = {
 
 const ViewMeasurementPoint = {
   url: "/measurementPoints/:id/view",
-  name: "EditMeasurementPoint",
+  name: "ViewMeasurementPoint",
 };
 
 const District = {
@@ -130,7 +130,7 @@ const ViewCrops = {
 };
 const CropField = {
   url: "/crop-field",
-  name: "Crop Field",
+  name: "CropField",
 };
 
 const CustomReport = {
@@ -277,7 +277,7 @@ const ViewRegion = {
 
 const SubRegion = {
   url: "/subregions",
-  name: "Sub-Region",
+  name: "Subregion",
 };
 
 const AddSubregion = {
@@ -302,6 +302,11 @@ const ViewConveyance = {
   url: "/conveyances/:id/view",
   name: "ViewConveyance",
 };
+
+const Collect ={
+  url: "/collect",
+  name: "Collect"
+}
 
 export {
   Map,
@@ -368,5 +373,6 @@ export {
   CropField,
   AddCustomers,
   EditCustomers,
-  ViewCustomers
+  ViewCustomers,
+  Collect
 };

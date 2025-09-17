@@ -28,6 +28,7 @@ import {
 import CustomModal from '@/components/modal/ConfirmModal';
 import { toast } from 'react-toastify';
 import { showErrorToast } from '@/utils/tools';
+import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -52,8 +53,8 @@ const Region = () => {
     }, 500),
     []
   );
-  const { data: regionData, isLoading: conveyLoading ,refetch} = useGetRegionList(tableInfo);
-  const { data: mapGeoJson, isLoading: isMapLoading, refetch:refetchMap } = useGetRegionMap();
+  const { data: regionData, isLoading: conveyLoading, refetch } = useGetRegionList(tableInfo);
+  const { data: mapGeoJson, isLoading: isMapLoading, refetch: refetchMap } = useGetRegionMap();
   const { mutate: deleteRegion } = useDeleteRegion();
   const columns: ColumnDef<conveyanceDataType>[] = [
     {
@@ -79,14 +80,14 @@ const Region = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "region_name", sort_order: tableInfo.sort_order === undefined ? "asc" : tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-           Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Region Name{tableInfo?.sort !== "region_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
       size: 150,
       cell: ({ row }) => <div className="px-4">{row.getValue("regionName")}</div>,
     },
-     {
+    {
       id: "actions",
       header: "",
       size: 60,
@@ -104,18 +105,23 @@ const Region = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/regions/${row.original.id}/edit/`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/regions/${row.original.id}/view/`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditRegion">
+              <DropdownMenuItem onClick={() => { navigate(`/regions/${row.original.id}/edit/`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditRegion">
+              <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewRegion">
+              <DropdownMenuItem onClick={() => { navigate(`/regions/${row.original.id}/view/`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -131,24 +137,24 @@ const Region = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
-    const showInfo = (label: String, Id: String, name: String) => {
-      var popup = $("<div></div>", {
-        id: "popup-" + Id,
-        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
-      });
-      // Insert a headline into that popup
-      var hed = $("<div></div>", {
-        text: ` ${label} : ${name}` ,
-        // text: `${label}: ` + Id,
-        css: { fontSize: "16px", marginBottom: "3px" },
-      }).appendTo(popup);
-      // Add the popup to the map
-      popup.appendTo("#map");
-    };
+  const showInfo = (label: String, Id: String, name: String) => {
+    var popup = $("<div></div>", {
+      id: "popup-" + Id,
+      class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+    });
+    // Insert a headline into that popup
+    var hed = $("<div></div>", {
+      text: ` ${label} : ${name}`,
+      // text: `${label}: ` + Id,
+      css: { fontSize: "16px", marginBottom: "3px" },
+    }).appendTo(popup);
+    // Add the popup to the map
+    popup.appendTo("#map");
+  };
 
-    const removeInfo = (Id: String) => {
-         $("[id^='popup-']").remove();
-    };
+  const removeInfo = (Id: String) => {
+    $("[id^='popup-']").remove();
+  };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     const popupDiv = document.createElement('div');
@@ -161,10 +167,10 @@ const Region = () => {
       mouseover: function (e: any) {
         const auxLayer = e.target;
         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-                  <div>Region Id: { auxLayer.feature.properties.region_id}</div>
-                  <div>Region Name: { auxLayer.feature.properties.region_name}</div>                             
+          <div>Region Id: {auxLayer.feature.properties.region_id}</div>
+          <div>Region Name: {auxLayer.feature.properties.region_name}</div>
         </div>);
-        showInfo("Region",auxLayer.feature.properties.region_id, auxLayer.feature.properties.region_name);
+        showInfo("Region", auxLayer.feature.properties.region_id, auxLayer.feature.properties.region_name);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -280,16 +286,18 @@ const Region = () => {
               <X />
             </Button>}
           </div>
-          <Button
-            variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate(`/regions/add`)
-            }}
-          >
-            <Plus size={4} />
-            Add Region
-          </Button>
+          <PermissionCheckWrapper name="AddRegion">
+            <Button
+              variant={"default"}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate(`/regions/add`)
+              }}
+            >
+              <Plus size={4} />
+              Add Region
+            </Button>
+          </PermissionCheckWrapper>
         </div>
         <div className="flex flex-grow">
           <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
@@ -306,7 +314,7 @@ const Region = () => {
                 totalData={regionData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={conveyLoading}
-              columnProperties={regionColumnProperties}
+                columnProperties={regionColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

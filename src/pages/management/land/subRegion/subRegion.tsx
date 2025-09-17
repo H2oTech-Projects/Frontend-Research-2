@@ -28,6 +28,7 @@ import {
 import { toast } from 'react-toastify';
 import { showErrorToast } from '@/utils/tools';
 import CustomModal from '@/components/modal/ConfirmModal';
+import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -52,8 +53,8 @@ const Subregions = () => {
     }, 500),
     []
   );
-  const { data: subRegionData, isLoading: conveyLoading ,refetch} = useGetSubRegionList(tableInfo);
-  const { data: mapGeoJson, isLoading: isMapLoading ,refetch:refetchMap} = useGetSubRegionMap();
+  const { data: subRegionData, isLoading: conveyLoading, refetch } = useGetSubRegionList(tableInfo);
+  const { data: mapGeoJson, isLoading: isMapLoading, refetch: refetchMap } = useGetSubRegionMap();
   const { mutate: deleteSubregion } = useDeleteSubregion();
   const columns: ColumnDef<conveyanceDataType>[] = [
 
@@ -88,7 +89,7 @@ const Subregions = () => {
       cell: ({ row }) => <div className="px-4">{row.getValue("subRegionName")}</div>,
     },
 
-     {
+    {
       id: "actions",
       header: "",
       size: 60,
@@ -106,18 +107,23 @@ const Subregions = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/subregions/${row.original.id}/edit/`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/subregions/${row.original.id}/view/`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditSubregion">
+              <DropdownMenuItem onClick={() => { navigate(`/subregions/${row.original.id}/edit/`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditSubregion">
+              <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewSubregion">
+              <DropdownMenuItem onClick={() => { navigate(`/subregions/${row.original.id}/view/`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -134,39 +140,39 @@ const Subregions = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
-    const showInfo = (label: String, Id: String, name: String) => {
-      var popup = $("<div></div>", {
-        id: "popup-" + Id,
-        class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
-      });
-      // Insert a headline into that popup
-      var hed = $("<div></div>", {
-        text: ` ${label}:` + ` ${name}` ,
-        // text: `${label}: ` + Id,
-        css: { fontSize: "16px", marginBottom: "3px" },
-      }).appendTo(popup);
-      // Add the popup to the map
-      popup.appendTo("#map");
-    };
+  const showInfo = (label: String, Id: String, name: String) => {
+    var popup = $("<div></div>", {
+      id: "popup-" + Id,
+      class: "absolute top-2 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+    });
+    // Insert a headline into that popup
+    var hed = $("<div></div>", {
+      text: ` ${label}:` + ` ${name}`,
+      // text: `${label}: ` + Id,
+      css: { fontSize: "16px", marginBottom: "3px" },
+    }).appendTo(popup);
+    // Add the popup to the map
+    popup.appendTo("#map");
+  };
 
-    const removeInfo = (Id: String) => {
-      $("#popup-" + Id).remove();
-    };
+  const removeInfo = (Id: String) => {
+    $("#popup-" + Id).remove();
+  };
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-       const popupDiv = document.createElement('div');
+    const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; overflow:hidden";
     popupDiv.id = feature.properties?.id;
     layer.bindPopup(popupDiv);
     layer.on({
-    mouseover: function (e: any) {
+      mouseover: function (e: any) {
         const auxLayer = e.target;
-                createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-                  <div>Region Id: { auxLayer.feature.properties.region_id}</div>
-                  <div>Subregion Name: { auxLayer.feature.properties.sub_region_name}</div>
+        createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+          <div>Region Id: {auxLayer.feature.properties.region_id}</div>
+          <div>Subregion Name: {auxLayer.feature.properties.sub_region_name}</div>
         </div>);
-        showInfo("SubRegion",auxLayer.feature.properties.region_id, auxLayer.feature.properties.sub_region_name);
+        showInfo("SubRegion", auxLayer.feature.properties.region_id, auxLayer.feature.properties.sub_region_name);
       },
       mouseout: function (e: any) {
         // const auxLayer = e.target;
@@ -177,7 +183,7 @@ const Subregions = () => {
         //   fillOpacity: 0,
         //   opacity: 1,
         // });
-          $("[id^='popup-']").remove();
+        $("[id^='popup-']").remove();
       },
     })
   };
@@ -280,16 +286,18 @@ const Subregions = () => {
               <X />
             </Button>}
           </div>
-                    <Button
-                      variant={"default"}
-                      className="h-7 w-auto px-2 text-sm"
-                      onClick={() => {
-                        navigate(`/subregions/add`)
-                      }}
-                    >
-                      <Plus size={4} />
-                      Add Subregions
-                    </Button>
+          <PermissionCheckWrapper name="AddSubregion">
+            <Button
+              variant={"default"}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate(`/subregions/add`)
+              }}
+            >
+              <Plus size={4} />
+              Add Subregions
+            </Button>
+          </PermissionCheckWrapper>
         </div>
         <div className="flex flex-grow">
           <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
@@ -306,7 +314,7 @@ const Subregions = () => {
                 totalData={subRegionData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={conveyLoading}
-              columnProperties={subregionColumnProperties}
+                columnProperties={subregionColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"

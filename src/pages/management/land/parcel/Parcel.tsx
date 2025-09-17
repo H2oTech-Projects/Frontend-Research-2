@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 import { parcelPageColumnProperties } from "@/utils/constant";
 import { createRoot } from "react-dom/client";
 import { DELETE_PARCEL_KEY_BY_WAY, GET_PARCEL_MAP_KEY_BY_WAY } from "@/services/water/parcel/constant";
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 interface initialTableDataTypes {
   search: string;
   page_no: number,
@@ -72,7 +73,7 @@ const Parcel = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
 
-  const { data: fieldData, isLoading, refetch:refetchParcel } = useGetParcelListByWAY(tableInfo, defaultWay);
+  const { data: fieldData, isLoading, refetch: refetchParcel } = useGetParcelListByWAY(tableInfo, defaultWay);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(defaultWay);
   const { data: ways, isLoading: waysLoading } = useGetWaysOptions()
   const { mutate: deleteParcel, isPending: isFieldDeleting } = deleteParcelByWAY()
@@ -131,7 +132,7 @@ const Parcel = () => {
             variant="ghost"
             onClick={() => { setTableInfo({ ...tableInfo, sort: "parcel_geom_ha", sort_order: !tableInfo.sort_order || tableInfo.sort_order === "asc" ? "desc" : "asc" }) }}
           >
-             Geom Area ({UnitSystemName()}) {tableInfo?.sort !== "parcel_geom_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
+            Geom Area ({UnitSystemName()}) {tableInfo?.sort !== "parcel_geom_ha" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
         );
       },
@@ -186,18 +187,23 @@ const Parcel = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/parcels/${row.original.id}/edit/${defaultWay}`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/parcels/${row.original.id}/view/${defaultWay}`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditParcel">
+              <DropdownMenuItem onClick={() => { navigate(`/parcels/${row.original.id}/edit/${defaultWay}`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditParcel">
+              <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewParcel">
+              <DropdownMenuItem onClick={() => { navigate(`/parcels/${row.original.id}/view/${defaultWay}`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -227,7 +233,7 @@ const Parcel = () => {
     () => ({
       mouseover(e: any) {
         const { id } = e.target.options;
-        showInfo('ParcelID: ',id);
+        showInfo('ParcelID: ', id);
       },
       mouseout(e: any) {
         const { id } = e.target.options;
@@ -258,7 +264,7 @@ const Parcel = () => {
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
-       const popupDiv = document.createElement('div');
+    const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; overflow:hidden";
@@ -267,15 +273,15 @@ const Parcel = () => {
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-            createRoot(popupDiv).render(
-              <div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-                <div>Parcel Id: { auxLayer.feature.properties.parcel_id}</div>
-                <div>Irrig Area: { auxLayer.feature.properties.field_irrig_ha}</div>
-                <div>Legal Area: { auxLayer.feature.properties.field_legal_ha}</div>
-                <div>Geom Area: { auxLayer.feature.properties.field_geom_ha}</div>
-                <div>Status: { auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
-              </div>);
-        showInfo("ParcelID: ",auxLayer.feature.properties.parcel_id);
+        createRoot(popupDiv).render(
+          <div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+            <div>Parcel Id: {auxLayer.feature.properties.parcel_id}</div>
+            <div>Irrig Area: {auxLayer.feature.properties.field_irrig_ha}</div>
+            <div>Legal Area: {auxLayer.feature.properties.field_legal_ha}</div>
+            <div>Geom Area: {auxLayer.feature.properties.field_geom_ha}</div>
+            <div>Status: {auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
+          </div>);
+        showInfo("ParcelID: ", auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -315,27 +321,27 @@ const Parcel = () => {
     }
     return (
       <>
-      {mapData?.data && <RtGeoJson
-        key={"parcels"}
-        layerEvents={geoJsonLayerEvents}
-        style={geoJsonStyle}
-        data={JSON.parse(mapData['data'])}
-        color={"#16599a"}
-      />}
-      {!!position.polygon ? (
-        <RtPolygon
-          pathOptions={{ id: position.parcelId } as Object}
-          positions={position.polygon}
-          color={"red"}
-          eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-        >
-          <Popup>
-            <div key={position.parcelId} dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
-          </Popup>
-        </RtPolygon>
-      ) : null}
-    </>
-  )
+        {mapData?.data && <RtGeoJson
+          key={"parcels"}
+          layerEvents={geoJsonLayerEvents}
+          style={geoJsonStyle}
+          data={JSON.parse(mapData['data'])}
+          color={"#16599a"}
+        />}
+        {!!position.polygon ? (
+          <RtPolygon
+            pathOptions={{ id: position.parcelId } as Object}
+            positions={position.polygon}
+            color={"red"}
+            eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+          >
+            <Popup>
+              <div key={position.parcelId} dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+            </Popup>
+          </RtPolygon>
+        ) : null}
+      </>
+    )
 
   }, [mapLoading, position, mapData])
 
@@ -393,16 +399,19 @@ const Parcel = () => {
               <X />
             </Button>}
           </div>
-          <Button
-            variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate(`/parcels/add`, { state: { wayId: defaultWay } })
-            }}
-          >
-            <Plus size={4} />
-            Add Parcel
-          </Button>
+
+          <PermissionCheckWrapper name="AddParcel">
+            <Button
+              variant={"default"}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate(`/parcels/add`, { state: { wayId: defaultWay } })
+              }}
+            >
+              <Plus size={4} />
+              Add Parcel
+            </Button>
+          </PermissionCheckWrapper>
         </div>
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>

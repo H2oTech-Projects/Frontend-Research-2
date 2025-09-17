@@ -20,6 +20,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { showErrorToast } from "@/utils/tools";
 import CustomModal from "@/components/modal/ConfirmModal";
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 
 interface initialTableDataTypes {
   search: string;
@@ -52,7 +53,7 @@ const Crops = () => {
         return (
           <Button
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_name", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_name", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" : "desc" }) }}
           >
             Crop Name {tableInfo?.sort !== "crop_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -67,7 +68,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_code", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_code", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" : "desc" }) }}
           >
             Crop Code  {tableInfo?.sort !== "crop_code" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -84,7 +85,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_abbrev", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_abbrev", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" : "desc" }) }}
           >
             Crop Abbreviation  {tableInfo?.sort !== "crop_abbrev" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -100,7 +101,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_group_name", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_group_name", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" : "desc" }) }}
           >
             Crop Group Name  {tableInfo?.sort !== "crop_group_name" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -116,7 +117,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start"
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_desc", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_desc", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" : "desc" }) }}
           >
             Crop Description  {tableInfo?.sort !== "crop_desc" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -132,7 +133,7 @@ const Crops = () => {
           <Button
             className="flex items-start justify-start "
             variant="ghost"
-            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_app_depth_m", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" :  "desc" }) }}
+            onClick={() => { setTableInfo({ ...tableInfo, sort: "crop_app_depth_m", sort_order: !tableInfo.sort_order || tableInfo?.sort_order === "desc" ? "asc" : "desc" }) }}
           >
             Crop App Depth  {tableInfo?.sort !== "crop_app_depth_m" ? <ArrowUpDown /> : tableInfo?.sort_order === "asc" ? <ArrowUp /> : <ArrowDown />}
           </Button>
@@ -159,18 +160,23 @@ const Crops = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/crops/${row.original.id}/edit/`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/crops/${row.original.id}/view/`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditCrop">
+              <DropdownMenuItem onClick={() => { navigate(`/crops/${row.original.id}/edit/`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditCrop">
+              <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewCrop">
+              <DropdownMenuItem onClick={() => { navigate(`/crops/${row.original.id}/view/`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -241,16 +247,18 @@ const Crops = () => {
               <X />
             </Button>}
           </div>
-          <Button
-            variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate(`/crops/add`)
-            }}
-          >
-            <Plus size={4} />
+          <PermissionCheckWrapper name="AddCrop">
+            <Button
+              variant={"default"}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate(`/crops/add`)
+              }}
+            >
+              <Plus size={4} />
               Add Crops
-          </Button>
+            </Button>
+          </PermissionCheckWrapper>
         </div>
         <div className="flex w-full">
           <div className="w-full h-[calc(100vh-160px)]">

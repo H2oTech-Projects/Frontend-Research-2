@@ -32,6 +32,7 @@ import { createRoot } from "react-dom/client";
 import { showErrorToast } from "@/utils/tools";
 import { toast } from "react-toastify";
 import { DELETE_MSMTPOINT } from "@/services/water/msmtPoint/constant";
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 
 interface initialTableDataTypes {
   search: string;
@@ -66,7 +67,7 @@ const measurementPoint = () => {
   const mapCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "map" : "default"));
   };
-  const { data: msmtPointData, isLoading,refetch } = useGetClientMsmtPoints(tableInfo);
+  const { data: msmtPointData, isLoading, refetch } = useGetClientMsmtPoints(tableInfo);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetClientMsmtPoinMap();
   const { mutate: deleteMsmtPoint } = useDeletemsmtPoint();
   const debouncedSearch = useCallback(
@@ -141,18 +142,23 @@ const measurementPoint = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/measurementPoints/${row.original.id}/edit`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/measurementPoints/${row.original.id}/view`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditMeasurementPoint">
+              <DropdownMenuItem onClick={() => { navigate(`/measurementPoints/${row.original.id}/edit`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditMeasurementPoint">
+              <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewMeasurementPoint">
+              <DropdownMenuItem onClick={() => { navigate(`/measurementPoints/${row.original.id}/view`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -178,7 +184,7 @@ const measurementPoint = () => {
 
   const removeInfo = (Id: String) => {
     // $("#popup-" + Id).remove();
-       $("[id^='popup-']").remove();
+    $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -197,10 +203,10 @@ const measurementPoint = () => {
           fillColor: "#5a76a380",
           opacity: 1,
         });
-           createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-                            <div>Measurement Point Id: { auxLayer.feature.properties.msmt_point_id}</div>                            
-                  </div>);
-        showInfo("MsmtPoint ID: ",auxLayer.feature.properties.msmt_point_id);
+        createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+          <div>Measurement Point Id: {auxLayer.feature.properties.msmt_point_id}</div>
+        </div>);
+        showInfo("MsmtPoint ID: ", auxLayer.feature.properties.msmt_point_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -231,21 +237,21 @@ const measurementPoint = () => {
   const ReturnChildren = useMemo(() => {
     return (
       <>
-      {mapData?.data && <RtGeoJson
-        key={"fields"}
-        layerEvents={geoJsonLayerEvents}
-        style={geoJsonStyle}
-        data={JSON.parse(mapData['data'])}
-        color={"#16599a"}
-      />}
-        { !!position.point && !!position.msmtPointId ? (
+        {mapData?.data && <RtGeoJson
+          key={"fields"}
+          layerEvents={geoJsonLayerEvents}
+          style={geoJsonStyle}
+          data={JSON.parse(mapData['data'])}
+          color={"#16599a"}
+        />}
+        {!!position.point && !!position.msmtPointId ? (
           <RtPoint
             position={position.point}
           >
           </RtPoint>
-          ) : null}
-    </>
-  )
+        ) : null}
+      </>
+    )
 
   }, [mapLoading, position, mapData])
 
@@ -306,16 +312,18 @@ const measurementPoint = () => {
               <X />
             </Button>}
           </div>
-          <Button
-            variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate(`/measurementPoints/add`)
-            }}
-          >
-            <Plus size={4} />
-            Add MsmtPoint
-          </Button>
+          <PermissionCheckWrapper name="AddMeasurementPoint">
+            <Button
+              variant={"default"}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate(`/measurementPoints/add`)
+              }}
+            >
+              <Plus size={4} />
+              Add MsmtPoint
+            </Button>
+          </PermissionCheckWrapper>
         </div>
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>

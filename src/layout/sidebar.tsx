@@ -1,13 +1,12 @@
 import { forwardRef, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-
-// import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
 import * as Icon from "lucide-react";
 import LightLogo from "../assets/Circular-Black.png";
 import DarkLogo from "../assets/Circular-Light-Gray.png";
 import * as routeUrl from "../routes/RouteUrl";
 import { cn } from "../utils/cn";
-import { icon } from "leaflet";
+import { staticPermissionList } from "@/utils/testPermission";
+import { useSelector } from "react-redux";
 
 const menuLinks = [
   {
@@ -26,6 +25,14 @@ const menuLinks = [
         icon: Icon.ChartColumnBig,
         name: routeUrl?.Insight?.name,
         path: routeUrl?.Insight?.url,
+        type: "link",
+        Children: [],
+      },
+      {
+        label: "Collect",
+        icon: Icon.CloudUpload,
+        name: routeUrl?.Collect?.name,
+        path: routeUrl?.Collect?.url,
         type: "link",
         Children: [],
       }
@@ -195,7 +202,36 @@ const menuLinks = [
     ],
   },
 ];
+
+
+
 export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
+const UserRole = useSelector((state: any) => state.auth?.userRole);
+const permissionList =  staticPermissionList(UserRole);
+const filteredMenuLinks = menuLinks
+  .map((section) => {
+    const filteredLinks = section.links
+      .map((link) => {
+        // If it's a group with Children (nested routes)
+        if (link.type === "group" && Array.isArray(link.Children)) {
+          const filteredChildren = link.Children.filter((child) =>
+            permissionList.includes(child.name)
+          );
+          return filteredChildren.length
+            ? { ...link, Children: filteredChildren }
+            : null;
+        }
+
+        // For normal link items
+        return permissionList.includes(link.name!) ? link : null;
+      })
+      .filter(Boolean); // Remove nulls
+
+    return filteredLinks.length
+      ? { ...section, links: filteredLinks }
+      : null;
+  })
+  .filter(Boolean);
   const handleCollapse = () => {
     setCollapsed(false);
     localStorage.setItem("isMenuCollapsed", JSON.stringify(false))
@@ -260,15 +296,15 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
         {!collapsed && <p className="animate-slideIn text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">FLOW</p>}
       </div>
       <div className="flex w-full animate-slideIn flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-2 [scrollbar-width:_thin]">
-        {menuLinks.map((navbarLink) => (
-          <nav
+        {filteredMenuLinks.map((navbarLink) => (
+        navbarLink?.title &&  <nav
             key={navbarLink.title}
             className={cn("sidebar-group", collapsed && "md:items-center", "animate-slideIn")}
           >
             <p className={cn("sidebar-group-title", collapsed && "md:w-[45px]")}>{navbarLink.title}</p>
-            {navbarLink.links.map((link) =>
-              link.type === "link" && link.path !== null ? (
-                <NavLink
+            {navbarLink.links.map((link:any) =>
+            link.type === "link" && link.path !== null  ? (
+              <NavLink
                   key={link.label}
                   to={link?.path}
                   className={cn("sidebar-item", collapsed && "md:w-[45px]", "animate-slideIn")}
@@ -320,8 +356,8 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
                   {childMenu.parentName === link.label && childMenu.showChildren && (
                     <div className={cn("menu-dropDown", "animate-fadeIn", collapsed && "hidden")}>
                       {link?.Children &&
-                        link?.Children.map((child) => (
-                          <NavLink
+                        link?.Children.map((child:any) => (
+                        <NavLink
                             onClick={() => SetActiveLinkGroup(link.label, child.path)}
                             key={child?.label}
                             to={child?.path}
@@ -341,3 +377,152 @@ export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
     </aside>
   );
 });
+
+
+// export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
+//   const handleCollapse = () => {
+//     setCollapsed(false);
+//     localStorage.setItem("isMenuCollapsed", JSON.stringify(false))
+//   };
+//   const route = window.location.pathname;
+//   const initialChildMenu = {
+//     parentName: "",
+//     showChildren: false,
+//   };
+//   const [activeLinkGroup, setActiveLinkGroup] = useState("");
+//   const [childMenu, setChildMenu] = useState(initialChildMenu);
+//   const SetActiveLinkGroup = (LinkGroup: string, path: string) => {
+//     const ActiveLinkGroupDetail = {
+//       linkGroup: LinkGroup,
+//       path: path,
+//     };
+//     setActiveLinkGroup(LinkGroup);
+//     localStorage.setItem("ActiveLinkGroup", JSON.stringify(ActiveLinkGroupDetail));
+//   };
+//   const ResetActiveLinkGroup = () => {
+//     setActiveLinkGroup("");
+//     setChildMenu(initialChildMenu);
+//     localStorage.removeItem("ActiveLinkGroup");
+//   };
+//   const DisplaySubmenu = (parentName: string, show: boolean) => {
+//     setChildMenu({ parentName: parentName, showChildren: collapsed ? true : childMenu?.parentName === parentName ? !show : show });
+//     collapsed && handleCollapse();
+//   };
+//   useEffect(() => {
+//     if (collapsed) {
+//       setChildMenu({ ...childMenu, showChildren: false });
+//     }
+//   }, [collapsed]);
+//   useEffect(() => {
+//     const activeLinkGroup = JSON.parse(localStorage.getItem("ActiveLinkGroup") || "{}");
+//     if (route.includes(activeLinkGroup?.path)) {
+//       setActiveLinkGroup(activeLinkGroup?.linkGroup);
+//       setChildMenu({ parentName: activeLinkGroup?.linkGroup, showChildren: true });
+//     }
+//   }, []);
+//   return (
+//     <aside
+//       ref={ref as React.LegacyRef<HTMLElement>}
+//       className={cn(
+//         "fixed z-[9000] flex h-full w-[240px] flex-col overflow-x-hidden border-r border-slate-300 bg-white [transition:_width_300ms_cubic-bezier(0.4,_0,_0.2,_1),_left_300ms_cubic-bezier(0.4,_0,_0.2,_1),_background-color_150ms_cubic-bezier(0.4,_0,_0.2,_1),_border_150ms_cubic-bezier(0.4,_0,_0.2,_1)] dark:border-slate-700 dark:bg-slate-900",
+//         collapsed ? "md:w-[70px] md:items-center" : "md:w-[240px]",
+//         collapsed ? "max-md:-left-full" : "max-md:left-0",
+//       )}
+//     >
+//       <div className="flex items-center gap-x-3 px-3 py-2">
+//         <img
+//           src={LightLogo}
+//           alt="Flow"
+//           className="h-[32px] w-[32px] dark:hidden"
+//         />
+//         <img
+//           src={DarkLogo}
+//           alt="Flow"
+//           className="hidden h-[32px] w-[32px] dark:block"
+//         />
+
+//         {!collapsed && <p className="animate-slideIn text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">FLOW</p>}
+//       </div>
+//       <div className="flex w-full animate-slideIn flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-2 [scrollbar-width:_thin]">
+//         {menuLinks.map((navbarLink) => (
+//           <nav
+//             key={navbarLink.title}
+//             className={cn("sidebar-group", collapsed && "md:items-center", "animate-slideIn")}
+//           >
+//             <p className={cn("sidebar-group-title", collapsed && "md:w-[45px]")}>{navbarLink.title}</p>
+//             {navbarLink.links.map((link) =>
+//               link.type === "link" && link.path !== null ? (
+//                 <NavLink
+//                   key={link.label}
+//                   to={link?.path}
+//                   className={cn("sidebar-item", collapsed && "md:w-[45px]", "animate-slideIn")}
+//                   onClick={ResetActiveLinkGroup}
+//                 >
+//                   <link.icon
+//                     size={22}
+//                     className="flex-shrink-0"
+//                   />
+//                   {!collapsed && <p className="animate-slideIn whitespace-nowrap">{link.label}</p>}
+//                 </NavLink>
+//               ) : (
+//                 <div
+//                   className="flex-col"
+//                   key={link.label}
+//                 >
+//                   <button
+//                     className={cn(
+//                       childMenu.parentName === link.label && childMenu.showChildren
+//                         ? "sidebar-menuName-active"
+//                         : activeLinkGroup === link.label
+//                           ? "sidebar-menuName-activeLink"
+//                           : "sidebar-menuName",
+//                       "animate-slideIn",
+//                       collapsed && "md:w-[45px]",
+//                     )}
+//                     onClick={() =>
+//                       DisplaySubmenu(link.label, childMenu.parentName === link.label ? childMenu.showChildren : true)
+//                     }
+//                   >
+//                     <link.icon
+//                       size={22}
+//                       className="flex-shrink-0"
+//                     />
+//                     {!collapsed && <p className="animate-slideIn whitespace-nowrap">{link.label}</p>}
+//                     <div className="flex grow justify-end">
+//                       <Icon.ChevronDown
+//                         size={16}
+//                         className={cn(
+//                           "flex-shrink-0",
+//                           collapsed && "hidden",
+//                           "animate-slideIn",
+//                           childMenu.parentName === link.label && childMenu.showChildren ? "rotate-180" : "",
+//                         )}
+//                       />
+//                     </div>
+//                   </button>
+
+//                   {childMenu.parentName === link.label && childMenu.showChildren && (
+//                     <div className={cn("menu-dropDown", "animate-fadeIn", collapsed && "hidden")}>
+//                       {link?.Children &&
+//                         link?.Children.map((child) => (
+//                           <NavLink
+//                             onClick={() => SetActiveLinkGroup(link.label, child.path)}
+//                             key={child?.label}
+//                             to={child?.path}
+//                             className={cn("sidebar-item", collapsed && "md:w-[45px]", "animate-fadeIn")}
+//                           >
+//                             {child?.label}
+//                           </NavLink>
+//                         ))}
+//                     </div>
+//                   )}
+//                 </div>
+//               ),
+//             )}
+//           </nav>
+//         ))}
+//       </div>
+//     </aside>
+//   );
+// });
+

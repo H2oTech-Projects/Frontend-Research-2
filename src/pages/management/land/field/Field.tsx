@@ -37,6 +37,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { fieldPageColumnProperties } from "@/utils/constant";
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 
 interface initialTableDataTypes {
   search: string;
@@ -203,18 +204,23 @@ const Field = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWap}`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWap}`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditField">
+              <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/edit/${defaultWap}`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditField">
+              <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewField">
+              <DropdownMenuItem onClick={() => { navigate(`/field/${row.original.id}/view/${defaultWap}`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -242,7 +248,7 @@ const Field = () => {
     () => ({
       mouseover(e: any) {
         const { id } = e.target.options;
-        showInfo('FieldID: ',id);
+        showInfo('FieldID: ', id);
       },
       mouseout(e: any) {
         const { id } = e.target.options;
@@ -271,7 +277,7 @@ const Field = () => {
 
   const removeInfo = () => {
     // $("#popup-" + Id).remove();
-      $("[id^='popup-']").remove();
+    $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -288,17 +294,17 @@ const Field = () => {
         //   weight: 4,
         //   //color: "#800080"
         // });
-                createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-                {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
+        createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+          {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
                 <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
-                  <div>Field Id: { auxLayer.feature.properties.field_id}</div>
-                  <div>Irrig Area: { auxLayer.feature.properties.field_irrig_ha}</div>
-                  <div>Legal Area: { auxLayer.feature.properties.field_legal_ha}</div>
-                  <div>Geom Area: { auxLayer.feature.properties.field_geom_ha}</div>
-                  <div>Status: { auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
-                  
+          <div>Field Id: {auxLayer.feature.properties.field_id}</div>
+          <div>Irrig Area: {auxLayer.feature.properties.field_irrig_ha}</div>
+          <div>Legal Area: {auxLayer.feature.properties.field_legal_ha}</div>
+          <div>Geom Area: {auxLayer.feature.properties.field_geom_ha}</div>
+          <div>Status: {auxLayer.feature.properties.field_act_bool ? "Active" : "Inactive"}</div>
+
         </div>);
-        showInfo("FieldID: ",auxLayer.feature.properties.field_id);
+        showInfo("FieldID: ", auxLayer.feature.properties.field_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -357,27 +363,27 @@ const Field = () => {
     }
     return (
       <>
-      {mapData?.data && <RtGeoJson
-        key={"fields"}
-        layerEvents={geoJsonLayerEvents}
-        style={geoJsonStyle}
-        data={JSON.parse(mapData['data'])}
-        color={"#16599a"}
-      />}
-      {!!position.polygon ? (
-        <RtPolygon
-          pathOptions={{ id: position.fieldId } as Object}
-          positions={position.polygon}
-          color={"red"}
-          eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-        >
-          <Popup>
-            <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
-          </Popup>
-        </RtPolygon>
-      ) : null}
-    </>
-  )
+        {mapData?.data && <RtGeoJson
+          key={"fields"}
+          layerEvents={geoJsonLayerEvents}
+          style={geoJsonStyle}
+          data={JSON.parse(mapData['data'])}
+          color={"#16599a"}
+        />}
+        {!!position.polygon ? (
+          <RtPolygon
+            pathOptions={{ id: position.fieldId } as Object}
+            positions={position.polygon}
+            color={"red"}
+            eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+          >
+            <Popup>
+              <div dangerouslySetInnerHTML={{ __html: buildPopupMessage(position.features) }} />
+            </Popup>
+          </RtPolygon>
+        ) : null}
+      </>
+    )
 
   }, [mapLoading, position, mapData])
 
@@ -402,7 +408,7 @@ const Field = () => {
         pageHeaderTitle="Fields"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
-<CustomModal
+      <CustomModal
         isOpen={open}
         onClose={() => setOpen(false)}
         title="Delete Field"
@@ -437,16 +443,19 @@ const Field = () => {
               <X />
             </Button>}
           </div>
-          <Button
-            variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate(`/field/addField`)
-            }}
-          >
-            <Plus size={4} />
-            Add Field
-          </Button>
+          <PermissionCheckWrapper name="AddField">
+            <Button
+              variant={"default"}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate(`/field/addField`)
+              }}
+            >
+              <Plus size={4} />
+              Add Field
+            </Button>
+          </PermissionCheckWrapper>
+
         </div>
         <div className="flex flex-grow">
           <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>

@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import * as routeUrl from "./RouteUrl";
 import path from "path";
+import { Component } from "lucide-react";
 
 export const RouteList = [
   {
@@ -384,6 +385,11 @@ export const RouteList = [
     path: routeUrl?.CropField?.url,
     name: routeUrl?.CropField?.name,
     Component: lazy(async () => import("../pages/management/crops/cropFields/index"))
+  },
+  {
+    path:routeUrl?.Collect?.url,
+    name:routeUrl?.Collect?.name,
+    Component: lazy(async ()=> import("../pages/Collect"))
   }
 
 ];

@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Loader } from "lucide-react";
+import { staticPermissionList } from "@/utils/testPermission";
 const Login = lazy(async () => await import("./../pages/auth/Login"));
 
 const ForgotPassword = lazy(async () => await import("./../pages/auth/ForgotPassword"));
@@ -16,9 +17,10 @@ interface RoutesContainerProps {
 }
 
 const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
-  const isAuthenticated = useSelector((state: any) => state.auth.isLoggedIn);
-  const landingPageRoute  = useSelector((state: any) => state.auth.landingPageRoute);
-
+  const authData = useSelector((state:any) => state.auth);
+  const UserRole = useSelector((state: any) => state.auth?.userRole);
+  const permissionList =  staticPermissionList(UserRole);
+  const authorizedRouteList = RouteList?.filter((route:any)=> permissionList.includes(route?.name))
   if (isLoadingData)
     return (<div className="flex h-screen items-center justify-center dark:bg-slate-900 dark:text-white">
       Loading <Loader size={20} />
@@ -52,10 +54,10 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
           />
         </>
 
-        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+        <Route element={<ProtectedRoute isAuthenticated={authData?.isLoggedIn} />}>
           {!isLoadingData && (
             <>
-              {RouteList?.map((route) => (
+              {authorizedRouteList?.map((route) => (
                 <Route
                   path={route.path}
                   element={<route.Component />}
@@ -78,7 +80,7 @@ const RoutesContainer = ({ isLoadingData }: RoutesContainerProps) => {
             path="/"
             element={
               <Navigate
-                to={landingPageRoute}
+                to={authData.landingPageRoute}
                 replace
               />
             }

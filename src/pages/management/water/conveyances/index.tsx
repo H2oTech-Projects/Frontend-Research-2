@@ -28,6 +28,7 @@ import RtGeoJson from '@/components/RtGeoJson';
 import { debounce } from '@/utils';
 import { conveyColumnProperties } from '@/utils/constant';
 import { createRoot } from 'react-dom/client';
+import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -43,7 +44,7 @@ const Conveyances = () => {
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState(null);
-  const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
+  const [clickedGeom, setClickedGeom] = useState<any>({ id: "", viewBounds: null });
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
   const [searchText, setSearchText] = useState("");
@@ -152,17 +153,23 @@ const Conveyances = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/conveyances/${row.original.id}/edit`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { setId(row.original.id); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/conveyances/${row.original.id}/view`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditConveyance">
+              <DropdownMenuItem onClick={() => { navigate(`/conveyances/${row.original.id}/edit`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditConveyance">
+              <DropdownMenuItem onClick={() => { setId(row.original.id); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewConveyance">
+              <DropdownMenuItem onClick={() => { navigate(`/conveyances/${row.original.id}/view`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -191,24 +198,24 @@ const Conveyances = () => {
     });
   };
 
-    const showInfo = (label: String, Id: String, name: String) => {
-      var popup = $("<div></div>", {
-        id: "popup-" + Id,
-        class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
-      });
-      // Insert a headline into that popup
-      var hed = $("<div></div>", {
-        text: ` ${label} : ${name}` ,
-        // text: `${label}: ` + Id,
-        css: { fontSize: "16px", marginBottom: "3px" },
-      }).appendTo(popup);
-      // Add the popup to the map
-      popup.appendTo("#map");
-    };
+  const showInfo = (label: String, Id: String, name: String) => {
+    var popup = $("<div></div>", {
+      id: "popup-" + Id,
+      class: "absolute top-[12px] left-3 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+    });
+    // Insert a headline into that popup
+    var hed = $("<div></div>", {
+      text: ` ${label} : ${name}`,
+      // text: `${label}: ` + Id,
+      css: { fontSize: "16px", marginBottom: "3px" },
+    }).appendTo(popup);
+    // Add the popup to the map
+    popup.appendTo("#map");
+  };
 
-    const removeInfo = (Id: String) => {
-         $("[id^='popup-']").remove();
-    };
+  const removeInfo = (Id: String) => {
+    $("[id^='popup-']").remove();
+  };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
     const popupDiv = document.createElement('div');
@@ -221,11 +228,11 @@ const Conveyances = () => {
       mouseover: function (e: any) {
         const auxLayer = e.target;
         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-                  <div>Conveyance Id: { auxLayer.feature.properties.convey_id}</div>
-                  <div>Conveyance Name: { auxLayer.feature.properties.convey_name}</div>                             
-                  <div>Seepage: { auxLayer.feature.properties.convey_seepage_cms}</div>                             
+          <div>Conveyance Id: {auxLayer.feature.properties.convey_id}</div>
+          <div>Conveyance Name: {auxLayer.feature.properties.convey_name}</div>
+          <div>Seepage: {auxLayer.feature.properties.convey_seepage_cms}</div>
         </div>);
-        showInfo("Conveyance Name",auxLayer.feature.properties.convey_id, auxLayer.feature.properties.convey_name);
+        showInfo("Conveyance Name", auxLayer.feature.properties.convey_id, auxLayer.feature.properties.convey_name);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
@@ -245,22 +252,22 @@ const Conveyances = () => {
 
   const ReturnChildren = useMemo(() => {
     const geoJsonStyle = (features: any) => {
-    if (features?.properties?.convey_id === clickedGeom?.id?.toString()) {
-      
+      if (features?.properties?.convey_id === clickedGeom?.id?.toString()) {
+
+        return {
+          color: "red", // Border color
+          fillColor: "transparent", // Fill color for the highlighted area
+          fillOpacity: 0.5,
+          weight: 2,
+        };
+      }
       return {
-        color: "red", // Border color
-        fillColor: "transparent", // Fill color for the highlighted area
+        color: "#16599A", // Border color
+        fillColor: "transparent", // Fill color for normal areas
         fillOpacity: 0.5,
         weight: 2,
       };
     }
-    return {
-      color: "#16599A", // Border color
-      fillColor: "transparent", // Fill color for normal areas
-      fillOpacity: 0.5,
-      weight: 2,
-    };
-  }
     return (
       <>
         {isMapLoading ? (
@@ -280,7 +287,7 @@ const Conveyances = () => {
       </>
     )
 
-  }, [isMapLoading,clickedGeom,mapGeoJson])
+  }, [isMapLoading, clickedGeom, mapGeoJson])
 
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
@@ -297,7 +304,7 @@ const Conveyances = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-            <div className="flex gap-2">
+          <div className="flex gap-2">
             <div className="input h-7 w-52">
               <Search
                 size={16}
@@ -323,18 +330,20 @@ const Conveyances = () => {
               <X />
             </Button>}
           </div>
-          <Button
-            variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate("/conveyances/add", {
-                state: { mode: "Add" },
-              });
-            }}
-          >
-            <Plus size={4} />
-            Add Conveyance
-          </Button>
+          <PermissionCheckWrapper name="AddConveyance">
+            <Button
+              variant={"default"}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate("/conveyances/add", {
+                  state: { mode: "Add" },
+                });
+              }}
+            >
+              <Plus size={4} />
+              Add Conveyance
+            </Button>
+          </PermissionCheckWrapper>
         </div>
         <div className="flex flex-grow">
           <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
@@ -351,7 +360,7 @@ const Conveyances = () => {
                 totalData={conveyData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={conveyLoading}
-              columnProperties={conveyColumnProperties}
+                columnProperties={conveyColumnProperties}
               />
               <CollapseBtn
                 className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
