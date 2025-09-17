@@ -27,6 +27,12 @@ export function FormInput({ control, name, label, placeholder, type, showLabel =
               type={type}
               autoComplete="off"
               disabled={disabled}
+              onKeyDown={(e) => {
+                // Prevent form submit when pressing Enter,
+                if (e.key === "Enter" ) {
+                  e.preventDefault();
+                }
+              }}
               className={type === "number" ? " [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}
             />
           </FormControl>
