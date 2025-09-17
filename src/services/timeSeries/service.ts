@@ -21,7 +21,7 @@ export const queryTimeSeries = {
   },
   postWaptList: async (formValue: any) => {
     const data = {
-      client_id: userData?.client_id,
+      client_id: userData?.user_details.client_id,
       wa_period_type: formValue?.waptName,
       wa_period_type_name: formValue?.waptName
     }
@@ -35,7 +35,7 @@ export const queryTimeSeries = {
 
   putWapt: async (formValue: any) => {
     const data = {
-      client_id: userData?.client_id,
+      client_id: userData?.user_details.client_id,
       wa_period_type: formValue?.waptName,
       wa_period_type_name: formValue?.waptName,
       rank: formValue?.rank

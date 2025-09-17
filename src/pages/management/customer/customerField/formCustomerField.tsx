@@ -44,7 +44,7 @@ const CustomerFieldForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id, wapId } = useParams();
-  const clientId = JSON.parse(localStorage.getItem("auth") as string)?.client_id
+  const clientId = JSON.parse(localStorage.getItem("auth") as string)?.user_details.client_id
   const queryClient = useQueryClient();
   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const [wayId, setWayId] = useState<number | undefined>(undefined)

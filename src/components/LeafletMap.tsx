@@ -92,7 +92,7 @@ const removeLineBars = <style>{`
 
 const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children, userPolygon }: LeafletMapTypes) => {
   const { center } = position;
-  const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user
+  const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const [opacity, setOpacity] = useState(1)
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
