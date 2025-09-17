@@ -1,6 +1,6 @@
 import PageHeader from '@/components/PageHeader'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -8,20 +8,17 @@ import {
 } from "@/components/ui/form"
 import { FormInput } from '@/components/FormComponent/FormInput'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
-import { LatLng, LeafletEvent, Layer, FeatureGroup as LeafletFeatureGroup, LatLngBounds } from "leaflet"
-import { useEffect, useRef, useState } from 'react'
+import {  LatLngBounds } from "leaflet"
+import { useEffect, useState } from 'react'
 import { FormTextbox } from '@/components/FormComponent/FormTextbox'
 import { FormRadioGroup } from '@/components/FormComponent/FormRadio'
 import BasicSelect from '@/components/BasicSelect'
-import { cn } from '@/lib/utils'
 import { FormFileReader } from '@/components/FormComponent/FormFileReader'
-//import MapPreview from '@/components/MapPreview'
 import FieldMapPreview from '@/components/FieldMapPreview'
 import { usePostMapPreview } from '@/services/mapPreview'
 import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { useMediaQuery } from '@uidotdev/usehooks'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useGetWaysOptions } from '@/services/timeSeries'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
@@ -29,7 +26,8 @@ import { showErrorToast } from '@/utils/tools'
 import { UnitSystemName } from '@/utils'
 import { useGetParcelDetailByWAY, useGetRegionOptions, usePostParcelByWAY, usePutParcelByWAY } from '@/services/water/parcel'
 import { GET_PARCEL_DETAIL_KEY_BY_WAY, GET_PARCEL_LIST_KEY_BY_WAY, GET_PARCEL_MAP_KEY_BY_WAY, POST_PARCEL_KEY_BY_WAY, PUT_PARCEL_KEY_BY_WAY } from '@/services/water/parcel/constant'
-
+import { useSelector } from 'react-redux'
+import { FormFieldsWrapper, FormMapWrapper, FormPageHeader, FormPageWrapper, FormWrapper } from '@/components/wrappers/formWrappers';
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
   wayId: z.coerce.number().optional(),
@@ -51,9 +49,8 @@ const ParcelForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id, wayId } = useParams();
-  const clientId = JSON.parse(localStorage.getItem("auth") as string)?.client_id
+  const clientId = useSelector((state: any) => state.auth?.clientId);
   const queryClient = useQueryClient();
-  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape");
   const { data: ways, isLoading: waysLoading } = useGetWaysOptions();
@@ -112,9 +109,9 @@ const ParcelForm = () => {
   useEffect(() => {
     if (parcelDetailData && id) {
       form.reset({ ...parcelDetailData?.data[0], parcelActBool: parcelDetailData?.data[0]?.parcelActBool ? "True" : "False", parcelIrrigArea: parcelDetailData?.data[0]?.parcelIrrigHa, parcelLegalArea: parcelDetailData?.data[0]?.parcelLegalHa });
-      form.setValue("wayId",  Number(wayId));
+      form.setValue("wayId", Number(wayId));
       form.setValue("parcelCoordinates", JSON.stringify(parcelDetailData?.parcelCoordinates));
-      setPreviewMapData({ data: parcelDetailData?.parcelGeojson,coordinates: parcelDetailData?.parcelCoordinates,   view_bounds: parcelDetailData?.viewBounds ? parcelDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
+      setPreviewMapData({ data: parcelDetailData?.parcelGeojson, coordinates: parcelDetailData?.parcelCoordinates, view_bounds: parcelDetailData?.viewBounds ? parcelDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
     }
 
   }, [parcelDetailData])
@@ -153,7 +150,7 @@ const ParcelForm = () => {
           toast.success(data?.message);
           navigate("/parcels", {
             state: {
-               wayId: formData?.way_id
+              wayId: formData?.way_id
             }
           });
           form.reset(); // Reset the form after successful submission
@@ -174,59 +171,67 @@ const ParcelForm = () => {
   const viewMode = location.pathname.includes("view")
 
   return (
-    <div className='h-w-full px-4 pt-2'>
-      <PageHeader
-        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Parcel`}
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Parcel", menuPath: "/parcels" }]}
-      />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
-          <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
-            <FormComboBox control={form.control} name='wayId' label='Water Accounting Year' options={ways?.data} disabled={id ? true : false} />
-            <FormInput control={form.control} name='parcelId' label='Parcel ID' placeholder='Enter Parcel ID' type='text' disabled={viewMode} />
-            <FormInput control={form.control} name='parcelName' label='Parcel Name' placeholder='Enter Parcel Name' type='text' disabled={viewMode} />
-            <FormInput control={form.control} name='parcelIrrigArea' label={'Irrigable Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Irrigable  Area' type='number' disabled={viewMode} />
-            <FormInput control={form.control} name='parcelLegalArea' label={'Stand By Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Stand By  Area' type='number' disabled={viewMode} />
-            <FormComboBox control={form.control} name='regionId' label='Select Region' options={regions?.data} disabled={viewMode} />
-            {/* <FormInput control={form.control} name= 'parcelLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
-            <FormTextbox control={form.control} name='parcelDesc' label='Parcel Description' placeholder='Enter Parcel Description' disabled={viewMode} />
-            <FormTextbox control={form.control} name='parcelDesc' label='Parcel Comment' placeholder='Enter Parcel comment' disabled={viewMode} />
-            <FormTextbox control={form.control} name='parcelWayComnt' label='Parcel Way Comment' placeholder='Enter comment' disabled={viewMode} />
-            <FormRadioGroup control={form.control} name='parcelActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={viewMode} />
+    <FormPageWrapper>
+      <FormPageHeader>
+        <PageHeader
+          pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Parcel`}
+          breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Parcels", menuPath: "/parcels" }]}
+        />
+        {!viewMode && <Button className='w-24 mt-4' form={"parcelForm"} disabled={creatingField || updatingField} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
+      </FormPageHeader>
+      <FormWrapper>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} id={"parcelForm"} className=' h-auto'>
+            <FormFieldsWrapper>
+              <FormComboBox control={form.control} name='wayId' label='Water Accounting Year' options={ways?.data} disabled={id ? true : false} />
+              <FormInput control={form.control} name='parcelId' label='Parcel ID' placeholder='Enter Parcel ID' type='text' disabled={viewMode} />
+              <FormInput control={form.control} name='parcelName' label='Parcel Name' placeholder='Enter Parcel Name' type='text' disabled={viewMode} />
+              <FormInput control={form.control} name='parcelIrrigArea' label={'Irrigable Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Irrigable  Area' type='number' disabled={viewMode} />
+              <FormInput control={form.control} name='parcelLegalArea' label={'Stand By Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Stand By  Area' type='number' disabled={viewMode} />
+              <FormComboBox control={form.control} name='regionId' label='Select Region' options={regions?.data} disabled={viewMode} />
+              {/* <FormInput control={form.control} name= 'parcelLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
+              <FormTextbox control={form.control} name='parcelDesc' label='Parcel Description' placeholder='Enter Parcel Description' disabled={viewMode} />
+              <FormTextbox control={form.control} name='parcelDesc' label='Parcel Comment' placeholder='Enter Parcel comment' disabled={viewMode} />
+              <FormTextbox control={form.control} name='parcelWayComnt' label='Parcel Way Comment' placeholder='Enter comment' disabled={viewMode} />
+              <FormRadioGroup control={form.control} name='parcelActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={viewMode} />
 
-            {!viewMode && <BasicSelect
-              itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
-              label="Choose Geometric File Type"
-              Value={shapeType}
-              setValue={(newValue) => {
-                // Clear the selected files **before** changing shapeType
-                form.setValue("parcelGeometryFile", undefined);
-                setPreviewMapData(null);
-                setShapeType(newValue);
-              }} />}
+              {!viewMode && <BasicSelect
+                itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
+                label="Choose Geometric File Type"
+                Value={shapeType}
+                setValue={(newValue) => {
+                  // Clear the selected files **before** changing shapeType
+                  form.setValue("parcelGeometryFile", undefined);
+                  setPreviewMapData(null);
+                  setShapeType(newValue);
+                }} />}
 
-            {!viewMode && <div className='flex flex-col gap-2 w-full'>
-              {shapeType === "geojson" ? <FormFileReader
-                control={form.control}
-                name="parcelGeometryFile"
-                label="Upload GeoJSON file"
-                placeholder='Choose GeoJSON File'
-                multiple={false}
-                accept=".geojson"
-              /> : <FormFileReader
-                control={form.control}
-                name="parcelGeometryFile"
-                label="Upload Shapefile"
-                placeholder='Choose Shapefile'
-                multiple={true}
-                accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
-            </div>}
-          </div>
-          <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} />
-          {!viewMode && <Button className='w-24 mt-4' disabled={creatingField || updatingField} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
-        </form>
-      </Form>
-    </div>
+              {!viewMode && <div className='flex flex-col gap-2 w-full'>
+                {shapeType === "geojson" ? <FormFileReader
+                  control={form.control}
+                  name="parcelGeometryFile"
+                  label="Upload GeoJSON file"
+                  placeholder='Choose GeoJSON File'
+                  multiple={false}
+                  accept=".geojson"
+                /> : <FormFileReader
+                  control={form.control}
+                  name="parcelGeometryFile"
+                  label="Upload Shapefile"
+                  placeholder='Choose Shapefile'
+                  multiple={true}
+                  accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
+              </div>}
+            </FormFieldsWrapper>
+            <FormMapWrapper>
+              <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} />
+            </FormMapWrapper>
+
+          </form>
+        </Form>
+      </FormWrapper>
+
+    </FormPageWrapper>
   );
 }
 

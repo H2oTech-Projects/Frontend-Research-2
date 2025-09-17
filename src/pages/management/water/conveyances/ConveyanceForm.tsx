@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from 'react-hook-form';
@@ -17,11 +17,11 @@ import { POST_MAP_PREVIEW } from '@/services/mapPreview/constant';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
 import { useGetConveyanceDetails, useGetConveyanceParents, useGetConveyanceTypes, usePostConveyance, usePutConveyance } from '@/services/convayance';
-import { set } from 'date-fns';
 import { useSelector } from 'react-redux';
 import { convertKeysToSnakeCase } from '@/utils/stringConversion';
 import { GET_CONVEYANCE_LIST, GET_CONVEYANCE_MAP, GET_CONVEYANCE_PARENTS } from '@/services/convayance/constants';
 import { showErrorToast } from '@/utils/tools';
+import { FormFieldsWrapper, FormMapWrapper, FormPageHeader, FormPageWrapper, FormWrapper } from '@/components/wrappers/formWrappers';
 
 const ConveyancesSchema = z.object({
   // clientId: z.string().optional(),
@@ -43,6 +43,7 @@ const ConveyancesForm = () => {
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const viewMode = location.pathname.includes("view")
   const { id } = useParams();
   const queryClient = useQueryClient();
   const clientId = useSelector((state: any) => state.auth?.clientId);
@@ -141,119 +142,118 @@ const ConveyancesForm = () => {
 
 
   return (
-    <div className='h-w-full px-4 pt-2'>
-      <PageHeader
+    <FormPageWrapper>
+     <FormPageHeader>
+       <PageHeader
         pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Conveyance`}
         breadcrumbPathList={[
           { menuName: "Management", menuPath: "" },
-          { menuName: "Conveyance", menuPath: "/conveyances" }
+          { menuName: "Conveyances", menuPath: "/conveyances" }
         ]}
       />
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
-          <div className='grid grid-cols-2 gap-4 mb-4'>
-
-            <FormInput
-              control={form.control}
-              name='conveyName'
-              label='Convey Name'
-              placeholder='Enter Convey Name'
-              type='text'
-              disabled={location.pathname.includes("view")}
-            />
-            <FormInput
-              control={form.control}
-              name='conveyId'
-              label='Convey ID'
-              placeholder='Enter Convey ID (e.g., ABC)'
-              type='text'
-              disabled={location.pathname.includes("view")}
-            />
-
-            <FormComboBox
-              control={form.control}
-              name='conveyType'
-              label='Select Convey Type'
-              options={
-                conveyanceTypeOptions || []
-              }
-              disabled={location.pathname.includes("view")}
-            />
-            {/* <FormComboBox
+          {!viewMode && <Button className='w-24 mt-4' form="conveyanceForm"  disabled={isConveyanceCreating || isConveyanceUpdating} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
+    </FormPageHeader>
+      <FormWrapper>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} id="conveyanceForm" className='h-auto'>
+            <FormFieldsWrapper>
+              <FormInput
                 control={form.control}
-                name='clientId'
-                label='Select Client'
+                name='conveyName'
+                label='Conveyance Name'
+                placeholder='Enter Conveyance Name'
+                type='text'
+                disabled={viewMode}
+              />
+              <FormInput
+                control={form.control}
+                name='conveyId'
+                label='Conveyance ID'
+                placeholder='Enter Conveyance ID '
+                type='text'
+                disabled={viewMode}
+              />
+
+              <FormComboBox
+                control={form.control}
+                name='conveyType'
+                label='Select Conveyance Type'
                 options={
-                  [
-                    { label: "Ram", value: "GPS" },
-                    { label: "Hari", value: "Survey" },
-                    { label: "Aerial", value: "Aerial" }
-                  ]
+                  conveyanceTypeOptions || []
                 }
-              /> */}
-            <FormComboBox
-              control={form.control}
-              name='conveyParentId'
-              label='Select parent conveyance '
-              options={
-                conveyanceParentOptions || []
-              }
-              disabled={location.pathname.includes("view")}
-            />
-            <FormInput
-              control={form.control}
-              name='conveySeepageCms'
-              label='Seepage (cms)'
-              placeholder='Enter Seepage in cms'
-              type='number'
-              disabled={location.pathname.includes("view")}
-            />
-            <FormTextbox
-              control={form.control}
-              name='conveyDesc'
-              label='Convey Description'
-              placeholder='Enter Convey Description'
-              rows={1}
-              disabled={location.pathname.includes("view")}
-            />
-
-
-
-
-            {!location.pathname.includes("view") && <BasicSelect
-              itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
-              label="Choose Geometric File Type"
-              Value={shapeType}
-              setValue={(newValue) => {
-                form.setValue("conveyGeom", undefined);
-                setPreviewMapData(null);
-                setShapeType(newValue);
-              }} />}
-            {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
-              {shapeType === "geojson" ? <FormFileReader
+                disabled={viewMode}
+              />
+              {/* <FormComboBox
+                  control={form.control}
+                  name='clientId'
+                  label='Select Client'
+                  options={
+                    [
+                      { label: "Ram", value: "GPS" },
+                      { label: "Hari", value: "Survey" },
+                      { label: "Aerial", value: "Aerial" }
+                    ]
+                  }
+                /> */}
+              <FormComboBox
                 control={form.control}
-                name="conveyGeom"
-                label="Upload GeoJSON file"
-                placeholder='Choose GeoJSON File'
-                multiple={false}
-                accept=".geojson"
-              /> : <FormFileReader
+                name='conveyParentId'
+                label='Select parent conveyance '
+                options={
+                  conveyanceParentOptions || []
+                }
+                disabled={viewMode}
+              />
+              <FormInput
                 control={form.control}
-                name="conveyGeom"
-                label="Upload Shapefile"
-                placeholder='Choose Shapefile'
-                multiple={true}
-                accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
-            </div>}
-          </div>
-          <MapPreview data={previewMapData} isLoading={mapLoading} />
+                name='conveySeepageCms'
+                label='Seepage (cms)'
+                placeholder='Enter Seepage in cms'
+                type='number'
+                disabled={viewMode}
+              />
+              <FormTextbox
+                control={form.control}
+                name='conveyDesc'
+                label='Convey Description'
+                placeholder='Enter Convey Description'
+                rows={1}
+                disabled={viewMode}
+              />
 
-
-          {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={isConveyanceCreating || isConveyanceUpdating} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
+              {!viewMode && <BasicSelect
+                itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
+                label="Choose Geometric File Type"
+                Value={shapeType}
+                setValue={(newValue) => {
+                  form.setValue("conveyGeom", undefined);
+                  setPreviewMapData(null);
+                  setShapeType(newValue);
+                }} />}
+              {!viewMode && <div className='flex flex-col gap-2 w-full'>
+                {shapeType === "geojson" ? <FormFileReader
+                  control={form.control}
+                  name="conveyGeom"
+                  label="Upload GeoJSON file"
+                  placeholder='Choose GeoJSON File'
+                  multiple={false}
+                  accept=".geojson"
+                /> : <FormFileReader
+                  control={form.control}
+                  name="conveyGeom"
+                  label="Upload Shapefile"
+                  placeholder='Choose Shapefile'
+                  multiple={true}
+                  accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
+              </div>}
+            </FormFieldsWrapper>
+            <FormMapWrapper>
+              <MapPreview data={previewMapData} isLoading={mapLoading} />
+            </FormMapWrapper>         
         </form>
       </Form>
-    </div>
+    </FormWrapper>
+    </FormPageWrapper>
   );
 };
 

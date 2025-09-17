@@ -189,7 +189,7 @@ const Subregions = () => {
         refetchMap();
         setOpen(false);
         setId("");
-        toast.success("Region deleted successfully");
+        toast.success("Subregion deleted successfully");
       },
       onError: (error) => {
         showErrorToast(error?.response?.data.message);
@@ -288,7 +288,7 @@ const Subregions = () => {
                       }}
                     >
                       <Plus size={4} />
-                      Add Subregionss
+                      Add Subregions
                     </Button>
         </div>
         <div className="flex flex-grow">

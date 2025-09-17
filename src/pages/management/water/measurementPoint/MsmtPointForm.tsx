@@ -7,10 +7,8 @@ import {
   Form
 } from "@/components/ui/form"
 import { FormInput } from '@/components/FormComponent/FormInput'
-import { cn } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { useMediaQuery } from '@uidotdev/usehooks'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import FormPointMap from './FormPointMap'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
@@ -20,7 +18,7 @@ import { GET_CLIENT_MSMT_POINTS_MAP, GET_MSMTPOINT_DETAIL_KEY, GET_MSMTPOINT_LIS
 import { useGetConveyanceParents } from '@/services/convayance'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
 import { useEffect } from 'react'
-import { FormRadioGroup } from '@/components/FormComponent/FormRadio'
+import { FormFieldsWrapper, FormMapWrapper, FormPageHeader, FormPageWrapper, FormWrapper } from '@/components/wrappers/formWrappers'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
@@ -50,8 +48,7 @@ const MsmtPoint = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const { id, wayId } = useParams();
-  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+  const { id } = useParams();
   const { data: conveyanceParentOptions, isLoading: isConveyanceParentLoading } = useGetConveyanceParents();
   const { data: msmtPointData, isLoading } = useGetMsmtPointById(id!);
   const { mutate: createMsmtPoint } = usePostmsmtPoint();
@@ -118,35 +115,41 @@ const MsmtPoint = () => {
   const viewMode = location.pathname.includes("view")
 
   return (
-    <div className='h-w-full px-4 pt-2'>
-      <PageHeader
-        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Measurement Point`}
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Measurement-Points", menuPath: "/measurementPoints" }]}
-      />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
-          <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-2' : 'grid-cols-1')}>
-            <FormInput control={form.control} name='msmtPointId' label='Measurement Point ID' placeholder='Enter Measurement Point ID' type='text' disabled={viewMode} />
-            <FormInput control={form.control} name='msmtPointName' label='Measurement Point Name' placeholder='Enter Measurement Point Name' type='text' disabled={viewMode} />
-            <FormComboBox control={form.control} label='Select conveyance ' name='conveyId' options={conveyanceParentOptions || []} disabled={location.pathname.includes("view")} />
-           <div></div>
- {/* <FormRadioGroup control={form.control} name='gateBrand' label='Gate Brand' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={location.pathname.includes("view")} /> */}
-            <FormInput control={form.control} name='lat' label='Latitude' placeholder='Enter latitude' type='number' disabled={viewMode} />
-            <FormInput control={form.control} name='lon' label='Longitude' placeholder='Enter Longitude' type='number' disabled={viewMode} />
+    <FormPageWrapper>
+      <FormPageHeader>
+        <PageHeader
+          pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Measurement Point`}
+          breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Measurement-Points", menuPath: "/measurementPoints" }]}
+        />
+        {!viewMode && <Button className='w-24 mt-4' form="msmtPointForm" type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
+      </FormPageHeader>
+      <FormWrapper>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} id="msmtPointForm" className=' h-auto'>
+            <FormFieldsWrapper>
+              <FormInput control={form.control} name='msmtPointId' label='Measurement Point ID' placeholder='Enter Measurement Point ID' type='text' disabled={viewMode} />
+              <FormInput control={form.control} name='msmtPointName' label='Measurement Point Name' placeholder='Enter Measurement Point Name' type='text' disabled={viewMode} />
+              <FormComboBox control={form.control} label='Select conveyance ' name='conveyId' options={conveyanceParentOptions || []} disabled={location.pathname.includes("view")} />
+              <FormInput control={form.control} name='lat' label='Latitude' placeholder='Enter latitude' type='number' disabled={viewMode} />
+              <FormInput control={form.control} name='lon' label='Longitude' placeholder='Enter Longitude' type='number' disabled={viewMode} />
+            </FormFieldsWrapper>
+            <FormMapWrapper>
+              <FormPointMap
+                latitude={form.watch("lat")}
+                longitude={form.watch("lon")}
+                onPointChange={(lat, lng) => {
+                  !viewMode && form.setValue("lat", lat);
+                  !viewMode && form.setValue("lon", lng);
+                }}
+              />
+            </FormMapWrapper>
 
-          </div>
-          <FormPointMap
-            latitude={form.watch("lat")}
-            longitude={form.watch("lon")}
-            onPointChange={(lat, lng) => {
-             !viewMode && form.setValue("lat", lat);
-             !viewMode && form.setValue("lon", lng);
-            }}
-          />
-          {!viewMode && <Button className='w-24 mt-4' type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
-        </form>
-      </Form>
-    </div>
+
+          </form>
+        </Form>
+      </FormWrapper>
+
+    </FormPageWrapper>
   );
 }
 

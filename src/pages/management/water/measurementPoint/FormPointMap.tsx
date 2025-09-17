@@ -41,7 +41,7 @@ const FormPointMap = ({ latitude, longitude, onPointChange}: FormPointMapProps) 
     <MapContainer
       center={[ 38.86902846413033, -121.729324818604]} // fallback center
       zoom={13}
-      style={{ height: "400px", width: "100%", borderRadius: "8px" }}
+      style={{ height: "100%", width: "100%", borderRadius: "8px" }}
       scrollWheelZoom={true}
       zoomControl={false}
       minZoom={2}
