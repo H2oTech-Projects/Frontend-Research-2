@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/form"
 import { FormInput } from '@/components/FormComponent/FormInput'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
-import { LatLngBounds } from "leaflet"
+import { LatLng, LeafletEvent, Layer, FeatureGroup as LeafletFeatureGroup, LatLngBounds } from "leaflet"
+import FormCoordinatesMap from '@/components/FormComponent/FormCoordinatesMap'
 import { useEffect, useRef, useState } from 'react'
 import { FormTextbox } from '@/components/FormComponent/FormTextbox'
 import { FormRadioGroup } from '@/components/FormComponent/FormRadio'
@@ -29,58 +30,50 @@ import { convertKeysToSnakeCase } from '@/utils/stringConversion'
 import { GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, POST_FIELD_KEY_BY_WAP, PUT_FIELD_KEY_BY_WAP } from '@/services/water/field/constant'
 import { showErrorToast } from '@/utils/tools'
 import { UnitSystemName } from '@/utils'
+import { useGetRegionById, usePostRegion, usePutRegion } from '@/services/region'
+import { GET_REGION_LIST, GET_REGION_MAP, GET_SUB_REGION_MAP, POST_REGION, PUT_REGION } from '@/services/region/constants'
+import { useGetSubregionById, usePostSubregion, usePutSubregion } from '@/services/subregion'
+import { GET_SUB_REGION_LIST, POST_SUBREGION, PUT_SUBREGION } from '@/services/subregion/constant'
 
 // ✅ Updated Schema: Coordinates as an array of [lat, lng]
 const formSchema = z.object({
-  wapId: z.string().nullable().optional(),
-  fieldId: z.string().optional(),
-  fieldName: z.string().min(5, "Field Name must be at least 5 characters"),
-  fieldDesc: z.string().optional(),
-  fieldIrrigArea: z.coerce.number(),
-  fieldLegalArea: z.coerce.number(),
-  fieldActBool: z.string().optional(),
-  fieldGeometryFile: z.array(z.instanceof(File)).optional(),
-  fieldCoordinates: z.string().optional(),
+  subRegionName: z.string().optional(),
+  subregionGeometryFile: z.array(z.instanceof(File)).optional(),
+  subregionCoordinates: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-const FieldForm = () => {
+const SubregionForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id, wapId } = useParams();
+  const { id } = useParams();
   const clientId = JSON.parse(localStorage.getItem("auth") as string)?.client_id
   const queryClient = useQueryClient();
   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const [previewMapData, setPreviewMapData] = useState<any>(null);
   const [shapeType, setShapeType] = useState<string>("shape");
   const { data: waps, isLoading: wapsLoading } = useGetWaps();
-  const { data: fieldDetailData, isLoading: isFieldDetailLoading } = useGetFieldDetailByWAP(wapId!, id!)
+  const { data: subregionDetailData, isLoading: isFieldDetailLoading } = useGetSubregionById( id)
   const { mutate: previewMap, isPending: mapLoading } = usePostMapPreview();
-  const { mutate: createFieldByWap, isPending: creatingField } = usePostFieldByWAP();
-  const { mutate: updateFieldByWap, isPending: updatingField } = usePutFieldByWAP();
+  const { mutate: createSubregion, isPending: creatingSubregion } = usePostSubregion();
+  const { mutate: updateSubregion, isPending: updatingSubregion } = usePutSubregion();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      wapId: undefined,
-      fieldId: "",
-      fieldName: "",
-      fieldIrrigArea: undefined,
-      fieldLegalArea: undefined,
-      fieldActBool: "True",
-      fieldDesc: "",
-      fieldGeometryFile: undefined,
-      fieldCoordinates: "",
+      subRegionName: "",
+      subregionGeometryFile: undefined,
+      subregionCoordinates: "",
     },
   });
 
   useEffect(() => {
-    if (!!form.watch("fieldGeometryFile")) {
-      const file = form.watch("fieldGeometryFile");
+    if (!!form.watch("subregionGeometryFile")) {
+      const file = form.watch("subregionGeometryFile");
       if (file?.length !== 0) {
         previewMap(file, {
           onSuccess: (data) => {
             setPreviewMapData(data || null);
-            form.setValue("fieldCoordinates", JSON.stringify(data?.coordinates));
+            form.setValue("subregionCoordinates", JSON.stringify(data?.coordinates));
             queryClient.invalidateQueries({ queryKey: [POST_MAP_PREVIEW] })
           },
           onError: (error: any) => {
@@ -90,70 +83,51 @@ const FieldForm = () => {
         });
       }
     }
-  }, [form.watch("fieldGeometryFile")])
+  }, [form.watch("subregionGeometryFile")])
+
 
   useEffect(() => {
-    if (!id && waps?.data) {
-      form.setValue("wapId", waps?.data[0].value)
-    }
-    else {
-      form.setValue("wapId", wapId)
-    }
-
-  }, [waps])
-
-  useEffect(() => {
-    if (fieldDetailData && id) {
-      form.reset({ ...fieldDetailData?.data[0], fieldActBool: fieldDetailData?.data[0]?.fieldActBool ? "True" : "False", fieldIrrigArea: fieldDetailData?.data[0]?.fieldIrrigHa, fieldLegalArea: fieldDetailData?.data[0]?.fieldLegalHa });
-      form.setValue("wapId", wapId);
-      form.setValue("fieldCoordinates", JSON.stringify(fieldDetailData?.fieldCoordinates));
-      setPreviewMapData({ data: fieldDetailData?.fieldGeojson,coordinates: fieldDetailData?.fieldCoordinates,   view_bounds: fieldDetailData?.viewBounds ? fieldDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
+    if (subregionDetailData && id) {
+      form.reset({ ...subregionDetailData?.data[0], });
+      form.setValue("subregionCoordinates", JSON.stringify(subregionDetailData?.regionCoordinates));
+      setPreviewMapData({ data: subregionDetailData?.regionGeojson,coordinates: subregionDetailData?.regionCoordinates,   view_bounds: subregionDetailData?.viewBound ? subregionDetailData?.viewBound : new LatLngBounds([0, 0], [0, 0]) })
     }
 
-  }, [fieldDetailData])
+  }, [subregionDetailData])
 
   const onSubmit = (data: FormValues) => {
+
     const formData = convertKeysToSnakeCase({ ...data, clientId: clientId, id: id })
     if (!id) {
-      createFieldByWap(formData, {
+      createSubregion(formData, {
         onSuccess: (data: any) => {
           // Invalidate and refetch
-          queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
-          queryClient.invalidateQueries({ queryKey: [GET_FIELD_DETAIL_KEY_BY_WAP] });
-          queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
-          queryClient.invalidateQueries({ queryKey: [GET_FIELD_MAP_KEY] });
+          queryClient.invalidateQueries({ queryKey: [GET_SUB_REGION_MAP] })
+          queryClient.invalidateQueries({ queryKey: [GET_SUB_REGION_LIST] });
+          queryClient.invalidateQueries({ queryKey: [POST_SUBREGION] });
           toast.success(data?.message);
-          navigate("/fields", {
-            state: {
-              wapId: formData?.wap_id
-            }
-          });
+          navigate("/subregions")
           form.reset(); // Reset the form after successful submission
         },
         onError: (error) => {
-          showErrorToast(error?.response?.data?.message || "Failed to create field");
-          queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
+          showErrorToast(error?.response?.data?.message || "Failed to create region");
+          queryClient.invalidateQueries({ queryKey: [POST_SUBREGION] });
         },
       });
     } else {
-      updateFieldByWap(formData, {
+      updateSubregion(formData, {
         onSuccess: (data: any) => {
           // Invalidate and refetch
-          queryClient.invalidateQueries({ queryKey: [GET_FIELD_LIST_KEY_BY_WAP] })
-          queryClient.invalidateQueries({ queryKey: [GET_FIELD_DETAIL_KEY_BY_WAP] });
-          queryClient.invalidateQueries({ queryKey: [PUT_FIELD_KEY_BY_WAP] });
-          queryClient.invalidateQueries({ queryKey: [GET_FIELD_MAP_KEY] });
+          queryClient.invalidateQueries({ queryKey: [GET_SUB_REGION_MAP] })
+          queryClient.invalidateQueries({ queryKey: [GET_SUB_REGION_LIST] });
+          queryClient.invalidateQueries({ queryKey: [PUT_SUBREGION] });
           toast.success(data?.message);
-          navigate("/fields", {
-            state: {
-              wapId: formData?.wap_id
-            }
-          });
+          navigate("/subregions");
           form.reset(); // Reset the form after successful submission
         },
         onError: (error) => {
           showErrorToast(error?.response?.data?.message || "Failed to create field");
-          queryClient.invalidateQueries({ queryKey: [POST_FIELD_KEY_BY_WAP] });
+          queryClient.invalidateQueries({ queryKey: [PUT_SUBREGION] });
         },
       });
     }
@@ -161,26 +135,25 @@ const FieldForm = () => {
   };
 
   const updateFieldCoordinates = (coordinates: any) => {
-    form.setValue("fieldCoordinates", JSON.stringify(coordinates));
+    form.setValue("subregionCoordinates", JSON.stringify(coordinates));
   }
+
   const mode = location.pathname.includes("edit") ? 'edit' : 'add'
   return (
     <div className='h-w-full px-4 pt-2'>
       <PageHeader
-        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Field`}
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Field", menuPath: "/fields" }]}
+        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Subregion`}
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Subregion", menuPath: "/subregions" }]}
       />
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='bg-white rounded-lg shadow-md p-5 mt-3 h-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white'>
+
+
+
           <div className={cn('grid gap-4 auto-rows-auto', isDesktopDevice ? 'grid-cols-3' : 'grid-cols-1')}>
-            <FormComboBox control={form.control} name='wapId' label='Water Accounting Period' options={waps?.data} disabled={id ? true : false} />
-            <FormInput control={form.control} name='fieldId' label='Field ID' placeholder='Enter Field ID' type='text' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='fieldName' label='Field Name' placeholder='Enter Field Name' type='text' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='fieldIrrigArea' label={'Irrigable Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Irrigable  Area' type='number' disabled={location.pathname.includes("view")} />
-            <FormInput control={form.control} name='fieldLegalArea' label={'Stand By Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Stand By  Area' type='number' disabled={location.pathname.includes("view")} />
-            {/* <FormInput control={form.control} name= 'fieldLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
-            <FormTextbox control={form.control} name='fieldDesc' label='Field Description' placeholder='Enter Field Description' disabled={location.pathname.includes("view")} />
-            <FormRadioGroup control={form.control} name='fieldActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={location.pathname.includes("view")} />
+
+            <FormInput control={form.control} name='subRegionName' label='Subregion Name' placeholder='Enter subregion Name' type='text' disabled={location.pathname.includes("view")} />
 
             {!location.pathname.includes("view") && <BasicSelect
               itemList={[{ label: "Shapefile", value: "shape" }, { label: "GeoJSON", value: "geojson" }]}
@@ -188,7 +161,7 @@ const FieldForm = () => {
               Value={shapeType}
               setValue={(newValue) => {
                 // Clear the selected files **before** changing shapeType
-                form.setValue("fieldGeometryFile", undefined);
+                form.setValue("subregionGeometryFile", undefined);
                 setPreviewMapData(null);
                 setShapeType(newValue);
               }} />}
@@ -196,14 +169,14 @@ const FieldForm = () => {
             {!location.pathname.includes("view") && <div className='flex flex-col gap-2 w-full'>
               {shapeType === "geojson" ? <FormFileReader
                 control={form.control}
-                name="fieldGeometryFile"
+                name="subregionGeometryFile"
                 label="Upload GeoJSON file"
                 placeholder='Choose GeoJSON File'
                 multiple={false}
                 accept=".geojson"
               /> : <FormFileReader
                 control={form.control}
-                name="fieldGeometryFile"
+                name="subregionGeometryFile"
                 label="Upload Shapefile"
                 placeholder='Choose Shapefile'
                 multiple={true}
@@ -212,11 +185,11 @@ const FieldForm = () => {
 
           </div>
           <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} mode={mode}/>
-          {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={creatingField || updatingField} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
+          {!location.pathname.includes("view") && <Button className='w-24 mt-4' disabled={creatingSubregion || updatingSubregion} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
         </form>
       </Form>
     </div>
   );
 }
 
-export default FieldForm;
+export default SubregionForm;

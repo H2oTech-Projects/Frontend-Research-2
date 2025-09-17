@@ -75,7 +75,7 @@ const AddField = () => {
 
     const layer = (e as any).layer;
     const formattedCoords = getPolygonCoordinates(layer);
-  
+
     form.setValue("coordinates", [...polygons, formattedCoords]);
     form.clearErrors("coordinates");
 
@@ -97,7 +97,7 @@ const onPolygonDeleted = (e: LeafletEvent) => {
     form.setValue("coordinates", remainingPolygons);
   };
 
-  
+
 
 
 
@@ -128,13 +128,13 @@ const onPolygonDeleted = (e: LeafletEvent) => {
           <FormRadioGroup control={form.control} name='ActiveFlag' label='Active status' options={[{ label: "Yes", value: "true" }, { label: "No", value: "false" }]} />
           </div>
           <FormTextbox control={form.control} name='MsmtMethodDesc' label='Measurement Method Description' placeholder='Enter Measurement Method Description'  />
- {/* <FormComboBox control={form.control} name = "year" label= 'Year' options={[{ label:"2022",value:"2022"},{ label:"2023",value:"2023"},{ label:"2024",value:"2024"}]}/> */}      
+ {/* <FormComboBox control={form.control} name = "year" label= 'Year' options={[{ label:"2022",value:"2022"},{ label:"2023",value:"2023"},{ label:"2024",value:"2024"}]}/> */}
           </div>
-          <div> 
+          <div>
              <FormCoordinatesMap form={form} name="coordinates" label="Polygon Coordinates"  type="polygon" refLayer={featureGroupPolygonRef} layerCounts='multiple'/>
           </div>
          </div>
-         
+
           {/* <FormCoordinatesMap control={form.control} name="markers" label="Point Coordinates" onCreated={onMarkerCreated} onEdited={onMarkerEdited} onDeleted={onMarkerDeleted} type="marker" refLayer={featureGroupMarkerRef}/> */}
           <Button className=' w-24' type="submit">Submit</Button>
         </form>
