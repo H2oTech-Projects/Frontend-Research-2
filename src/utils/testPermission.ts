@@ -90,7 +90,7 @@ export const clientAdminPermissionList = [
 ];
 
 export const staticPermissionList = (UserRole: string) => {
-  if (UserRole === "Admidsdn") {
+  if (UserRole === "Admin") {
     return [
       "Map",
       "Insight",
