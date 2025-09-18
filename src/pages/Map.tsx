@@ -200,7 +200,7 @@ const Map = () => {
       };
     }
 
-    if (loggedUser == 'colusa@wateraccounts.com' || loggedUser == 'colusagrower@wateraccounts.com') {
+    if (['colusa@wateraccounts.com', 'colusagrower@wateraccounts.com', 'madera@wateraccounts.com', 'maderagrower@wateraccounts.com'].includes(loggedUser)) {
       return mapLoading ? <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
       <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
     </div> : <RtGeoJson key={'50003'} layerEvents={colusaLayerEvents} style={maderaJsonStyle} data={JSON.parse(mapData['data'])} color={"#16599a"}/>
