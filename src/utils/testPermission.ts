@@ -149,6 +149,7 @@ export const staticPermissionList = (UserRole: string) => {
       "Collect",
       "Field-MsmtPoint",
       "Field-Parcel",
+      "Time"
     ]
   }
 
