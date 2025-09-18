@@ -29,8 +29,8 @@ const Map = () => {
     const modalRef = useRef<HTMLDivElement>(null);
     const [zoomLevel, setZoomLevel] = useState(10);
     const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
-    const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user
-    const wayId = JSON.parse(localStorage.getItem("auth") as string)?.way_id
+    const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
+    const wayId = JSON.parse(localStorage.getItem("auth") as string)?.user_details.way_id
     const refreshToken = useSelector((state: any) => state.auth.refresh);
     const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
     const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(wayId);
