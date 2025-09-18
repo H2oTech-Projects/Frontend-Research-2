@@ -38,6 +38,9 @@ import { toast } from "react-toastify";
 import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { fieldPageColumnProperties } from "@/utils/constant";
 import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
+import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
+import SearchInput from "@/components/SearchInput";
+import { useTableData } from "@/utils/customHooks/useTableData";
 
 interface initialTableDataTypes {
   search: string;
@@ -58,35 +61,19 @@ const Field = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient()
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
-  const [searchText, setSearchText] = useState("");
+  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData})
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  // const [doFilter, setDoFilter] = useState<Boolean>(false);
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
-  // const { data: fieldData, isLoading } = useGetFieldList(tableInfo);
   const { data: fieldData, isLoading } = useGetFieldListByWAP(tableInfo, defaultWap);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap, isFetching: mapFetching } = useGetFieldMapByWAP(defaultWap);
   //  const { data: mapData, isLoading: mapLoading } = useGetFieldMapList();
   const { data: waps, isLoading: wapsLoading } = useGetWaps()
   const { mutate: deleteField, isPending: isFieldDeleting } = useDeleteFieldByWAP()
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
   // const defaultData: DummyDataType[] = DummyData?.data as DummyDataType[];
 
   const columns: ColumnDef<DummyDataType>[] = [
@@ -417,32 +404,11 @@ const Field = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
+          <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search Field' />
           <PermissionCheckWrapper name="AddField">
             <Button
               variant={"default"}

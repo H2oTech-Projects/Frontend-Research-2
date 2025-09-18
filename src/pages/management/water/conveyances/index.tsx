@@ -29,6 +29,9 @@ import { debounce } from '@/utils';
 import { conveyColumnProperties } from '@/utils/constant';
 import { createRoot } from 'react-dom/client';
 import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper';
+import { useMableCollapse } from '@/utils/customHooks/useMableCollapse';
+import { useTableData } from '@/utils/customHooks/useTableData';
+import SearchInput from '@/components/SearchInput';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -39,21 +42,13 @@ const initialTableData = {
 const Conveyances = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState(null);
   const [clickedGeom, setClickedGeom] = useState<any>({ id: "", viewBounds: null });
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  const [searchText, setSearchText] = useState("");
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
   const { data: conveyData, isLoading: conveyLoading } = useGetConveyanceList(tableInfo);
   const { mutate: deleteConveyance, isPending: isConveyanceDeleting } = useDeleteConveyance();
   const { data: mapGeoJson, isLoading: isMapLoading } = useGetConveyanceMap();
@@ -178,12 +173,6 @@ const Conveyances = () => {
       },
     },
   ];
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
 
   const handleDelete = () => {
     deleteConveyance(id, {
@@ -304,32 +293,11 @@ const Conveyances = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
+         <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search Region' />
           <PermissionCheckWrapper name="AddConveyance">
             <Button
               variant={"default"}

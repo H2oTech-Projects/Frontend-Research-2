@@ -31,6 +31,9 @@ import { useGetCropFieldDetailByWAP, useGetCropFieldMapByWAP, useGetCropsFieldLi
 import { GET_ALL_CROP_FIELDS_LIST, GET_ALL_CROP_FIELDS_MAP, PUT_CROPS_FIELD } from "@/services/crops/constants";
 import CropFieldModal from "./cropFieldModal";
 import { cropFieldColumnProperties } from "@/utils/constant";
+import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
+import { useTableData } from "@/utils/customHooks/useTableData";
+import SearchInput from "@/components/SearchInput";
 
 
 interface initialTableDataTypes {
@@ -68,25 +71,17 @@ const CropField = () => {
   const queryClient = useQueryClient();
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
   const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], existingPcts: [], cropName: "" })
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
-  const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
   const [agroItems,setAgroItems] = useState<any>(null)
-  // const [doFilter, setDoFilter] = useState<Boolean>(false);
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
   const { data: cropsFieldData, isLoading } = useGetCropsFieldListByWAP(tableInfo, defaultWap);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCropFieldMapByWAP(defaultWap);
   const { data: fieldCropData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCropFieldDetailByWAP(defaultWap!, id!)
@@ -94,13 +89,6 @@ const CropField = () => {
   const { data: wapsOptions, isLoading: wapsLoading } = useGetWaps()
   const [conflictFields, setConflictFields] = useState([]);
   const [processConflictFields, setProcessConflictFields] = useState(false)
-
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
 
   const columns: ColumnDef<any>[] = [
     {
@@ -116,7 +104,7 @@ const CropField = () => {
         );
       },
       size: 180,
-      cell: ({ row }) => <div className="lowercase">{row.getValue("cropName")}</div>,
+      cell: ({ row }) => <div >{row.getValue("cropName")}</div>,
     },
     {
       accessorKey: "fieldPctFarmed",
@@ -399,32 +387,11 @@ const CropField = () => {
       />}
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
+          <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search ' />
           <Button
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"

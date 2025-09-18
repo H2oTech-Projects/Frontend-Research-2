@@ -32,6 +32,9 @@ import { useGetParcelMapByWAY } from "@/services/water/parcel";
 import { z } from "zod";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
 import { customerParcelColumnProperties } from "@/utils/constant";
+import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
+import SearchInput from "@/components/SearchInput";
+import { useTableData } from "@/utils/customHooks/useTableData";
 
 const MAX_ITEMS_LENGTH = 5;
 interface initialTableDataTypes {
@@ -71,40 +74,23 @@ const CustomerParcel = () => {
   const timerRef = useRef<number | null>(null);
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+ const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], parcelId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
   const [geojson, setGeojson] = useState<any>({ id: null, parcelGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: ""})
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWay, setDefaultWay] = useState<any>("")
-  const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
   const [agroItems,setAgroItems] = useState<any>(null)
-  // const [doFilter, setDoFilter] = useState<Boolean>(false);
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
   const { data: customerFieldData, isLoading } = useGetCustomerParcelListByWAY(tableInfo, defaultWay);
   //const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWay);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(defaultWay);
   // const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWay!, id!)
   const { mutate: updateCustomerParcel } = usePutCustomerParcel();
   const { data: waysOptions, isLoading: waysLoading } = useGetWaysOptions()
-
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
-
-
 
   const columns: ColumnDef<any>[] = [
     {
@@ -383,32 +369,11 @@ const CustomerParcel = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
+           <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search ' />
           <Button
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"

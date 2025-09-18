@@ -36,6 +36,9 @@ import { parcelPageColumnProperties } from "@/utils/constant";
 import { createRoot } from "react-dom/client";
 import { DELETE_PARCEL_KEY_BY_WAY, GET_PARCEL_MAP_KEY_BY_WAY } from "@/services/water/parcel/constant";
 import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
+import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
+import { useTableData } from "@/utils/customHooks/useTableData";
+import SearchInput from "@/components/SearchInput";
 interface initialTableDataTypes {
   search: string;
   page_no: number,
@@ -55,34 +58,18 @@ const Parcel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient()
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+ const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData})
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWay, setDefaultWay] = useState<any>("")
-  const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  // const [doFilter, setDoFilter] = useState<Boolean>(false);
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
-
   const { data: fieldData, isLoading, refetch: refetchParcel } = useGetParcelListByWAY(tableInfo, defaultWay);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(defaultWay);
   const { data: ways, isLoading: waysLoading } = useGetWaysOptions()
   const { mutate: deleteParcel, isPending: isFieldDeleting } = deleteParcelByWAY()
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
 
   const columns: ColumnDef<DummyDataType>[] = [
     {
@@ -372,34 +359,12 @@ const Parcel = () => {
         onConfirm={handleDelete}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
-
+        <div className="flex justify-between">     
+          <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search Parcel' />
           <PermissionCheckWrapper name="AddParcel">
             <Button
               variant={"default"}

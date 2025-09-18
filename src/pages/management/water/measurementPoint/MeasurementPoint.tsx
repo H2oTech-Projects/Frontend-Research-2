@@ -33,6 +33,9 @@ import { showErrorToast } from "@/utils/tools";
 import { toast } from "react-toastify";
 import { DELETE_MSMTPOINT } from "@/services/water/msmtPoint/constant";
 import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
+import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
+import { useTableData } from "@/utils/customHooks/useTableData";
+import SearchInput from "@/components/SearchInput";
 
 interface initialTableDataTypes {
   search: string;
@@ -52,30 +55,17 @@ const initialTableData = {
 const measurementPoint = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient()
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: "", fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
   const [defaultWap, setDefaultWap] = useState<any>("")
-  const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
   const { data: msmtPointData, isLoading, refetch } = useGetClientMsmtPoints(tableInfo);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetClientMsmtPoinMap();
   const { mutate: deleteMsmtPoint } = useDeletemsmtPoint();
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
 
   const columns: ColumnDef<DummyDataType>[] = [
     {
@@ -286,32 +276,11 @@ const measurementPoint = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
+          <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search Measurement Point' />
           <PermissionCheckWrapper name="AddMeasurementPoint">
             <Button
               variant={"default"}

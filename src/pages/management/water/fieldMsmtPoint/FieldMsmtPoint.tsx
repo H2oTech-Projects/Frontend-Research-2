@@ -40,6 +40,7 @@ import { convertKeysToSnakeCase } from "@/utils/stringConversion";
 import { useLocation } from 'react-router-dom';
 import { measurementPointFieldColumnProperties } from "@/utils/constant";
 import { AgroItems } from "@/utils/tools";
+import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
 
 interface initialTableDataTypes {
   search: string;
@@ -76,9 +77,8 @@ const FieldMsmtPoint = () => {
   const mpId = params.get("mpId");
   const wapId= params.get("wapId");
   const msmtPointId= params.get("msmtpoint");
-
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData, search: msmtPointId || "" })
-  const [collapse, setCollapse] = useState("default");
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: mpId || "", features: {}, fields: [] });
@@ -178,12 +178,6 @@ const FieldMsmtPoint = () => {
     return sorted1.length != sorted2.length || !sorted1.every((value, index) => value === sorted2[index])
   }
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {

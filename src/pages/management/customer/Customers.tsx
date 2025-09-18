@@ -20,6 +20,9 @@ import CustomModal from "@/components/modal/ConfirmModal";
 import { GET_CUSTOMER_LIST_KEY } from "@/services/customers/constants";
 import { toast } from "react-toastify";
 import { showErrorToast } from "@/utils/tools";
+import { useTableData } from "@/utils/customHooks/useTableData";
+import SearchInput from "@/components/SearchInput";
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 
 interface initialTableDataTypes {
   search: string;
@@ -38,9 +41,8 @@ const initialTableData = {
 
 const Customers = () => {
   const navigate = useNavigate();
-  const [searchText, setSearchText] = useState("");
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const { data: customerList, isLoading: isCustomersLoading ,refetch} = useGetCustomers(tableInfo);
+  const { tableInfo, setTableInfo, searchText, handleClearSearch, handleSearch } = useTableData({ initialTableData });
+  const { data: customerList, isLoading: isCustomersLoading, refetch } = useGetCustomers(tableInfo);
   const { mutate: deleteCustomer } = useDeleteCustomer();
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
@@ -125,18 +127,23 @@ const Customers = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { navigate(`/customers/${row.original.id}/edit`) }}>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { navigate(`/customers/${row.original.id}/view`) }}>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditCustomers">
+              <DropdownMenuItem onClick={() => { navigate(`/customers/${row.original.id}/edit`) }}>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="EditCustomers">
+              <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewCustomers">
+              <DropdownMenuItem onClick={() => { navigate(`/customers/${row.original.id}/view`) }}>
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -146,13 +153,6 @@ const Customers = () => {
     },
 
   ];
-
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
 
   const handleDelete = () => {
     deleteCustomer({ customerId: id }, {
@@ -182,42 +182,24 @@ const Customers = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
+          <SearchInput
+            value={searchText}
+            onChange={handleSearch}
+            onClear={handleClearSearch}
+            placeholder='Search Customer' />
+          <PermissionCheckWrapper name="AddCustomers">
+            <Button
               variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
+              className="h-7 w-auto px-2 text-sm"
+              onClick={() => {
+                navigate(`/customers/add`)
+              }}
             >
-              <X />
-            </Button>}
-          </div>
-          <Button
-            variant={"default"}
-            className="h-7 w-auto px-2 text-sm"
-            onClick={() => {
-              navigate(`/customers/add`)
-            }}
-          >
-            <Plus size={4} />
-            Add Customer
-          </Button>
+              <Plus size={4} />
+              Add Customer
+            </Button>
+          </PermissionCheckWrapper>
+
         </div>
         <div className="flex w-full">
           <div className="w-full h-[calc(100vh-160px)]">

@@ -29,6 +29,9 @@ import CustomModal from '@/components/modal/ConfirmModal';
 import { toast } from 'react-toastify';
 import { showErrorToast } from '@/utils/tools';
 import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper';
+import { useMableCollapse } from '@/utils/customHooks/useMableCollapse';
+import { useTableData } from '@/utils/customHooks/useTableData';
+import SearchInput from '@/components/SearchInput';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -39,20 +42,13 @@ const initialTableData = {
 const Region = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
-  const [collapse, setCollapse] = useState("default");
+  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedGeom, setClickedGeom] = useState<any>({ regionId: "", viewBounds: null });
-  const [searchText, setSearchText] = useState("");
   const [id, setId] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
   const { data: regionData, isLoading: conveyLoading, refetch } = useGetRegionList(tableInfo);
   const { data: mapGeoJson, isLoading: isMapLoading, refetch: refetchMap } = useGetRegionMap();
   const { mutate: deleteRegion } = useDeleteRegion();
@@ -130,12 +126,6 @@ const Region = () => {
       },
     },
   ];
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
 
   const showInfo = (label: String, Id: String, name: String) => {
     var popup = $("<div></div>", {
@@ -260,32 +250,11 @@ const Region = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
+          <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search Region' />
           <PermissionCheckWrapper name="AddRegion">
             <Button
               variant={"default"}
