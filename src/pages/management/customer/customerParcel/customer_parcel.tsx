@@ -372,14 +372,14 @@ const CustomerParcel = () => {
 
       <PageHeader
         pageHeaderTitle="Customer-Parcel"
-        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
+        breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "/customers" }]}
       />
       <CustomModal
         isOpen={!!(agroItems)}
         onClose={() => setAgroItems(null)}
         title={`Linked with ${agroItems?.customerName}`}
         showActionButton={false}
-        children={<AgroItems fields={agroItems?.parcelIds}/>}
+        children={<AgroItems data={agroItems?.parcelIds} name={"Parcels"}/>}
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">

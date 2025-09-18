@@ -22,7 +22,7 @@ import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
 import { useGetWaps } from "@/services/timeSeries";
-import { showErrorToast } from "@/utils/tools";
+import { AgroItems, showErrorToast } from "@/utils/tools";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,7 @@ import { z } from "zod";
 import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
 import CustomerFieldModal from "./customerFieldModal";
 import { customerFieldColumnProperties } from "@/utils/constant";
+import CustomModal from "@/components/modal/ConfirmModal";
 
 interface initialTableDataTypes {
   search: string;
@@ -80,6 +81,7 @@ const CustomerField = () => {
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
+  const [agroItems,setAgroItems] = useState<any>(null)
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -132,7 +134,7 @@ const CustomerField = () => {
         );
       },
       size: 180,
-      cell: ({ row }:any) => <div className=" flex flex-wrap h-auto w-auto px-3">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.join(", ")}</div>}</div>,
+      cell: ({ row }:any) => <div className=" flex flex-wrap h-auto w-auto px-3">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0,5)?.join(", ")} {row.getValue("fieldPctFarmed")?.length > 5 && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setAgroItems(row.original)}}>View All</button>}</div>}</div>,
     },
     {
       id: "actions",
@@ -411,6 +413,14 @@ const CustomerField = () => {
         pageHeaderTitle="Customer-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
       />
+
+      <CustomModal
+        isOpen={!!(agroItems)}
+        onClose={() => setAgroItems(null)}
+        title={`Linked with ${agroItems?.customerName}`}
+        showActionButton={false}
+        children={<AgroItems data={agroItems?.fieldPctFarmed} name={"Fields"}/>}
+        />
       {/* <EditModel /> */}
       {open && <CustomerFieldModal
         customerId={id || geojson.id}
