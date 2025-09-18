@@ -271,6 +271,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
     </>
     }
     const addLayers = () => {
+      const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
       if (loggedUser == "colusa@wateraccounts.com" || loggedUser == 'colusagrower@wateraccounts.com') {
         return colusaRaster()
       }
@@ -278,7 +279,8 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
         <>
           <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer=='Evapotranspiration (ET)'}>
             <WMSTileLayer
-              url={`${geoserverUrl}`}
+              key={userPolygon}
+              url={`${geoUrl}`}
               opacity= {opacity}
               params={{
                 format:"image/png",
