@@ -24,9 +24,9 @@ export const showSuccessToast = (messages: any) => {
   );
 };
 
-export const AgroItems = ({ fields }: any)=>{
+export const AgroItems = ({ data,name }: {data:string[],name:string})=>{
   const [search, setSearch] = useState("");
-  const filteredFields = fields?.filter((item: string) =>
+  const filteredFields = data?.filter((item: string) =>
     item.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -46,7 +46,7 @@ export const AgroItems = ({ fields }: any)=>{
 
   const showAllFields = () => {
     return (
-      fields?.map((item: any, index: number) => (
+      data?.map((item: any, index: number) => (
         <div
           key={index}
           className="flex justify-between border-b border-slate-300 pb-1"
@@ -58,13 +58,13 @@ export const AgroItems = ({ fields }: any)=>{
   }
 
   const shouldShowFiltered = search.trim() !== "";
-  const title = shouldShowFiltered ? "Search Results" : "All Fields";
+  const title = shouldShowFiltered ? "Search Results" : `All ${name}`;
 
   return (
     <div className="flex flex-col gap-4">
       <input
         type="text"
-        placeholder="Search Field..."
+        placeholder={`Search ${name}...`}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="w-[300px] px-3 py-2 border rounded-md text-sm outline-none focus:ring-2 focus:ring-royalBlue text-black"

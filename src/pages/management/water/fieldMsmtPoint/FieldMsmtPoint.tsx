@@ -39,6 +39,7 @@ import { FormInput } from "@/components/FormComponent/FormInput";
 import { convertKeysToSnakeCase } from "@/utils/stringConversion";
 import { useLocation } from 'react-router-dom';
 import { measurementPointFieldColumnProperties } from "@/utils/constant";
+import { AgroItems } from "@/utils/tools";
 
 interface initialTableDataTypes {
   search: string;
@@ -90,7 +91,7 @@ const FieldMsmtPoint = () => {
   const [enableLink, setEnableLink] = useState(false);
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-
+  const [agroItems,setAgroItems] = useState<any>(null)
   const form = useForm<any>({
     resolver: zodResolver(ApportionSchema),
     defaultValues: {
@@ -207,7 +208,7 @@ const FieldMsmtPoint = () => {
           </Button>
         );
       },
-      size: 300,
+      size: 120,
       cell: ({ row }) => <div className="px-4">{row.getValue("msmtPointId")}</div>,
     },
     {
@@ -239,8 +240,10 @@ const FieldMsmtPoint = () => {
         );
       },
 
-      size: 100, // this size value is in px
+      size: 200, // this size value is in px
       cell: ({ row }) => <div className="px-4">{row.getValue("fields")}</div>,
+
+      // cell: ({ row }:any) => <div className="px-4"> {row?.getValue("fields")?.slice(0,5)?.join(", ")} {row.getValue("fieldPctFarmed")?.length > 5 && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setAgroItems(row.original)}}>View All</button>}</div>,
       //filterFn: 'includesString',
     },
     {
@@ -481,6 +484,13 @@ const FieldMsmtPoint = () => {
         pageHeaderTitle="Msmt Point-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
+      <CustomModal
+        isOpen={!!(agroItems)}
+        onClose={() => setAgroItems(null)}
+        title={`Linked with ${agroItems?.msmtPointName}`}
+        showActionButton={false}
+        children={<AgroItems data={agroItems?.fieldPctFarmed} name={"Fields"}/>}
+        />
       <CustomModal
         isOpen={open}
         onClose={() => {

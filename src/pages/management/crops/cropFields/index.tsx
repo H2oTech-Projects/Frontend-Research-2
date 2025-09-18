@@ -1,15 +1,11 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronsLeft, ChevronsRight, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import $, { data } from "jquery";
+import $ from "jquery";
 import { ColumnDef } from "@tanstack/react-table";
 import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
-import { createRoot } from 'react-dom/client';
-import {
-  Form
-} from "@/components/ui/form"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,34 +16,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
-import { useDeleteFieldByWAP, useGetFieldList, useGetFieldListByWAP, useGetFieldMapByWAP, useGetFieldMapList } from "@/services/water/field";
-import { debounce, UnitSystemName } from "@/utils";
+import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
 import { useGetWaps, useGetWaysOptions } from "@/services/timeSeries";
-import { showErrorToast } from "@/utils/tools";
+import { AgroItems, showErrorToast } from "@/utils/tools";
 import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_LIST_KEY_BY_WAP } from "@/services/water/field/constant";
 import { cn } from "@/lib/utils";
-import { useGetCustomerFieldDetailByWAP, useGetCustomerFieldListByWAP, useGetCustomerFieldMapByWAP, usePutCustomerField } from "@/services/customerField";
-import { MsmtPointInfo } from '@/utils/tableLineChartInfo';
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormInput } from "@/components/FormComponent/FormInput";
-import { error } from "console";
-import { GET_ALL_CUSTOMER_FIELD, POST_CUSTOMER_FIELD } from "@/services/customerField/constants";
-import { de } from "zod/dist/types/v4/locales";
-import { set } from "date-fns";
-import CustomerFieldModal from "./cropFieldModal";
 import { useGetCropFieldDetailByWAP, useGetCropFieldMapByWAP, useGetCropsFieldListByWAP, usePutCropField } from "@/services/crops";
 import { GET_ALL_CROP_FIELDS_LIST, GET_ALL_CROP_FIELDS_MAP, PUT_CROPS_FIELD } from "@/services/crops/constants";
 import CropFieldModal from "./cropFieldModal";
 import { cropFieldColumnProperties } from "@/utils/constant";
-import AllFieldList from "./AllFieldList";
+
 
 interface initialTableDataTypes {
   search: string;
@@ -82,7 +66,6 @@ const CropField = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const timerRef = useRef<number | null>(null);
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
@@ -96,7 +79,7 @@ const CropField = () => {
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  const [fields,setFields] = useState<any>(null)
+  const [agroItems,setAgroItems] = useState<any>(null)
   // const [doFilter, setDoFilter] = useState<Boolean>(false);
   const tableCollapseBtn = () => {
     setCollapse((prev) => (prev === "default" ? "table" : "default"));
@@ -149,7 +132,7 @@ const CropField = () => {
         );
       },
       size: 180,
- cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0,5)?.join(", ")} {row.getValue("fieldPctFarmed")?.length > 5 && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setFields(row.original)}}>View All</button>}  </div>}</div>,
+ cell: ({ row }: any) => <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0,5)?.join(", ")} {row.getValue("fieldPctFarmed")?.length > 5 && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setAgroItems(row.original)}}>View All</button>}  </div>}</div>,
     },
     {
       id: "actions",
@@ -394,12 +377,12 @@ const CropField = () => {
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Crops", menuPath: "/crops" }]}
       />
       <CustomModal
-        isOpen={fields ? true : false}
-        onClose={() => setFields(null)}
-        title={`Linked with ${fields?.cropName}`}
+        isOpen={!!(agroItems)}
+        onClose={() => setAgroItems(null)}
+        title={`Linked with ${agroItems?.cropName}`}
         showActionButton={false}
-        children={<AllFieldList fields={fields}/>}
-      />
+        children={<AgroItems data={agroItems?.fieldPctFarmed} name={"Fields"}/>}
+        />
       {/* <EditModel /> */}
       {open && <CropFieldModal
         cropId={id || geojson.id}
