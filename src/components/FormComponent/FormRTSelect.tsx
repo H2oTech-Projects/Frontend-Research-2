@@ -40,8 +40,8 @@ export function FormComboBox({
       name={name}
       render={({ field }) => (
         <FormItem className={cn("w-full", className)}>
-          <FormLabel>{label}</FormLabel>
-          <Popover open={open} onOpenChange={setOpen}>
+          <FormLabel>{label}</FormLabel>       
+          <Popover open={open} onOpenChange={setOpen} modal> {/* adding modal with popover makes popover behave like modal and it wont allow to scroll */}
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
