@@ -129,10 +129,10 @@ const MsmtPoint = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} id="msmtPointForm" className=' h-auto'>
             <FormFieldsWrapper>
-              <FormInput control={form.control} name='msmtPointId' label='Measurement Point ID' placeholder='Enter Measurement Point ID' type='text' disabled={viewMode} />
+              <FormInput control={form.control} name='msmtPointId' label='Measurement Point ID' placeholder='Enter Measurement Point ID' type='text' disabled={!location.pathname.includes("add")} />
               <FormInput control={form.control} name='msmtPointName' label='Measurement Point Name' placeholder='Enter Measurement Point Name' type='text' disabled={viewMode} />
-              <FormComboBox control={form.control} label='Conveyance ' name='conveyId' options={conveyanceParentOptions || []} disabled={location.pathname.includes("view")} />
-              <FormComboBox control={form.control} label=' Measurement Point Type ' name='msmtTypeId' options={msmtTypeOptions || []} disabled={location.pathname.includes("view")} />
+              <FormComboBox control={form.control} label='Conveyance ' name='conveyId' options={conveyanceParentOptions || []} disabled={viewMode} />
+              <FormComboBox control={form.control} label=' Measurement Point Type ' name='msmtTypeId' options={msmtTypeOptions || []} disabled={viewMode} />
               <FormInput control={form.control} name='lat' label='Latitude' placeholder='Enter latitude' type='number' disabled={viewMode} />
               <FormInput control={form.control} name='lon' label='Longitude' placeholder='Enter Longitude' type='number' disabled={viewMode} />
             </FormFieldsWrapper>
