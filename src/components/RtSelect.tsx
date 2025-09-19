@@ -31,7 +31,7 @@ const RtSelect = ({dropdownList,selectedValue,setSelectedValue,label,showSearch=
 const [open, setOpen] = useState(false);
 const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
-    <div className={cn("flex items-center gap-2  ",isDesktopDevice ? "w-[40rem] " : "w-[24.5rem] text-sm")}>
+    <div className={cn("flex items-center gap-2  ",isDesktopDevice ? "w-[40rem] " : "w-[24.5rem] ")}>
                  <label className="min-w-[6rem] flex gap-1"><span>{label}:</span> </label>
                    <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
@@ -39,9 +39,9 @@ const isDesktopDevice = useMediaQuery("(min-width: 768px)");
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className={cn("justify-between font-normal h-8", isDesktopDevice ? " w-[25rem]" :" w-[22rem]  overflow-y-hidden")}
+                        className={cn("justify-between font-normal h-8", isDesktopDevice ? " w-[25rem]" :" w-auto")}
                       >
-                        <div className={cn("flex justify-start",isDesktopDevice ? "w-[24rem]" : "w-[20rem] overflow-x-scroll ")} >
+                        <div  >
                           {selectedValue
                           ? dropdownList?.find((email) => email.value === selectedValue)?.label
                           : `Select ${label}...`}
