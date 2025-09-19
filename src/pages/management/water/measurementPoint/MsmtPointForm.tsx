@@ -13,7 +13,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import FormPointMap from './FormPointMap'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
 import { showErrorToast } from '@/utils/tools'
-import { useGetMsmtPointById, usePostmsmtPoint, usePutmsmtPoint } from '@/services/water/msmtPoint'
+import { useGetMsmtPointById, useGetMsmtTypeOptions, usePostmsmtPoint, usePutmsmtPoint } from '@/services/water/msmtPoint'
 import { GET_CLIENT_MSMT_POINTS_MAP, GET_MSMTPOINT_DETAIL_KEY, GET_MSMTPOINT_LIST_KEY, POST_MSMTPOINT_LIST, PUT_MSMTPOINT } from '@/services/water/msmtPoint/constant'
 import { useGetConveyanceParents } from '@/services/convayance'
 import { FormComboBox } from '@/components/FormComponent/FormRTSelect'
@@ -25,6 +25,7 @@ const formSchema = z.object({
   msmtPointId: z.string().optional(),
   msmtPointName: z.string().optional(),
   conveyId: z.coerce.number().optional(),
+  msmtTypeId: z.coerce.number().optional(),
   // gateBrand: z.string().optional(),
   lat: z.coerce
     .number({
@@ -50,16 +51,17 @@ const MsmtPoint = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const { data: conveyanceParentOptions, isLoading: isConveyanceParentLoading } = useGetConveyanceParents();
+  const { data: msmtTypeOptions } = useGetMsmtTypeOptions();
   const { data: msmtPointData, isLoading } = useGetMsmtPointById(id!);
   const { mutate: createMsmtPoint } = usePostmsmtPoint();
   const { mutate: updateMsmtPoint } = usePutmsmtPoint();
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       msmtPointId: "",
       msmtPointName: "",
       conveyId: undefined,
+      msmtTypeId: undefined,
       lat: 0,
       lon: 0,
       // gateBrand: "True",
@@ -129,7 +131,8 @@ const MsmtPoint = () => {
             <FormFieldsWrapper>
               <FormInput control={form.control} name='msmtPointId' label='Measurement Point ID' placeholder='Enter Measurement Point ID' type='text' disabled={viewMode} />
               <FormInput control={form.control} name='msmtPointName' label='Measurement Point Name' placeholder='Enter Measurement Point Name' type='text' disabled={viewMode} />
-              <FormComboBox control={form.control} label='Select conveyance ' name='conveyId' options={conveyanceParentOptions || []} disabled={location.pathname.includes("view")} />
+              <FormComboBox control={form.control} label='Conveyance ' name='conveyId' options={conveyanceParentOptions || []} disabled={location.pathname.includes("view")} />
+              <FormComboBox control={form.control} label=' Measurement Point Type ' name='msmtTypeId' options={msmtTypeOptions || []} disabled={location.pathname.includes("view")} />
               <FormInput control={form.control} name='lat' label='Latitude' placeholder='Enter latitude' type='number' disabled={viewMode} />
               <FormInput control={form.control} name='lon' label='Longitude' placeholder='Enter Longitude' type='number' disabled={viewMode} />
             </FormFieldsWrapper>
