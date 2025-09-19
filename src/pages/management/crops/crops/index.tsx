@@ -2,7 +2,6 @@ import PageHeader from "@/components/PageHeader";
 import MapTable from "@/components/Table/mapTable";
 import { Button } from "@/components/ui/button";
 import { useDeleteCrops, useGetCropList } from "@/services/crops";
-import { debounce } from "@/utils";
 import { cropColumnProperties } from "@/utils/constant";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, FilePenLine, MoreVertical, Plus, Search, Trash2, X } from "lucide-react";
@@ -21,6 +20,8 @@ import { toast } from "react-toastify";
 import { showErrorToast } from "@/utils/tools";
 import CustomModal from "@/components/modal/ConfirmModal";
 import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
+import SearchInput from "@/components/SearchInput";
+import { useTableData } from "@/utils/customHooks/useTableData";
 
 interface initialTableDataTypes {
   search: string;
@@ -41,8 +42,7 @@ const Crops = () => {
   const navigate = useNavigate();
   const [id, setId] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
-  const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData })
+  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});
   const { data: cropList, isLoading: isCropLoading, refetch } = useGetCropList(tableInfo);
   const { mutate: deleteCrop } = useDeleteCrops();
   const queryClient = useQueryClient();
@@ -198,12 +198,6 @@ const Crops = () => {
     });
   };
 
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setTableInfo((prev) => ({ ...prev, search: value }));
-    }, 500),
-    []
-  );
   return (
     <div className="flex h-full flex-col gap-1 px-4 pt-2">
 
@@ -221,32 +215,11 @@ const Crops = () => {
       />
       <div className="pageContain flex flex-grow flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex gap-2">
-            <div className="input h-7 w-52">
-              <Search
-                size={16}
-                className="text-slate-300"
-              />
-              <input
-                name="search"
-                id="search"
-                placeholder="Search..."
-                value={searchText}
-                className="w-full bg-transparent text-sm text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-            </div>
-            {tableInfo.search && <Button
-              variant={"default"}
-              className="h-7 w-7"
-              onClick={() => { setSearchText(""); setTableInfo({ ...tableInfo, search: "" }) }}
-            >
-              <X />
-            </Button>}
-          </div>
+          <SearchInput 
+            value={searchText} 
+            onChange={handleSearch} 
+            onClear={handleClearSearch} 
+            placeholder='Search Crop' />
           <PermissionCheckWrapper name="AddCrop">
             <Button
               variant={"default"}

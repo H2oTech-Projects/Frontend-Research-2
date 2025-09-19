@@ -19,6 +19,7 @@ import LeafletMap from "@/components/LeafletMap";
 import { InsightMapPosition, LeafletMapConfig } from "@/utils/mapConstant";
 import Spinner from "@/components/Spinner";
 import { useSelector } from "react-redux";
+import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
 interface EmailProps {
   value: string;
   label: string;
@@ -35,16 +36,8 @@ const Insight = () => {
   const [selectedReportTypeValue, setSelectedReportTypeValue] = useState<string>("Account Farm Unit Summary");
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
-  const [collapse, setCollapse] = useState("default");
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const Name = useSelector((state: any) => state.auth.user)?.split("@")?.[0];
-
-  const tableCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  };
-  const mapCollapseBtn = () => {
-    setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  };
-
   const { data: accountList, isLoading, isFetched } = useGetAccountsList();
   const { data: accountDetail, isLoading: accountDetailLoading } = useGetAccountDetails(selectedEmailValue);
   const { data: accountParcels, isLoading: accountParcelsLoading } = useGetAccountParcels(selectedEmailValue);

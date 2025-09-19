@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 interface CustomModalProps {
   isOpen: boolean;
@@ -30,10 +31,10 @@ const CustomModal: React.FC<CustomModalProps> = ({
   titleStyle = "",
 }) => {
   if (!isOpen) return null;
-
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
     <div className="fixed inset-0 z-[1111] flex items-center justify-center bg-black/50">
-      <div className="relative bg-white rounded-xl shadow-lg w-auto p-6 animate-fade-in dark:bg-slate-800 dark:text-slate-50">
+      <div className={cn("relative bg-white rounded-xl shadow-lg  animate-fade-in dark:bg-slate-800 dark:text-slate-50",isDesktopDevice ? "w-auto p-6" : "w-[20rem] p-6")}>
         <button
           onClick={onClose}
           className="absolute -top-0 -right-0 flex h-7 w-7 items-center justify-center  dark:text-white text-black "

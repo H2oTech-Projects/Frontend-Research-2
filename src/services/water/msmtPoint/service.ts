@@ -124,6 +124,11 @@ getMsmtPointMap : async () =>{
   deleteMsmtPoint: async (id: string) => {
     const response = await axiosInstance.delete<any>(BASE_API_URL + "/msmt_points/" + id + "/");
     return response.data;
-  }
+  },
 
+  getMsmtPointType: async () =>{
+    const response = await axiosInstance.get(BASE_API_URL + "/msmt_types/options/");
+    const data = convertKeysToCamelCase(toJson(response));
+    return data?.data?.data
+  }
 };
