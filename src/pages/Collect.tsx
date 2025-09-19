@@ -46,6 +46,7 @@ const Collect = () => {
         {/* Iframe */}
         <iframe
           key={key}
+          allow="geolocation"
           src={getUrl()}
           title="Collect Page"
           className="w-full h-[calc(100vh-76px)] rounded-xl border"
