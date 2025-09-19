@@ -25,7 +25,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import CustomModal from '@/components/modal/ConfirmModal';
 import RtGeoJson from '@/components/RtGeoJson';
-import { debounce } from '@/utils';
 import { conveyColumnProperties } from '@/utils/constant';
 import { createRoot } from 'react-dom/client';
 import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper';
@@ -42,10 +41,10 @@ const initialTableData = {
 const Conveyances = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
+  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});  
+  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
-  // const [clickedField, setClickedField] = useState(null);
   const [clickedGeom, setClickedGeom] = useState<any>({ id: "", viewBounds: null });
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");

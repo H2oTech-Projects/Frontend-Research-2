@@ -37,16 +37,7 @@ const Insight = () => {
   const [searchText, setSearchText] = useState<String>("");
   const [doFilter, setDoFilter] = useState<Boolean>(false);
   const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
-  // const [collapse, setCollapse] = useState("default");
   const Name = useSelector((state: any) => state.auth.user)?.split("@")?.[0];
-
-  // const tableCollapseBtn = () => {
-  //   setCollapse((prev) => (prev === "default" ? "table" : "default"));
-  // };
-  // const mapCollapseBtn = () => {
-  //   setCollapse((prev) => (prev === "default" ? "map" : "default"));
-  // };
-
   const { data: accountList, isLoading, isFetched } = useGetAccountsList();
   const { data: accountDetail, isLoading: accountDetailLoading } = useGetAccountDetails(selectedEmailValue);
   const { data: accountParcels, isLoading: accountParcelsLoading } = useGetAccountParcels(selectedEmailValue);
