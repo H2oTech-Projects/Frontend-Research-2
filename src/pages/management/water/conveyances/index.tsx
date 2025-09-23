@@ -27,10 +27,13 @@ import CustomModal from '@/components/modal/ConfirmModal';
 import RtGeoJson from '@/components/RtGeoJson';
 import { conveyColumnProperties } from '@/utils/constant';
 import { createRoot } from 'react-dom/client';
+import $ from "jquery";
 import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper';
 import { useMableCollapse } from '@/utils/customHooks/useMableCollapse';
 import { useTableData } from '@/utils/customHooks/useTableData';
 import SearchInput from '@/components/SearchInput';
+import { MableBodyWrapper, MableContainerWrapper, MableHeaderWrapper, MablePageWrapper, MapWrapper, TableWrapper } from '@/components/wrappers/mableWrappers';
+
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -41,8 +44,8 @@ const initialTableData = {
 const Conveyances = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});  
-  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
+  const { tableInfo, setTableInfo, searchText, handleClearSearch, handleSearch } = useTableData({ initialTableData });
+  const { collapse, tableCollapseBtn, mapCollapseBtn } = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedGeom, setClickedGeom] = useState<any>({ id: "", viewBounds: null });
@@ -278,7 +281,7 @@ const Conveyances = () => {
   }, [isMapLoading, clickedGeom, mapGeoJson])
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
+    <MablePageWrapper>
       <CustomModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -290,12 +293,12 @@ const Conveyances = () => {
         pageHeaderTitle="Conveyances"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
-         <SearchInput 
-            value={searchText} 
-            onChange={handleSearch} 
-            onClear={handleClearSearch} 
+      <MableContainerWrapper>
+        <MableHeaderWrapper>
+          <SearchInput
+            value={searchText}
+            onChange={handleSearch}
+            onClear={handleClearSearch}
             placeholder='Search Region' />
           <PermissionCheckWrapper name="AddConveyance">
             <Button
@@ -311,61 +314,53 @@ const Conveyances = () => {
               Add Conveyance
             </Button>
           </PermissionCheckWrapper>
-        </div>
-        <div className="flex flex-grow">
-          <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
-              <MapTable
-                defaultData={conveyData?.data || []}
-                columns={columns}
-                setPosition={setPosition as Function}
-                setZoomLevel={setZoomLevel as Function}
-                setClickedGeom={setClickedGeom as Function}
-                tableType={"conveyance"}
-                tableInfo={tableInfo}
-                setTableInfo={setTableInfo}
-                totalData={conveyData?.totalRecords || 1}
-                collapse={collapse}
-                isLoading={conveyLoading}
-                columnProperties={conveyColumnProperties}
-              />
-              <CollapseBtn
-                className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
-                onClick={mapCollapseBtn}
-                note={collapse === 'default' ? 'View Full Table' : "Show Map"}
-              >
-                <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
-              </CollapseBtn>
-            </div>
-          </div>
-
-          <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-            <div
-              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
-              id="map"
+        </MableHeaderWrapper>
+        <MableBodyWrapper>
+          <TableWrapper collapse={collapse}>
+            <MapTable
+              defaultData={conveyData?.data || []}
+              columns={columns}
+              setPosition={setPosition as Function}
+              setZoomLevel={setZoomLevel as Function}
+              setClickedGeom={setClickedGeom as Function}
+              tableType={"conveyance"}
+              tableInfo={tableInfo}
+              setTableInfo={setTableInfo}
+              totalData={conveyData?.totalRecords || 1}
+              collapse={collapse}
+              isLoading={conveyLoading}
+              columnProperties={conveyColumnProperties}
+            />
+            <CollapseBtn
+              className="absolute -right-4 top-1/2 z-[800] m-2 flex size-8  items-center justify-center"
+              onClick={mapCollapseBtn}
+              note={collapse === 'default' ? 'View Full Table' : "Show Map"}
             >
-              <LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                viewBound={clickedGeom?.viewBound ?? mapGeoJson?.data?.viewBounds}
-                configurations={mapConfiguration}
-              >
-                {ReturnChildren}
+              <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
+            </CollapseBtn>
+          </TableWrapper>
 
-              </LeafletMap>
-              <CollapseBtn
-                className="absolute -left-4 top-1/2 z-[1100] m-2 flex size-8 items-center justify-center"
-                onClick={tableCollapseBtn}
-                note={collapse === 'default' ? 'View Full Map' : "Show Table"}
-              >
-                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-              </CollapseBtn>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          <MapWrapper collapse={collapse}>
+            <LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              viewBound={clickedGeom?.viewBound ?? mapGeoJson?.data?.viewBounds}
+              configurations={mapConfiguration}
+            >
+              {ReturnChildren}
+            </LeafletMap>
+            <CollapseBtn
+              className="absolute -left-4 top-1/2 z-[1100] m-2 flex size-8 items-center justify-center"
+              onClick={tableCollapseBtn}
+              note={collapse === 'default' ? 'View Full Map' : "Show Table"}
+            >
+              <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
+            </CollapseBtn>
+          </MapWrapper>
+        </MableBodyWrapper>
+      </MableContainerWrapper>
+    </MablePageWrapper>
   )
 }
 

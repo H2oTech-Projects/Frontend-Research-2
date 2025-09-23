@@ -35,6 +35,7 @@ import { customerParcelColumnProperties } from "@/utils/constant";
 import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
 import SearchInput from "@/components/SearchInput";
 import { useTableData } from "@/utils/customHooks/useTableData";
+import { MableBodyWrapper, MableContainerWrapper, MableHeaderWrapper, MablePageWrapper, MapWrapper, TableDropdownWrapper, TableOnlyWrapper, TableWrapper, TableWrapperWithWapWay } from '@/components/wrappers/mableWrappers';
 
 const MAX_ITEMS_LENGTH = 5;
 interface initialTableDataTypes {
@@ -74,17 +75,17 @@ const CustomerParcel = () => {
   const timerRef = useRef<number | null>(null);
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
- const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});
-  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
+  const { tableInfo, setTableInfo, searchText, handleClearSearch, handleSearch } = useTableData({ initialTableData });
+  const { collapse, tableCollapseBtn, mapCollapseBtn } = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], parcelId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  const [geojson, setGeojson] = useState<any>({ id: null, parcelGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: ""})
+  const [geojson, setGeojson] = useState<any>({ id: null, parcelGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], existingPcts: [], customerName: "" })
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWay, setDefaultWay] = useState<any>("")
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  const [agroItems,setAgroItems] = useState<any>(null)
+  const [agroItems, setAgroItems] = useState<any>(null)
   const { data: customerFieldData, isLoading } = useGetCustomerParcelListByWAY(tableInfo, defaultWay);
   //const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWay);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(defaultWay);
@@ -127,8 +128,8 @@ const CustomerParcel = () => {
       cell: ({ row }: any) =>
         <div className=" flex flex-wrap gap-3 text-sm h-auto w-auto">
           <div className="flex gap-2">
-            {row.getValue("parcelIds")?.slice(0,MAX_ITEMS_LENGTH)?.join(", ")}
-            {row.getValue("parcelIds")?.length > MAX_ITEMS_LENGTH && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setAgroItems(row.original)}}>View All</button>}
+            {row.getValue("parcelIds")?.slice(0, MAX_ITEMS_LENGTH)?.join(", ")}
+            {row.getValue("parcelIds")?.length > MAX_ITEMS_LENGTH && <button type={"button"} className="text-blue-500 underline text-xs" onClick={() => { setAgroItems(row.original) }}>View All</button>}
           </div>
         </div>,
     },
@@ -188,7 +189,7 @@ const CustomerParcel = () => {
   };
 
   const removeInfo = (Id: String) => {
-      $("[id^='popup-']").remove();
+    $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -260,7 +261,7 @@ const CustomerParcel = () => {
   }
 
   useEffect(() => {
-    if (!!geojson.parcelGeojson){
+    if (!!geojson.parcelGeojson) {
       setSelectedFields(geojson.existingParcelIds)
       selectedFieldsRef.current = geojson.existingParcelIds;
       setId(geojson.id)
@@ -268,7 +269,7 @@ const CustomerParcel = () => {
   }, [geojson])
 
   useEffect(() => {
-    if (!!selectedFields){
+    if (!!selectedFields) {
       selectedFieldsRef.current = selectedFields;
     }
   }, [selectedFields])
@@ -336,26 +337,25 @@ const CustomerParcel = () => {
   const handleAssociatePopUp2 = () => {
     if (selectedFields.length < 1) return;
 
-    const formData ={wayId:defaultWay, customerId: geojson.id, data: {parcels: selectedFields}}
+    const formData = { wayId: defaultWay, customerId: geojson.id, data: { parcels: selectedFields } }
     updateCustomerParcel(formData, {
-    onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-      queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-      refetchMap();
-      //refetch();
-      toast.success(data?.message);
-      setId("");
-    },
-    onError: (error) => {
-      showErrorToast(error?.response?.data?.message || "Failed to create Link");
-      queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-    },
-  });
+      onSuccess: (data: any) => {
+        queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+        queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+        refetchMap();
+        //refetch();
+        toast.success(data?.message);
+        setId("");
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data?.message || "Failed to create Link");
+        queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+      },
+    });
   }
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
-
+    <MablePageWrapper>
       <PageHeader
         pageHeaderTitle="Customer-Parcel"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "/customers" }]}
@@ -365,14 +365,14 @@ const CustomerParcel = () => {
         onClose={() => setAgroItems(null)}
         title={`Linked with ${agroItems?.customerName}`}
         showActionButton={false}
-        children={<AgroItems data={agroItems?.parcelIds} name={"Parcels"}/>}
+        children={<AgroItems data={agroItems?.parcelIds} name={"Parcels"} />}
       />
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
-           <SearchInput 
-            value={searchText} 
-            onChange={handleSearch} 
-            onClear={handleClearSearch} 
+      <MableContainerWrapper>
+        <MableHeaderWrapper>
+          <SearchInput
+            value={searchText}
+            onChange={handleSearch}
+            onClear={handleClearSearch}
             placeholder='Search ' />
           <Button
             variant={"default"}
@@ -382,14 +382,14 @@ const CustomerParcel = () => {
             <Plus size={4} />
             Add Links
           </Button>
-        </div>
-        <div className="flex flex-grow">
-          <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+        </MableHeaderWrapper>
+        <MableBodyWrapper>
+          <TableWrapperWithWapWay collapse={collapse}>
+            <TableDropdownWrapper>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
               <div className="px-2"><BasicSelect setValue={setDefaultWay} Value={defaultWay!} itemList={waysOptions?.data} showLabel={false} label="wap" /></div>
-            </div>
-            <div className={cn(" h-[calc(100vh-312px) w-full")}>
+            </TableDropdownWrapper>
+            <TableOnlyWrapper>
               <MapTable
                 defaultData={customerFieldData?.data || []}
                 columns={columns}
@@ -412,59 +412,54 @@ const CustomerParcel = () => {
               >
                 <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
               </CollapseBtn>
-            </div>
-          </div>
+            </TableOnlyWrapper>
+          </TableWrapperWithWapWay>
 
-          <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-            <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
-              id="map"
+          <MapWrapper collapse={collapse}>
+            {!mapLoading ? (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              // clickedField={clickedField}
+              configurations={mapConfiguration}
+              viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
             >
-              {!mapLoading ? (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                // clickedField={clickedField}
-                configurations={mapConfiguration}
-                viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
-              >
-                {mapData?.data && <RtGeoJson
-                    key={"fields"}
-                    layerEvents={geoJsonLayerEvents}
-                    style={geoJsonStyle}
-                    data={JSON.parse(mapData['data'])}
-                    color={"#16599a"}
-                  />}
-                  {geojson?.parcelGeojson && <RtGeoJson
-                    key={"customerFields"}
-                    layerEvents={fieldJsonLayerEvents}
-                    style={fieldGeojsonStyle}
-                    data={JSON.parse(geojson?.parcelGeojson)}
-                    color={"#16599a"}
-                  />}
-              </LeafletMap>) : (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                // clickedField={clickedField}
-                configurations={mapConfiguration}
-              >
-                <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
-                </div>
-              </LeafletMap>)}
-              <CollapseBtn
-                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
-                onClick={tableCollapseBtn}
-                note={collapse === 'default' ? 'View Full Map' : "Show Table"}
-              >
-                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-              </CollapseBtn>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              {mapData?.data && <RtGeoJson
+                key={"fields"}
+                layerEvents={geoJsonLayerEvents}
+                style={geoJsonStyle}
+                data={JSON.parse(mapData['data'])}
+                color={"#16599a"}
+              />}
+              {geojson?.parcelGeojson && <RtGeoJson
+                key={"customerFields"}
+                layerEvents={fieldJsonLayerEvents}
+                style={fieldGeojsonStyle}
+                data={JSON.parse(geojson?.parcelGeojson)}
+                color={"#16599a"}
+              />}
+            </LeafletMap>) : (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              // clickedField={clickedField}
+              configurations={mapConfiguration}
+            >
+              <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+                <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
+              </div>
+            </LeafletMap>)}
+            <CollapseBtn
+              className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
+              onClick={tableCollapseBtn}
+              note={collapse === 'default' ? 'View Full Map' : "Show Table"}
+            >
+              <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
+            </CollapseBtn>
+          </MapWrapper>
+        </MableBodyWrapper>
+      </MableContainerWrapper>
+    </MablePageWrapper>
   );
 };
 

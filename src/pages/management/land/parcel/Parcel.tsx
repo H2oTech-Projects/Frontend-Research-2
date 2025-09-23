@@ -11,7 +11,6 @@ import RtGeoJson from "@/components/RtGeoJson";
 import { DummyDataType } from "@/types/tableTypes";
 import { Button } from "@/components/ui/button";
 import { buildPopupMessage } from "@/utils/map";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +38,7 @@ import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper
 import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
 import { useTableData } from "@/utils/customHooks/useTableData";
 import SearchInput from "@/components/SearchInput";
+import { MableBodyWrapper, MableContainerWrapper, MableHeaderWrapper, MablePageWrapper, MapWrapper, TableDropdownWrapper, TableOnlyWrapper, TableWrapper, TableWrapperWithWapWay } from '@/components/wrappers/mableWrappers';
 interface initialTableDataTypes {
   search: string;
   page_no: number,
@@ -58,8 +58,8 @@ const Parcel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient()
- const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData})
-  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
+  const { tableInfo, setTableInfo, searchText, handleClearSearch, handleSearch } = useTableData({ initialTableData })
+  const { collapse, tableCollapseBtn, mapCollapseBtn } = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
@@ -346,7 +346,7 @@ const Parcel = () => {
 
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
+    <MablePageWrapper>
       <PageHeader
         pageHeaderTitle="Parcels"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
@@ -358,12 +358,12 @@ const Parcel = () => {
         description="Are you sure you want to delete this Parcel? This action cannot be undone."
         onConfirm={handleDelete}
       />
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">     
-          <SearchInput 
-            value={searchText} 
-            onChange={handleSearch} 
-            onClear={handleClearSearch} 
+      <MableContainerWrapper>
+        <MableHeaderWrapper>
+          <SearchInput
+            value={searchText}
+            onChange={handleSearch}
+            onClear={handleClearSearch}
             placeholder='Search Parcel' />
           <PermissionCheckWrapper name="AddParcel">
             <Button
@@ -377,14 +377,14 @@ const Parcel = () => {
               Add Parcel
             </Button>
           </PermissionCheckWrapper>
-        </div>
-        <div className="flex flex-grow">
-          <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+        </MableHeaderWrapper>
+        <MableBodyWrapper>
+          <TableWrapperWithWapWay collapse={collapse}>
+            <TableDropdownWrapper>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Year</div>
               <div className="px-2"><BasicSelect setValue={setDefaultWay} Value={defaultWay!} itemList={ways?.data} showLabel={false} label="wap" /></div>
-            </div>
-            <div className={cn(" h-[calc(100vh-312px) w-full")}>
+            </TableDropdownWrapper>
+            <TableOnlyWrapper>
               <MapTable
                 defaultData={fieldData?.data || []}
                 columns={columns}
@@ -398,7 +398,7 @@ const Parcel = () => {
                 collapse={collapse}
                 isLoading={isLoading}
                 tableType={"parcel"}
-                customHeight="h-[calc(100vh-312px)]"
+                customHeight="h-[calc(100dvh-312px)]"
                 columnProperties={parcelPageColumnProperties}
               />
               <CollapseBtn
@@ -408,46 +408,41 @@ const Parcel = () => {
               >
                 <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
               </CollapseBtn>
-            </div>
-          </div>
+            </TableOnlyWrapper>
+          </TableWrapperWithWapWay>
 
-          <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-            <div
-              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
-              id="map"
+          <MapWrapper collapse={collapse}>
+            {!mapLoading ? (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              // clickedField={clickedField}
+              configurations={mapConfiguration}
+              viewBound={clickedField?.viewBounds ?? mapData?.viewBounds}
             >
-              {!mapLoading ? (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                // clickedField={clickedField}
-                configurations={mapConfiguration}
-                viewBound={clickedField?.viewBounds ?? mapData?.viewBounds}
-              >
-                {ReturnChildren}
-              </LeafletMap>) : (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                // clickedField={clickedField}
-                configurations={mapConfiguration}
-              >
-                <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
-                </div>
-              </LeafletMap>)}
-              <CollapseBtn
-                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
-                onClick={tableCollapseBtn}
-                note={collapse === 'default' ? 'View Full Map' : "Show Table"}
-              >
-                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-              </CollapseBtn>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              {ReturnChildren}
+            </LeafletMap>) : (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              // clickedField={clickedField}
+              configurations={mapConfiguration}
+            >
+              <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+                <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
+              </div>
+            </LeafletMap>)}
+            <CollapseBtn
+              className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
+              onClick={tableCollapseBtn}
+              note={collapse === 'default' ? 'View Full Map' : "Show Table"}
+            >
+              <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
+            </CollapseBtn>
+          </MapWrapper>
+        </MableBodyWrapper>
+      </MableContainerWrapper>
+    </MablePageWrapper>
   );
 };
 

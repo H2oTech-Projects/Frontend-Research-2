@@ -36,6 +36,7 @@ import CustomModal from "@/components/modal/ConfirmModal";
 import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
 import { useTableData } from "@/utils/customHooks/useTableData";
 import SearchInput from "@/components/SearchInput";
+import { MableBodyWrapper, MableContainerWrapper, MableHeaderWrapper, MablePageWrapper, MapWrapper, TableDropdownWrapper, TableOnlyWrapper, TableWrapper, TableWrapperWithWapWay } from '@/components/wrappers/mableWrappers';
 
 interface initialTableDataTypes {
   search: string;
@@ -73,17 +74,17 @@ const CustomerField = () => {
   const timerRef = useRef<number | null>(null);
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
-  const {tableInfo,setTableInfo,searchText,handleClearSearch,handleSearch} = useTableData({initialTableData});
-  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
+  const { tableInfo, setTableInfo, searchText, handleClearSearch, handleSearch } = useTableData({ initialTableData });
+  const { collapse, tableCollapseBtn, mapCollapseBtn } = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
   // const [clickedField, setClickedField] = useState({ id: "", viewBounds: null });
-  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds:[], existingPcts:[], customerName: "", fieldIids: []})
+  const [geojson, setGeojson] = useState<any>({ id: null, fieldGeojson: null, msmtPoint: null, viewBounds: null, existingFieldIds: [], existingPcts: [], customerName: "", fieldIids: [] })
   // const [clickedGeom,setClickedGeom] = useState<any>({id: "", viewBounds: null});
   const [defaultWap, setDefaultWap] = useState<any>("")
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  const [agroItems,setAgroItems] = useState<any>(null)
+  const [agroItems, setAgroItems] = useState<any>(null)
   const { data: customerFieldData, isLoading } = useGetCustomerFieldListByWAP(tableInfo, defaultWap);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWap);
   const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWap!, id!)
@@ -122,7 +123,7 @@ const CustomerField = () => {
         );
       },
       size: 180,
-      cell: ({ row }:any) => <div className=" flex flex-wrap h-auto w-auto px-3">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0,5)?.join(", ")} {row.getValue("fieldPctFarmed")?.length > 5 && <button type={"button"}  className="text-blue-500 underline text-xs" onClick={()=>{setAgroItems(row.original)}}>View All</button>}</div>}</div>,
+      cell: ({ row }: any) => <div className=" flex flex-wrap h-auto w-auto px-3">{<div className="flex gap-2">{row.getValue("fieldPctFarmed")?.slice(0, 5)?.join(", ")} {row.getValue("fieldPctFarmed")?.length > 5 && <button type={"button"} className="text-blue-500 underline text-xs" onClick={() => { setAgroItems(row.original) }}>View All</button>}</div>}</div>,
     },
     {
       id: "actions",
@@ -180,7 +181,7 @@ const CustomerField = () => {
   };
 
   const removeInfo = (Id: String) => {
-       $("[id^='popup-']").remove();
+    $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -281,7 +282,7 @@ const CustomerField = () => {
     });
   }
   useEffect(() => {
-    if (!!geojson.fieldGeojson){
+    if (!!geojson.fieldGeojson) {
       setSelectedFields(geojson.existingFieldIds)
       selectedFieldsRef.current = geojson.existingFieldIds;
       setId(geojson.id)
@@ -289,7 +290,7 @@ const CustomerField = () => {
   }, [geojson])
 
   useEffect(() => {
-    if (!!selectedFields){
+    if (!!selectedFields) {
       selectedFieldsRef.current = selectedFields;
     }
   }, [selectedFields])
@@ -357,7 +358,7 @@ const CustomerField = () => {
 
   const handleAssociatePopUp2 = () => {
     if (selectedFields.length < 1) {
-      showErrorToast({"Error": ["None Field is selected."]});
+      showErrorToast({ "Error": ["None Field is selected."] });
       return;
     };
     const fieldPctMapper: { [key: string]: any } = {};
@@ -369,34 +370,33 @@ const CustomerField = () => {
     let data = selectedFields.map((field: string) => {
       let pctFarmed = fieldPctMapper.hasOwnProperty(field) ? fieldPctMapper[field] : 100
       let farmIid = fieldIdMapper.hasOwnProperty(field) ? fieldIdMapper[field] : 100
-      return ({'field_name': field,'pct_farmed': pctFarmed, 'field_id': farmIid})
+      return ({ 'field_name': field, 'pct_farmed': pctFarmed, 'field_id': farmIid })
     })
-    const formData ={wapId:defaultWap, customerId: geojson.id, data: {customers: data, checkValidation: true}}
+    const formData = { wapId: defaultWap, customerId: geojson.id, data: { customers: data, checkValidation: true } }
     updateCustomerField(formData, {
-    onSuccess: (data: any) => {
-      if (!data?.success){
-        setConflictFields(data?.data)
-        setProcessConflictFields(true)
-        setOpen(true)
-      } else{
-        queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
-        queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
-        refetchMap();
-        refetch();
-        toast.success(data?.message);
-        setId("");
-      }
-    },
-    onError: (error) => {
-      showErrorToast(error?.response?.data?.message || "Failed to create Link");
-      queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
-    },
-  });
+      onSuccess: (data: any) => {
+        if (!data?.success) {
+          setConflictFields(data?.data)
+          setProcessConflictFields(true)
+          setOpen(true)
+        } else {
+          queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
+          queryClient.invalidateQueries({ queryKey: [GET_ALL_CUSTOMER_FIELD] });
+          refetchMap();
+          refetch();
+          toast.success(data?.message);
+          setId("");
+        }
+      },
+      onError: (error) => {
+        showErrorToast(error?.response?.data?.message || "Failed to create Link");
+        queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] });
+      },
+    });
   }
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
-
+    <MablePageWrapper>
       <PageHeader
         pageHeaderTitle="Customer-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Customers", menuPath: "" }]}
@@ -407,8 +407,8 @@ const CustomerField = () => {
         onClose={() => setAgroItems(null)}
         title={`Linked with ${agroItems?.customerName}`}
         showActionButton={false}
-        children={<AgroItems data={agroItems?.fieldPctFarmed} name={"Fields"}/>}
-        />
+        children={<AgroItems data={agroItems?.fieldPctFarmed} name={"Fields"} />}
+      />
       {/* <EditModel /> */}
       {open && <CustomerFieldModal
         customerId={id || geojson.id}
@@ -423,12 +423,12 @@ const CustomerField = () => {
         setProcessConflictFields={setProcessConflictFields}
         customerName={processConflictFields ? geojson.customerName : ""}
       />}
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
-           <SearchInput 
-            value={searchText} 
-            onChange={handleSearch} 
-            onClear={handleClearSearch} 
+      <MableContainerWrapper>
+        <MableHeaderWrapper>
+          <SearchInput
+            value={searchText}
+            onChange={handleSearch}
+            onClear={handleClearSearch}
             placeholder='Search' />
           <Button
             variant={"default"}
@@ -438,14 +438,14 @@ const CustomerField = () => {
             <Plus size={4} />
             Add Links
           </Button>
-        </div>
-        <div className="flex flex-grow">
-          <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+        </MableHeaderWrapper>
+        <MableBodyWrapper>
+          <TableWrapperWithWapWay collapse={collapse}>
+            <TableDropdownWrapper>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
               <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={wapsOptions?.data} showLabel={false} label="wap" /></div>
-            </div>
-            <div className={cn(" h-[calc(100vh-312px) w-full")}>
+            </TableDropdownWrapper>
+            <TableOnlyWrapper>
               <MapTable
                 defaultData={customerFieldData?.data || []}
                 columns={columns}
@@ -456,7 +456,7 @@ const CustomerField = () => {
                 totalData={customerFieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
-                customHeight="h-[calc(100vh-312px)]"
+                customHeight="h-[calc(100dvh-312px)]"
                 setGeojson={setGeojson as Function}
                 tableType={"relation"}
                 columnProperties={customerFieldColumnProperties}
@@ -468,66 +468,61 @@ const CustomerField = () => {
               >
                 <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
               </CollapseBtn>
-            </div>
-          </div>
+            </TableOnlyWrapper>
+          </TableWrapperWithWapWay>
 
-          <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-            <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
-              id="map"
+          <MapWrapper collapse={collapse}>
+            {!mapLoading ? (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              // clickedField={clickedField}
+              configurations={mapConfiguration}
+              viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
             >
-              {!mapLoading ? (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                // clickedField={clickedField}
-                configurations={mapConfiguration}
-                viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
-              >
-                {mapData?.data && <RtGeoJson
-                    key={"fields"}
-                    layerEvents={geoJsonLayerEvents}
-                    style={geoJsonStyle}
-                    data={JSON.parse(mapData['data'])}
-                    color={"#16599a"}
-                  />}
-                  {geojson?.fieldGeojson && <RtGeoJson
-                    key={"customerFields"}
-                    layerEvents={fieldJsonLayerEvents}
-                    style={fieldGeojsonStyle}
-                    data={JSON.parse(geojson?.fieldGeojson)}
-                    color={"#16599a"}
-                  />}
-                  {geojson?.msmtPoint && <RtGeoJson
-                    key={"msmtPoints"}
-                    layerEvents={pointLayerEvents}
-                    style={pointGeojsonStyle}
-                    data={JSON.parse(geojson?.msmtPoint)}
-                    color={"#16599a"}
-                  />}
-              </LeafletMap>) : (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                // clickedField={clickedField}
-                configurations={mapConfiguration}
-              >
-                <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
-                </div>
-              </LeafletMap>)}
-              <CollapseBtn
-                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
-                onClick={tableCollapseBtn}
-                note={collapse === 'default' ? 'View Full Map' : "Show Table"}
-              >
-                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-              </CollapseBtn>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              {mapData?.data && <RtGeoJson
+                key={"fields"}
+                layerEvents={geoJsonLayerEvents}
+                style={geoJsonStyle}
+                data={JSON.parse(mapData['data'])}
+                color={"#16599a"}
+              />}
+              {geojson?.fieldGeojson && <RtGeoJson
+                key={"customerFields"}
+                layerEvents={fieldJsonLayerEvents}
+                style={fieldGeojsonStyle}
+                data={JSON.parse(geojson?.fieldGeojson)}
+                color={"#16599a"}
+              />}
+              {geojson?.msmtPoint && <RtGeoJson
+                key={"msmtPoints"}
+                layerEvents={pointLayerEvents}
+                style={pointGeojsonStyle}
+                data={JSON.parse(geojson?.msmtPoint)}
+                color={"#16599a"}
+              />}
+            </LeafletMap>) : (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              // clickedField={clickedField}
+              configurations={mapConfiguration}
+            >
+              <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+                <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
+              </div>
+            </LeafletMap>)}
+            <CollapseBtn
+              className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
+              onClick={tableCollapseBtn}
+              note={collapse === 'default' ? 'View Full Map' : "Show Table"}
+            >
+              <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
+            </CollapseBtn>
+          </MapWrapper>
+        </MableBodyWrapper>
+      </MableContainerWrapper>
+    </MablePageWrapper>
   );
 };
 
