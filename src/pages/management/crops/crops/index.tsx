@@ -22,6 +22,7 @@ import CustomModal from "@/components/modal/ConfirmModal";
 import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 import SearchInput from "@/components/SearchInput";
 import { useTableData } from "@/utils/customHooks/useTableData";
+import { PageContainer, PageContainerHeader, PageTableWrapper, PageWrapper } from "@/components/wrappers/pageWrappers";
 
 interface initialTableDataTypes {
   search: string;
@@ -199,7 +200,7 @@ const Crops = () => {
   };
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
+     <PageWrapper>
 
       <PageHeader
         pageHeaderTitle="Crops"
@@ -213,8 +214,8 @@ const Crops = () => {
         description="Are you sure you want to delete this Crop? This action cannot be undone."
         onConfirm={handleDelete}
       />
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
+         <PageContainer>
+              <PageContainerHeader>
           <SearchInput 
             value={searchText} 
             onChange={handleSearch} 
@@ -232,9 +233,8 @@ const Crops = () => {
               Add Crops
             </Button>
           </PermissionCheckWrapper>
-        </div>
-        <div className="flex w-full">
-          <div className="w-full h-[calc(100vh-160px)]">
+      </PageContainerHeader>
+            <PageTableWrapper> 
             <MapTable
               defaultData={cropList?.data || []}
               columns={columns}
@@ -242,13 +242,13 @@ const Crops = () => {
               setTableInfo={setTableInfo}
               totalData={cropList?.totalRecords || 1}
               isLoading={isCropLoading}
-              customHeight="h-[calc(100vh-210px)]"
+              customHeight="h-[calc(100dvh-210px)]"
               columnProperties={cropColumnProperties}
+              collapse="map" // set collapse to map since there is no map. It helps to make pagination responsive 
             />
-          </div>
-        </div>
-      </div>
-    </div>
+          </PageTableWrapper>
+         </PageContainer>
+       </PageWrapper>
   )
 }
 

@@ -23,6 +23,7 @@ import { showErrorToast } from "@/utils/tools";
 import { useTableData } from "@/utils/customHooks/useTableData";
 import SearchInput from "@/components/SearchInput";
 import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
+import { PageContainer, PageContainerHeader, PageTableWrapper, PageWrapper } from "@/components/wrappers/pageWrappers";
 
 interface initialTableDataTypes {
   search: string;
@@ -168,7 +169,7 @@ const Customers = () => {
   };
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
+    <PageWrapper>
       <CustomModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -180,8 +181,8 @@ const Customers = () => {
         pageHeaderTitle="Customers"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
       />
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
+      <PageContainer>
+        <PageContainerHeader>
           <SearchInput
             value={searchText}
             onChange={handleSearch}
@@ -200,9 +201,8 @@ const Customers = () => {
             </Button>
           </PermissionCheckWrapper>
 
-        </div>
-        <div className="flex w-full">
-          <div className="w-full h-[calc(100vh-160px)]">
+        </PageContainerHeader>
+        <PageTableWrapper> 
             <MapTable
               defaultData={customerList?.data || []}
               columns={columns}
@@ -210,13 +210,13 @@ const Customers = () => {
               setTableInfo={setTableInfo}
               totalData={customerList?.totalRecords || 1}
               isLoading={isCustomersLoading}
-              customHeight="h-[calc(100vh-210px)]"
+              customHeight="h-[calc(100dvh-210px)]"
               columnProperties={customerPageColumnProperties}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+              collapse="map"
+            />      
+        </PageTableWrapper>
+      </PageContainer>
+    </PageWrapper>
   )
 }
 
