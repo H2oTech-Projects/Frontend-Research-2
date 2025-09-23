@@ -4,7 +4,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react"
-
+import { useMediaQuery } from "@uidotdev/usehooks";
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -29,11 +29,13 @@ function MapTablePagination<TData>({
   useEffect(() => {
       setTableInfo({...tableInfo,page_no: 1})
 }, [tableInfo?.page_size])
+const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+
   return (
     <div className="flex items-center justify-between px-2 dark:text-white">
       <div className="flex items-center space-x-8 lg:space-x-8 " >
         <div className="flex items-center space-x-1">
-          {collapse === "map" && <p className="text-xs font-medium">Rows per page</p>}
+          {!isDesktopDevice || (collapse === "map"  && <p className="text-xs font-medium">Rows per page</p>)}
           <Select
             value={`${tableInfo.page_size}`}
             onValueChange={(value) => {      
@@ -52,12 +54,12 @@ function MapTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        {collapse === "map" &&  <div className="flex w-[60px] items-center justify-center text-xs font-medium">
+        {!isDesktopDevice || (collapse === "map" &&  <div className="flex w-[60px] items-center justify-center text-xs font-medium">
           Page {tableInfo?.page_no  } of{" "}
           {Math.ceil(totalData/tableInfo?.page_size)}
-        </div>}
+        </div>)}
          <div className="flex items-center space-x-1">
-          {collapse === 'map' && <p className="text-xs font-medium">Go to page</p>}
+          {!isDesktopDevice || (collapse === "map" && <p className="text-xs font-medium">Go to page</p>)}
           <Select
             value={`${tableInfo?.page_no }`}
             onValueChange={(value) => {

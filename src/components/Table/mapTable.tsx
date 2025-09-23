@@ -46,7 +46,7 @@ const MapTable = <T,>({
     setTableInfo,
     collapse,
     useClientPagination = false,
-    customHeight ="h-[calc(100vh-208px)]",
+    customHeight ="h-[calc(100dvh-208px)] md:h-[calc(100vh-208px)]",
     setClickedGeom = null,
     setGeojson = null,
 }: MapTableTypes<T>) => {
