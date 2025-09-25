@@ -7,6 +7,7 @@ import * as routeUrl from "../routes/RouteUrl";
 import { cn } from "../utils/cn";
 import { staticPermissionList } from "@/utils/testPermission";
 import { useSelector } from "react-redux";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 const menuLinks = [
   {
@@ -21,7 +22,7 @@ const menuLinks = [
         Children: [],
       },
       {
-        label: "Allocation",
+        label: "Insight",
         icon: Icon.ChartColumnBig,
         name: routeUrl?.Insight?.name,
         path: routeUrl?.Insight?.url,
@@ -134,7 +135,7 @@ const menuLinks = [
         type: "link",
         Children: [],
       },
-            {
+      {
         label: "Allocation",
         icon: Icon.ChartColumnBig,
         name: routeUrl?.Allocations?.name,
@@ -159,29 +160,29 @@ const menuLinks = [
     ]
   },
 
+  // {
+  //   title: "Reports",
+  //   links: [
+  //     {
+  //       label: "Custom Reports",
+  //       icon: Icon.BookOpenText,
+  //       name: routeUrl?.CustomReport?.name,
+  //       path: routeUrl?.CustomReport?.url,
+  //       type: "link",
+  //       Children: [],
+  //     },
+  //     {
+  //       label: "Daily Reports",
+  //       icon: Icon.BookText,
+  //       name: routeUrl?.DailyReport?.name,
+  //       path: routeUrl?.DailyReport?.url,
+  //       type: "link",
+  //       Children: [],
+  //     },
+  //   ],
+  // },
   {
-    title: "Reports",
-    links: [
-      {
-        label: "Custom Reports",
-        icon: Icon.BookOpenText,
-        name: routeUrl?.CustomReport?.name,
-        path: routeUrl?.CustomReport?.url,
-        type: "link",
-        Children: [],
-      },
-      {
-        label: "Daily Reports",
-        icon: Icon.BookText,
-        name: routeUrl?.DailyReport?.name,
-        path: routeUrl?.DailyReport?.url,
-        type: "link",
-        Children: [],
-      },
-    ],
-  },
-  {
-    title: "Others",
+    title: "User Configuration",
     links: [
       {
         label: "Settings",
@@ -206,35 +207,36 @@ const menuLinks = [
 
 
 export const Sidebar = forwardRef(({ collapsed, setCollapsed }: any, ref) => {
-const UserRole = useSelector((state: any) => state.auth?.userRole);
-const permissionList =  staticPermissionList(UserRole);
-const filteredMenuLinks = menuLinks
-  .map((section) => {
-    const filteredLinks = section.links
-      .map((link) => {
-        // If it's a group with Children (nested routes)
-        if (link.type === "group" && Array.isArray(link.Children)) {
-          const filteredChildren = link.Children.filter((child) =>
-            permissionList.includes(child.name)
-          );
-          return filteredChildren.length
-            ? { ...link, Children: filteredChildren }
-            : null;
-        }
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+  const userDetail = useSelector((state: any) => state.auth);
+  const permissionList = staticPermissionList(userDetail?.userRole);
+  const filteredMenuLinks = menuLinks
+    .map((section) => {
+      const filteredLinks = section.links
+        .map((link) => {
+          // If it's a group with Children (nested routes)
+          if (link.type === "group" && Array.isArray(link.Children)) {
+            const filteredChildren = link.Children.filter((child) =>
+              permissionList.includes(child.name)
+            );
+            return filteredChildren.length
+              ? { ...link, Children: filteredChildren }
+              : null;
+          }
 
-        // For normal link items
-        return permissionList.includes(link.name!) ? link : null;
-      })
-      .filter(Boolean); // Remove nulls
+          // For normal link items
+          return permissionList.includes(link.name!) ? link : null;
+        })
+        .filter(Boolean); // Remove nulls
 
-    return filteredLinks.length
-      ? { ...section, links: filteredLinks }
-      : null;
-  })
-  .filter(Boolean);
-  const handleCollapse = () => {
-    setCollapsed(false);
-    localStorage.setItem("isMenuCollapsed", JSON.stringify(false))
+      return filteredLinks.length
+        ? { ...section, links: filteredLinks }
+        : null;
+    })
+    .filter(Boolean);
+  const handleCollapse = (bool: boolean) => {
+    setCollapsed(bool);
+    localStorage.setItem("isMenuCollapsed", JSON.stringify(bool))
   };
   const route = window.location.pathname;
   const initialChildMenu = {
@@ -249,16 +251,18 @@ const filteredMenuLinks = menuLinks
       path: path,
     };
     setActiveLinkGroup(LinkGroup);
+    !isDesktopDevice && handleCollapse(true)
     localStorage.setItem("ActiveLinkGroup", JSON.stringify(ActiveLinkGroupDetail));
   };
   const ResetActiveLinkGroup = () => {
     setActiveLinkGroup("");
     setChildMenu(initialChildMenu);
+    !isDesktopDevice && handleCollapse(true)
     localStorage.removeItem("ActiveLinkGroup");
   };
   const DisplaySubmenu = (parentName: string, show: boolean) => {
     setChildMenu({ parentName: parentName, showChildren: collapsed ? true : childMenu?.parentName === parentName ? !show : show });
-    collapsed && handleCollapse();
+    collapsed && handleCollapse(false);
   };
   useEffect(() => {
     if (collapsed) {
@@ -297,14 +301,14 @@ const filteredMenuLinks = menuLinks
       </div>
       <div className="flex w-full animate-slideIn flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-2 [scrollbar-width:_thin]">
         {filteredMenuLinks.map((navbarLink) => (
-        navbarLink?.title &&  <nav
+          navbarLink?.title && <nav
             key={navbarLink.title}
             className={cn("sidebar-group", collapsed && "md:items-center", "animate-slideIn")}
           >
             <p className={cn("sidebar-group-title", collapsed && "md:w-[45px]")}>{navbarLink.title}</p>
-            {navbarLink.links.map((link:any) =>
-            link.type === "link" && link.path !== null  ? (
-              <NavLink
+            {navbarLink.links.map((link: any) =>
+              link.type === "link" && link.path !== null ? (
+                <NavLink
                   key={link.label}
                   to={link?.path}
                   className={cn("sidebar-item", collapsed && "md:w-[45px]", "animate-slideIn")}
@@ -356,8 +360,8 @@ const filteredMenuLinks = menuLinks
                   {childMenu.parentName === link.label && childMenu.showChildren && (
                     <div className={cn("menu-dropDown", "animate-fadeIn", collapsed && "hidden")}>
                       {link?.Children &&
-                        link?.Children.map((child:any) => (
-                        <NavLink
+                        link?.Children.map((child: any) => (
+                          <NavLink
                             onClick={() => SetActiveLinkGroup(link.label, child.path)}
                             key={child?.label}
                             to={child?.path}

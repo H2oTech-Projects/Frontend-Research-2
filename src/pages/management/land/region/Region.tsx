@@ -32,6 +32,7 @@ import PermissionCheckWrapper from '@/components/wrappers/PermissionCheckWrapper
 import { useMableCollapse } from '@/utils/customHooks/useMableCollapse';
 import { useTableData } from '@/utils/customHooks/useTableData';
 import SearchInput from '@/components/SearchInput';
+import { MableBodyWrapper, MableContainerWrapper, MableHeaderWrapper, MablePageWrapper, MapWrapper, TableWrapper } from '@/components/wrappers/mableWrappers';
 const initialTableData = {
   search: "",
   page_no: 1,
@@ -236,7 +237,7 @@ const Region = () => {
   }, [isMapLoading, clickedGeom, mapGeoJson])
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
+    <MablePageWrapper>
       <PageHeader
         pageHeaderTitle="Regions"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }, { menuName: "Land", menuPath: "" }]}
@@ -248,8 +249,8 @@ const Region = () => {
         description="Are you sure you want to delete this Region? This action cannot be undone."
         onConfirm={handleDelete}
       />
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
+      <MableContainerWrapper>
+        <MableHeaderWrapper>
           <SearchInput 
             value={searchText} 
             onChange={handleSearch} 
@@ -267,10 +268,9 @@ const Region = () => {
               Add Region
             </Button>
           </PermissionCheckWrapper>
-        </div>
-        <div className="flex flex-grow">
-          <div className={cn("w-1/2", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className={cn("relative h-[calc(100vh-160px)] w-full")}>
+        </MableHeaderWrapper>
+        <MableBodyWrapper>
+          <TableWrapper collapse={collapse}>
               <MapTable
                 defaultData={regionData?.data || []}
                 columns={columns}
@@ -292,14 +292,9 @@ const Region = () => {
               >
                 <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
               </CollapseBtn>
-            </div>
-          </div>
+           </TableWrapper>
 
-          <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-            <div
-              className={cn("Mable-Map relative flex h-[calc(100vh-160px)] w-full")}
-              id="map"
-            >
+          <MapWrapper collapse={collapse}>
               <LeafletMap
                 position={position}
                 zoom={zoomLevel}
@@ -317,11 +312,10 @@ const Region = () => {
               >
                 <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
               </CollapseBtn>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+           </MapWrapper>
+        </MableBodyWrapper>
+      </MableContainerWrapper>
+    </MablePageWrapper>
   )
 }
 

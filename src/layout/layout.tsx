@@ -25,7 +25,7 @@ const Layout = () => {
 
     useEffect(() => {
         setCollapsed(!isDesktopDevice);
-        // localStorage.setItem("isMenuCollapsed",JSON.stringify(!isDesktopDevice))      
+        localStorage.setItem("isMenuCollapsed",JSON.stringify(!isDesktopDevice))      
     }, [isDesktopDevice]);
     useEffect(() => {
         dispatch(setSideMenuCollapse(collapsed ? true : false));
@@ -45,7 +45,7 @@ const Layout = () => {
     }, [location.pathname]);
     useEffect(()=>{setCollapsed(isCollapse)},[])
     return (
-        <div className="min-h-screen bg-slateLight-100 transition-colors dark:bg-slateLight-950">
+        <div className="h-[100dvh] md:h-[100vh] bg-slateLight-100 transition-colors dark:bg-slateLight-950">
             {/* <div
                 className={cn(
                     "pointer-events-none fixed inset-0 -z-10 bg-black opacity-0 transition-opacity",

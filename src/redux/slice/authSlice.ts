@@ -13,7 +13,8 @@ const authSlice = createSlice({
     clientId:initialAuthData?.user_details?.client_id || null,
     unitSystemName: initialAuthData?.user_details?.unit_system_name || null,
     landingPageRoute:initialAuthData?.user_details?.redirect_url || null,
-    userRole:initialAuthData?.user_details?.client_role
+    userRole:initialAuthData?.user_details?.client_role,
+    viewBound:initialAuthData?.user_details?.view_bound
   },
   reducers: {
     login(state, action) {
@@ -24,6 +25,7 @@ const authSlice = createSlice({
       state.clientId = action.payload?.user_details.client_id;
       state.unitSystemName = action.payload.user_details.unit_system_name;
       state.userRole = action.payload.user_details.client_role;
+      state.viewBound = action.payload.user_details.view_bound;
       localStorage.setItem("auth", JSON.stringify(action.payload));
     },
     logout(state) {
@@ -33,6 +35,8 @@ const authSlice = createSlice({
       state.refresh = null;
       state.unitSystemName = null;
       state.userRole= null;
+      state.viewBound = null;
+      state.landingPageRoute = null;
       localStorage.removeItem("auth");
     },
   },

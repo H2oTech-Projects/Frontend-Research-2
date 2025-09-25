@@ -210,7 +210,7 @@ const Map = () => {
 
   const mapConfigurations = useMemo(() => { return {'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true} }, []);
   return (
-    <div id="map" className="relative flex h-screen w-full">
+    <div id="map" className="relative flex h-[100dvh] md:h-[100vh] w-full">
        <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
         <div className="flex items-center gap-x-3 justify-center text-white bg-royalBlue  ml-6 rounded-lg px-2 z-[450] h-8 w-56 ">
           <Icon.Search

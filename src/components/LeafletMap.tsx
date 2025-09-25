@@ -9,31 +9,31 @@ import "nouislider/distribute/nouislider.css";
 import "./sliderDesign.css"
 
 type mapConfiguration = {
-    minZoom: number;
-    containerStyle: {};
-    enableLayers?: boolean;
+  minZoom: number;
+  containerStyle: {};
+  enableLayers?: boolean;
 };
 
-const layerMapper: any ={
-  'rt_2023:wy2023_202309_eta_accumulation_in': {'id': 'ETA', 'name': 'Evapotranspiration (ET)'},
-  'rt_2023:wy2023_202309_etaw_accumulation_in': {'id': 'ETAW', 'name': 'Evapotranspiration of Applied Water (ETAW)'},
-  'rt_2023:wy2023_202309_etpr_accumulation_in': {'id': 'ETPR', 'name': 'Evapotranspiration of Precipitation (ETPR)'},
-  'rt_2023:wy2023_p_total_in': {'id': 'P_TOTAL', 'name': 'Precipitation (P)'},
-  'rt_2023:colusa_ETa_WY2023_EPSG_6414': {'id': 'Colusa ETA', 'name': 'Evapotranspiration (ET)'},
-  'rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414': {'id': 'Colusa ETA', 'name': 'Evapotranspiration (mm)'},
+const layerMapper: any = {
+  'rt_2023:wy2023_202309_eta_accumulation_in': { 'id': 'ETA', 'name': 'Evapotranspiration (ET)' },
+  'rt_2023:wy2023_202309_etaw_accumulation_in': { 'id': 'ETAW', 'name': 'Evapotranspiration of Applied Water (ETAW)' },
+  'rt_2023:wy2023_202309_etpr_accumulation_in': { 'id': 'ETPR', 'name': 'Evapotranspiration of Precipitation (ETPR)' },
+  'rt_2023:wy2023_p_total_in': { 'id': 'P_TOTAL', 'name': 'Precipitation (P)' },
+  'rt_2023:colusa_ETa_WY2023_EPSG_6414': { 'id': 'Colusa ETA', 'name': 'Evapotranspiration (ET)' },
+  'rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414': { 'id': 'Colusa ETA', 'name': 'Evapotranspiration (mm)' },
 }
 
 type LeafletMapTypes = {
-    zoom: number;
-    position: any;
-    collapse?: string;
-    configurations?: mapConfiguration;
-    userPolygon?: string;
-    children?: any;
-    viewBound?: any;
+  zoom: number;
+  position: any;
+  collapse?: string;
+  configurations?: mapConfiguration;
+  userPolygon?: string;
+  children?: any;
+  viewBound?: any;
 };
 const geoserverUrl = "https://staging.flowgeos.wateraccounts.com/geoserver/rt_2023/wms";
-const sld =`<StyledLayerDescriptor version="1.0.0">
+const sld = `<StyledLayerDescriptor version="1.0.0">
   <NamedLayer>
     <Name>rt_2023:wy2023_202309_eta_accumulation_in</Name> <!-- Replace with actual layer name -->
     <UserStyle>
@@ -55,7 +55,7 @@ const sld =`<StyledLayerDescriptor version="1.0.0">
   </NamedLayer>
 </StyledLayerDescriptor>`
 
-const colusaSld =`<StyledLayerDescriptor version="1.0.0">
+const colusaSld = `<StyledLayerDescriptor version="1.0.0">
   <NamedLayer>
     <Name>rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414</Name> <!-- Replace with actual layer name -->
     <UserStyle>
@@ -90,8 +90,9 @@ const removeLineBars = <style>{`
       .noUi-target { width: 100%}
       `}</style>
 
-const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'minZoom': 11, 'containerStyle': {}, enableLayers: false}, children, userPolygon }: LeafletMapTypes) => {
+const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'minZoom': 11, 'containerStyle': {}, enableLayers: false }, children, userPolygon }: LeafletMapTypes) => {
   const { center } = position;
+  const defaultViewBound = useSelector((state: any) => state.auth?.viewBound);
   const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const [opacity, setOpacity] = useState(1)
@@ -100,25 +101,30 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
   const MapHandler = () => {
     const map = useMap();
 
-  useEffect(() => {
-    map.whenReady(() => {
-      map.invalidateSize(); // Ensure proper sizing
-      map.setView(center);  // Recenter
-      if (viewBound) {
-        map.fitBounds(viewBound);
-      }
-    });
-  }, [collapse, center, zoom, map,viewBound]);
+    useEffect(() => {
+      map.whenReady(() => {
+        map.invalidateSize(); // Ensure proper sizing
+        map.setView(center);  // Recenter
+        if (viewBound) {
+          map.fitBounds(viewBound);
+        }
+        else {
+          map.fitBounds(defaultViewBound);
+        }
+      });
+    }, [collapse, center, zoom, map, viewBound]);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (map) {
-        map.invalidateSize();
-      }
-    }, 300);
 
-    return () => clearTimeout(timeout);
-  }, [collapse, isMenuCollapsed, map]);
+
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        if (map) {
+          map.invalidateSize();
+        }
+      }, 300);
+
+      return () => clearTimeout(timeout);
+    }, [collapse, isMenuCollapsed, map]);
     useEffect(() => {
       const handleLayerAdd = (event: any) => {
         let OldaddedLayers = addedLayers.slice();
@@ -144,75 +150,75 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
       };
     }, [map]);
 
-        return null;
-    };
+    return null;
+  };
 
-    const addLegends = () => {
-      if (addedLayers.length <= 0) return ;
-      let selectedLayer = addedLayers[addedLayers.length-1]
-      if (loggedUser == 'colusa@wateraccounts.com') {
-        selectedLayer = 'rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414'
-      }
-      const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=${selectedLayer}`;
-      // if ((selectedLayer != 'rt_2023:wy2023_202309_eta_accumulation_in') || (selectedLayer != 'rt_2023:colusa_ETa_WY2023_EPSG_6414')) {
-      //   return (
-      //     <div className="absolute top-20 right-2 z-[1002] h-auto  w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65">
-      //     <label className="text-center">{layerMapper[selectedLayer].id}</label>
-      //     <img src={url} alt="Legend" style={{ width: "80px", height: "150px" }} />
-      //     </div>
-      //   )
-      // }
-      const additionalLegendsColusa = <>
-        <div className="flex flex-row pb-1">
-          <span style={{position: 'absolute',display: 'block',left: '35px'}}>60</span>
-          <i style={{
+  const addLegends = () => {
+    if (addedLayers.length <= 0) return;
+    let selectedLayer = addedLayers[addedLayers.length - 1]
+    if (loggedUser == 'colusa@wateraccounts.com') {
+      selectedLayer = 'rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414'
+    }
+    const url = `${geoserverUrl}?service=WMS&request=GetLegendGraphic&format=image/png&layer=${selectedLayer}`;
+    // if ((selectedLayer != 'rt_2023:wy2023_202309_eta_accumulation_in') || (selectedLayer != 'rt_2023:colusa_ETa_WY2023_EPSG_6414')) {
+    //   return (
+    //     <div className="absolute top-20 right-2 z-[1002] h-auto  w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65">
+    //     <label className="text-center">{layerMapper[selectedLayer].id}</label>
+    //     <img src={url} alt="Legend" style={{ width: "80px", height: "150px" }} />
+    //     </div>
+    //   )
+    // }
+    const additionalLegendsColusa = <>
+      <div className="flex flex-row pb-1">
+        <span style={{ position: 'absolute', display: 'block', left: '35px' }}>60</span>
+        <i style={{
           background: "#4c87bd",
           height: "17px",
           width: "17px",
-          }}
-          ></i>
-        </div>
-      </>
-      return (
-        <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-1 rounded-[8px] bg-black text-slate-50">
-        <div  className="flex flex-col">
-          {loggedUser == "colusa@wateraccounts.com" &&  additionalLegendsColusa || ''}
+        }}
+        ></i>
+      </div>
+    </>
+    return (
+      <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-1 rounded-[8px] bg-black text-slate-50">
+        <div className="flex flex-col">
+          {loggedUser == "colusa@wateraccounts.com" && additionalLegendsColusa || ''}
           <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>50</span>
+            <span style={{ position: 'absolute', display: 'block', left: '35px' }}>50</span>
             <i style={{
               background: "#4dc2a3",
               height: "17px",
               width: "17px",
             }}></i>
           </div>
-            <div className="flex flex-row pb-1">
-              <span style={{position: 'absolute',display: 'block',left: '35px'}}>40</span>
-              <i style={{
+          <div className="flex flex-row pb-1">
+            <span style={{ position: 'absolute', display: 'block', left: '35px' }}>40</span>
+            <i style={{
               background: "#44b26b",
               height: "17px",
               width: "17px",
-              }}
-              ></i>
-            </div>
-            <div className="flex flex-row pb-1">
-              <span style={{position: 'absolute',display: 'block',left: '35px'}}>30</span>
-              <i style={{
-                background: "#86c456",
-                height: "17px",
-                width: "17px",
-              }}></i>
-            </div>
-          <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>20</span>
-            <i style={{
-            background: "#d7db47",
-            height: "17px",
-            width: "17px",
             }}
             ></i>
           </div>
           <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>10</span>
+            <span style={{ position: 'absolute', display: 'block', left: '35px' }}>30</span>
+            <i style={{
+              background: "#86c456",
+              height: "17px",
+              width: "17px",
+            }}></i>
+          </div>
+          <div className="flex flex-row pb-1">
+            <span style={{ position: 'absolute', display: 'block', left: '35px' }}>20</span>
+            <i style={{
+              background: "#d7db47",
+              height: "17px",
+              width: "17px",
+            }}
+            ></i>
+          </div>
+          <div className="flex flex-row pb-1">
+            <span style={{ position: 'absolute', display: 'block', left: '35px' }}>10</span>
             <i style={{
               background: "#bfa22d",
               height: "17px",
@@ -220,11 +226,11 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
             }}></i>
           </div>
           <div className="flex flex-row pb-1">
-            <span style={{position: 'absolute',display: 'block',left: '35px'}}>0</span>
+            <span style={{ position: 'absolute', display: 'block', left: '35px' }}>0</span>
             <i style={{
-            background: "#9e6212",
-            height: "17px",
-            width: "17px",
+              background: "#9e6212",
+              height: "17px",
+              width: "17px",
             }}
             ></i>
           </div>
@@ -233,156 +239,156 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = {'mi
           <p className="[writing-mode:vertical-rl] text-center">Cumulative ET (IN)</p>
         </div>
       </div>
-      )
-    }
+    )
+  }
 
-    const addSlider = () => {
-      return (
-        <div
-          className="flex flex-col absolute bottom-[2rem] right-[7rem] z-[1002] h-[20px]  w-[200px] p-2 m-2 rounded-[8px] bg-green text-slate-50">
-          <Nouislider
-            connect= {[true, false]}
-            start={100}
-            tooltips= {false}
-            range= {{ min: 0, max: 100 }}
-            step= {25}
-            onUpdate={(num) => {setOpacity(parseFloat(num[0])/100)}}
-          />
-        </div>
-      )
-    }
+  const addSlider = () => {
+    return (
+      <div
+        className="flex flex-col absolute bottom-[2rem] right-[7rem] z-[1002] h-[20px]  w-[200px] p-2 m-2 rounded-[8px] bg-green text-slate-50">
+        <Nouislider
+          connect={[true, false]}
+          start={100}
+          tooltips={false}
+          range={{ min: 0, max: 100 }}
+          step={25}
+          onUpdate={(num) => { setOpacity(parseFloat(num[0]) / 100) }}
+        />
+      </div>
+    )
+  }
 
-    const colusaRaster = () => {
-      const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
-      return <>
-      <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer=='Evapotranspiration (ET)'}>
+  const colusaRaster = () => {
+    const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
+    return <>
+      <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer == 'Evapotranspiration (ET)'}>
         <WMSTileLayer
           key={userPolygon}
           url={`${geoUrl}`}
-          opacity= {opacity}
+          opacity={opacity}
           params={{
-            format:"image/png",
-            layers:"rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414",
+            format: "image/png",
+            layers: "rt_2023:colusa_subbasin_ETa_mm_WY2024_EPSG_6414",
             transparent: true,
-            ...( { sld_body: colusaSld } as Record<string, any> ),
+            ...({ sld_body: colusaSld } as Record<string, any>),
           }}
         />
       </LayersControl.Overlay>
     </>
+  }
+  const addLayers = () => {
+    const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
+    if (loggedUser == "colusa@wateraccounts.com" || loggedUser == 'colusagrower@wateraccounts.com') {
+      return colusaRaster()
     }
-    const addLayers = () => {
-      const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
-      if (loggedUser == "colusa@wateraccounts.com" || loggedUser == 'colusagrower@wateraccounts.com') {
-        return colusaRaster()
-      }
-      return (
-        <>
-          <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer=='Evapotranspiration (ET)'}>
-            <WMSTileLayer
-              key={userPolygon}
-              url={`${geoUrl}`}
-              opacity= {opacity}
-              params={{
-                format:"image/png",
-                layers:"rt_2023:wy2023_202309_eta_accumulation_in",
-                transparent: true,
-                ...( { sld_body: sld } as Record<string, any> ),
-              }}
-              eventHandlers={{
-                add: () => setDefaultLayer("Evapotranspiration (ET)"),
-                remove: () => console.log(''),
-              }}
-            />
-          </LayersControl.Overlay>
-          <LayersControl.Overlay name="Evapotranspiration of Applied Water (ETAW)" checked={defaultLayer=='Evapotranspiration of Applied Water (ETAW)'}>
-            <WMSTileLayer
-              url={`${geoserverUrl}`}
-              opacity= {opacity}
-              params={{
-                format:"image/png",
-                layers:"rt_2023:wy2023_202309_etaw_accumulation_in",
-                transparent: true,
-                //...( { sld_body: sld } as Record<string, any> ),
-              }}
-              eventHandlers={{
-                add: () => setDefaultLayer("Evapotranspiration of Applied Water (ETAW)"),
-                remove: () => console.log(''),
-              }}
-            />
-          </LayersControl.Overlay>
-          <LayersControl.Overlay name="Evapotranspiration of Precipitation (ETPR)" checked={defaultLayer=='Evapotranspiration of Precipitation (ETPR)'}>
-            <WMSTileLayer
-              url={`${geoserverUrl}`}
-              opacity= {opacity}
-              params={{
-                format:"image/png",
-                layers:"rt_2023:wy2023_202309_etpr_accumulation_in",
-                transparent: true,
-                //...( { sld_body: sld } as Record<string, any> ),
-              }}
-              eventHandlers={{
-                add: () => setDefaultLayer("Evapotranspiration of Precipitation (ETPR)"),
-                remove: () => console.log(''),
-              }}
-            />
-          </LayersControl.Overlay>
-          <LayersControl.Overlay name="Precipitation (P)" checked={defaultLayer=='Precipitation (P)'}>
-            <WMSTileLayer
-              url={`${geoserverUrl}`}
-              opacity= {opacity}
-              params={{
-                format:"image/png",
-                layers:"rt_2023:wy2023_p_total_in",
-                transparent: true,
-                // ...( { SLD_BODY: sld } as Record<string, any> ),
-              }}
-              eventHandlers={{
-                add: () => setDefaultLayer("Precipitation (P)"),
-                remove: () => console.log(''),
-              }}
-            />
-          </LayersControl.Overlay>
-        </>
-      )
-    }
-
     return (
-        <MapContainer
-            center={center}
-            zoom={zoom}
-            scrollWheelZoom={true}
-            zoomControl={false} // Disable default zoom control
-            minZoom={2}
-            style={configurations?.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
+      <>
+        <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer == 'Evapotranspiration (ET)'}>
+          <WMSTileLayer
+            key={userPolygon}
+            url={`${geoUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: "rt_2023:wy2023_202309_eta_accumulation_in",
+              transparent: true,
+              ...({ sld_body: sld } as Record<string, any>),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Evapotranspiration (ET)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Evapotranspiration of Applied Water (ETAW)" checked={defaultLayer == 'Evapotranspiration of Applied Water (ETAW)'}>
+          <WMSTileLayer
+            url={`${geoserverUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: "rt_2023:wy2023_202309_etaw_accumulation_in",
+              transparent: true,
+              //...( { sld_body: sld } as Record<string, any> ),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Evapotranspiration of Applied Water (ETAW)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Evapotranspiration of Precipitation (ETPR)" checked={defaultLayer == 'Evapotranspiration of Precipitation (ETPR)'}>
+          <WMSTileLayer
+            url={`${geoserverUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: "rt_2023:wy2023_202309_etpr_accumulation_in",
+              transparent: true,
+              //...( { sld_body: sld } as Record<string, any> ),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Evapotranspiration of Precipitation (ETPR)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Precipitation (P)" checked={defaultLayer == 'Precipitation (P)'}>
+          <WMSTileLayer
+            url={`${geoserverUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: "rt_2023:wy2023_p_total_in",
+              transparent: true,
+              // ...( { SLD_BODY: sld } as Record<string, any> ),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Precipitation (P)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+      </>
+    )
+  }
+
+  return (
+    <MapContainer
+      center={center}
+      zoom={zoom}
+      scrollWheelZoom={true}
+      zoomControl={false} // Disable default zoom control
+      minZoom={2}
+      style={configurations?.containerStyle || { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" }}
+    >
+      {removeLineBars}
+      {configurations.enableLayers && addSlider()}
+      <LayersControl position="bottomleft">
+
+        <LayersControl.BaseLayer
+          checked
+          name="Satellite"
         >
-            {removeLineBars}
-            { configurations.enableLayers && addSlider() }
-            <LayersControl position="bottomleft">
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
+          />
+        </LayersControl.BaseLayer>
 
-                <LayersControl.BaseLayer
-                    checked
-                    name="Satellite"
-                >
-                    <TileLayer
-                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                        attribution='&copy; <a href="https://www.arcgis.com/">Esri</a>'
-                    />
-                </LayersControl.BaseLayer>
-
-                <LayersControl.BaseLayer name="Street Map">
-                    <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                </LayersControl.BaseLayer>
-                {configurations.enableLayers && addLayers()}
-            </LayersControl>
-            {configurations.enableLayers && addLegends()}
-            {children}
-            <CustomZoomControl />
-            <MapHandler />
-        </MapContainer>
-    );
+        <LayersControl.BaseLayer name="Street Map">
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+        </LayersControl.BaseLayer>
+        {configurations.enableLayers && addLayers()}
+      </LayersControl>
+      {configurations.enableLayers && addLegends()}
+      {children}
+      <CustomZoomControl />
+      <MapHandler />
+    </MapContainer>
+  );
 };
 
 export default React.memo(LeafletMap);

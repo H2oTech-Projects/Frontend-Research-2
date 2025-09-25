@@ -41,7 +41,7 @@ import { useLocation } from 'react-router-dom';
 import { measurementPointFieldColumnProperties } from "@/utils/constant";
 import { AgroItems } from "@/utils/tools";
 import { useMableCollapse } from "@/utils/customHooks/useMableCollapse";
-
+import { MableBodyWrapper, MableContainerWrapper, MableHeaderWrapper, MablePageWrapper, MapWrapper, TableDropdownWrapper, TableOnlyWrapper, TableWrapper, TableWrapperWithWapWay } from '@/components/wrappers/mableWrappers';
 interface initialTableDataTypes {
   search: string;
   page_no: number,
@@ -59,7 +59,7 @@ const initialTableData = {
 
 
 const ApportionSchema = z.object({
-  apportionMethodType: z.coerce.number().min(1,"Choose Apportion Method"),
+  apportionMethodType: z.coerce.number().min(1, "Choose Apportion Method"),
   data: z
     .array(
       z.object({
@@ -73,12 +73,12 @@ const ApportionSchema = z.object({
 type ApportionFormType = z.infer<typeof ApportionSchema>;
 
 const FieldMsmtPoint = () => {
-  const params= new URLSearchParams(useLocation().search)
+  const params = new URLSearchParams(useLocation().search)
   const mpId = params.get("mpId");
-  const wapId= params.get("wapId");
-  const msmtPointId= params.get("msmtpoint");
+  const wapId = params.get("wapId");
+  const msmtPointId = params.get("msmtpoint");
   const [tableInfo, setTableInfo] = useState<initialTableDataTypes>({ ...initialTableData, search: msmtPointId || "" })
-  const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
+  const { collapse, tableCollapseBtn, mapCollapseBtn } = useMableCollapse();
   const [selectedFields, setSelectedFields] = useState<any>([]);
   const selectedFieldsRef = useRef(selectedFields);
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], point: [38.86902846413033, -121.729324818604], msmtPointId: mpId || "", features: {}, fields: [] });
@@ -91,7 +91,7 @@ const FieldMsmtPoint = () => {
   const [enableLink, setEnableLink] = useState(false);
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<string>("");
-  const [agroItems,setAgroItems] = useState<any>(null)
+  const [agroItems, setAgroItems] = useState<any>(null)
   const form = useForm<any>({
     resolver: zodResolver(ApportionSchema),
     defaultValues: {
@@ -119,15 +119,15 @@ const FieldMsmtPoint = () => {
     if (selectedFields.length > 0) {
       selectedFieldsRef.current = selectedFields;
       setEnableLink(true)
-    }else{
-    setEnableLink(false)
-}
+    } else {
+      setEnableLink(false)
+    }
   }, [selectedFields]);
 
 
 
   useEffect(() => {
-    if (!!mapData?.data && !!mapData['data']['view_bounds'] && !mpId){
+    if (!!mapData?.data && !!mapData['data']['view_bounds'] && !mpId) {
       setViewBound(mapData['data']['view_bounds'])
     }
   }, [mapData]);
@@ -150,14 +150,14 @@ const FieldMsmtPoint = () => {
       setSelectedFields(position.fields)
       // setEnableLink(true)
     }
-},[position])
+  }, [position])
 
 
   useEffect(() => {
     if (!!msmtPointFields) {
       setSelectedFields(msmtPointFields.data)
       setViewBound(msmtPointFields.viewBounds)
-      setPosition({...position, center: msmtPointFields.center, point: msmtPointFields.center, fields: msmtPointFields.data})
+      setPosition({ ...position, center: msmtPointFields.center, point: msmtPointFields.center, fields: msmtPointFields.data })
       setEnableLink(true)
     }
 
@@ -295,7 +295,7 @@ const FieldMsmtPoint = () => {
 
   const removeInfo = (Id: String) => {
     // $("#popup-" + Id).remove();
-       $("[id^='popup-']").remove();
+    $("[id^='popup-']").remove();
   };
 
   const geoJsonLayerEvents = (feature: any, layer: any) => {
@@ -440,7 +440,7 @@ const FieldMsmtPoint = () => {
     }
     else {
       if (!!msmtPointFieldDetail?.data) {
-        form.setValue("apportionMethodType", msmtPointFieldDetail?.data?.apportionMethodTypeId || apportionMethodType?.data?.options[0]?.value )
+        form.setValue("apportionMethodType", msmtPointFieldDetail?.data?.apportionMethodTypeId || apportionMethodType?.data?.options[0]?.value)
         // apportionMethodType?.data?.apportionVolPercentIds.includes(msmtPointFieldDetail?.data?.apportionMethodTypeId) && append(msmtPointFieldDetail?.data?.fields)
         if (apportionMethodType?.data?.apportionVolPercentIds.includes(msmtPointFieldDetail?.data?.apportionMethodTypeId)) {
 
@@ -473,7 +473,7 @@ const FieldMsmtPoint = () => {
   }
 
   return (
-    <div className="flex h-full flex-col gap-1 px-4 pt-2">
+    <MablePageWrapper>
       <PageHeader
         pageHeaderTitle="Msmt Point-Field"
         breadcrumbPathList={[{ menuName: "Management", menuPath: "" }]}
@@ -483,8 +483,8 @@ const FieldMsmtPoint = () => {
         onClose={() => setAgroItems(null)}
         title={`Linked with ${agroItems?.msmtPointName}`}
         showActionButton={false}
-        children={<AgroItems data={agroItems?.fieldPctFarmed} name={"Fields"}/>}
-        />
+        children={<AgroItems data={agroItems?.fieldPctFarmed} name={"Fields"} />}
+      />
       <CustomModal
         isOpen={open}
         onClose={() => {
@@ -559,14 +559,12 @@ const FieldMsmtPoint = () => {
           </form>
         </Form>
       </CustomModal>
-      <div className="pageContain flex flex-grow flex-col gap-3">
-        <div className="flex justify-between">
+      <MableContainerWrapper>
+        <MableHeaderWrapper>
           <div className="flex justify-left gap-2">
 
             <div className="flex gap-2">
-
               <div className="input h-7 w-100">
-
                 <Search
                   size={16}
                   className="text-slate-300"
@@ -602,14 +600,14 @@ const FieldMsmtPoint = () => {
             <Plus size={4} />
             Link MsmtPoint-Field
           </Button>
-        </div>
-        <div className="flex flex-grow">
-          <div className={cn("relative w-1/2 flex flex-col gap-3 h-[calc(100vh-160px)]", collapse === "table" ? "hidden" : "", collapse === "map" ? "flex-grow" : "pr-3")}>
-            <div className='flex flex-col gap-2 bg-white p-2  dark:text-slate-50 dark:bg-slate-600 rounded-lg shadow-xl transition-colors '>
+        </MableHeaderWrapper>
+        <MableBodyWrapper>
+          <TableWrapperWithWapWay collapse={collapse}>
+            <TableDropdownWrapper>
               <div className='text-lg text-royalBlue dark:text-slate-50 '>Select Water Accounting Period</div>
               <div className="px-2"><BasicSelect setValue={setDefaultWap} Value={defaultWap!} itemList={ways?.data} showLabel={false} label="wap" /></div>
-            </div>
-            <div className={cn(" h-[calc(100vh-260px) w-full")}>
+            </TableDropdownWrapper>
+            <TableOnlyWrapper>
               <MapTable
                 tableType={"point"}
                 defaultData={msmtPoints?.data || []}
@@ -623,7 +621,7 @@ const FieldMsmtPoint = () => {
                 totalData={msmtPoints?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
-                customHeight="h-[calc(100vh-308px)]" // increase h-[calc(100vh-160px)] to h-[calc(100vh-308px)] by adding 48px
+                customHeight="h-[calc(100dvh-308px)]" // increase h-[calc(100vh-160px)] to h-[calc(100vh-308px)] by adding 48px
                 columnProperties={measurementPointFieldColumnProperties}
               />
               <CollapseBtn
@@ -633,35 +631,31 @@ const FieldMsmtPoint = () => {
               >
                 <ChevronsRight className={cn(collapse === "map" ? "rotate-180" : "")} size={20} />
               </CollapseBtn>
-            </div>
-          </div>
+            </TableOnlyWrapper>
+          </TableWrapperWithWapWay>
 
-          <div className={cn("w-1/2", collapse === "map" ? "hidden" : "", collapse === "table" ? "flex-grow" : "pl-3")}>
-            <div
-              className={cn("relative flex h-[calc(100vh-160px)] w-full")}
-              id="map"
+          <MapWrapper collapse={collapse}>
+            {!mapLoading ? (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              //clickedField={clickedField}
+              viewBound={viewBound}
+              configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
             >
-              {!mapLoading ? (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                //clickedField={clickedField}
-                viewBound={viewBound}
-                configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
-              >
-        {!!position.point && !!position.msmtPointId ? (
-                  <RtPoint
-                    position={position.point}
-                    handleMouseDown={handleMouseDown}
-                    cancel={cancel}
-                  >
-                    {/* <Popup>
+              {!!position.point && !!position.msmtPointId ? (
+                <RtPoint
+                  position={position.point}
+                  handleMouseDown={handleMouseDown}
+                  cancel={cancel}
+                >
+                  {/* <Popup>
                                     <div dangerouslySetInnerHTML={{ __html: "Please press icon for 3 secs to associate." }} />
                                   </Popup> */}
-                  </RtPoint>
-                ) : null}
+                </RtPoint>
+              ) : null}
 
-               {mapData?.data &&
+              {mapData?.data &&
                 <RtGeoJson
                   key={"fields"}
                   layerEvents={geoJsonLayerEvents}
@@ -670,29 +664,28 @@ const FieldMsmtPoint = () => {
                   color={"#16599a"}
                 />}
 
-              </LeafletMap>) : (<LeafletMap
-                position={position}
-                zoom={zoomLevel}
-                collapse={collapse}
-                //clickedField={clickedField}
-                configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
-              >
-                <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-                  <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
-                </div>
-              </LeafletMap>)}
-              <CollapseBtn
-                className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
-                onClick={tableCollapseBtn}
-                note={collapse === 'default' ? 'View Full Map' : "Show Table"}
-              >
-                <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
-              </CollapseBtn>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </LeafletMap>) : (<LeafletMap
+              position={position}
+              zoom={zoomLevel}
+              collapse={collapse}
+              //clickedField={clickedField}
+              configurations={{ 'minZoom': 11, 'containerStyle': { height: "100%", width: "100%", overflow: "hidden", borderRadius: "8px" } }}
+            >
+              <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
+                <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
+              </div>
+            </LeafletMap>)}
+            <CollapseBtn
+              className="absolute -left-4 top-1/2 z-[800] m-2 flex size-8 items-center justify-center"
+              onClick={tableCollapseBtn}
+              note={collapse === 'default' ? 'View Full Map' : "Show Table"}
+            >
+              <ChevronsLeft className={cn(collapse === "table" ? "rotate-180" : "")} size={20} />
+            </CollapseBtn>
+          </MapWrapper>
+        </MableBodyWrapper>
+      </MableContainerWrapper>
+    </MablePageWrapper>
   );
 };
 
