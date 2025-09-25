@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { debounce } from '@/utils';
-import { TileLayer } from "react-leaflet";
 import { Feature } from "geojson";
 import L from "leaflet";
 import * as Icon from "lucide-react";
@@ -17,107 +15,113 @@ import { Button } from "@/components/ui/button";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { usePostLogoutUser } from "@/services/registration";
-import TableLineChartInfo, {ColusaTableLineChartInfo} from '@/utils/tableLineChartInfo';
+import TableLineChartInfo, { ColusaTableLineChartInfo } from '@/utils/tableLineChartInfo';
 import { createRoot } from 'react-dom/client';
 import { useGetSearchParcelMapByWAY, useGetParcelMapByWAY } from "@/services/water/parcel";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMediaQuery } from "@uidotdev/usehooks";
+import MobileMapPopup from "@/components/modal/CustomMapModel";
 
 const Map = () => {
-    const queryClient = useQueryClient();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [search, setSearch] = useState("");
-    const modalRef = useRef<HTMLDivElement>(null);
-    const [zoomLevel, setZoomLevel] = useState(10);
-    const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
-    const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
-    const wayId = JSON.parse(localStorage.getItem("auth") as string)?.user_details.way_id
-    const refreshToken = useSelector((state: any) => state.auth.refresh);
-    const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
-    const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(wayId);
-    const { data: searchedParcels, isLoading: isSearching, refetch: refetchSearchParcelMap,isError:isSearchError } = useGetSearchParcelMapByWAY(wayId, search);
-    const [searchParcelData, setSearchParcelData] = useState<any>(null);
-    const parcels: any = parcelsData as any;
-    const { theme, setTheme } = useTheme();
-    const dispatch = useDispatch();
-    const Name = useSelector((state: any) => state.auth.user)?.split("@")?.[0];
-    const handleKeyDown = (e : any) => {
-      if (e.key === "Enter") {
-        setSearch(e.target.value)
+  const queryClient = useQueryClient();
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [zoomLevel, setZoomLevel] = useState(10);
+  const { mutate, isPending, isError, error, isSuccess, data } = usePostLogoutUser();
+  const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
+  const wayId = JSON.parse(localStorage.getItem("auth") as string)?.user_details.way_id
+  const refreshToken = useSelector((state: any) => state.auth.refresh);
+  const [position, setPosition] = useState<any>({ center: [36.92380329553985, -120.2151157309385], polygon: [], fieldId: "" });
+  const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(wayId);
+  const { data: searchedParcels, isLoading: isSearching, refetch: refetchSearchParcelMap, isError: isSearchError } = useGetSearchParcelMapByWAY(wayId, search);
+  const [searchParcelData, setSearchParcelData] = useState<any>(null);
+  const [mobilePopupInfo, setMobilePopupInfo] = useState<any>({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null })
+  const parcels: any = parcelsData as any;
+  const { theme, setTheme } = useTheme();
+  const dispatch = useDispatch();
+  const Name = useSelector((state: any) => state.auth.user)?.split("@")?.[0];
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      setSearch(e.target.value)
+    }
+  };
+  useEffect(() => {
+    if (searchedParcels && Object.keys(searchedParcels).length > 0) {
+      setSearchParcelData(searchedParcels);
+    }
+
+    if (isSearchError) {
+      toast.info("No parcels found");
+    }
+  }, [searchedParcels, isSearchError]);
+
+
+  const handleLogout = () => {
+    mutate({ refresh_token: refreshToken }, {
+      onSuccess: (data) => {
+        dispatch(logout());
+        setIsModalOpen(false);
+        toast.success("Logout successful");
+        queryClient.removeQueries();
+      },
+      onError: (err) => {
+        dispatch(logout());
+        toast.success("Logout successful.");
+        queryClient.removeQueries();
+      },
+
+    })
+  }
+  const showInfo = (label: String, Id: String) => {
+    var popup = $("<div></div>", {
+      id: "popup-" + Id,
+      class: "absolute top-14 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
+    });
+    // Insert a headline into that popup
+    var hed = $("<div></div>", {
+      text: `${label}: ${Id}`,
+      // text: `${label}: ` + Id,
+      css: { fontSize: "16px", marginBottom: "3px" },
+    }).appendTo(popup);
+    // Add the popup to the map
+    popup.appendTo("#map");
+  };
+
+  const removeInfo = (Id: String) => {
+    document.querySelectorAll('[id^="popup-"]').forEach(el => el.remove());
+  };
+  // Close modal when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setIsModalOpen(false);
       }
     };
-    useEffect(() => {
-      if (searchedParcels && Object.keys(searchedParcels).length > 0) {
-        setSearchParcelData(searchedParcels);
-      }
 
-     if( isSearchError ){
-        toast.info("No parcels found");}
-      }, [searchedParcels,isSearchError]);
-
-
-    const handleLogout = () => {
-          mutate({refresh_token: refreshToken},{
-            onSuccess: (data) => {
-              dispatch(logout());
-              setIsModalOpen(false);
-              toast.success("Logout successful");
-              queryClient.removeQueries();
-            },
-             onError: (err) => {
-              dispatch(logout());
-              toast.success("Logout successful.");
-              queryClient.removeQueries();
-        },
-
-    })}
-    const showInfo = (label: String, Id: String) => {
-      var popup = $("<div></div>", {
-        id: "popup-" + Id,
-        class: "absolute top-14 left-2 z-[1002] h-auto w-auto p-2 rounded-[8px] bg-royalBlue text-slate-50 bg-opacity-65",
-      });
-      // Insert a headline into that popup
-      var hed = $("<div></div>", {
-        text: `${label}: ${Id}` ,
-        // text: `${label}: ` + Id,
-        css: { fontSize: "16px", marginBottom: "3px" },
-      }).appendTo(popup);
-      // Add the popup to the map
-      popup.appendTo("#map");
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-
-    const removeInfo = (Id: String) => {
-      document.querySelectorAll('[id^="popup-"]').forEach(el => el.remove());
-    };
-    // Close modal when clicking outside
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-          setIsModalOpen(false);
-        }
-      };
-
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, []);
+  }, []);
 
   const geoJsonLayerEvents = (feature: Feature, layer: L.Layer) => {
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
         auxLayer.setStyle({
-            weight: 4,
-            //color: "#800080"
+          weight: 4,
+          //color: "#800080"
         });
         showInfo('FieldID', auxLayer.feature.properties.FieldID);
       },
       mouseout: function (e) {
         const auxLayer = e.target;
         auxLayer.setStyle({
-            weight: 2.5,
-            fillOpacity: 0,
-            opacity: 1,
+          weight: 2.5,
+          fillOpacity: 0,
+          opacity: 1,
         });
         removeInfo(auxLayer.feature.properties.FieldID);
       },
@@ -125,56 +129,99 @@ const Map = () => {
   }
 
   const maderaLayerEvents = (feature: Feature, layer: L.Layer) => {
+     if (!isDesktopDevice) {
+      layer.on({
+        click: (e) => {
+          const auxLayer = e.target;
+          setMobilePopupInfo({ isOpen: true, tableInfo: parcels[auxLayer.feature.properties.parcel_id], chartInfo: [] })
+        },
+      });
+      return;
+    }
     const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.apn;
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false});
+    layer.bindPopup(popupDiv, { maxHeight: 1000, maxWidth: 700, closeOnClick: false });
     layer.on({
       mouseover: function (e) {
         const auxLayer = e.target;
         auxLayer.setStyle({
-            weight: 4,
-            //color: "#800080"
+          weight: 4,
+          //color: "#800080"
         });
 
-        createRoot(popupDiv).render(<TableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.apn], 'chartInfo': []}}/>);
+        createRoot(popupDiv).render(<TableLineChartInfo data={{ 'tableInfo': parcels[auxLayer.feature.properties.apn], 'chartInfo': [] }} />);
 
         showInfo('Parcel Id ', auxLayer.feature.properties.apn);
       },
       mouseout: function (e) {
         const auxLayer = e.target;
         auxLayer.setStyle({
-            weight: 2.5,
-            fillOpacity: 0,
-            opacity: 1,
+          weight: 2.5,
+          fillOpacity: 0,
+          opacity: 1,
         });
         removeInfo(auxLayer.feature.properties.apn);
       },
     });
   }
-    const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
+
+
+  const colusaLayerEvents = (feature: Feature, layer: L.Layer) => {
+    //MOBILE BEHAVIOR ONLY
+    if (!isDesktopDevice) {
+      layer.on({
+        click: (e) => {
+          const auxLayer = e.target;
+          setMobilePopupInfo({ isOpen: true, tableInfo: parcels[auxLayer.feature.properties.parcel_id], chartInfo: [], parcelId: auxLayer.feature.properties.parcel_id })
+        },
+      });
+      return;
+    }
+
+    //DESKTOP BEHAVIOR ONLY
     const popupDiv = document.createElement('div');
-    popupDiv.className = 'popup-map ';
-    // @ts-ignore
-    popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
+    popupDiv.className = 'popup-map';
+    popupDiv.style.cssText =
+      'width:100%; height:100%; border-radius:8px; overflow:hidden';
     popupDiv.id = feature.properties?.parcel_id;
 
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(54, 128),autoPanPaddingBottomRight: L.point(128, 48) });
-    layer.on({
-      mouseover: function (e) {
-        const auxLayer = e.target;
+    layer.bindPopup(popupDiv, {
+      maxHeight: 1000,
+      maxWidth: 700,
+      closeOnClick: false,
+      autoPan: true,
+      autoPanPaddingTopLeft: L.point(54, 128),
+      autoPanPaddingBottomRight: L.point(128, 48),
+    });
 
-        createRoot(popupDiv).render(<ColusaTableLineChartInfo data={{'tableInfo': parcels[auxLayer.feature.properties.parcel_id], 'chartInfo': [], 'parcelId': auxLayer.feature.properties.parcel_id}}/>);
+    layer.on({
+      mouseover: e => {
+        const auxLayer = e.target;
         showInfo('Parcel Id', auxLayer.feature.properties.parcel_id);
       },
-      mouseout: function (e) {
+      mouseout: e => {
         const auxLayer = e.target;
         removeInfo(auxLayer.feature.properties.parcel_id);
       },
+      click: e => {
+        const auxLayer = e.target;
+        createRoot(popupDiv).render(
+          <ColusaTableLineChartInfo
+            data={{
+              tableInfo: parcels[auxLayer.feature.properties.parcel_id],
+              chartInfo: [],
+              parcelId: auxLayer.feature.properties.parcel_id,
+            }}
+          />
+        );
+      },
+
     });
-  }
+  };
+
 
 
   // const viewBound = useMemo(() => {
@@ -184,7 +231,7 @@ const Map = () => {
 
   const ReturnChildren = useMemo(() => {
     const maderaJsonStyle = (features: Feature) => {
-      if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)){
+      if (!!searchParcelData && searchParcelData?.parcelIds?.includes(features?.properties?.parcel_id)) {
         return {
           color: "red", // Border color
           fillColor: "transparent", // Fill color for the highlighted area
@@ -202,16 +249,32 @@ const Map = () => {
 
     if (['colusa@wateraccounts.com', 'colusagrower@wateraccounts.com', 'madera@wateraccounts.com', 'maderagrower@wateraccounts.com'].includes(loggedUser)) {
       return mapLoading ? <div className="absolute top-1/2 left-1/2 right-1/2 z-[800] flex gap-4 -ml-[70px] ">
-      <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
-    </div> : <RtGeoJson key={'50003'} layerEvents={colusaLayerEvents} style={maderaJsonStyle} data={JSON.parse(mapData['data'])} color={"#16599a"}/>
+        <div className="flex  rounded-lg bg-[#16599a] text-slate-50 bg-opacity-65 p-2 text-xl h-auto gap-3 ">Loading <Spinner /></div>
+      </div> : <RtGeoJson key={isDesktopDevice ? '5003' : "mobile"} layerEvents={colusaLayerEvents} style={maderaJsonStyle} data={JSON.parse(mapData['data'])} color={"#16599a"} />
     }
-    return <RtGeoJson key={'50003'} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"}/>
-  }, [searchParcelData, mapData])
+    return <RtGeoJson key={isDesktopDevice ? '5003' : "mobile"} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"} />
+  }, [searchParcelData, mapData,isDesktopDevice])
 
-  const mapConfigurations = useMemo(() => { return {'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true} }, []);
+  const mapConfigurations = useMemo(() => { return { 'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true } }, []);
+
+  useEffect(()=>{
+    setMobilePopupInfo({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null });
+},[isDesktopDevice])
+
   return (
     <div id="map" className="relative flex h-[100dvh] md:h-[100vh] w-full">
-       <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
+      <MobileMapPopup
+        isOpen={mobilePopupInfo?.isOpen}
+        onClose={() => setMobilePopupInfo({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null })}
+        title={`Parcel Id: ${mobilePopupInfo?.parcelId}`}
+        children={<ColusaTableLineChartInfo
+          data={{
+            tableInfo: mobilePopupInfo?.tableInfo,
+            chartInfo: [],
+            parcelId: mobilePopupInfo?.parcelId,
+          }}
+        />} />
+      <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
         <div className="flex items-center gap-x-3 justify-center text-white bg-royalBlue  ml-6 rounded-lg px-2 z-[450] h-8 w-56 ">
           <Icon.Search
             size={20}
@@ -229,21 +292,21 @@ const Map = () => {
           />
         </div>
         <div className="flex items-center gap-x-3 z-[450]" >
-        <span className="text-[16px] font-medium text-slate-50">{ Name?.toUpperCase()}</span>
-        <Button
-          variant={"default"}
-          className="size-8"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-        >
-          <Icon.Sun
-            size={20}
-            className="dark:hidden"
-          />
-          <Icon.Moon
-            size={20}
-            className="hidden dark:block"
-          />
-        </Button>
+          <span className="text-[16px] font-medium text-slate-50">{Name?.toUpperCase()}</span>
+          <Button
+            variant={"default"}
+            className="size-8"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          >
+            <Icon.Sun
+              size={20}
+              className="dark:hidden"
+            />
+            <Icon.Moon
+              size={20}
+              className="hidden dark:block"
+            />
+          </Button>
           <Button
             variant={"default"}
             className="size-8">
@@ -266,18 +329,18 @@ const Map = () => {
           ref={modalRef}
           className="absolute right-3 top-14 z-[9000] mt-2 flex w-52 flex-col gap-1 rounded-xl border-slate-900 bg-white p-1 shadow-lg dark:bg-slate-900 dark:text-slate-50"
         >
-        <button
+          <button
             className="flex w-full items-center gap-2 rounded-xl px-4 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-950"
             disabled={isPending}
             onClick={handleLogout}
-        >
-          <Icon.LogOut size={20} />
-          Logout
-        </button>
-          </div>
+          >
+            <Icon.LogOut size={20} />
+            Logout
+          </button>
+        </div>
       )}
 
-      <LeafletMap position={position} viewBound={searchParcelData?.viewBound ?? mapData?.viewBounds} zoom={zoomLevel} configurations={mapConfigurations} userPolygon={mapLoading ? '': mapData['userPolygon']}>
+      <LeafletMap position={position} viewBound={searchParcelData?.viewBound ?? mapData?.viewBounds} zoom={zoomLevel} configurations={mapConfigurations} userPolygon={mapLoading ? '' : mapData['userPolygon']}>
         {ReturnChildren}
       </LeafletMap>
     </div>
