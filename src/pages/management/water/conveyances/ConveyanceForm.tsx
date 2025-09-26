@@ -22,6 +22,7 @@ import { convertKeysToSnakeCase } from '@/utils/stringConversion';
 import { GET_CONVEYANCE_LIST, GET_CONVEYANCE_MAP, GET_CONVEYANCE_PARENTS } from '@/services/convayance/constants';
 import { showErrorToast } from '@/utils/tools';
 import { FormFieldsWrapper, FormMapWrapper, FormPageHeader, FormPageWrapper, FormWrapper } from '@/components/wrappers/formWrappers';
+import FieldMapPreview from '@/components/FieldMapPreview';
 
 const ConveyancesSchema = z.object({
   // clientId: z.string().optional(),
@@ -34,6 +35,7 @@ const ConveyancesSchema = z.object({
     required_error: "Seepage rate must be a number"
   }).nonnegative("Seepage must be non-negative").optional(),
   conveyGeom: z.array(z.instanceof(File)).optional(),
+  conveyCoordinates: z.string().optional(),
 });
 
 export type ConveyFormType = z.infer<typeof ConveyancesSchema>;
@@ -53,6 +55,7 @@ const ConveyancesForm = () => {
   const { data: conveyanceData, isLoading } = useGetConveyanceDetails(id);
   const { mutate: createConveyance, isPending: isConveyanceCreating } = usePostConveyance();
   const { mutate: updateConveyance, isPending: isConveyanceUpdating } = usePutConveyance();
+  const mode = location.pathname.includes("edit") ? 'edit' : 'add'
   const form = useForm<ConveyFormType>({
     resolver: zodResolver(ConveyancesSchema),
     defaultValues: {
@@ -64,6 +67,7 @@ const ConveyancesForm = () => {
       conveySeepageCms: undefined,
       conveyGeom: undefined,
       conveyType: undefined,
+      conveyCoordinates: '',
     },
   });
 
@@ -136,23 +140,25 @@ const ConveyancesForm = () => {
   useEffect(() => {
     if (conveyanceData) {
       form.reset({ ...conveyanceData?.data[0], conveyType: conveyanceData?.data[0]?.conveyTypeId });
-      setPreviewMapData({ data: conveyanceData?.conveyGeojson, view_bounds: conveyanceData?.viewBounds });
+      setPreviewMapData({ data: conveyanceData?.conveyGeojson, view_bounds: conveyanceData?.viewBounds, coordinates: conveyanceData?.conveyanceCoordinates });
     }
   }, [conveyanceData]);
-
+  const updateFieldCoordinates = (coordinates: any) => {
+    form.setValue("conveyCoordinates", JSON.stringify(coordinates));
+  }
 
   return (
     <FormPageWrapper>
-     <FormPageHeader>
-       <PageHeader
-        pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Conveyance`}
-        breadcrumbPathList={[
-          { menuName: "Management", menuPath: "" },
-          { menuName: "Conveyances", menuPath: "/conveyances" }
-        ]}
-      />
-          {!viewMode && <Button className='w-24 mt-4' form="conveyanceForm"  disabled={isConveyanceCreating || isConveyanceUpdating} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
-    </FormPageHeader>
+      <FormPageHeader>
+        <PageHeader
+          pageHeaderTitle={`${!id ? 'Add' : (location.pathname.includes("edit") ? "Edit" : "View")} Conveyance`}
+          breadcrumbPathList={[
+            { menuName: "Management", menuPath: "" },
+            { menuName: "Conveyances", menuPath: "/conveyances" }
+          ]}
+        />
+        {!viewMode && <Button className='w-24 mt-4' form="conveyanceForm" disabled={isConveyanceCreating || isConveyanceUpdating} type="submit">{location.pathname.includes("edit") ? "Update" : "Add"}</Button>}
+      </FormPageHeader>
       <FormWrapper>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} id="conveyanceForm" className='h-auto'>
@@ -248,11 +254,11 @@ const ConveyancesForm = () => {
               </div>}
             </FormFieldsWrapper>
             <FormMapWrapper>
-              <MapPreview data={previewMapData} isLoading={mapLoading} />
-            </FormMapWrapper>         
-        </form>
-      </Form>
-    </FormWrapper>
+              <FieldMapPreview data={previewMapData} isLoading={mapLoading} updateFieldCoordinates={updateFieldCoordinates} mode={mode} />
+            </FormMapWrapper>
+          </form>
+        </Form>
+      </FormWrapper>
     </FormPageWrapper>
   );
 };
