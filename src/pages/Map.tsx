@@ -129,7 +129,7 @@ const Map = () => {
   }
 
   const maderaLayerEvents = (feature: Feature, layer: L.Layer) => {
-     if (!isDesktopDevice) {
+    if (!isDesktopDevice) {
       layer.on({
         click: (e) => {
           const auxLayer = e.target;
@@ -253,13 +253,13 @@ const Map = () => {
       </div> : <RtGeoJson key={isDesktopDevice ? '5003' : "mobile"} layerEvents={colusaLayerEvents} style={maderaJsonStyle} data={JSON.parse(mapData['data'])} color={"#16599a"} />
     }
     return <RtGeoJson key={isDesktopDevice ? '5003' : "mobile"} layerEvents={maderaLayerEvents} style={maderaJsonStyle} data={rt30_data} color={"#16599a"} />
-  }, [searchParcelData, mapData,isDesktopDevice])
+  }, [searchParcelData, mapData, isDesktopDevice])
 
   const mapConfigurations = useMemo(() => { return { 'minZoom': 10, 'containerStyle': { height: "100%", width: "100vw" }, enableLayers: true } }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setMobilePopupInfo({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null });
-},[isDesktopDevice])
+  }, [isDesktopDevice])
 
   return (
     <div id="map" className="relative flex h-[100dvh] md:h-[100vh] w-full">
@@ -267,13 +267,17 @@ const Map = () => {
         isOpen={mobilePopupInfo?.isOpen}
         onClose={() => setMobilePopupInfo({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null })}
         title={`Parcel Id: ${mobilePopupInfo?.parcelId}`}
-        children={<ColusaTableLineChartInfo
-          data={{
-            tableInfo: mobilePopupInfo?.tableInfo,
-            chartInfo: [],
-            parcelId: mobilePopupInfo?.parcelId,
-          }}
-        />} />
+        children={
+          (['colusa@wateraccounts.com', 'colusagrower@wateraccounts.com', 'madera@wateraccounts.com', 'maderagrower@wateraccounts.com'].includes(loggedUser)) ?
+            <ColusaTableLineChartInfo
+              data={{
+                tableInfo: mobilePopupInfo?.tableInfo,
+                chartInfo: [],
+                parcelId: mobilePopupInfo?.parcelId,
+              }}
+            /> :
+            <TableLineChartInfo data={{ 'tableInfo': mobilePopupInfo?.tableInfo, 'chartInfo': [] }} />
+        } />
       <div className="absolute right-4 top-0 flex h-[3.75rem] w-full justify-between  items-center gap-x-3 align-middle">
         <div className="flex items-center gap-x-3 justify-center text-white bg-royalBlue  ml-6 rounded-lg px-2 z-[450] h-8 w-56 ">
           <Icon.Search

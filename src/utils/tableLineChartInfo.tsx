@@ -246,7 +246,7 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
     return (
       <table className="dataframe text-white  border-separate border-spacing-x-3 -ml-2">
         <thead>
-           <tr >
+          <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
             <th className='text-right'>ETAW (AF)</th>
@@ -363,9 +363,9 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
     if (way == '2024') return table_2024();
   }
 
- if(!isDesktopDevice){
-    return (  
-       <div className=' pl-4 pb-4 pt-2 w-full h-full overflow-y-auto overflow-x-hidden  flex flex-col gap-3 '>
+  if (!isDesktopDevice) {
+    return (
+      <div className=' pl-4 pb-4 pt-2 w-full h-full overflow-y-auto overflow-x-hidden  flex flex-col gap-3 '>
         <div className='pl-2 flex justify-between items-center w-[92%] gap-2'> <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
           [{
             value: "2025",
@@ -384,10 +384,10 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
             label: "2022"
           }]
         } />
-          <Download className="inline-block items-baseline  cursor-pointer" onClick={()=>console.log("here")} size={24} />
+          <Download className="inline-block items-baseline  cursor-pointer" onClick={() => console.log("here")} size={24} />
         </div>
         <div className='flex w-[94%] h-[350px] text-white flex-shrink-0  text-sm'> <RTLineChart way={way} /></div>
-          <div className='flex flex-col gap-1 p-2 text-white text-sm bg-slate-900 rounded-lg w-[94%]'>
+        <div className='flex flex-col gap-1 p-2 text-white text-sm bg-slate-900 rounded-lg w-[94%]'>
           <div>Parcel ID: XXX-XXX-XXX</div>
           <div>Account ID: MAD_MA_XXXXX</div>
           <div>Farm Unit Zone: {data?.tableInfo?.zone_name}</div>
@@ -398,13 +398,13 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
           <div>Sustainable Yield Acreage (AC): 75.9</div>
           <div>Transitional Water Acreage (AC): 74.3</div>
         </div>
-          <div className='h-[400px]  '>
-              <div className=' bg-slate-900 rounded-lg w-[94%] p-2 overflow-x-auto text-[12px]'>
-                  {showTable()}
-               </div>
+        <div className='h-[400px]  '>
+          <div className=' bg-slate-900 rounded-lg w-[94%] p-2 overflow-x-auto text-[12px]'>
+            {showTable()}
           </div>
-</div>)
-}
+        </div>
+      </div>)
+  }
 
   return (
     <div className='p-1 h-full w-full flex gap-4'>
@@ -451,7 +451,7 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
 
 export default TableLineChartInfo;
 
-export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
+export const ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
   const [way, setWay] = useState("2025")
   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const table_2025 = () => {
@@ -656,7 +656,7 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
     return (
       <table className="dataframe text-white  border-separate border-spacing-x-3 -ml-2">
         <thead>
-           <tr >
+          <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
             <th className='text-right'>ETAW (AF)</th>
@@ -771,7 +771,7 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
     return (
       <table className="dataframe text-white  border-separate border-spacing-x-3 -ml-2">
         <thead>
-           <tr >
+          <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
             <th className='text-right'>ETAW (AF)</th>
@@ -889,9 +889,9 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
     if (way == '2024') return table_2024();
   }
 
-  if(!isDesktopDevice){
-    return (  
-       <div className=' pl-4 pb-4 pt-2 w-full h-full overflow-y-auto overflow-x-hidden  flex flex-col gap-3 '>
+  if (!isDesktopDevice) {
+    return (
+      <div className=' pl-4 pb-4 pt-2 w-full h-full overflow-y-auto overflow-x-hidden  flex flex-col gap-3 '>
         <div className='pl-2 flex justify-between items-center w-[92%] gap-2'> <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
           [{
             value: "2025",
@@ -910,10 +910,10 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
             label: "2022"
           }]
         } />
-          <Download className="inline-block items-baseline  cursor-pointer" onClick={()=>console.log("here")} size={24} />
+          <Download className="inline-block items-baseline  cursor-pointer" onClick={() => console.log("here")} size={24} />
         </div>
         <div className='flex w-[94%] h-[350px] text-white flex-shrink-0  text-sm'><RTLineChart way={way} isColusa={true} /></div>
-          <div className='flex flex-col gap-1 p-2 text-white text-sm bg-slate-900 rounded-lg w-[94%]'>
+        <div className='flex flex-col gap-1 p-2 text-white text-sm bg-slate-900 rounded-lg w-[94%]'>
           <div>Parcel ID: {data['parcelId']}</div>
           <div>Account ID: COL_MA_XXXXX</div>
           <div>Farm Unit Zone: {data?.tableInfo?.zone_name}</div>
@@ -924,13 +924,13 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
           <div>Sustainable Yield Acreage (AC): 75.9</div>
           <div>Transitional Water Acreage (AC): 74.3</div>
         </div>
-          <div className='h-[400px]  '>
-              <div className=' bg-slate-900 rounded-lg w-[94%] p-2 overflow-x-auto text-[12px]'>
-                  {showTable()}
-               </div>
+        <div className='h-[400px]  '>
+          <div className=' bg-slate-900 rounded-lg w-[94%] p-2 overflow-x-auto text-[12px]'>
+            {showTable()}
           </div>
-</div>)
-}
+        </div>
+      </div>)
+  }
 
   return (
     <div className='p-1 h-full w-full flex gap-4'>
@@ -980,13 +980,13 @@ export const  ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
 };
 
 
-type MsmtPointDetailTypes ={
+type MsmtPointDetailTypes = {
   mpId: string;
   msmtPointId: string;
   wapId: string
 }
 
-export const MsmtPointInfo = ({mpId, msmtPointId, wapId}: MsmtPointDetailTypes) => {
+export const MsmtPointInfo = ({ mpId, msmtPointId, wapId }: MsmtPointDetailTypes) => {
   return (
     <div className='flex-col w-[140px] '>
       <div className='w-full pb-[10px] underline pl-[32px]'>
