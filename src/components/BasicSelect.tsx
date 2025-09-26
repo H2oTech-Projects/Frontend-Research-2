@@ -15,7 +15,7 @@ const BasicSelect = ({ itemList, label,Value ,setValue,showLabel=true}: BasicSel
         <SelectTrigger className="w-full h-10 border  rounded-md transition-colors" >
           <SelectValue placeholder={`Select a ${label}`} />
         </SelectTrigger>
-        <SelectContent className="!z-[800]">
+        <SelectContent className="!z-[1111]">
           {itemList?.map((item) => (
             <SelectItem key={item.value} value={item.value}>
               {item.label}

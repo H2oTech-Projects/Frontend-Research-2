@@ -84,6 +84,10 @@ const Insight = () => {
 
   const yearList: EmailProps[] = [
     {
+      value: "2025",
+      label: "2025"
+    },
+    {
       value: "2024",
       label: "2024"
     },
