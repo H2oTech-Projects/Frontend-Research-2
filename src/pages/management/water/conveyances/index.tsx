@@ -299,7 +299,7 @@ const Conveyances = () => {
             value={searchText}
             onChange={handleSearch}
             onClear={handleClearSearch}
-            placeholder='Search Region' />
+            placeholder='Search Conveyance' />
           <PermissionCheckWrapper name="AddConveyance">
             <Button
               variant={"default"}
