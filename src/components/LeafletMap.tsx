@@ -94,6 +94,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
   const { center } = position;
   const defaultViewBound = useSelector((state: any) => state.auth?.viewBound);
   const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
+  const clientId = JSON.parse(localStorage.getItem("auth") as string)?.user_details.client_id
   const [addedLayers, setAddedLayers] = useState(['rt_2023:wy2023_202309_eta_accumulation_in'])
   const [opacity, setOpacity] = useState(1)
   const isMenuCollapsed = useSelector((state: any) => state.sideMenuCollapse.sideMenuCollapse)
@@ -276,10 +277,108 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
       </LayersControl.Overlay>
     </>
   }
+  const maderaGrowerSld = () => {
+    return `<StyledLayerDescriptor version="1.0.0">
+    <NamedLayer>
+      <Name>rt_2023:${loggedUser}_${clientId}</Name> <!-- Replace with actual layer name -->
+      <UserStyle>
+        <FeatureTypeStyle>
+          <Rule>
+            <RasterSymbolizer>
+              <ColorMap type="ramp">
+                <ColorMapEntry quantity="0" label="0" color="#9e6212"/>
+                <ColorMapEntry quantity="10" label="10" color="#bfa22d"/>
+                <ColorMapEntry quantity="20" label="20" color="#d7db47"/>
+                <ColorMapEntry quantity="30" label="30" color="#86c456"/>
+                <ColorMapEntry quantity="40" label="40" color="#44b26b"/>
+                <ColorMapEntry quantity="50" label="50" color="#4dc2a3"/>
+              </ColorMap>
+            </RasterSymbolizer>
+          </Rule>
+        </FeatureTypeStyle>
+      </UserStyle>
+    </NamedLayer>
+  </StyledLayerDescriptor>`
+  }
+  const maderaGrowerLayers = () =>{
+    const geoUrl = `${geoserverUrl}`
+    return (
+      <>
+        <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer == 'Evapotranspiration (ET)'}>
+          <WMSTileLayer
+            key={userPolygon}
+            url={`${geoUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: `rt_2023:${loggedUser}_${clientId}`,
+              transparent: true,
+              ...({ sld_body: maderaGrowerSld() } as Record<string, any>),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Evapotranspiration (ET)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Evapotranspiration of Applied Water (ETAW)" checked={defaultLayer == 'Evapotranspiration of Applied Water (ETAW)'}>
+          <WMSTileLayer
+            url={`${geoserverUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: "rt_2023:wy2023_202309_etaw_accumulation_in",
+              transparent: true,
+              //...( { sld_body: sld } as Record<string, any> ),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Evapotranspiration of Applied Water (ETAW)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Evapotranspiration of Precipitation (ETPR)" checked={defaultLayer == 'Evapotranspiration of Precipitation (ETPR)'}>
+          <WMSTileLayer
+            url={`${geoserverUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: "rt_2023:wy2023_202309_etpr_accumulation_in",
+              transparent: true,
+              //...( { sld_body: sld } as Record<string, any> ),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Evapotranspiration of Precipitation (ETPR)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Precipitation (P)" checked={defaultLayer == 'Precipitation (P)'}>
+          <WMSTileLayer
+            url={`${geoserverUrl}`}
+            opacity={opacity}
+            params={{
+              format: "image/png",
+              layers: "rt_2023:wy2023_p_total_in",
+              transparent: true,
+              // ...( { SLD_BODY: sld } as Record<string, any> ),
+            }}
+            eventHandlers={{
+              add: () => setDefaultLayer("Precipitation (P)"),
+              remove: () => console.log(''),
+            }}
+          />
+        </LayersControl.Overlay>
+      </>
+    )
+  }
   const addLayers = () => {
-    const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
+    const geoUrl = `${geoserverUrl}`
     if (loggedUser == "colusa@wateraccounts.com" || loggedUser == 'colusagrower@wateraccounts.com') {
       return colusaRaster()
+    }
+    if (loggedUser == 'maderagrower@wateraccounts.com') {
+      return maderaGrowerLayers()
     }
     return (
       <>

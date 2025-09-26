@@ -90,7 +90,7 @@ const CustomerParcel = () => {
   //const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetCustomerFieldMapByWAP(defaultWay);
   const { data: mapData, isLoading: mapLoading, refetch: refetchMap } = useGetParcelMapByWAY(defaultWay);
   // const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWay!, id!)
-  const { mutate: updateCustomerParcel } = usePutCustomerParcel();
+  const { mutate: updateCustomerParcel, isPending: updatingCustomerParcels } = usePutCustomerParcel();
   const { data: waysOptions, isLoading: waysLoading } = useGetWaysOptions()
 
   const columns: ColumnDef<any>[] = [
@@ -192,7 +192,7 @@ const CustomerParcel = () => {
     $("[id^='popup-']").remove();
   };
 
-  const geoJsonLayerEvents = (feature: any, layer: any) => {
+  const geoJsonLayerEvents = useCallback((feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(feature.properties));
 
     layer.on({
@@ -224,9 +224,9 @@ const CustomerParcel = () => {
         }
       }
     });
-  }
+  },[])
 
-  const fieldJsonLayerEvents = (feature: any, layer: any) => {
+  const fieldJsonLayerEvents = useCallback((feature: any, layer: any) => {
     // layer.bindPopup(buildPopupMessage(feature.properties));
     layer.on({
       mouseover: function (e: any) {
@@ -258,7 +258,7 @@ const CustomerParcel = () => {
         }
       }
     });
-  }
+  },[])
 
   useEffect(() => {
     if (!!geojson.parcelGeojson) {
@@ -278,7 +278,7 @@ const CustomerParcel = () => {
     setGeojson({ parcelGeojson: null, viewBounds: null, existingParcelIds: [], customerName: "" })
   }, [defaultWay])
 
-  const geoJsonStyle = (feature: any) => {
+  const geoJsonStyle = useCallback((feature: any) => {
     if (selectedFields.includes(feature.properties.parcel_id)) {
       return {
         color: "#16599A", // Border color
@@ -293,8 +293,8 @@ const CustomerParcel = () => {
       fillOpacity: 0.5,
       weight: 2,
     };
-  }
-  const fieldGeojsonStyle = (feature: any) => {
+  },[selectedFields])
+  const fieldGeojsonStyle = useCallback((feature: any) => {
     if (selectedFields.includes(feature.properties.parcel_id)) {
       return {
         color: "#16599A", // Border color
@@ -310,15 +310,7 @@ const CustomerParcel = () => {
       fillOpacity: 0.5,
       weight: 2,
     };
-  }
-  const pointGeojsonStyle = (features: any) => {
-    return {
-      color: "white",
-      fillColor: "blue", // Fill color for normal areas
-      fillOpacity: 1,
-      weight: 2,
-    };
-  }
+  },[selectedFields])
 
   // }, [mapLoading, mapData, geojson, selectedFields])
 
@@ -373,11 +365,12 @@ const CustomerParcel = () => {
             value={searchText}
             onChange={handleSearch}
             onClear={handleClearSearch}
-            placeholder='Search ' />
+            placeholder='Search' />
           <Button
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={handleAssociatePopUp2}
+            disabled={updatingCustomerParcels}
           >
             <Plus size={4} />
             Add Links
