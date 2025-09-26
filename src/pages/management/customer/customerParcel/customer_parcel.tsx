@@ -329,7 +329,7 @@ const CustomerParcel = () => {
   const handleAssociatePopUp2 = () => {
     if (selectedFields.length < 1) return;
 
-    const formData = { wayId: defaultWay, customerId: geojson.id, data: { parcels: selectedFields } }
+    const formData = { wayId: defaultWay, customerId: geojson.id, data: { parcels: selectedFields.filter(Boolean) } }
     updateCustomerParcel(formData, {
       onSuccess: (data: any) => {
         queryClient.invalidateQueries({ queryKey: [POST_CUSTOMER_FIELD] })
