@@ -106,10 +106,6 @@ const Insight = () => {
     {
       value: "2020",
       label: "2020"
-    },
-    {
-      value: "2025",
-      label: "2025"
     }
   ]
 
