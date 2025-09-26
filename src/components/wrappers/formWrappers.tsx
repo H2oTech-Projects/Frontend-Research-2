@@ -25,7 +25,7 @@ export const FormPageWrapper: React.FC<WrapperProps> = ({ children, className })
 
 export const FormWrapper: React.FC<WrapperProps> = ({ children, className }) => {
   return (
-    <div className={`bg-white rounded-lg shadow-md p-5 mt-3 h-[calc(100vh-138px)] overflow-y-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white ${className || ""}`}>
+    <div className={`bg-white rounded-lg shadow-md p-5 mt-3 h-[calc(100dvh-138px)] overflow-y-auto flex flex-col gap-4 dark:bg-slate-900 dark:text-white ${className || ""}`}>
       {children}
     </div>
   );
@@ -33,7 +33,7 @@ export const FormWrapper: React.FC<WrapperProps> = ({ children, className }) => 
 
 export const FormMapWrapper: React.FC<WrapperProps> = ({ children, className }) => {
   return (
-    <div className={`h-[calc(100vh-228px)] ${className}`}>
+    <div className={`h-[calc(100dvh-228px)] ${className}`}>
       {children}
     </div>
   )
