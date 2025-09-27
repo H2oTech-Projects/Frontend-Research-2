@@ -1,5 +1,5 @@
 import $ from "jquery";
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import LeafletMap from '../LeafletMap'
 import RtGeoJson from '../RtGeoJson'
 import RtPolygon from '../RtPolygon'
@@ -8,6 +8,9 @@ import { AccountDetailType, parcel_id_mapperType } from '@/types/apiResponseType
 import { geoFarmJsonStyle, geoJsonStyle, InsightMapPosition, LeafletMapConfig } from '@/utils/mapConstant'
 import { buildPopupMessage } from "@/utils/map";
 import { createRoot } from "react-dom/client";
+import TableLineChartInfo, {ColusaTableLineChartInfo} from '@/utils/tableLineChartInfo';
+import { useMediaQuery } from "@uidotdev/usehooks";
+import MobileMapPopup from "@/components/modal/CustomMapModel";
 
 interface InsightMapProps {
   viewBoundFarmGeoJson:[number,number][] | null;
@@ -32,6 +35,9 @@ const InsightMap =({
   selectedParcelGeom,
   parcelInfo
 }:InsightMapProps)=>{
+const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+const [mobilePopupInfo, setMobilePopupInfo] = useState<any>({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null })
+const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
 function hasOnlyZeroPairs(arr: any[]): boolean {
     return Array.isArray(arr) && arr.every(subArr =>
         Array.isArray(subArr) &&
@@ -60,51 +66,85 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
     // $("#popup-" + Id).remove();
   };
 
-  const geoJsonLayerEvents = (feature: any, layer: any) => {
-        const popupDiv = document.createElement('div');
+  useEffect(() => {
+    setMobilePopupInfo({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null });
+  }, [isDesktopDevice])
+
+//   const geoJsonLayerEvents = (feature: any, layer: any) => {
+//         const popupDiv = document.createElement('div');
+//     popupDiv.className = 'popup-map ';
+//     // @ts-ignore
+//     popupDiv.style = "width:100%; height:100%; overflow:hidden";
+//     popupDiv.id = feature.properties?.apn;
+//     layer.bindPopup(popupDiv);
+//     // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
+//     layer.on({
+//       mouseover: function (e: any) {
+//         const auxLayer = e.target;
+//         // auxLayer.setStyle({
+//         //   weight: 4,
+//         //   //color: "#800080"
+//         // });
+//         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
+//         {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
+//         <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
+//           <div>Parcel ID: { auxLayer.feature.properties.parcel_id || feature.properties.apn}</div>
+//           <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div>
+//             <div>Total Allocation (AF): 66.5</div>
+//             <div>ETAW (AF): 46.5</div>
+//             <div>Remaining (AF): 19.7</div>
+//             <div>Remaining (%): 29.7</div>
+//             <div>Sustainable Yield Acreage (AC): 20.1</div>
+//             <div>Transitional Water Acreage (AC): 19.3</div>
+//             <div>2024 Allocation (AF): 45.9</div>
+//             <div>Carryover (AF): 20.3</div>
+//             <div> Zone Abbreviation: MEN</div>
+// </div>);
+//         showInfo('Parcel Id: ', auxLayer.feature.properties.parcel_id || feature.properties.apn);
+//       },
+//       mouseout: function (e: any) {
+//         const auxLayer = e.target;
+//         // auxLayer.setStyle({
+//         //   weight: 2.5,
+//         //   //color: "#9370DB",
+//         //   //fillColor: "lightblue",
+//         //   fillOpacity: 0,
+//         //   opacity: 1,
+//         // });
+//         removeInfo(auxLayer.feature.properties.parcel_id);
+//       },
+//     })};
+
+const geoJsonLayerEvents = (feature: any, layer: any) => {
+  if (!isDesktopDevice) {
+    layer.on({
+      click: (e: any) => {
+        const auxLayer = e.target;
+        setMobilePopupInfo({ isOpen: true, tableInfo: parcelInfo[auxLayer.feature.properties.apn], chartInfo: [], parcelId: auxLayer.feature.properties.apn })
+      },
+    });
+    return;
+  }
+  const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
-    popupDiv.style = "width:100%; height:100%; overflow:hidden";
+    popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.apn;
-    layer.bindPopup(popupDiv);
-    // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
+
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(54, 128),autoPanPaddingBottomRight: L.point(128, 48) });
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        // auxLayer.setStyle({
-        //   weight: 4,
-        //   //color: "#800080"
-        // });
-        createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-        {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
-        <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
-          <div>Parcel ID: { auxLayer.feature.properties.parcel_id || feature.properties.apn}</div>
-          <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div>
-            <div>Total Allocation (AF): 66.5</div>
-            <div>ETAW (AF): 46.5</div>
-            <div>Remaining (AF): 19.7</div>
-            <div>Remaining (%): 29.7</div>
-            <div>Sustainable Yield Acreage (AC): 20.1</div>
-            <div>Transitional Water Acreage (AC): 19.3</div>
-            <div>2024 Allocation (AF): 45.9</div>
-            <div>Carryover (AF): 20.3</div>
-            <div> Zone Abbreviation: MEN</div>
-</div>);
-        showInfo('Parcel Id: ', auxLayer.feature.properties.parcel_id || feature.properties.apn);
+        debugger
+        createRoot(popupDiv).render(<ColusaTableLineChartInfo data={{'tableInfo': parcelInfo[auxLayer.feature.properties.apn], 'chartInfo': [], 'parcelId': auxLayer.feature.properties.apn}}/>);
+        showInfo('Parcel Id', auxLayer.feature.properties.apn);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
-        // auxLayer.setStyle({
-        //   weight: 2.5,
-        //   //color: "#9370DB",
-        //   //fillColor: "lightblue",
-        //   fillOpacity: 0,
-        //   opacity: 1,
-        // });
-        removeInfo(auxLayer.feature.properties.parcel_id);
+        removeInfo(auxLayer.feature.properties.apn);
       },
-    })};
-
+    });
+}
   const polygonEventHandlers: {
     mouseover: (e: L.LeafletMouseEvent) => void;
     mouseout: (e: L.LeafletMouseEvent) => void;
@@ -136,50 +176,65 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
 
     }
 
-  return (<LeafletMap
-            position={InsightMapPosition}
-            zoom={14}
-            // viewBound={ accountDetail?.data?.view_bounds }
-            viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds }
-            collapse={collapse}
-            configurations={{...LeafletMapConfig, enableLayers: true}}
-          >
+  return (<>
+    <MobileMapPopup
+      isOpen={mobilePopupInfo?.isOpen}
+      onClose={() => setMobilePopupInfo({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null })}
+      title={`Parcel Id: ${mobilePopupInfo?.parcelId}`}
+      children={
+        (['colusa@wateraccounts.com', 'colusagrower@wateraccounts.com', 'madera@wateraccounts.com', 'maderagrower@wateraccounts.com'].includes(loggedUser)) ?
+          <ColusaTableLineChartInfo
+            data={{
+              tableInfo: mobilePopupInfo?.tableInfo,
+              chartInfo: [],
+              parcelId: mobilePopupInfo?.parcelId,
+            }}
+          /> :
+          <TableLineChartInfo data={{ 'tableInfo': mobilePopupInfo?.tableInfo, 'chartInfo': [] }} />
+      } />
+    <LeafletMap
+      position={InsightMapPosition}
+      zoom={14}
+      // viewBound={ accountDetail?.data?.view_bounds }
+      viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds }
+      collapse={collapse}
+      configurations={{...LeafletMapConfig, enableLayers: true}}
+    >
+      {
+        accountDetail?.geojson_parcels &&
+          <RtGeoJson
+            key={selectedEmailValue as string}
+            layerEvents={geoJsonLayerEvents}
+            style={geoJsonStyle}
+            data={JSON.parse(accountDetail?.geojson_parcels)}
+            color={"#16599a"}
+          />
+      }
+      {
+        !!selectedFarmGeoJson &&
+        <RtGeoJson
+          key={selectedFarm as string}
+          layerEvents={geoJsonLayerEvents}
+          style={geoFarmJsonStyle}
+          data={JSON.parse(selectedFarmGeoJson)}
+          color={"red"}
+        />
+      }
 
-            {
-              accountDetail?.geojson_parcels &&
-                <RtGeoJson
-                  key={selectedEmailValue as string}
-                  layerEvents={geoJsonLayerEvents}
-                  style={geoJsonStyle}
-                  data={JSON.parse(accountDetail?.geojson_parcels)}
-                  color={"#16599a"}
-                />
-            }
-            {
-              !!selectedFarmGeoJson &&
-              <RtGeoJson
-                key={selectedFarm as string}
-                layerEvents={geoJsonLayerEvents}
-                style={geoFarmJsonStyle}
-                data={JSON.parse(selectedFarmGeoJson)}
-                color={"red"}
-              />
-            }
-
-            {
-              !!selectedParcel &&
-              <RtPolygon
-                pathOptions={{ id: selectedParcel } as Object}
-                positions={selectedParcelGeom}
-                color={"red"}
-                eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
-              >
-                <Popup>
-                  <div dangerouslySetInnerHTML={{ __html: "test" }} />
-                </Popup>
-              </RtPolygon>
-            }
-    </LeafletMap>
+      {
+        !!selectedParcel &&
+        <RtPolygon
+          pathOptions={{ id: selectedParcel } as Object}
+          positions={selectedParcelGeom}
+          color={"red"}
+          eventHandlers={polygonEventHandlers as L.LeafletEventHandlerFnMap}
+        >
+          <Popup>
+            <div dangerouslySetInnerHTML={{ __html: "test" }} />
+          </Popup>
+        </RtPolygon>
+      }
+    </LeafletMap></>
   )
 
 }

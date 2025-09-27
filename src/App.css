@@ -69,8 +69,8 @@ html.dark .leaflet-popup-tip {
 
 .insight-Map .leaflet-popup-content {
   background-color:#16599a !important; /* Set a background color for the popup content */
-  max-height: 208px !important; /* Set a maximum height for the popup content */
-  max-width: 280px !important;
+  /* max-height: 208px !important;
+  max-width: 280px !important; */
   scrollbar-width: thin !important; /* For Firefox */
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
 }
