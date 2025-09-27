@@ -136,15 +136,13 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
 
     }
 
-
-
   return (<LeafletMap
             position={InsightMapPosition}
             zoom={14}
             // viewBound={ accountDetail?.data?.view_bounds }
             viewBound={viewBoundFarmGeoJson?.length ?  viewBoundFarmGeoJson : accountDetail?.view_bounds }
             collapse={collapse}
-            configurations={LeafletMapConfig}
+            configurations={{...LeafletMapConfig, enableLayers: true}}
           >
 
             {
