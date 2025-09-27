@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@uidotdev/usehooks';
 import React, { PureComponent } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -103,7 +104,6 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
       acc_2024: 162.3,
       acc_2023: 175.2,
       acc_2022: 149.7,
-      total_allocation_2024: 197.7,
       total_allocation_2023: 182.5,
       total_allocation_2022: 167.6,
       total_allocation: 206.2,
@@ -233,8 +233,10 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
     },
     {
       name: 'Sep',
+      acc_2025: 162.5,
       acc_2023: 175.2,
       acc_2022: 149.7,
+      total_allocation_2025: 162.45,
       total_allocation_2023: 182.5,
       total_allocation_2022: 167.6,
       total_allocation: 206.2,
@@ -268,20 +270,21 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
       allocation_2024: 173.4
     },
   ];
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
     <ResponsiveContainer width="100%" height="100%" >
       <LineChart
         data={data}
         margin={{
           top: 5,
-          right: 30,
-          left: 20,
+          right: 10,
+          left: -5,
           bottom: 5,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" angle={-40} textAnchor="end" tick={{ fill: 'white' }} interval={0} />
-        <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft', style: { fill: 'white' } }} tick={{ fill: 'white' }} />
+        <XAxis dataKey="name" angle={-40} textAnchor="end" tick={{ fill: 'white',style: { fontSize: isDesktopDevice ? 14 : 12 } }} interval={0} />
+        <YAxis name='Volume (AF)' label={{ value: 'Volume (AF)', angle: -90, position: 'insideLeft',offset:18, style: { fill: 'white',fontSize: isDesktopDevice ? 14 : 12  } }} tick={{ fill: 'white',style: { fontSize: isDesktopDevice ? 14 : 12 } }} />
         <Tooltip
           labelFormatter={(label) => {
             return <div className='text-black font-bold underline '>{`${label} ${way}`}</div>;
@@ -289,7 +292,7 @@ const RTLineChart = ({ data, way, isColusa=false }: ChartParameters) => {
           formatter={(value: any, name: any) => [`${value}`, name]}
           contentStyle={{ border: '1px solid #ccc', borderRadius: '8px' }}
         />
-        <Legend wrapperStyle={{ paddingTop: 16 }} />
+        <Legend wrapperStyle={{ paddingTop: 16,fontSize : isDesktopDevice ? 14 : 12 } }/>
         <Line type="monotone" dataKey={`acc_${way}`} textAnchor="end" stroke="#0096FF" name={`${way} ETAW`} strokeWidth={2}/>
         <Line type="monotone" dataKey="acc_2022" textAnchor="end" strokeDasharray="8 4 2 4" stroke="gray" name="Low (2022)" strokeWidth={2}/>
         <Line type="monotone" dataKey="acc_2023" textAnchor="end" strokeDasharray="8 8" stroke="gray" name="High (2023)" strokeWidth={2}/>
