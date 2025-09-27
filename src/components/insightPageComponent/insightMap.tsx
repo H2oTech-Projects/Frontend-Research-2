@@ -1,6 +1,7 @@
 import $ from "jquery";
 import React, { useEffect, useState } from 'react'
 import LeafletMap from '../LeafletMap'
+import L from "leaflet";
 import RtGeoJson from '../RtGeoJson'
 import RtPolygon from '../RtPolygon'
 import { Popup } from 'react-leaflet'
