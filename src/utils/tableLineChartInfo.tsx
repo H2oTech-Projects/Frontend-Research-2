@@ -19,108 +19,108 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>ETAW (AF)</th>
-            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Jan</td>
-            <td className="text-right">0.0</td>
-            <td className="text-right">0.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Feb</td>
-            <td className="text-right">1.6</td>
-            <td className="text-right">1.6</td>
             <td className="text-right">204.6</td>
             <td className="text-right">99.2%</td>
+            <td className="text-right">1.6</td>
+            <td className="text-right">1.6</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Mar</td>
-            <td className="text-right">4.2</td>
-            <td className="text-right">5.8</td>
             <td className="text-right">200.4</td>
             <td className="text-right">97.2%</td>
+            <td className="text-right">4.2</td>
+            <td className="text-right">5.8</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Apr</td>
-            <td className="text-right">13.2</td>
-            <td className="text-right">19.0</td>
             <td className="text-right">187.2</td>
             <td className="text-right">90.8%</td>
+            <td className="text-right">13.2</td>
+            <td className="text-right">19.0</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">May</td>
-            <td className="text-right">24.6</td>
-            <td className="text-right">43.6</td>
             <td className="text-right">162.6</td>
             <td className="text-right">78.9%</td>
+            <td className="text-right">24.6</td>
+            <td className="text-right">43.6</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Jun</td>
-            <td className="text-right">34.1</td>
-            <td className="text-right">77.7</td>
             <td className="text-right">128.5</td>
             <td className="text-right">62.3%</td>
+            <td className="text-right">34.1</td>
+            <td className="text-right">77.7</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Jul</td>
-            <td className="text-right">35.3</td>
-            <td className="text-right">113.0</td>
             <td className="text-right">93.2</td>
             <td className="text-right">45.2%</td>
+            <td className="text-right">35.3</td>
+            <td className="text-right">113.0</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Aug</td>
-            <td className="text-right">29.7</td>
-            <td className="text-right">142.7</td>
             <td className="text-right">63.5</td>
             <td className="text-right">30.8%</td>
+            <td className="text-right">29.7</td>
+            <td className="text-right">142.7</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Sep</td>
-            <td className="text-right">19.6</td>
-            <td className="text-right">162.3</td>
             <td className="text-right">43.9</td>
             <td className="text-right">21.3%</td>
+            <td className="text-right">19.6</td>
+            <td className="text-right">162.3</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Oct</td>
-            <td className="text-right">11.7</td>
-            <td className="text-right">174.1</td>
             <td className="text-right">32.1</td>
             <td className="text-right">15.6%</td>
+            <td className="text-right">11.7</td>
+            <td className="text-right">174.1</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Nov</td>
-            <td className="text-right">5.9</td>
-            <td className="text-right">179.9</td>
             <td className="text-right">26.3</td>
             <td className="text-right">12.7%</td>
+            <td className="text-right">5.9</td>
+            <td className="text-right">179.9</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Dec</td>
-            <td className="text-right">2.6</td>
-            <td className="text-right">182.5</td>
             <td className="text-right">23.7</td>
             <td className="text-right">11.5%</td>
+            <td className="text-right">2.6</td>
+            <td className="text-right">182.5</td>
           </tr>
         </tbody>
       </table>
@@ -133,108 +133,108 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>ETAW (AF)</th>
-            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Jan</td>
-            <td className="text-right">0.0</td>
-            <td className="text-right">0.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Feb</td>
-            <td className="text-right">1.7</td>
-            <td className="text-right">1.7</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">1.7</td>
+            <td className="text-right">1.7</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Mar</td>
-            <td className="text-right">4.7</td>
-            <td className="text-right">6.4</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">4.7</td>
+            <td className="text-right">6.4</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Apr</td>
-            <td className="text-right">14.3</td>
-            <td className="text-right">20.7</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">14.3</td>
+            <td className="text-right">20.7</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">May</td>
-            <td className="text-right">27.3</td>
-            <td className="text-right">48.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">27.3</td>
+            <td className="text-right">48.0</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Jun</td>
-            <td className="text-right">38.7</td>
-            <td className="text-right">86.7</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">38.7</td>
+            <td className="text-right">86.7</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Jul</td>
-            <td className="text-right">39.7</td>
-            <td className="text-right">126.3</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">39.7</td>
+            <td className="text-right">126.3</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Aug</td>
-            <td className="text-right">31.6</td>
-            <td className="text-right">157.9</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">31.6</td>
+            <td className="text-right">157.9</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Sep</td>
-            <td className="text-right">21.0</td>
-            <td className="text-right">179.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">21.0</td>
+            <td className="text-right">179.0</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Oct</td>
-            <td className="text-right">12.2</td>
-            <td className="text-right">191.2</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">12.2</td>
+            <td className="text-right">191.2</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Nov</td>
-            <td className="text-right">6.7</td>
-            <td className="text-right">197.9</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">6.7</td>
+            <td className="text-right">197.9</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Dec</td>
-            <td className="text-right">2.6</td>
-            <td className="text-right">200.5</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">2.6</td>
+            <td className="text-right">200.5</td>
           </tr>
         </tbody>
 
@@ -249,108 +249,108 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>ETAW (AF)</th>
-            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Jan</td>
-            <td className="text-right">0.0</td>
-            <td className="text-right">0.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Feb</td>
-            <td className="text-right">1.3</td>
-            <td className="text-right">1.3</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">1.3</td>
+            <td className="text-right">1.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Mar</td>
-            <td className="text-right">3.9</td>
-            <td className="text-right">5.2</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">3.9</td>
+            <td className="text-right">5.2</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Apr</td>
-            <td className="text-right">13.1</td>
-            <td className="text-right">18.3</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">13.1</td>
+            <td className="text-right">18.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">May</td>
-            <td className="text-right">23.0</td>
-            <td className="text-right">41.3</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">23.0</td>
+            <td className="text-right">41.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Jun</td>
-            <td className="text-right">29.3</td>
-            <td className="text-right">70.5</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">29.3</td>
+            <td className="text-right">70.5</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Jul</td>
-            <td className="text-right">34.3</td>
-            <td className="text-right">104.9</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">34.3</td>
+            <td className="text-right">104.9</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Aug</td>
-            <td className="text-right">26.5</td>
-            <td className="text-right">131.4</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">26.5</td>
+            <td className="text-right">131.4</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Sep</td>
-            <td className="text-right">16.7</td>
-            <td className="text-right">148.2</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">16.7</td>
+            <td className="text-right">148.2</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Oct</td>
-            <td className="text-right">11.1</td>
-            <td className="text-right">159.3</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">11.1</td>
+            <td className="text-right">159.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Nov</td>
-            <td className="text-right">5.8</td>
-            <td className="text-right">165.1</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">5.8</td>
+            <td className="text-right">165.1</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Dec</td>
-            <td className="text-right">2.4</td>
-            <td className="text-right">167.5</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">2.4</td>
+            <td className="text-right">167.5</td>
           </tr>
         </tbody>
 
@@ -461,76 +461,84 @@ export const ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>ETAW (AF)</th>
-            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">Jan</td>
-            <td className="text-right">0.0</td>
-            <td className="text-right">0.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
           </tr>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">Feb</td>
-            <td className="text-right">1.6</td>
-            <td className="text-right">1.6</td>
             <td className="text-right">204.6</td>
             <td className="text-right">99.2%</td>
+            <td className="text-right">1.6</td>
+            <td className="text-right">1.6</td>
           </tr>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">Mar</td>
-            <td className="text-right">4.2</td>
-            <td className="text-right">5.8</td>
             <td className="text-right">200.4</td>
             <td className="text-right">97.2%</td>
+            <td className="text-right">4.2</td>
+            <td className="text-right">5.8</td>
           </tr>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">Apr</td>
-            <td className="text-right">13.2</td>
-            <td className="text-right">19.0</td>
             <td className="text-right">187.2</td>
             <td className="text-right">90.8%</td>
+            <td className="text-right">13.2</td>
+            <td className="text-right">19.0</td>
           </tr>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">May</td>
-            <td className="text-right">24.6</td>
-            <td className="text-right">43.6</td>
             <td className="text-right">162.6</td>
             <td className="text-right">78.9%</td>
+            <td className="text-right">24.6</td>
+            <td className="text-right">43.6</td>
           </tr>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">Jun</td>
-            <td className="text-right">34.1</td>
-            <td className="text-right">77.7</td>
             <td className="text-right">128.5</td>
             <td className="text-right">62.3%</td>
+            <td className="text-right">34.1</td>
+            <td className="text-right">77.7</td>
           </tr>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">Jul</td>
-            <td className="text-right">35.3</td>
-            <td className="text-right">113.0</td>
             <td className="text-right">93.2</td>
             <td className="text-right">45.2%</td>
+            <td className="text-right">35.3</td>
+            <td className="text-right">113.0</td>
           </tr>
           <tr>
             <td className="text-left">2025</td>
             <td className="text-left">Aug</td>
-            <td className="text-right">29.7</td>
-            <td className="text-right">142.7</td>
             <td className="text-right">63.5</td>
             <td className="text-right">30.8%</td>
+            <td className="text-right">29.7</td>
+            <td className="text-right">142.7</td>
+          </tr>
+          <tr>
+            <td className="text-left">2025</td>
+            <td className="text-left">Sep</td>
+            <td className="text-right">33.5</td>
+            <td className="text-right">16.8%</td>
+            <td className="text-right">30</td>
+            <td className="text-right">172.7</td>
           </tr>
         </tbody>
       </table>
@@ -543,108 +551,108 @@ export const ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>ETAW (AF)</th>
-            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Jan</td>
-            <td className="text-right">0.0</td>
-            <td className="text-right">0.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Feb</td>
-            <td className="text-right">1.7</td>
-            <td className="text-right">1.7</td>
             <td className="text-right">204.5</td>
             <td className="text-right">99.1%</td>
+            <td className="text-right">1.7</td>
+            <td className="text-right">1.7</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Mar</td>
-            <td className="text-right">4.7</td>
-            <td className="text-right">6.4</td>
             <td className="text-right">199.8</td>
             <td className="text-right">96.8%</td>
+            <td className="text-right">4.7</td>
+            <td className="text-right">6.4</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Apr</td>
-            <td className="text-right">14.3</td>
-            <td className="text-right">20.7</td>
             <td className="text-right">185.5</td>
             <td className="text-right">89.96%</td>
+            <td className="text-right">14.3</td>
+            <td className="text-right">20.7</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">May</td>
-            <td className="text-right">27.3</td>
-            <td className="text-right">48.0</td>
             <td className="text-right">158.2</td>
             <td className="text-right">76.72%</td>
+            <td className="text-right">27.3</td>
+            <td className="text-right">48.0</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Jun</td>
-            <td className="text-right">38.7</td>
-            <td className="text-right">86.7</td>
             <td className="text-right">119.5</td>
             <td className="text-right">57.9%</td>
+            <td className="text-right">38.7</td>
+            <td className="text-right">86.7</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Jul</td>
-            <td className="text-right">39.7</td>
-            <td className="text-right">126.3</td>
             <td className="text-right">79.9</td>
             <td className="text-right">38.7%</td>
+            <td className="text-right">39.7</td>
+            <td className="text-right">126.3</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Aug</td>
-            <td className="text-right">31.6</td>
-            <td className="text-right">157.9</td>
             <td className="text-right">48.3</td>
             <td className="text-right">23.4%</td>
+            <td className="text-right">31.6</td>
+            <td className="text-right">157.9</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Sep</td>
-            <td className="text-right">21.0</td>
-            <td className="text-right">179.0</td>
             <td className="text-right">27.2</td>
             <td className="text-right">13.2%</td>
+            <td className="text-right">21.0</td>
+            <td className="text-right">179.0</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Oct</td>
-            <td className="text-right">12.2</td>
-            <td className="text-right">191.2</td>
             <td className="text-right">15</td>
             <td className="text-right">7.2%</td>
+            <td className="text-right">12.2</td>
+            <td className="text-right">191.2</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Nov</td>
-            <td className="text-right">6.7</td>
-            <td className="text-right">197.9</td>
             <td className="text-right">8.3</td>
             <td className="text-right">3.8%</td>
+            <td className="text-right">6.7</td>
+            <td className="text-right">197.9</td>
           </tr>
           <tr>
             <td className="text-left">2023</td>
             <td className="text-left">Dec</td>
-            <td className="text-right">2.6</td>
-            <td className="text-right">200.5</td>
             <td className="text-right">5.7</td>
             <td className="text-right">2.7%</td>
+            <td className="text-right">2.6</td>
+            <td className="text-right">200.5</td>
           </tr>
         </tbody>
 
@@ -659,108 +667,108 @@ export const ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>ETAW (AF)</th>
-            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Jan</td>
-            <td className="text-right">0.0</td>
-            <td className="text-right">0.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Feb</td>
-            <td className="text-right">1.3</td>
-            <td className="text-right">1.3</td>
             <td className="text-right">204.9</td>
             <td className="text-right">99.12%</td>
+            <td className="text-right">1.3</td>
+            <td className="text-right">1.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Mar</td>
-            <td className="text-right">3.9</td>
-            <td className="text-right">5.2</td>
             <td className="text-right">201</td>
             <td className="text-right">97.47%</td>
+            <td className="text-right">3.9</td>
+            <td className="text-right">5.2</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Apr</td>
-            <td className="text-right">13.1</td>
-            <td className="text-right">18.3</td>
             <td className="text-right">187.9</td>
             <td className="text-right">91.12%</td>
+            <td className="text-right">13.1</td>
+            <td className="text-right">18.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">May</td>
-            <td className="text-right">23.0</td>
-            <td className="text-right">41.3</td>
             <td className="text-right">164.9</td>
             <td className="text-right">79.97%</td>
+            <td className="text-right">23.0</td>
+            <td className="text-right">41.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Jun</td>
-            <td className="text-right">29.3</td>
-            <td className="text-right">70.5</td>
             <td className="text-right">135.7</td>
             <td className="text-right">65.8%</td>
+            <td className="text-right">29.3</td>
+            <td className="text-right">70.5</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Jul</td>
-            <td className="text-right">34.3</td>
-            <td className="text-right">104.9</td>
             <td className="text-right">101.3</td>
             <td className="text-right">49.12%</td>
+            <td className="text-right">34.3</td>
+            <td className="text-right">104.9</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Aug</td>
-            <td className="text-right">26.5</td>
-            <td className="text-right">131.4</td>
             <td className="text-right">74.8</td>
             <td className="text-right">36.27%</td>
+            <td className="text-right">26.5</td>
+            <td className="text-right">131.4</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Sep</td>
-            <td className="text-right">16.7</td>
-            <td className="text-right">148.2</td>
             <td className="text-right">58</td>
             <td className="text-right">28.12%</td>
+            <td className="text-right">16.7</td>
+            <td className="text-right">148.2</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Oct</td>
-            <td className="text-right">11.1</td>
-            <td className="text-right">159.3</td>
             <td className="text-right">46.9</td>
             <td className="text-right">22.7%</td>
+            <td className="text-right">11.1</td>
+            <td className="text-right">159.3</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Nov</td>
-            <td className="text-right">5.8</td>
-            <td className="text-right">165.1</td>
             <td className="text-right">41.1</td>
             <td className="text-right">19.9%</td>
+            <td className="text-right">5.8</td>
+            <td className="text-right">165.1</td>
           </tr>
           <tr>
             <td className="text-left">2022</td>
             <td className="text-left">Dec</td>
-            <td className="text-right">2.4</td>
-            <td className="text-right">167.5</td>
             <td className="text-right">38.7</td>
             <td className="text-right">18.7%</td>
+            <td className="text-right">2.4</td>
+            <td className="text-right">167.5</td>
           </tr>
         </tbody>
 
@@ -774,108 +782,108 @@ export const ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
           <tr >
             <th className='text-left'>Year</th>
             <th className='text-left'>Month</th>
-            <th className='text-right'>ETAW (AF)</th>
-            <th className='text-right'>Cumulative ETAW (AF)</th>
             <th className='text-right'>Remaining (AF)</th>
             <th className='text-right'>Remaining (%)</th>
+            <th className='text-right'>ETAW (AF)</th>
+            <th className='text-right'>Cumulative ETAW (AF)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Jan</td>
-            <td className="text-right">0.0</td>
-            <td className="text-right">0.0</td>
             <td className="text-right">206.2</td>
             <td className="text-right">100.0%</td>
+            <td className="text-right">0.0</td>
+            <td className="text-right">0.0</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Feb</td>
-            <td className="text-right">1.3</td>
-            <td className="text-right">1.3</td>
             <td className="text-right">204.9</td>
             <td className="text-right">99.12%</td>
+            <td className="text-right">1.3</td>
+            <td className="text-right">1.3</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Mar</td>
-            <td className="text-right">3.9</td>
-            <td className="text-right">5.2</td>
             <td className="text-right">201</td>
             <td className="text-right">97.47%</td>
+            <td className="text-right">3.9</td>
+            <td className="text-right">5.2</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Apr</td>
-            <td className="text-right">13.1</td>
-            <td className="text-right">18.3</td>
             <td className="text-right">187.9</td>
             <td className="text-right">91.12%</td>
+            <td className="text-right">13.1</td>
+            <td className="text-right">18.3</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">May</td>
-            <td className="text-right">23.0</td>
-            <td className="text-right">41.3</td>
             <td className="text-right">164.9</td>
             <td className="text-right">79.97%</td>
+            <td className="text-right">23.0</td>
+            <td className="text-right">41.3</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Jun</td>
-            <td className="text-right">29.3</td>
-            <td className="text-right">70.5</td>
             <td className="text-right">135.7</td>
             <td className="text-right">65.8%</td>
+            <td className="text-right">29.3</td>
+            <td className="text-right">70.5</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Jul</td>
-            <td className="text-right">34.3</td>
-            <td className="text-right">104.9</td>
             <td className="text-right">101.3</td>
             <td className="text-right">49.12%</td>
+            <td className="text-right">34.3</td>
+            <td className="text-right">104.9</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Aug</td>
-            <td className="text-right">26.5</td>
-            <td className="text-right">131.4</td>
             <td className="text-right">74.8</td>
             <td className="text-right">36.27%</td>
+            <td className="text-right">26.5</td>
+            <td className="text-right">131.4</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Sep</td>
-            <td className="text-right">16.7</td>
-            <td className="text-right">148.2</td>
             <td className="text-right">58</td>
             <td className="text-right">28.12%</td>
+            <td className="text-right">16.7</td>
+            <td className="text-right">148.2</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Oct</td>
-            <td className="text-right">11.1</td>
-            <td className="text-right">159.3</td>
             <td className="text-right">46.9</td>
             <td className="text-right">22.7%</td>
+            <td className="text-right">11.1</td>
+            <td className="text-right">159.3</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Nov</td>
-            <td className="text-right">5.8</td>
-            <td className="text-right">165.1</td>
             <td className="text-right">41.1</td>
             <td className="text-right">19.9%</td>
+            <td className="text-right">5.8</td>
+            <td className="text-right">165.1</td>
           </tr>
           <tr>
             <td className="text-left">2024</td>
             <td className="text-left">Dec</td>
-            <td className="text-right">2.4</td>
-            <td className="text-right">167.5</td>
             <td className="text-right">38.7</td>
             <td className="text-right">18.7%</td>
+            <td className="text-right">2.4</td>
+            <td className="text-right">167.5</td>
           </tr>
         </tbody>
 
