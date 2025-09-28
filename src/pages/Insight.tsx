@@ -199,8 +199,8 @@ const Insight = () => {
       header: ({ column }) => {
         return (
           <div
-            className="flex gap-2  cursor-pointer"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex gap-2  cursor-pointer"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Parcel ID
             {!column.getIsSorted() ? <ArrowUpDown size={16} /> : column.getIsSorted() === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
@@ -210,12 +210,41 @@ const Insight = () => {
       cell: ({ row }) => <div>{row.getValue("parcel_id")}</div>,
     },
     {
+      accessorKey: "remain_af",
+      header: ({ column }) => {
+        return (
+          <div
+            className="flex gap-2 cursor-pointer justify-end"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Remaining (AF)
+            {!column.getIsSorted() ? <ArrowUpDown size={16} /> : column.getIsSorted() === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+          </div>
+        );
+      },
+      size: 180
+    },
+    {
+      accessorKey: "remain_pct",
+      header: ({ column }) => {
+        return (
+          <div
+            className="flex gap-2 cursor-pointer items-center"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Remaining (%)
+            {!column.getIsSorted() ? <ArrowUpDown size={16} /> : column.getIsSorted() === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "primary_crop",
       header: ({ column }) => {
         return (
           <div
-            className="flex gap-2 cursor-pointer"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex gap-2 cursor-pointer"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Primary Crop
             {!column.getIsSorted() ? <ArrowUpDown size={16} /> : column.getIsSorted() === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
@@ -252,37 +281,6 @@ const Insight = () => {
         );
       },
       size: 150
-    },
-    {
-      accessorKey: "remain_af",
-      header: ({ column }) => {
-        return (
-          <div
-            className="flex gap-2 cursor-pointer justify-end"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Remaining (AF)
-            {!column.getIsSorted() ? <ArrowUpDown size={16} /> : column.getIsSorted() === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
-          </div>
-        );
-      },
-      size: 180
-    },
-    {
-      accessorKey: "remain_pct",
-      header: ({ column }) => {
-        return (
-          <div
-            className="flex gap-2 cursor-pointer items-center"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Remaining (%)
-            {!column.getIsSorted() ? <ArrowUpDown size={16} /> : column.getIsSorted() === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
-          </div>
-        );
-      },
-
-
     },
     {
       accessorKey: "legal_ac",
