@@ -106,7 +106,7 @@ const FieldMsmtPoint = () => {
   });
 
   const { data: msmtPoints, isLoading, refetch: refetchMsmtPoints } = useGetMsmtPointList(tableInfo, defaultWap);
-  const { data: mapData, isLoading: mapLoading } = useClientGetFieldMapList();
+  const { data: mapData, isLoading: mapLoading } = useClientGetFieldMapList(defaultWap);
   const { data: msmtPointFields, refetch: refetchmsmtPointFields } = useGetMsmtPointFields(position?.msmtPointId || null, defaultWap)
   const { data: msmtPointFieldDetail, refetch: refetchMsmtPointFieldsDetail } = useGetMsmtPointFieldDetail(position?.msmtPointId || null, defaultWap)
   const { data: ways, isLoading: waysLoading } = useGetWaps()

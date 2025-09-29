@@ -49,8 +49,8 @@ getApportionMethod : async ()=>{
     const response  = await axiosInstance.get(GET_FIELD_MAP_LIST).catch((err) => console.log(err));
     return toJson(response);
 },
-getClientFieldMapList :async()=>{
-  const response  = await axiosInstance.get(GET_CLIENT_FIELD_MAP_LIST).catch((err) => console.log(err));
+getClientFieldMapList :async(wapId:any)=>{
+  const response  = await axiosInstance.get(BASE_API_URL + "/waps/"+wapId+"/clientfields/").catch((err) => console.log(err));
   return toJson(response);
 },
 
@@ -100,13 +100,13 @@ getMsmtPointMap : async () =>{
  getMsmtPointById: async (id:any) => {
   const response = await axiosInstance.get<any>(BASE_API_URL + "/msmt_points/" + id + "/");
   const data = convertKeysToCamelCase(toJson(response));
-  return data?.data   
+  return data?.data
 },
 
-  postMsmtPoint: async (data: any) => { 
+  postMsmtPoint: async (data: any) => {
     const response = await axiosInstance.post<any>(BASE_API_URL + "/msmt_points/", data, {
       headers: {
-        "Content-Type": "application/json",   
+        "Content-Type": "application/json",
       },
     });
     return response.data;

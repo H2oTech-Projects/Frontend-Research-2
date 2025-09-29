@@ -204,7 +204,7 @@ const Subregions = () => {
 
         return {
           color: "red", // Border color
-          fillColor: "red", // Fill color for the highlighted area
+          fillColor: "transparent", // Fill color for the highlighted area
           fillOpacity: 0.7,
           weight: 2,
         };

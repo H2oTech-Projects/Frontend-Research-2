@@ -23,10 +23,11 @@ export const useGetMsmtPointList = (tableInfo:initialTableDataTypes, wapId:strin
 //   });
 // }
 
-export const useClientGetFieldMapList = () => {
+export const useClientGetFieldMapList = (wapId:string | null) => {
   return useQuery({
     queryKey: [GET_CLIENT_FIELD_MAP_KEY],
-    queryFn: ()=> queryFieldService.getClientFieldMapList(),
+    queryFn: ()=> queryFieldService.getClientFieldMapList(wapId),
+    enabled:!!wapId,
     ...queryConfig,
   });
 }
