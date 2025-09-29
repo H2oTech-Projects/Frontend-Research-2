@@ -278,7 +278,9 @@ const Subregions = () => {
               setPosition={setPosition as Function}
               setZoomLevel={setZoomLevel as Function}
               setClickedGeom={setClickedGeom as Function}
+              clickedField={clickedGeom}
               tableType={"subregion"}
+              idType={'id'}
               tableInfo={tableInfo}
               setTableInfo={setTableInfo}
               totalData={subRegionData?.totalRecords || 1}

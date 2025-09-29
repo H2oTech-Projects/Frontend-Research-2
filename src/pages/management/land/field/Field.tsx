@@ -441,6 +441,7 @@ const Field = () => {
                 totalData={fieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
+                idType={"fieldId"}
                 customHeight="h-[calc(100dvh-312px)]"
                 columnProperties={fieldPageColumnProperties}
               />

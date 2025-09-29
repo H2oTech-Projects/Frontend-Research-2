@@ -397,7 +397,7 @@ const Parcel = () => {
                 totalData={fieldData?.totalRecords || 1}
                 collapse={collapse}
                 isLoading={isLoading}
-                tableType={"parcel"}
+                idType={"parcelId"}
                 customHeight="h-[calc(100dvh-312px)]"
                 columnProperties={parcelPageColumnProperties}
               />

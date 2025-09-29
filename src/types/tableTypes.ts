@@ -37,6 +37,7 @@ export type MapTableTypes<T> = {
   columnProperties?: any | null;
   tableCSSConfig?: tableCSSConfig | null;
   tableType?: string | null;
+  idType?: string;
   setSelectedFarm?: null | Function;
   setSelectedParcel?: null | Function;
   isLoading?: boolean;

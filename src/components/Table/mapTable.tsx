@@ -38,6 +38,7 @@ const MapTable = <T,>({
     columnProperties = null,
     tableCSSConfig = {headerFontSize:null , bodyFontSize:null},
     tableType,
+    idType = 'fieldId',
     setSelectedFarm=null,
     setSelectedParcel=null,
     isLoading = false,
@@ -108,10 +109,12 @@ const MapTable = <T,>({
         setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});
       }
       if(type === "region") {
-        setClickedGeom && setClickedGeom({regionId: row.original?.regionId, viewBound: row.original?.viewBounds});
+        setClickedGeom && setClickedGeom({id: row.original?.regionId, viewBound: row.original?.viewBounds});
+        return;
       }
       if(type === "subregion") {
         setClickedGeom && setClickedGeom({id: row.original?.id, viewBound: row.original?.viewBounds});
+        return;
       }
       if (type=="farm") {
         // @ts-ignore
@@ -260,13 +263,15 @@ const MapTable = <T,>({
 
 
     const fieldTableRow = (row: any) => {
+      const isSelectedRow = !!clickedField && clickedField.id === row.original[idType]
       return <TableRow
               key={row.id}
-              className="cursor-pointer text-sm hover:bg-slate-500"
+              className={`${isSelectedRow ? "bg-slate-400 text-white" : ""} cursor-pointer text-sm hover:bg-slate-500`}
             >
               {row.getVisibleCells().map((cell: any) =>
                 <TableCell
-                  className={`${
+                  className={`
+                    ${isSelectedRow ? " text-white" : ""} ${
                     // @ts-ignore
                     cell.column.columnDef.meta?.className ?? ""
                     } `}
@@ -286,11 +291,12 @@ const MapTable = <T,>({
     }
 
     const insightTableRow = (row: any) => {
+      const isSelectedRow = !!clickedField && clickedField.id === row.original.FieldID
       return <TableRow
               key={row.id}
               className={cn(
                 // @ts-ignore
-               clickedField && clickedField === row.original.FieldID ? "bg-slate-400" : "",
+                isSelectedRow ? "bg-slate-400" : "",
                 "cursor-pointer",
               )}
               // @ts-ignore
@@ -298,7 +304,8 @@ const MapTable = <T,>({
              >
               {row.getVisibleCells().map((cell: any) => (
                 <TableCell
-                  className={`${
+                  className={`${isSelectedRow ? " text-white" : ""} ${
+
                     // @ts-ignore
                     cell.column.columnDef.meta?.className ?? ""
                     // @ts-ignore

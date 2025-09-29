@@ -47,7 +47,7 @@ const Region = () => {
   const {collapse,tableCollapseBtn,mapCollapseBtn} = useMableCollapse();
   const [position, setPosition] = useState<any>({ center: [38.86902846413033, -121.729324818604], polygon: [], fieldId: "", features: {} });
   const [zoomLevel, setZoomLevel] = useState(14);
-  const [clickedGeom, setClickedGeom] = useState<any>({ regionId: "", viewBounds: null });
+  const [clickedGeom, setClickedGeom] = useState<any>({ id: "", viewBounds: null });
   const [id, setId] = useState<string>("");
   const [open, setOpen] = useState(false);
   const { data: regionData, isLoading: conveyLoading, refetch } = useGetRegionList(tableInfo);
@@ -197,7 +197,7 @@ const Region = () => {
   const ReturnChildren = useMemo(() => {
 
     const geoJsonStyle = (features: any) => {
-      if (features?.properties?.region_id === clickedGeom?.regionId?.toString()) {
+      if (features?.properties?.region_id === clickedGeom?.id?.toString()) {
 
         return {
           color: "red", // Border color
@@ -251,10 +251,10 @@ const Region = () => {
       />
       <MableContainerWrapper>
         <MableHeaderWrapper>
-          <SearchInput 
-            value={searchText} 
-            onChange={handleSearch} 
-            onClear={handleClearSearch} 
+          <SearchInput
+            value={searchText}
+            onChange={handleSearch}
+            onClear={handleClearSearch}
             placeholder='Search Region' />
           <PermissionCheckWrapper name="AddRegion">
             <Button
@@ -277,7 +277,9 @@ const Region = () => {
                 setPosition={setPosition as Function}
                 setZoomLevel={setZoomLevel as Function}
                 setClickedGeom={setClickedGeom as Function}
+                clickedField={clickedGeom}
                 tableType={"region"}
+                idType={'regionId'}
                 tableInfo={tableInfo}
                 setTableInfo={setTableInfo}
                 totalData={regionData?.totalRecords || 1}
