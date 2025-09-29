@@ -300,8 +300,34 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
     </NamedLayer>
   </StyledLayerDescriptor>`
   }
+
+  const coludsGrowerSld = () => {
+    return `<StyledLayerDescriptor version="1.0.0">
+    <NamedLayer>
+      <Name>rt_2023:${loggedUser}_${clientId}</Name> <!-- Replace with actual layer name -->
+      <UserStyle>
+        <FeatureTypeStyle>
+          <Rule>
+            <RasterSymbolizer>
+              <ColorMap type="ramp">
+              <ColorMapEntry quantity="150.00" label="0" color="#9e6212"/>
+              <ColorMapEntry quantity="341.67" label="10" color="#bfa22d"/>
+              <ColorMapEntry quantity="533.33" label="20" color="#d7db47"/>
+              <ColorMapEntry quantity="725.00" label="30" color="#86c456"/>
+              <ColorMapEntry quantity="916.67" label="40" color="#44b26b"/>
+              <ColorMapEntry quantity="1108.33" label="50" color="#4dc2a3"/>
+              <ColorMapEntry quantity="1300.00" label="60" color="#4c87bd"/>
+              </ColorMap>
+            </RasterSymbolizer>
+          </Rule>
+        </FeatureTypeStyle>
+      </UserStyle>
+    </NamedLayer>
+  </StyledLayerDescriptor>`
+  }
   const maderaGrowerLayers = () =>{
     const geoUrl = `${geoserverUrl}`
+    const sld = loggedUser == 'colusagrower@wateraccounts.com' ? coludsGrowerSld() :maderaGrowerSld()
     return (
       <>
         <LayersControl.Overlay name="Evapotranspiration (ET)" checked={defaultLayer == 'Evapotranspiration (ET)'}>
@@ -313,7 +339,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
               format: "image/png",
               layers: `rt_2023:${loggedUser}_${clientId}`,
               transparent: true,
-              ...({ sld_body: maderaGrowerSld() } as Record<string, any>),
+              ...({ sld_body: sld } as Record<string, any>),
             }}
             eventHandlers={{
               add: () => setDefaultLayer("Evapotranspiration (ET)"),
@@ -374,10 +400,10 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
   }
   const addLayers = () => {
     const geoUrl = `${geoserverUrl}`
-    if (loggedUser == "colusa@wateraccounts.com" || loggedUser == 'colusagrower@wateraccounts.com') {
+    if (loggedUser == "colusa@wateraccounts.com") {
       return colusaRaster()
     }
-    if (loggedUser == 'maderagrower@wateraccounts.com') {
+    if (loggedUser == 'maderagrower@wateraccounts.com' || loggedUser == 'colusagrower@wateraccounts.com') {
       return maderaGrowerLayers()
     }
     return (

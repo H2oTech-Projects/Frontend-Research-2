@@ -1,6 +1,6 @@
 export const geoFarmJsonStyle = {
-  color: "#16599A", // Border color
-  fillColor: "red", // Fill color for normal areas
+  color: "red", // Border color
+  fillColor: "transparent", // Fill color for normal areas
   fillOpacity: 1,
   weight: 2,
 };

@@ -71,57 +71,12 @@ function hasOnlyZeroPairs(arr: any[]): boolean {
     setMobilePopupInfo({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null });
   }, [isDesktopDevice])
 
-//   const geoJsonLayerEvents = (feature: any, layer: any) => {
-//         const popupDiv = document.createElement('div');
-//     popupDiv.className = 'popup-map ';
-//     // @ts-ignore
-//     popupDiv.style = "width:100%; height:100%; overflow:hidden";
-//     popupDiv.id = feature.properties?.apn;
-//     layer.bindPopup(popupDiv);
-//     // layer.bindPopup(buildPopupMessage(parcelInfo[feature.properties.apn]));
-//     layer.on({
-//       mouseover: function (e: any) {
-//         const auxLayer = e.target;
-//         // auxLayer.setStyle({
-//         //   weight: 4,
-//         //   //color: "#800080"
-//         // });
-//         createRoot(popupDiv).render(<div className="w-full h-full overflow-y-auto flex flex-col  py-2">
-//         {/* <div>Parcel ID: {parcelInfo[feature.properties.apn]?.parcel_id}</div>
-//         <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div> */}
-//           <div>Parcel ID: { auxLayer.feature.properties.parcel_id || feature.properties.apn}</div>
-//           <div>Primary Crop: {parcelInfo[feature.properties.apn]?.primary_crop}</div>
-//             <div>Total Allocation (AF): 66.5</div>
-//             <div>ETAW (AF): 46.5</div>
-//             <div>Remaining (AF): 19.7</div>
-//             <div>Remaining (%): 29.7</div>
-//             <div>Sustainable Yield Acreage (AC): 20.1</div>
-//             <div>Transitional Water Acreage (AC): 19.3</div>
-//             <div>2024 Allocation (AF): 45.9</div>
-//             <div>Carryover (AF): 20.3</div>
-//             <div> Zone Abbreviation: MEN</div>
-// </div>);
-//         showInfo('Parcel Id: ', auxLayer.feature.properties.parcel_id || feature.properties.apn);
-//       },
-//       mouseout: function (e: any) {
-//         const auxLayer = e.target;
-//         // auxLayer.setStyle({
-//         //   weight: 2.5,
-//         //   //color: "#9370DB",
-//         //   //fillColor: "lightblue",
-//         //   fillOpacity: 0,
-//         //   opacity: 1,
-//         // });
-//         removeInfo(auxLayer.feature.properties.parcel_id);
-//       },
-//     })};
-
 const geoJsonLayerEvents = (feature: any, layer: any) => {
   if (!isDesktopDevice) {
     layer.on({
       click: (e: any) => {
         const auxLayer = e.target;
-        setMobilePopupInfo({ isOpen: true, tableInfo: parcelInfo[auxLayer.feature.properties.apn], chartInfo: [], parcelId: auxLayer.feature.properties.apn })
+        setMobilePopupInfo({ isOpen: true, tableInfo: parcelInfo[auxLayer.feature.properties.parcel_id], chartInfo: [], parcelId: auxLayer.feature.properties.parcel_id })
       },
     });
     return;
@@ -130,19 +85,18 @@ const geoJsonLayerEvents = (feature: any, layer: any) => {
     popupDiv.className = 'popup-map ';
     // @ts-ignore
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
-    popupDiv.id = feature.properties?.apn;
+    popupDiv.id = feature.properties?.parcel_id;
 
     layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(54, 128),autoPanPaddingBottomRight: L.point(128, 48) });
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;
-        debugger
-        createRoot(popupDiv).render(<ColusaTableLineChartInfo data={{'tableInfo': parcelInfo[auxLayer.feature.properties.apn], 'chartInfo': [], 'parcelId': auxLayer.feature.properties.apn}}/>);
-        showInfo('Parcel Id', auxLayer.feature.properties.apn);
+        createRoot(popupDiv).render(<ColusaTableLineChartInfo data={{'tableInfo': parcelInfo[auxLayer.feature.properties.parcel_id], 'chartInfo': [], 'parcelId': auxLayer.feature.properties.parcel_id}}/>);
+        showInfo('Parcel Id', auxLayer.feature.properties.parcel_id);
       },
       mouseout: function (e: any) {
         const auxLayer = e.target;
-        removeInfo(auxLayer.feature.properties.apn);
+        removeInfo(auxLayer.feature.properties.parcel_id);
       },
     });
 }
