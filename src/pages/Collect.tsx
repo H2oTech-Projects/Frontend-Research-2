@@ -18,9 +18,9 @@ const Collect = () => {
   const getUrl = () =>{
     !Name?.includes('colusa')
     if (!Name?.includes('madera')){
-      return "https://fielddatastaging.davidsengineering.com/-/single/8hqRnJ79xmXVyytPddh7uNNkO5tkbk6?st=HM1wWTj0dds0KghSc9lAIa$iM4niEKcu8NJERaWWaRwWvXWwN8XiLhmyZ2d1qrI9"
+      return "https://fielddatastaging.davidsengineering.com/-/x/8hqRnJ79xmXVyytPddh7uNNkO5tkbk6?st=HM1wWTj0dds0KghSc9lAIa$iM4niEKcu8NJERaWWaRwWvXWwN8XiLhmyZ2d1qrI9"
     } else if (!Name?.includes('colusa')){
-      return "https://fielddatastaging.davidsengineering.com/-/single/XT7LfLuCVFAvUfRK88SbsozcRsBmTmE?st=InVJBwxePovvOTPDAyoqXufP9QOZ1KT4IYyaYG85UhpzNRW1PewVFQv4ZVSttgJq"
+      return "https://fielddatastaging.davidsengineering.com/-/x/XT7LfLuCVFAvUfRK88SbsozcRsBmTmE?st=InVJBwxePovvOTPDAyoqXufP9QOZ1KT4IYyaYG85UhpzNRW1PewVFQv4ZVSttgJq"
     }
   }
 
