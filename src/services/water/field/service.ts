@@ -8,6 +8,7 @@ import { createFormData } from "@/utils/createFormData";
 
 const GET_FIELD_LIST = BASE_API_URL + "/fields/";
 const GET_FIELD_MAP_LIST = BASE_API_URL + "/fields/map/";
+const GET_CLIENT_CROP_OPTIONS = BASE_API_URL + "/crop/options/";
 
 export const queryFieldService = {
   getFieldList: async (tableInfo:initialTableDataTypes) => {
@@ -25,7 +26,7 @@ export const queryFieldService = {
   getFieldMapList :async()=>{
     const response  = await axiosInstance.get(GET_FIELD_MAP_LIST).catch((err) => console.log(err));
     return toJson(response);
-},
+  },
 
 getFieldListByWAP : async (tableInfo:initialTableDataTypes,wapId:number) =>{
     const response = await axiosInstance.get(BASE_API_URL + "/waps/" + wapId + "/fields/",{
@@ -72,5 +73,9 @@ putFieldByWap : async (formData:any) =>{
       },
     })
   return response?.data
-}
+},
+  getClientCropsOptions :async()=>{
+    const response  = await axiosInstance.get(GET_CLIENT_CROP_OPTIONS).catch((err) => console.log(err));
+    return toJson(response?.data.data);
+  },
 };

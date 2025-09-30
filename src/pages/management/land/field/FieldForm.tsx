@@ -19,7 +19,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useGetWaps } from '@/services/timeSeries'
-import { useGetFieldDetailByWAP, usePostFieldByWAP, usePutFieldByWAP } from '@/services/water/field'
+import { useGetFieldDetailByWAP, usePostFieldByWAP, usePutFieldByWAP, useGetCropOptions } from '@/services/water/field'
 import { convertKeysToSnakeCase } from '@/utils/stringConversion'
 import { GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, POST_FIELD_KEY_BY_WAP, PUT_FIELD_KEY_BY_WAP } from '@/services/water/field/constant'
 import { showErrorToast } from '@/utils/tools'
@@ -38,6 +38,7 @@ const formSchema = z.object({
   fieldActBool: z.string().optional(),
   fieldGeometryFile: z.array(z.instanceof(File)).optional(),
   fieldCoordinates: z.string().optional(),
+  cropId: z.number().optional()
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -51,6 +52,7 @@ const FieldForm = () => {
   const [shapeType, setShapeType] = useState<string>("shape");
   const { data: waps, isLoading: wapsLoading } = useGetWaps();
   const { data: fieldDetailData, isLoading: isFieldDetailLoading } = useGetFieldDetailByWAP(wapId!, id!)
+  const { data: cropOptions, isLoading: cropOptionsLoading } = useGetCropOptions();
   const { mutate: previewMap, isPending: mapLoading } = usePostMapPreview();
   const { mutate: createFieldByWap, isPending: creatingField } = usePostFieldByWAP();
   const { mutate: updateFieldByWap, isPending: updatingField } = usePutFieldByWAP();
@@ -67,6 +69,7 @@ const FieldForm = () => {
       fieldDesc: "",
       fieldGeometryFile: undefined,
       fieldCoordinates: "",
+      cropId: undefined
     },
   });
 
@@ -101,7 +104,7 @@ const FieldForm = () => {
 
   useEffect(() => {
     if (fieldDetailData && id) {
-      form.reset({ ...fieldDetailData?.data[0], fieldActBool: fieldDetailData?.data[0]?.fieldActBool ? "True" : "False", fieldIrrigArea: fieldDetailData?.data[0]?.fieldIrrigHa, fieldLegalArea: fieldDetailData?.data[0]?.fieldLegalHa });
+      form.reset({ ...fieldDetailData?.data[0], fieldActBool: fieldDetailData?.data[0]?.fieldActBool ? "True" : "False", fieldIrrigArea: fieldDetailData?.data[0]?.fieldIrrigHa, fieldLegalArea: fieldDetailData?.data[0]?.fieldLegalHa, cropId: fieldDetailData?.data[0]?.cropId});
       form.setValue("wapId", wapId);
       form.setValue("fieldCoordinates", JSON.stringify(fieldDetailData?.fieldCoordinates));
       setPreviewMapData({ data: fieldDetailData?.fieldGeojson, coordinates: fieldDetailData?.fieldCoordinates, view_bounds: fieldDetailData?.viewBounds ? fieldDetailData?.viewBounds : new LatLngBounds([0, 0], [0, 0]) })
@@ -181,7 +184,7 @@ const FieldForm = () => {
               <FormInput control={form.control} name='fieldIrrigArea' label={'Irrigable Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Irrigable  Area' type='number' disabled={viewMode} />
               <FormInput control={form.control} name='fieldLegalArea' label={'Stand By Area' + " " + `(${(UnitSystemName())})`} placeholder='Enter Stand By  Area' type='number' disabled={viewMode} />
               {/* <FormInput control={form.control} name= 'fieldLegalArea ' label='Legal Area' placeholder='Enter Stand By  Area' type='number' /> */}
-              <FormTextbox control={form.control} name='fieldDesc' label='Field Description' placeholder='Enter Field Description' disabled={viewMode} />
+              <FormComboBox control={form.control} name='cropId' label='Select Crop' options={cropOptions} disabled={viewMode} />
               <FormRadioGroup control={form.control} name='fieldActBool' label='Active status' options={[{ label: "Yes", value: "True" }, { label: "No", value: "False" }]} disabled={viewMode} />
 
               {!viewMode && <BasicSelect
@@ -211,6 +214,7 @@ const FieldForm = () => {
                   multiple={true}
                   accept=".prj,.shp,.dbf,.shx,.qmd,.cpg" />}
               </div>}
+              <FormTextbox control={form.control} name='fieldDesc' label='Field Description' placeholder='Enter Field Description' disabled={viewMode} />
 
             </FormFieldsWrapper>
             <FormMapWrapper>

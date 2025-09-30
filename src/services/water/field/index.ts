@@ -2,7 +2,7 @@ import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
 import { queryConfig } from "@/utils/reactQueryConfig";
 import { queryFieldService } from "./service";
 import { initialTableDataTypes } from "@/types/tableTypes";
-import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, POST_FIELD_KEY_BY_WAP, PUT_FIELD_KEY_BY_WAP } from "./constant";
+import { DELETE_FIELD_KEY_BY_FIELD, GET_FIELD_DETAIL_KEY_BY_WAP, GET_FIELD_LIST_KEY, GET_FIELD_LIST_KEY_BY_WAP, GET_FIELD_MAP_KEY, POST_FIELD_KEY_BY_WAP, PUT_FIELD_KEY_BY_WAP, GET_CLIENT_CROPS } from "./constant";
 import { FieldListResponseType } from "@/types/apiResponseType";
 import { RegisterResponse } from "../msmtPoint/service";
 import { AxiosError } from "axios";
@@ -19,6 +19,14 @@ export const useGetFieldMapList = () => {
   return useQuery({
     queryKey: [GET_FIELD_MAP_KEY],
     queryFn: ()=> queryFieldService.getFieldMapList(),
+    ...queryConfig,
+  });
+}
+
+export const useGetCropOptions = () => {
+  return useQuery({
+    queryKey: [GET_CLIENT_CROPS],
+    queryFn: ()=> queryFieldService.getClientCropsOptions(),
     ...queryConfig,
   });
 }
