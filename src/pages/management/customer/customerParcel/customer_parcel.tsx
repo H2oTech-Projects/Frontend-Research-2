@@ -396,6 +396,8 @@ const CustomerParcel = () => {
                 customHeight="h-[calc(100vh-312px)]"
                 setGeojson={setGeojson as Function}
                 tableType={"customerParcel"}
+                idType={'customerId'}
+                clickedField={geojson}
                 columnProperties={customerParcelColumnProperties}
               />
               <CollapseBtn

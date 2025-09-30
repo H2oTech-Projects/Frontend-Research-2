@@ -417,7 +417,9 @@ const CropField = () => {
                 isLoading={isLoading}
                 customHeight="h-[calc(100dvh-312px)]"
                 setGeojson={setGeojson as Function}
+                clickedField={geojson}
                 tableType={"cropField"}
+                idType={"cropId"}
                 columnProperties={cropFieldColumnProperties}
               />
               <CollapseBtn

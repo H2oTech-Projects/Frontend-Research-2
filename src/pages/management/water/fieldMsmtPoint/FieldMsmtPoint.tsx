@@ -468,8 +468,6 @@ const FieldMsmtPoint = () => {
       }
       setOpen(true)
     }
-
-
   }
 
   return (
@@ -610,6 +608,7 @@ const FieldMsmtPoint = () => {
             <TableOnlyWrapper>
               <MapTable
                 tableType={"point"}
+                idType={"id"}
                 defaultData={msmtPoints?.data || []}
                 columns={columns}
                 setPosition={setPosition as Function}

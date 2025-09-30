@@ -307,6 +307,7 @@ const measurementPoint = () => {
               isLoading={isLoading}
               customHeight="h-[calc(100dvh-210px)]"
               tableType={"clientPoint"}
+              idType={'id'}
               columnProperties={measurementPointColumnProperties}
             />
             <CollapseBtn

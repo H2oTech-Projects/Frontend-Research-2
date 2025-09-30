@@ -107,6 +107,7 @@ const MapTable = <T,>({
       }
       if(type === "conveyance") {
         setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});
+        return
       }
       if(type === "region") {
         setClickedGeom && setClickedGeom({id: row.original?.regionId, viewBound: row.original?.viewBounds});
@@ -149,6 +150,8 @@ const MapTable = <T,>({
           features: row.original,
           fields: fields
         });
+        // @ts-ignore
+        setClickedField({id: row.original.id, viewBounds:''})
         return;
       }
       if (type == 'clientPoint') {
@@ -165,6 +168,8 @@ const MapTable = <T,>({
           // @ts-ignore
           features: row.original,
         });
+        // @ts-ignore
+        setClickedField({id: row.original.id, viewBounds:''})
         return;
       }
       // @ts-ignore
@@ -251,7 +256,6 @@ const MapTable = <T,>({
 
     const fieldTableContent = () => {
       return table.getRowModel().rows.map((row) =>
-
         fieldTableRow(row)
       )
     }

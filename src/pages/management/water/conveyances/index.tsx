@@ -323,7 +323,9 @@ const Conveyances = () => {
               setPosition={setPosition as Function}
               setZoomLevel={setZoomLevel as Function}
               setClickedGeom={setClickedGeom as Function}
+              clickedField={clickedGeom}
               tableType={"conveyance"}
+              idType={"conveyId"}
               tableInfo={tableInfo}
               setTableInfo={setTableInfo}
               totalData={conveyData?.totalRecords || 1}
