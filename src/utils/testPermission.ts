@@ -157,7 +157,9 @@ export const staticPermissionList = (UserRole: string) => {
       "DeleteMsmtPointField",
       "ViewMsmtPointField",
       "EditCropField",
-      "ViewCropField"
+      "ViewCropField",
+      "EditCustomerParcel",
+      "ViewCustomerParcel"
     ]
   }
 
@@ -196,7 +198,9 @@ export const staticPermissionList = (UserRole: string) => {
       "Field-MsmtPoint",
       "ViewMsmtPointField",
       "CropField",
-      "ViewCropField"
+      "ViewCropField",
+      "CustomerParcel",
+      "ViewCustomerParcel"
     ];
   }
 

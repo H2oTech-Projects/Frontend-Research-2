@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import PageHeader from "@/components/PageHeader";
 import CollapseBtn from "@/components/CollapseBtn";
+import { useSelector } from 'react-redux';
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -74,6 +76,7 @@ const CustomerParcel = () => {
   const queryClient = useQueryClient();
   const timerRef = useRef<number | null>(null);
   const [selectedFields, setSelectedFields] = useState<any>([]);
+  const UserRole = useSelector((state: any) => state.auth?.userRole);
   const selectedFieldsRef = useRef(selectedFields);
   const { tableInfo, setTableInfo, searchText, handleClearSearch, handleSearch } = useTableData({ initialTableData });
   const { collapse, tableCollapseBtn, mapCollapseBtn } = useMableCollapse();
@@ -152,18 +155,22 @@ const CustomerParcel = () => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {/* <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWay}/edit/${row.original.fieldId}`) }}> */}
-            <DropdownMenuItem onClick={() => { setId(row.original.customerId); setOpen(true) }} >
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditCustomerParcel">
+              <DropdownMenuItem onClick={() => { setId(row.original.customerId); setOpen(true) }} >
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
 
             {/* <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
               <Trash2 />
               Delete
             </DropdownMenuItem> */}
-            <DropdownMenuItem >
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="ViewCustomerParcel">
+              <DropdownMenuItem >
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -370,7 +377,7 @@ const CustomerParcel = () => {
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={handleAssociatePopUp2}
-            disabled={updatingCustomerParcels}
+            disabled={UserRole !== 'Admin' || updatingCustomerParcels}
           >
             <Plus size={4} />
             Add Links

@@ -22,7 +22,7 @@ const menuLinks = [
         Children: [],
       },
       {
-        label: "Insight",
+        label: "Insights",
         icon: Icon.ChartColumnBig,
         name: routeUrl?.Insight?.name,
         path: routeUrl?.Insight?.url,
