@@ -152,7 +152,10 @@ export const staticPermissionList = (UserRole: string) => {
       "Collect",
       "Field-MsmtPoint",
       "Field-Parcel",
-      "Time"
+      "Time",
+      "EditMsmtPointField",
+      "DeleteMsmtPointField",
+      "ViewMsmtPointField"
     ]
   }
 
@@ -187,7 +190,9 @@ export const staticPermissionList = (UserRole: string) => {
       "ViewRegion",
       "Subregion",
       "ViewSubregion",
-      "Collect"
+      "Collect",
+      "Field-MsmtPoint",
+      "ViewMsmtPointField"
     ];
   }
 

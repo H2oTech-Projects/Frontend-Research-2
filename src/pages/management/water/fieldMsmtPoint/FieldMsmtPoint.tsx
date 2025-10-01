@@ -10,6 +10,7 @@ import RtPoint from "@/components/RtPoint";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
 import { useGetWaps, useGetMsmtPointFields } from '@/services/timeSeries'
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 import { toast } from 'react-toastify';
 import {
   DropdownMenu,
@@ -28,6 +29,7 @@ import { debounce } from "@/utils";
 import Spinner from "@/components/Spinner";
 import { useNavigate } from "react-router-dom";
 import CustomModal from "@/components/modal/ConfirmModal";
+import { useSelector } from 'react-redux';
 import { set } from "date-fns";
 import { z } from "zod";
 import { link } from "fs";
@@ -74,6 +76,7 @@ type ApportionFormType = z.infer<typeof ApportionSchema>;
 
 const FieldMsmtPoint = () => {
   const params = new URLSearchParams(useLocation().search)
+  const UserRole = useSelector((state: any) => state.auth?.userRole);
   const mpId = params.get("mpId");
   const wapId = params.get("wapId");
   const msmtPointId = params.get("msmtpoint");
@@ -256,20 +259,25 @@ const FieldMsmtPoint = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
-
-            <DropdownMenuItem>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditMsmtPointField">
+              <DropdownMenuItem>
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="DeleteMsmtPointField">
+              <DropdownMenuItem>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
+            <PermissionCheckWrapper name="ViewMsmtPointField">
+              <DropdownMenuItem>
+                <Eye />
+                View
+              </DropdownMenuItem>
+              </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -592,7 +600,7 @@ const FieldMsmtPoint = () => {
           <Button
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
-            disabled={!enableLink}
+            disabled={UserRole !== 'Admin' || !enableLink}
             onClick={handleAssociatePopUp}
           >
             <Plus size={4} />
