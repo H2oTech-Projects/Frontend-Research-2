@@ -6,6 +6,7 @@ import MapTable from "@/components/Table/mapTable";
 import LeafletMap from "@/components/LeafletMap";
 import RtGeoJson from "@/components/RtGeoJson";
 import { Button } from "@/components/ui/button";
+import { useSelector } from 'react-redux';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ import Spinner from "@/components/Spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import BasicSelect from "@/components/BasicSelect";
 import { useGetWaps, useGetWaysOptions } from "@/services/timeSeries";
+import PermissionCheckWrapper from "@/components/wrappers/PermissionCheckWrapper";
 import { AgroItems, showErrorToast } from "@/utils/tools";
 import CustomModal from "@/components/modal/ConfirmModal";
 import { useQueryClient } from "@tanstack/react-query";
@@ -68,6 +70,7 @@ const CropField = () => {
   const location = useLocation();
   const queryClient = useQueryClient();
   const [selectedFields, setSelectedFields] = useState<any>([]);
+  const UserRole = useSelector((state: any) => state.auth?.userRole);
   const selectedFieldsRef = useRef(selectedFields);
   const { tableInfo, setTableInfo, searchText, handleClearSearch, handleSearch } = useTableData({ initialTableData });
   const { collapse, tableCollapseBtn, mapCollapseBtn } = useMableCollapse();
@@ -139,18 +142,22 @@ const CropField = () => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {/* <DropdownMenuItem onClick={() => { navigate(`/customer-field/waps/${defaultWap}/edit/${row.original.fieldId}`) }}> */}
-            <DropdownMenuItem onClick={() => { setId(row.original.cropId); setOpen(true) }} >
-              <FilePenLine /> Edit
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="EditCropField">
+              <DropdownMenuItem onClick={() => { setId(row.original.cropId); setOpen(true) }} >
+                <FilePenLine /> Edit
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
 
             {/* <DropdownMenuItem onClick={() => { setId(String(row.original.id!)); setOpen(true) }}>
               <Trash2 />
               Delete
             </DropdownMenuItem> */}
-            <DropdownMenuItem >
-              <Eye />
-              View
-            </DropdownMenuItem>
+            <PermissionCheckWrapper name="ViewCropField">
+              <DropdownMenuItem >
+                <Eye />
+                View
+              </DropdownMenuItem>
+            </PermissionCheckWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -393,6 +400,7 @@ const CropField = () => {
             variant={"default"}
             className="h-7 w-auto px-2 text-sm"
             onClick={handleAssociatePopUp2}
+            disabled={UserRole !== 'Admin'}
           >
             <Plus size={4} />
             Add Links
