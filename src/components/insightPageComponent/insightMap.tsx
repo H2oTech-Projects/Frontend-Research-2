@@ -158,7 +158,7 @@ const geoJsonLayerEvents = (feature: any, layer: any) => {
       {
         accountDetail?.geojson_parcels &&
           <RtGeoJson
-            key={selectedEmailValue as string}
+            key={isDesktopDevice ? `5003_${selectedEmailValue}` : `mobile_${selectedEmailValue}`}
             layerEvents={geoJsonLayerEvents}
             style={geoJsonStyle}
             data={JSON.parse(accountDetail?.geojson_parcels)}
@@ -168,7 +168,7 @@ const geoJsonLayerEvents = (feature: any, layer: any) => {
       {
         !!selectedFarmGeoJson &&
         <RtGeoJson
-          key={selectedFarm as string}
+          key={isDesktopDevice ? `5003_${selectedEmailValue}` : `mobile_${selectedEmailValue}`}
           layerEvents={geoJsonLayerEvents}
           style={geoFarmJsonStyle}
           data={JSON.parse(selectedFarmGeoJson)}

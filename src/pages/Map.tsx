@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Feature } from "geojson";
 import L from "leaflet";
 import * as Icon from "lucide-react";
