@@ -21,7 +21,7 @@ const CustomZoomControl = () => {
   };
 
   return (
-    <div className="absolute bottom-11 right-4 z-[800] flex w-8 flex-col content-center justify-center gap-4 text-slate-50">
+    <div className="absolute bottom-8 right-4 z-[800] flex w-8 flex-col content-center justify-center gap-4 text-slate-50">
       {/* <div className="flex h-8 content-center justify-center rounded-lg bg-royalBlue p-2 text-sm font-bold">{zoomLevel}</div> */}
       <div className="flex h-16 w-8 flex-col content-center justify-center rounded-lg bg-royalBlue">
         <button

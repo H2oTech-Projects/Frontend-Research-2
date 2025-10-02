@@ -87,7 +87,7 @@ const geoJsonLayerEvents = (feature: any, layer: any) => {
     popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
     popupDiv.id = feature.properties?.parcel_id;
 
-    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(54, 128),autoPanPaddingBottomRight: L.point(128, 48) });
+    layer.bindPopup(popupDiv,{maxHeight:1000, maxWidth:700, closeOnClick: false ,  autoPan: true,autoPanPaddingBottomRight: L.point(128, 48) });
     layer.on({
       mouseover: function (e: any) {
         const auxLayer = e.target;

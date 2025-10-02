@@ -93,3 +93,13 @@ html.dark .Mable-Map .leaflet-popup-content-wrapper {
   background-color: #1e293b !important; /* Dark mode background */
   color: #f1f5f9; /* Dark mode text color */
 }
+
+
+.leaflet-control-layers  {
+ margin-left: 12px !important;
+ margin-bottom: 34px !important;
+}
+
+.leaflet-control-attribution {
+  display: none !important;
+}
