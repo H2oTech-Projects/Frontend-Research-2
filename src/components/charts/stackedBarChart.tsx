@@ -33,7 +33,7 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
     const dataItem = data.find((d: any) => d.category === payload.value);
     return (
       <g transform={`translate(${x},${y})`} style={{ cursor: "pointer" }}>
-        <text x={-10} y={0} dy={4} textAnchor="end" className="dark:fill-white">
+        <text x={-10} y={0} dy={4} textAnchor="end" className="fill-white">
           {payload.value.length > 5 ? payload.value.slice(0, 5) + "..." : payload.value}
           <title className="text-white">{dataItem.full_label}</title>
         </text>
@@ -79,13 +79,13 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
         //barGap={-10}
         >
         <Tooltip content={<CustomTooltip />} /> {/* ✅ Custom Tooltip */}
-        <XAxis type="number" tickCount={10} stroke="black" ticks={generateTicks(minTick, maxTick, 20)} tick={props => (
+        <XAxis type="number" tickCount={10} stroke="white" ticks={generateTicks(minTick, maxTick, 20)} tick={props => (
     <text
       x={props.x}
       y={props.y}
       dy={10}
       textAnchor="middle"
-      className=" font-semibold text-[14px] dark:fill-white" // Tailwind classes
+      className=" font-semibold text-[14px] fill-white" // Tailwind classes
     >
       {props.payload.value}
     </text>
@@ -93,15 +93,15 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
         <YAxis
           dataKey="category"
           type="category"
-          stroke="black"
+          stroke="white"
           tick={<CustomYAxisTick />}
         />
         <Tooltip />
         <Legend />
         <Bar dataKey={stack2} stackId="a" fill="#d8b365" name="Allocation Used" onClick={barClick}/>
         <Bar dataKey={stack1} stackId="a" fill="#5ab4ac" name="Remaining" onClick={barClick}/>
-        <ReferenceLine x={0} stroke="#c94c4c" strokeWidth={3} strokeDasharray="3 3" label={{ value: "0%", position: "left", style: { fill: "#16599a", fontSize: 15, fontWeight: "bold" } }}/>
-        <ReferenceLine x={100} stroke="#c94c4c"  strokeWidth={3} strokeDasharray="3 3" label={{ value: "100%", position: "right", style: { fill: "red", fontSize: 15, fontWeight: "bold" } }}/>
+        <ReferenceLine x={0} stroke="white" strokeWidth={3} strokeDasharray="3 3" label={{ value: "0%", position: "left", style: { fill: "white", fontSize: 15, fontWeight: "bold" } }}/>
+        <ReferenceLine x={100} stroke="white"  strokeWidth={3} strokeDasharray="3 3" label={{ value: "100%", position: "right", style: { fill: "white", fontSize: 15, fontWeight: "bold" } }}/>
         {/* <ReferenceArea x1={0} x2={10} fill="lightblue" fillOpacity={0.3}/> */}
       </BarChart>
     </ResponsiveContainer>

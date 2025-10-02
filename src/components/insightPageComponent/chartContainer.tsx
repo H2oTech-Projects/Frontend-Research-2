@@ -23,7 +23,7 @@ const ChartContainer = ({ loading, data, setSelectedFarm, parcelLoading }: { loa
       setSelectedFarm={!parcelLoading ? setSelectedFarm : (farmUnit: string)=> {}}
     /> : <div className="flex justify-center items-center h-full">No Chart Available</div>
   return <div
-    className={"dark:bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
+    className={"bg-slate-500 rounded-[8px] pb-[25px] my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)]"}
     style={{ height: 70 * (data?.length || 1)  + 80 }}
   >
     <ChartBars />
