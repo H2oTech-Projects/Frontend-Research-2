@@ -79,7 +79,7 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
         //barGap={-10}
         >
         <Tooltip content={<CustomTooltip />} /> {/* ✅ Custom Tooltip */}
-        <XAxis type="number" tickCount={10} stroke="white" ticks={generateTicks(minTick, maxTick, 20)} tick={props => (
+        <XAxis type="number" tickCount={10} stroke="black" ticks={generateTicks(minTick, maxTick, 20)} tick={props => (
     <text
       x={props.x}
       y={props.y}
@@ -93,7 +93,7 @@ const StackedBarChart = ({data, config, stack1, stack2, setSelectedFarm}: ChartP
         <YAxis
           dataKey="category"
           type="category"
-          stroke="white"
+          stroke="black"
           tick={<CustomYAxisTick />}
         />
         <Tooltip />
