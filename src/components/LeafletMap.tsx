@@ -7,6 +7,8 @@ import { Layer } from "recharts";
 import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 import "./sliderDesign.css"
+import { useMediaQuery } from "@uidotdev/usehooks";
+import { cn } from "@/lib/utils";
 
 type mapConfiguration = {
   minZoom: number;
@@ -92,6 +94,7 @@ const removeLineBars = <style>{`
 
 const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'minZoom': 11, 'containerStyle': {}, enableLayers: false }, children, userPolygon }: LeafletMapTypes) => {
   const { center } = position;
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const defaultViewBound = useSelector((state: any) => state.auth?.viewBound);
   const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
   const clientId = JSON.parse(localStorage.getItem("auth") as string)?.user_details.client_id
@@ -181,7 +184,7 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
       </div>
     </>
     return (
-      <div className="flex flex-row justify-between  absolute top-20 right-2 z-[1002] h-auto  w-[100px] p-2 m-1 rounded-[8px] bg-black text-slate-50">
+      <div className={cn("flex flex-row gap-7  absolute  right-2 z-[1002] h-auto  p-2 m-1 rounded-[8px] bg-black text-slate-50", collapse ? "top-2" : "top-20" )}>
         <div className="flex flex-col">
           {loggedUser == "colusa@wateraccounts.com" && additionalLegendsColusa || ''}
           <div className="flex flex-row pb-1">
@@ -242,12 +245,11 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
       </div>
     )
   }
-
   const addSlider = () => {
     return (
       <div
-        className="flex flex-col absolute bottom-[2rem] right-[7rem] z-[1002] h-[20px]  w-[200px] p-2 m-2 rounded-[8px] bg-green text-slate-50">
-        <Nouislider
+        className={cn("flex flex-col absolute  z-[800] h-[20px]  w-[200px] p-2 m-2 rounded-[8px] bg-green text-slate-50", isDesktopDevice ? "bottom-[2rem] right-[7rem]" : "bottom-[8px] left-0" )}>
+        <Nouislider   
           connect={[true, false]}
           start={100}
           tooltips={false}
@@ -258,6 +260,28 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
       </div>
     )
   }
+
+// const addSlider = () => {
+//   return (
+//     <div
+//       className="flex flex-col absolute bottom-[2rem] right-[2rem] z-[1002] h-[200px] w-[20px] p-2 m-2 rounded-[8px] bg-green text-slate-50 justify-center items-center"
+//     >
+//       <Nouislider
+//         orientation="vertical"
+//         // optional: flips slider direction
+//         connect={[true, false]}
+//         start={100}
+//         tooltips={false}
+//         range={{ min: 0, max: 100 }}
+//         step={25}
+//         onUpdate={(num) => {
+//           setOpacity(parseFloat(num[0]) / 100);
+//         }}
+//       />
+//     </div>
+//   );
+// };
+
 
   const colusaRaster = () => {
     const geoUrl = `${geoserverUrl}?clip=srid=900913;${userPolygon}⁠`
