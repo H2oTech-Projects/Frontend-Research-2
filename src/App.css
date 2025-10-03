@@ -79,6 +79,14 @@ html.dark .insight-Map .leaflet-popup-content-wrapper {
   background-color: #1e293b !important; /* Dark mode background */
   color: #f1f5f9; /* Dark mode text color */
 }
+.Default-Map .leaflet-popup-content {
+  background-color:#16599a !important; /* Set a background color for the popup content */
+  max-height: calc(100dvh - 380px) !important; /* Set a maximum height for the popup content */
+  max-width: 500px !important;
+  min-width: 250 !important;
+  scrollbar-width: thin !important; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
 .Mable-Map .leaflet-popup-content {
   background-color:#16599a !important; /* Set a background color for the popup content */
   max-height: 280px !important; /* Set a maximum height for the popup content */

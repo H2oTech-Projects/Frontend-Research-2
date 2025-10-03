@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { useMediaQuery } from '@uidotdev/usehooks';
 interface ChartParameters {
   data?: any;
+  isDefault?: boolean;
 }
 
 const TableLineChartInfo = ({ data }: ChartParameters) => {
@@ -451,7 +452,7 @@ const TableLineChartInfo = ({ data }: ChartParameters) => {
 
 export default TableLineChartInfo;
 
-export const ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
+export const ColusaTableLineChartInfo = ({ data,isDefault }: ChartParameters) => {
   const [way, setWay] = useState("2025")
   const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   const table_2025 = () => {
@@ -939,7 +940,48 @@ export const ColusaTableLineChartInfo = ({ data }: ChartParameters) => {
         </div>
       </div>)
   }
-
+  if (isDefault) {
+    return (
+      <div className=' pl-4 pb-4 pt-2 w-full h-full overflow-y-auto overflow-x-hidden  flex flex-col gap-3 '>
+        <div className='pl-2 flex justify-between items-center w-[92%] gap-2'> <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
+          [{
+            value: "2025",
+            label: "2025"
+          },
+          {
+            value: "2024",
+            label: "2024"
+          },
+          {
+            value: '2023',
+            label: "2023"
+          },
+          {
+            value: '2022',
+            label: "2022"
+          }]
+        } />
+          <Download className="inline-block items-baseline  cursor-pointer" onClick={() => console.log("here")} size={24} />
+        </div>
+        <div className='flex w-[94%] h-[350px] text-white flex-shrink-0  text-sm'><RTLineChart way={way} isColusa={true} /></div>
+        <div className='flex flex-col gap-1 p-2 text-white text-sm bg-slate-900 rounded-lg w-[94%]'>
+          <div>Parcel ID: {data['parcelId']}</div>
+          <div>Account ID: COL_MA_XXXXX</div>
+          <div>Farm Unit Zone: {data?.tableInfo?.zone_name}</div>
+          <div>Primary Crop: Pistachios</div>
+          <div>{way} Allocation (AF): 173.4</div>
+          <div>Carryover (AF): 22.5</div>
+          <div>Total Allocation (AF): 206.2</div>
+          <div>Sustainable Yield Acreage (AC): 75.9</div>
+          <div>Transitional Water Acreage (AC): 74.3</div>
+        </div>
+        <div className='h-[400px]  '>
+          <div className=' bg-slate-900 rounded-lg w-[94%] p-2 overflow-x-auto text-[12px]'>
+            {showTable()}
+          </div>
+        </div>
+      </div>)
+  }
   return (
     <div className='p-1 h-full w-full flex gap-4'>
       <div className='flex w-2/5 flex-col gap-2 text-black dark:text-white '>

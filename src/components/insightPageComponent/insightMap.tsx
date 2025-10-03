@@ -38,7 +38,8 @@ const InsightMap =({
 }:InsightMapProps)=>{
 const isDesktopDevice = useMediaQuery("(min-width: 768px)");
 const [mobilePopupInfo, setMobilePopupInfo] = useState<any>({ isOpen: false, tableInfo: null, chartInfo: [], parcelId: null })
-const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user
+const loggedUser = JSON.parse(localStorage.getItem("auth") as string)?.user_details.user;
+const isDefault = collapse === "default" ? true : false;
 function hasOnlyZeroPairs(arr: any[]): boolean {
     return Array.isArray(arr) && arr.every(subArr =>
         Array.isArray(subArr) &&
@@ -81,6 +82,28 @@ const geoJsonLayerEvents = (feature: any, layer: any) => {
     });
     return;
   }
+  if(isDefault){
+   const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup-map ';
+    // @ts-ignore
+    popupDiv.style = "width:100%; height:100%; border-radius:8px; overflow:hidden";
+    popupDiv.id = feature.properties?.parcel_id;
+
+    layer.bindPopup(popupDiv,{maxHeight:500, maxWidth:500, closeOnClick: false ,  autoPan: true,autoPanPaddingTopLeft: L.point(24, 68), autoPanPaddingBottomRight: L.point(0, 68), });
+         
+    layer.on({
+      mouseover: function (e: any) {
+        const auxLayer = e.target;
+        createRoot(popupDiv).render(<ColusaTableLineChartInfo data={{'tableInfo': parcelInfo[auxLayer.feature.properties.parcel_id], 'chartInfo': [], 'parcelId': auxLayer.feature.properties.parcel_id}} isDefault={true}/>);
+        showInfo('Parcel Id', auxLayer.feature.properties.parcel_id);
+      },
+      mouseout: function (e: any) {
+        const auxLayer = e.target;
+        removeInfo(auxLayer.feature.properties.parcel_id);
+      },
+    });
+    return;
+}
   const popupDiv = document.createElement('div');
     popupDiv.className = 'popup-map ';
     // @ts-ignore
@@ -158,7 +181,7 @@ const geoJsonLayerEvents = (feature: any, layer: any) => {
       {
         accountDetail?.geojson_parcels &&
           <RtGeoJson
-            key={isDesktopDevice ? `5003_${selectedEmailValue}` : `mobile_${selectedEmailValue}`}
+            key={isDesktopDevice ? isDefault ? `5003_${selectedEmailValue}` : `5004_${selectedEmailValue}` : `mobile_${selectedEmailValue}`}
             layerEvents={geoJsonLayerEvents}
             style={geoJsonStyle}
             data={JSON.parse(accountDetail?.geojson_parcels)}
@@ -168,7 +191,7 @@ const geoJsonLayerEvents = (feature: any, layer: any) => {
       {
         !!selectedFarmGeoJson &&
         <RtGeoJson
-          key={isDesktopDevice ? `5003_${selectedEmailValue}` : `mobile_${selectedEmailValue}`}
+          key={isDesktopDevice ? isDefault ? `5003_${selectedEmailValue}` : `5004_${selectedEmailValue}` : `mobile_${selectedEmailValue}`}
           layerEvents={geoJsonLayerEvents}
           style={geoFarmJsonStyle}
           data={JSON.parse(selectedFarmGeoJson)}
