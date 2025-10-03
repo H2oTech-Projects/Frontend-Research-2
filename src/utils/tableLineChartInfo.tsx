@@ -943,7 +943,7 @@ export const ColusaTableLineChartInfo = ({ data,isDefault }: ChartParameters) =>
   if (isDefault) {
     return (
       <div className=' pl-4 pb-4 pt-2 w-full h-full overflow-y-auto overflow-x-hidden  flex flex-col gap-3 '>
-        <div className='pl-2 flex justify-between items-center w-[92%] gap-2'> <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
+        <div className='pl-2 flex justify-between items-center w-[92%] text-slate-800 gap-2'> <BasicSelect label='Year' Value={way} showLabel={false} setValue={(value) => setWay(value)} itemList={
           [{
             value: "2025",
             label: "2025"
