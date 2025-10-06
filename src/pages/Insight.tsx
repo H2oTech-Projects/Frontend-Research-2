@@ -62,9 +62,9 @@ const Insight = () => {
 
       let selectFarm = accountFarmUnits?.data?.find((farm_unit: any) => farm_unit['farm_unit_zone'] == selectedFarm)
       // @ts-ignore
-      selectFarm['farm_parcel_geojson'] && setSelectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
+      selectFarm && setSelectedFarmGeoJson(selectFarm['farm_parcel_geojson'] ?? null )
       // @ts-ignore
-      selectFarm['view_bounds'] && setViewBound(selectFarm['view_bounds'])
+      selectFarm && setViewBound(selectFarm['view_bounds'])
       setSelectedParcel("")
       setSelectedParcelGeom([])
     }
@@ -394,7 +394,7 @@ const Insight = () => {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
                 />
-                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm} parcelLoading={accountParcelsLoading}/>
+                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
                 <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                   <AccountDetailTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail?.data!} />
                 </div>
