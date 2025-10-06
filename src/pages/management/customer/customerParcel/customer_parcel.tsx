@@ -95,6 +95,7 @@ const CustomerParcel = () => {
   // const { data: fieldCustomerData, isLoading: isFieldCustomerDataLoading, refetch } = useGetCustomerFieldDetailByWAP(defaultWay!, id!)
   const { mutate: updateCustomerParcel, isPending: updatingCustomerParcels } = usePutCustomerParcel();
   const { data: waysOptions, isLoading: waysLoading } = useGetWaysOptions()
+  const [viewBounds,setViewBounds] = useState<any>(null);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -222,6 +223,7 @@ const CustomerParcel = () => {
       },
       click: function (e: any) {
         const auxLayer = e.target;
+         setViewBounds([]);
         removeInfo(auxLayer.feature.properties.parcel_id)
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.parcel_id)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.parcel_id);
@@ -257,6 +259,7 @@ const CustomerParcel = () => {
       click: function (e: any) {
         const auxLayer = e.target;
         removeInfo(auxLayer.feature.properties.parcel_id)
+        setViewBounds([]);
         if (selectedFieldsRef.current.includes(auxLayer.feature.properties.parcel_id)) {
           const arr = selectedFieldsRef.current.filter((item: object) => item !== auxLayer.feature.properties.parcel_id);
           setSelectedFields(arr)
@@ -353,6 +356,10 @@ const CustomerParcel = () => {
     });
   }
 
+  useEffect(() => {
+    setViewBounds(geojson?.viewBounds ?? mapData?.viewBounds)
+}, [mapData, geojson])
+
   return (
     <MablePageWrapper>
       <PageHeader
@@ -424,7 +431,7 @@ const CustomerParcel = () => {
               collapse={collapse}
               // clickedField={clickedField}
               configurations={mapConfiguration}
-              viewBound={geojson?.viewBounds ?? mapData?.viewBounds}
+              viewBound={viewBounds}
             >
               {mapData?.data && <RtGeoJson
                 key={"fields"}
