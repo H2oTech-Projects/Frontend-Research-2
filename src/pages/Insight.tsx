@@ -134,13 +134,13 @@ const Insight = () => {
     {
       accessorKey: "farm_unit_zone",
       header: "Farm Unit Zone",
-      size: 150,
+      size: 100,
       cell: ({ row }) => <div>{row.getValue("farm_unit_zone")}</div>,
     },
     {
       accessorKey: "fu_total_alloc_af",
       header: 'Total Allocation (AF)',
-      size: 150,
+      size: 130,
       cell: ({ row }) => <div>{row.getValue("fu_total_alloc_af")}</div>,
     },
     {
@@ -164,7 +164,7 @@ const Insight = () => {
     {
       accessorKey: "fu_sy_ac",
       header: "Sustainable Yield Acreage (AC)",
-      size: 150,
+ 
       cell: ({ row }) => <div>{row.getValue("fu_sy_ac")}</div>,
     },
     {
@@ -208,6 +208,7 @@ const Insight = () => {
         );
       },
       cell: ({ row }) => <div>{row.getValue("parcel_id")}</div>,
+      size: 150
     },
     {
       accessorKey: "remain_af",
@@ -222,7 +223,7 @@ const Insight = () => {
           </div>
         );
       },
-      size: 180
+      size: 160
     },
     {
       accessorKey: "remain_pct",
@@ -418,6 +419,7 @@ const Insight = () => {
                     setSelectedFarm={setSelectedFarm}
                     isLoading={accountFarmUnitsLoading}
                     customHeight={"h-[400px]"}
+                    collapse={collapse}
                   />
                 </div>
 
