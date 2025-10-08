@@ -337,7 +337,7 @@ const Field = () => {
 
         return {
           color: "red", // Border color
-          fillColor: "transparent", // Fill color for the highlighted area
+          fillColor: "red", // Fill color for the highlighted area
           fillOpacity: 0.5,
           weight: 2,
         };
@@ -345,7 +345,7 @@ const Field = () => {
       return {
         color: "#16599A", // Border color
         fillColor: "transparent", // Fill color for normal areas
-        fillOpacity: 0.5,
+        fillOpacity: 0.4,
         weight: 2,
       };
     }
