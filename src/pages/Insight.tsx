@@ -470,6 +470,7 @@ const Insight = () => {
                         isLoading={accountParcelsLoading}
                         useClientPagination={true}
                         showPagination={true}
+                        collapse={collapse}
                       />
                     </div>
                   </div>

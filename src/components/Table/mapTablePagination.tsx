@@ -34,15 +34,15 @@ const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
     <div className="flex items-center justify-between px-2 dark:text-white">
       <div className="flex items-center space-x-8 lg:space-x-8 " >
+          {!isDesktopDevice || (collapse === "map"  && <p className="text-xs font-medium w-auto">Rows per page</p>)}
         <div className="flex items-center space-x-1">
-          {!isDesktopDevice || (collapse === "map"  && <p className="text-xs font-medium">Rows per page</p>)}
           <Select
             value={`${tableInfo.page_size}`}
             onValueChange={(value) => {      
               setTableInfo({...tableInfo,page_size:Number(value)})
             }}
           >
-            <SelectTrigger className="h-8 w-[65px] bg-royalBlue text-white dark:bg-royalBlue">
+            <SelectTrigger className="h-8 min-w-[65px] bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={tableInfo.page_size} />
             </SelectTrigger>
             <SelectContent side="top" className="min-w-[65px]">
@@ -54,22 +54,22 @@ const isDesktopDevice = useMediaQuery("(min-width: 768px)");
             </SelectContent>
           </Select>
         </div>
-        {!isDesktopDevice || (collapse === "map" &&  <div className="flex w-[60px] items-center justify-center text-xs font-medium">
+        {!isDesktopDevice || (collapse === "map" &&  <div className="flex w-auto items-center justify-center text-xs font-medium">
           Page {tableInfo?.page_no  } of{" "}
           {Math.ceil(totalData/tableInfo?.page_size)}
         </div>)}
+        {!isDesktopDevice || (collapse === "map" && <p className="text-xs font-medium">Go to page</p>)}
          <div className="flex items-center space-x-1">
-          {!isDesktopDevice || (collapse === "map" && <p className="text-xs font-medium">Go to page</p>)}
           <Select
             value={`${tableInfo?.page_no }`}
             onValueChange={(value) => {
               setTableInfo({...tableInfo,page_no:Number(value)})
             }}
           >
-            <SelectTrigger className="h-8 w-[50px]  bg-royalBlue text-white dark:bg-royalBlue">
+            <SelectTrigger className="h-8 min-w-[60px]  bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={tableInfo?.page_no} />
             </SelectTrigger>
-            <SelectContent side="top" className="min-w-[50px]">
+            <SelectContent side="top" className="min-w-[60px]">
              
               {[...Array(Math.ceil(totalData/tableInfo?.page_size)).keys()].map((pageIndex) => (
                 <SelectItem key={pageIndex} value={`${pageIndex + 1}`}>
