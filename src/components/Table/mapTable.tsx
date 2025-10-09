@@ -99,7 +99,7 @@ const MapTable = <T,>({
         setGeojson && setGeojson({id: row.original?.customerId || row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName, fieldIids: row.original?.fieldIids});
       }
       if(type === "cropField") {
-        setGeojson && setGeojson({id:  row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, cropName: row.original?.cropName});
+        setGeojson && setGeojson({id:  row.original?.cropId , fieldGeojson:row.original?.fieldGeojson.length > 1 ? row.original?.fieldGeojson : null, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds.length > 1 ? row.original?.viewBounds : null, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, cropName: row.original?.cropName});
       }
 
       if(type === "customerParcel") {

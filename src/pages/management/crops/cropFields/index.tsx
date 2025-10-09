@@ -277,7 +277,7 @@ const CropField = () => {
       return {
         color: "#16599A", // Border color
         fillColor: "red", // Fill color for the highlighted area
-        fillOpacity: .4,
+        fillOpacity: 0.4,
         weight: 2,
         zIndex: 150, // Ensure it is above the RtPoint
       };
@@ -294,7 +294,7 @@ const CropField = () => {
       return {
         color: "#16599A", // Border color
         fillColor: "red", // Fill color for the highlighted area
-        fillOpacity: .4,
+        fillOpacity: 0.4,
         weight: 2,
         zIndex: 150, // Ensure it is above the RtPoint
       };
@@ -460,7 +460,7 @@ const CropField = () => {
                 key={"cropFields"}
                 layerEvents={fieldJsonLayerEvents}
                 style={fieldGeojsonStyle}
-                data={JSON.parse(geojson?.fieldGeojson)}
+                data={ JSON.parse(geojson?.fieldGeojson)}
                 color={"#16599a"}
               />}
             </LeafletMap>) : (<LeafletMap
