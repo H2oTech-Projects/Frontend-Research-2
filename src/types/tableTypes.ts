@@ -44,7 +44,7 @@ export type MapTableTypes<T> = {
   tableInfo?: initialTableDataTypes;
   setTableInfo?: Function;
   totalData?: number | undefined;
-  collapse: string;
+  collapse?: string;
   useClientPagination?: boolean;
   customHeight?: any;
   setClickedGeom?: null | Function;
