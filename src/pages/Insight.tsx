@@ -62,9 +62,9 @@ const Insight = () => {
 
       let selectFarm = accountFarmUnits?.data?.find((farm_unit: any) => farm_unit['farm_unit_zone'] == selectedFarm)
       // @ts-ignore
-      selectFarm['farm_parcel_geojson'] && setSelectedFarmGeoJson(selectFarm['farm_parcel_geojson'])
+      selectFarm && setSelectedFarmGeoJson(selectFarm['farm_parcel_geojson'] ?? null )
       // @ts-ignore
-      selectFarm['view_bounds'] && setViewBound(selectFarm['view_bounds'])
+      selectFarm && setViewBound(selectFarm['view_bounds'])
       setSelectedParcel("")
       setSelectedParcelGeom([])
     }
@@ -134,13 +134,13 @@ const Insight = () => {
     {
       accessorKey: "farm_unit_zone",
       header: "Farm Unit Zone",
-      size: 150,
+      size: 100,
       cell: ({ row }) => <div>{row.getValue("farm_unit_zone")}</div>,
     },
     {
       accessorKey: "fu_total_alloc_af",
       header: 'Total Allocation (AF)',
-      size: 150,
+      size: 130,
       cell: ({ row }) => <div>{row.getValue("fu_total_alloc_af")}</div>,
     },
     {
@@ -164,7 +164,7 @@ const Insight = () => {
     {
       accessorKey: "fu_sy_ac",
       header: "Sustainable Yield Acreage (AC)",
-      size: 150,
+ 
       cell: ({ row }) => <div>{row.getValue("fu_sy_ac")}</div>,
     },
     {
@@ -208,6 +208,7 @@ const Insight = () => {
         );
       },
       cell: ({ row }) => <div>{row.getValue("parcel_id")}</div>,
+      size: 150
     },
     {
       accessorKey: "remain_af",
@@ -222,7 +223,7 @@ const Insight = () => {
           </div>
         );
       },
-      size: 180
+      size: 160
     },
     {
       accessorKey: "remain_pct",
@@ -394,7 +395,7 @@ const Insight = () => {
                                 contact Madera Country Water and Natural Resources Department at (559) 662-8015
                                 or WNR@maderacounty.com for information."
                 />
-                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm} parcelLoading={accountParcelsLoading}/>
+                <ChartContainer data={accountAllocationChart?.data!} loading={chartLoading} setSelectedFarm={setSelectedFarm}/>
                 <div className="rounded-[8px] overflow-hidden my-2 shadow-[0px_19px_38px_rgba(0,0,0,0.3),0px_15px_12px_rgba(0,0,0,0.22)] dark:bg-slate-500 ">
                   <AccountDetailTable accountDetailLoading={accountDetailLoading} accountDetail={accountDetail?.data!} />
                 </div>
@@ -418,6 +419,7 @@ const Insight = () => {
                     setSelectedFarm={setSelectedFarm}
                     isLoading={accountFarmUnitsLoading}
                     customHeight={"h-[400px]"}
+                    collapse={collapse}
                   />
                 </div>
 
@@ -468,6 +470,7 @@ const Insight = () => {
                         isLoading={accountParcelsLoading}
                         useClientPagination={true}
                         showPagination={true}
+                        collapse={collapse}
                       />
                     </div>
                   </div>

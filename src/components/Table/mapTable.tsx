@@ -1,348 +1,350 @@
 import {
-    flexRender,
-    getCoreRowModel,
-    SortingState,
-    useReactTable,
-    getPaginationRowModel,
-    PaginationState,
-    getSortedRowModel,
-    getFilteredRowModel,
+  flexRender,
+  getCoreRowModel,
+  SortingState,
+  useReactTable,
+  getPaginationRowModel,
+  PaginationState,
+  getSortedRowModel,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MapTableTypes } from "@/types/tableTypes";
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from "@/utils/cn";
-import  MapTablePagination  from "./mapTablePagination";
+import MapTablePagination from "./mapTablePagination";
 import { DataTablePagination } from "./clientSidePagination";
+import Spinner from "../Spinner";
 
 interface ColumnFilter {
-    id: string;
-    value: unknown;
+  id: string;
+  value: unknown;
 }
 
 type ColumnFiltersState = ColumnFilter[];
 
 const MapTable = <T,>({
-    defaultData,
-    columns,
-    doFilter,
-    filterValue,
-    setPosition = null,
-    setZoomLevel = null,
-    setClickedField = null,
-    clickedField = null,
-    fullHeight = true,
-    showPagination = true,
-    textAlign = "center",
-    columnProperties = null,
-    tableCSSConfig = {headerFontSize:null , bodyFontSize:null},
-    tableType,
-    idType = 'fieldId',
-    setSelectedFarm=null,
-    setSelectedParcel=null,
-    isLoading = false,
-    totalData,
-    tableInfo,
-    setTableInfo,
-    collapse,
-    useClientPagination = false,
-    customHeight ="h-[calc(100dvh-208px)] md:h-[calc(100vh-208px)]",
-    setClickedGeom = null,
-    setGeojson = null,
+  defaultData,
+  columns,
+  doFilter,
+  filterValue,
+  setPosition = null,
+  setZoomLevel = null,
+  setClickedField = null,
+  clickedField = null,
+  fullHeight = true,
+  showPagination = true,
+  textAlign = "center",
+  columnProperties = null,
+  tableCSSConfig = { headerFontSize: null, bodyFontSize: null },
+  tableType,
+  idType = 'fieldId',
+  setSelectedFarm = null,
+  setSelectedParcel = null,
+  isLoading = false,
+  totalData,
+  tableInfo,
+  setTableInfo,
+  collapse,
+  useClientPagination = false,
+  customHeight = "h-[calc(100dvh-208px)] md:h-[calc(100vh-208px)]",
+  setClickedGeom = null,
+  setGeojson = null,
 }: MapTableTypes<T>) => {
-    const [sorting, setSorting] = useState<SortingState>([]);
-    const [data, setData] = useState(defaultData?.length > 0 ?  [...defaultData] : []);
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [globalFilter, setGlobalFilter] = useState<any>([]);
-    const [pagination, setPagination] = useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: 50,
-    });
-    useEffect(() => {
-      setData(defaultData);
-    }, [defaultData]);
-    useEffect(() => {
-    tableInfo?.page_size && setPagination({...pagination, pageSize: tableInfo?.page_size})
-    }, [tableInfo?.page_size])
-    const table = useReactTable({
-      data,
-      columns,
-      onSortingChange: setSorting,
-      getCoreRowModel: getCoreRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      onPaginationChange: setPagination,
-      getFilteredRowModel: getFilteredRowModel(),
-      globalFilterFn: "includesString", // built-in filter function
-      //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
-      state: {
-        sorting,
-        globalFilter,
-        pagination,
-        columnFilters,
-      },
-      onGlobalFilterChange: setGlobalFilter,
-    });
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [data, setData] = useState(defaultData?.length > 0 ? [...defaultData] : []);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState<any>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 50,
+  });
+  useEffect(() => {
+    setData(defaultData);
+  }, [defaultData]);
+  useEffect(() => {
+    tableInfo?.page_size && setPagination({ ...pagination, pageSize: tableInfo?.page_size })
+  }, [tableInfo?.page_size])
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onPaginationChange: setPagination,
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: "includesString", // built-in filter function
+    //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
+    state: {
+      sorting,
+      globalFilter,
+      pagination,
+      columnFilters,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+  });
 
-    useEffect(() => {
-      //client side filtering
-      if (!!filterValue) {
-          table.setGlobalFilter(String(filterValue));
-      } else {
-          table.resetGlobalFilter(true);
-      }
-    }, [doFilter]);
+  useEffect(() => {
+    //client side filtering
+    if (!!filterValue) {
+      table.setGlobalFilter(String(filterValue));
+    } else {
+      table.resetGlobalFilter(true);
+    }
+  }, [doFilter]);
 
-    const handleOnClick = ((row: any, type: any) => {
-      if(type === "relation") {
-        setGeojson && setGeojson({id: row.original?.customerId || row.original?.cropId , fieldGeojson:row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName, fieldIids: row.original?.fieldIids});
-      }
-      if(type === "cropField") {
-        setGeojson && setGeojson({id:  row.original?.cropId , fieldGeojson:row.original?.fieldGeojson.length > 1 ? row.original?.fieldGeojson : null, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds.length > 1 ? row.original?.viewBounds : null, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, cropName: row.original?.cropName});
-      }
+  const handleOnClick = ((row: any, type: any) => {
+    if (type === "relation") {
+      setGeojson && setGeojson({ id: row.original?.customerId || row.original?.cropId, fieldGeojson: row.original?.fieldGeojson, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, customerName: row.original?.customerName, fieldIids: row.original?.fieldIids });
+    }
+    if (type === "cropField") {
+      setGeojson && setGeojson({ id: row.original?.cropId, fieldGeojson:row.original?.fieldGeojson.length > 1 ? row.original?.fieldGeojson: null, msmtPoint: row.original?.msmtPointGeojson, viewBounds: row.original?.viewBounds.length > 1 ? row.original?.viewBounds : null, existingFieldIds: row.original?.fieldIds, existingPcts: row.original?.pctFarmed, cropName: row.original?.cropName });
+    }
 
-      if(type === "customerParcel") {
-        setGeojson && setGeojson({id: row.original?.customerId, parcelGeojson:row.original?.parcelGeojson, viewBounds: row.original?.viewBounds, existingParcelIds: row.original?.parcelId, customerName: row.original?.customerName});
-      }
-      if(type === "conveyance") {
-        setClickedGeom && setClickedGeom({id: row.original?.conveyId, viewBound: row.original?.viewBounds});
-        return
-      }
-      if(type === "region") {
-        setClickedGeom && setClickedGeom({id: row.original?.regionId, viewBound: row.original?.viewBounds});
-        return;
-      }
-      if(type === "subregion") {
-        setClickedGeom && setClickedGeom({id: row.original?.id, viewBound: row.original?.viewBounds});
-        return;
-      }
-      if (type=="farm") {
-        // @ts-ignore
-        setSelectedFarm(row.original?.farm_unit_zone)
-        return;
-      }
-      if (type=="parcel") {
-        setPosition &&  setPosition({
-          // @ts-ignore
-          center: [row.original?.center_latitude || 38.86902846413033, row.original?.center_longitude || -121.729324818604],
-          // @ts-ignore
-          polygon: row.original?.coords || [],
-          // @ts-ignore
-          parcelId: row.original?.ParcelID || null,
-          // @ts-ignore
-          features: row.original
-        });
-      }
-      if (type == 'point') {
-        const parseData = JSON.parse(row.original.geompoint)
-        const coordinates = parseData.coordinates
-        const fields = row.original.fields.split(',').map((item: string) => item.trim())
-        // @ts-ignore
-        setPosition({
-          // @ts-ignore
-          center: [coordinates[1], coordinates[0]],
-          // @ts-ignore
-          point: [coordinates[1], coordinates[0]],
-          // @ts-ignore
-          msmtPointId: row.original.id || null,
-          // @ts-ignore
-          features: row.original,
-          fields: fields
-        });
-        // @ts-ignore
-        setClickedField({id: row.original.id, viewBounds:''})
-        return;
-      }
-      if (type == 'clientPoint') {
-        const parseData =row.original
-        const coordinates = parseData.coordinates
-        // @ts-ignore
-        setPosition({
-          // @ts-ignore
-          center: [coordinates[1], coordinates[0]],
-          // @ts-ignore
-          point: [coordinates[1], coordinates[0]],
-          // @ts-ignore
-          msmtPointId: row.original.id || null,
-          // @ts-ignore
-          features: row.original,
-        });
-        // @ts-ignore
-        setClickedField({id: row.original.id, viewBounds:''})
-        return;
-      }
+    if (type === "customerParcel") {
+      setGeojson && setGeojson({ id: row.original?.customerId, parcelGeojson: row.original?.parcelGeojson, viewBounds: row.original?.viewBounds, existingParcelIds: row.original?.parcelId, customerName: row.original?.customerName });
+    }
+    if (type === "conveyance") {
+      setClickedGeom && setClickedGeom({ id: row.original?.conveyId, viewBound: row.original?.viewBounds });
+      return
+    }
+    if (type === "region") {
+      setClickedGeom && setClickedGeom({ id: row.original?.regionId, viewBound: row.original?.viewBounds });
+      return;
+    }
+    if (type === "subregion") {
+      setClickedGeom && setClickedGeom({ id: row.original?.id, viewBound: row.original?.viewBounds });
+      return;
+    }
+    if (type == "farm") {
       // @ts-ignore
-      setPosition &&  setPosition({
+      setSelectedFarm(row.original?.farm_unit_zone)
+      return;
+    }
+    if (type == "parcel") {
+      setPosition && setPosition({
         // @ts-ignore
         center: [row.original?.center_latitude || 38.86902846413033, row.original?.center_longitude || -121.729324818604],
         // @ts-ignore
         polygon: row.original?.coords || [],
         // @ts-ignore
-        fieldId: row.original?.FieldID || null,
+        parcelId: row.original?.ParcelID || null,
         // @ts-ignore
         features: row.original
       });
-      if (tableType == 'insightParcel'){
+    }
+    if (type == 'point') {
+      const parseData = JSON.parse(row.original.geompoint)
+      const coordinates = parseData.coordinates
+      const fields = row.original.fields.split(',').map((item: string) => item.trim())
+      // @ts-ignore
+      setPosition({
         // @ts-ignore
-        setSelectedParcel(row.original.parcel_id)
-        return;
-      }
+        center: [coordinates[1], coordinates[0]],
+        // @ts-ignore
+        point: [coordinates[1], coordinates[0]],
+        // @ts-ignore
+        msmtPointId: row.original.id || null,
+        // @ts-ignore
+        features: row.original,
+        fields: fields
+      });
       // @ts-ignore
-      tableType!=='parcel' && setZoomLevel(13);
+      setClickedField({ id: row.original.id, viewBounds: '' })
+      return;
+    }
+    if (type == 'clientPoint') {
+      const parseData = row.original
+      const coordinates = parseData.coordinates
       // @ts-ignore
-      setClickedField && setClickedField({id:row.original?.fieldId || row.original?.parcelId ,viewBounds:row.original?.viewBounds});
+      setPosition({
+        // @ts-ignore
+        center: [coordinates[1], coordinates[0]],
+        // @ts-ignore
+        point: [coordinates[1], coordinates[0]],
+        // @ts-ignore
+        msmtPointId: row.original.id || null,
+        // @ts-ignore
+        features: row.original,
+      });
+      // @ts-ignore
+      setClickedField({ id: row.original.id, viewBounds: '' })
+      return;
+    }
+    // @ts-ignore
+    setPosition && setPosition({
+      // @ts-ignore
+      center: [row.original?.center_latitude || 38.86902846413033, row.original?.center_longitude || -121.729324818604],
+      // @ts-ignore
+      polygon: row.original?.coords || [],
+      // @ts-ignore
+      fieldId: row.original?.FieldID || null,
+      // @ts-ignore
+      features: row.original
     });
-
-    const tableHeader = () => {
-      return (table.getHeaderGroups().map((headerGroup) => (
-        <TableRow key={headerGroup.id}>
-          {headerGroup.headers.map((header) => (
-            <TableHead
-              // this class code help to differentiate action column
-              className={cn(
-                `${
-                // @ts-ignore  this code helps to ignore types in certain line
-                header.column.columnDef.meta?.className ?? ""
-                } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
-                `!min-w-[${header?.getSize()}px]`,
-                ` ${tableCSSConfig?.headerFontSize && tableCSSConfig?.headerFontSize }`,
-              )}
-              key={header.id}
-              style={{
-                minWidth: header.column.columnDef.size,
-                maxWidth: header.column.columnDef.size,
-                textAlign: columnProperties ? columnProperties[header.id] == "str"  ? "left" : "right" : textAlign
-              }}
-            >
-             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-            </TableHead>
-          ))}
-        </TableRow>
-      )));
+    if (tableType == 'insightParcel') {
+      // @ts-ignore
+      setSelectedParcel(row.original.parcel_id)
+      return;
     }
+    // @ts-ignore
+    tableType !== 'parcel' && setZoomLevel(13);
+    // @ts-ignore
+    setClickedField && setClickedField({ id: row.original?.fieldId || row.original?.parcelId, viewBounds: row.original?.viewBounds });
+  });
 
-    const tableContent = () => {
-      if (table?.getRowModel()?.rows?.length < 1 && !isLoading) {
-        return <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-               >
-                No results.
-              </TableCell>
-            </TableRow>
+  const tableHeader = () => {
+    return (table.getHeaderGroups().map((headerGroup) => (
+      <TableRow key={headerGroup.id}>
+        {headerGroup.headers.map((header) => (
+          <TableHead
+            // this class code help to differentiate action column
+            className={cn(
+              `${
+              // @ts-ignore  this code helps to ignore types in certain line
+              header.column.columnDef.meta?.className ?? ""
+              } !bg-royalBlue !text-white !transition-colors dark:!bg-royalBlue`,
+              `!min-w-[${header?.getSize()}px]`,
+              ` ${tableCSSConfig?.headerFontSize && tableCSSConfig?.headerFontSize}`,
+            )}
+            key={header.id}
+            style={{
+              minWidth: header.column.columnDef.size,
+              maxWidth: header.column.columnDef.size,
+              textAlign: columnProperties ? columnProperties[header.id] == "str" ? "left" : "right" : textAlign
+            }}
+          >
+            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+          </TableHead>
+        ))}
+      </TableRow>
+    )));
+  }
 
-      }
-      if (setPosition !==null) {
-        return fieldTableContent()
-      } else {
-        return insightTableContent()
-      }
+  const tableContent = () => {
+    if (setPosition !== null) {
+      return fieldTableContent()
+    } else {
+      return insightTableContent()
     }
+  }
 
-    const emptyTable = () => {
-      return <TableBody>
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                  >
-                  Data Loading
-                </TableCell>
-              </TableRow>
-            </TableBody>
-    }
-
-    const fieldTableContent = () => {
-      return table.getRowModel().rows.map((row) =>
-        fieldTableRow(row)
+  const DataLoading = () => {
+    if (isLoading) {
+      return (
+        <div className="absolute top-0 left-0 z-10 flex h-full w-full items-center justify-center bg-white/70 transition-colors dark:bg-slateLight-500/70">
+          <Spinner />
+        </div>
       )
     }
-
-    const insightTableContent = () => {
-      return table.getRowModel().rows.map((row) =>
-        insightTableRow(row)
-      )};
-
-
-    const fieldTableRow = (row: any) => {
-      const isSelectedRow = !!clickedField && clickedField.id === row.original[idType]
-      return <TableRow
-              key={row.id}
-              className={`${isSelectedRow ? "bg-slate-400 text-white" : ""} cursor-pointer text-sm hover:bg-slate-500`}
-            >
-              {row.getVisibleCells().map((cell: any) =>
-                <TableCell
-                  className={`
-                    ${isSelectedRow ? " text-white" : ""} ${
-                    // @ts-ignore
-                    cell.column.columnDef.meta?.className ?? ""
-                    } `}
-                  key={cell.id}
-                  style={{
-                      // minWidth: cell.column.columnDef.size,
-                      // maxWidth: cell.column.columnDef.size,
-                      textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign,
-                  }}
-                  // @ts-ignore
-                  onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              )}
-      </TableRow>
-    }
-
-    const insightTableRow = (row: any) => {
-      const isSelectedRow = !!clickedField && clickedField.id === row.original.FieldID
-      return <TableRow
-              key={row.id}
-              className={cn(
-                // @ts-ignore
-                isSelectedRow ? "bg-slate-400" : "",
-                "cursor-pointer",
-              )}
-              // @ts-ignore
-              onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
-             >
-              {row.getVisibleCells().map((cell: any) => (
-                <TableCell
-                  className={`${isSelectedRow ? " text-white" : ""} ${
-
-                    // @ts-ignore
-                    cell.column.columnDef.meta?.className ?? ""
-                    // @ts-ignore
-                    } ${tableCSSConfig?.bodyFontSize  && tableCSSConfig?.bodyFontSize }`}
-                  key={cell.id}
-                  // @ts-ignore
-                  style={{textAlign: columnProperties ? columnProperties[cell.column.id] == "str"  ? "left" : "right" : textAlign}}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-    }
-
-    const renderPagination = () => {
-      // @ts-ignore
-      if (!showPagination ) return null
-      return <div className="flex flex-grow p-2  justify-center items-center">
-                {useClientPagination ?  <DataTablePagination table={table} collapse={collapse!}/> : <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!}/>}
-            </div>
-    }
-
-    return (
-      <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
-        <div className={cn(fullHeight ? customHeight : "h-auto ")}>
-          <Table className="relative">
-            <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
-              {isLoading ? emptyTable() : tableContent()}
-          </Table>
+    return null;
+  }
+  const NoData = () => {
+    if (table?.getRowModel()?.rows?.length < 1 && !isLoading) {
+      return (
+        <div className="absolute top-0 left-0 z-10 flex h-full w-full items-center justify-center bg-white/70 transition-colors dark:bg-slateLight-500/70 dark:text-white">
+          No data found
         </div>
-          {renderPagination()}
-      </div>
+      )
+    }
+    return null;
+
+  }
+
+  const fieldTableContent = () => {
+    return table.getRowModel().rows.map((row) =>
+      fieldTableRow(row)
     )
+  }
+
+  const insightTableContent = () => {
+    return table.getRowModel().rows.map((row) =>
+      insightTableRow(row)
+    )
+  };
+
+
+  const fieldTableRow = (row: any) => {
+    const isSelectedRow = !!clickedField && clickedField.id === row.original[idType]
+    return <TableRow
+      key={row.id}
+      className={`${isSelectedRow ? "bg-slate-400 text-white" : ""} cursor-pointer text-sm hover:bg-slate-500`}
+    >
+      {row.getVisibleCells().map((cell: any) =>
+        <TableCell
+          className={`
+                    ${isSelectedRow ? " text-white" : ""} ${
+            // @ts-ignore
+            cell.column.columnDef.meta?.className ?? ""
+            } `}
+          key={cell.id}
+          style={{
+            // minWidth: cell.column.columnDef.size,
+            // maxWidth: cell.column.columnDef.size,
+            textAlign: columnProperties ? columnProperties[cell.column.id] == "str" ? "left" : "right" : textAlign,
+          }}
+          // @ts-ignore
+          onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
+        >
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </TableCell>
+      )}
+    </TableRow>
+  }
+
+  const insightTableRow = (row: any) => {
+    const isSelectedRow = !!clickedField && clickedField.id === row.original.FieldID
+    return <TableRow
+      key={row.id}
+      className={cn(
+        // @ts-ignore
+        isSelectedRow ? "bg-slate-400" : "",
+        "cursor-pointer",
+      )}
+      // @ts-ignore
+      onClick={() => { handleOnClick(row, tableType) }} //  we added this on click event to set center in map
+    >
+      {row.getVisibleCells().map((cell: any) => (
+        <TableCell
+          className={`${isSelectedRow ? " text-white" : ""} ${
+
+            // @ts-ignore
+            cell.column.columnDef.meta?.className ?? ""
+            // @ts-ignore
+            } ${tableCSSConfig?.bodyFontSize && tableCSSConfig?.bodyFontSize}`}
+          key={cell.id}
+          // @ts-ignore
+          style={{ textAlign: columnProperties ? columnProperties[cell.column.id] == "str" ? "left" : "right" : textAlign }}
+        >
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </TableCell>
+      ))}
+    </TableRow>
+  }
+
+  const renderPagination = () => {
+    // @ts-ignore
+    if (!showPagination) return null
+    return <div className="flex flex-grow p-2  justify-center items-center">
+      {useClientPagination ? <DataTablePagination table={table} collapse={collapse!} /> : <MapTablePagination totalData={totalData!} tableInfo={tableInfo!} setTableInfo={setTableInfo!} collapse={collapse!} />}
+    </div>
+  }
+
+  return (
+    <div className="table-container flex flex-col overflow-hidden rounded-md bg-white shadow-md transition-colors dark:bg-slateLight-500">
+      <div className={cn(fullHeight ? customHeight : "h-auto ", "relative overflow-auto")}>
+        <Table className="relative">
+          <TableHeader className="sticky top-0">{tableHeader()}</TableHeader>
+          {!isLoading && tableContent()}
+        </Table>
+        <DataLoading />
+        <NoData />
+      </div>
+      {renderPagination()}
+    </div>
+  )
 };
 
 export default MapTable;

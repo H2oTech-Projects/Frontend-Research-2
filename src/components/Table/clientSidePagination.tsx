@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -21,23 +22,24 @@ interface DataTablePaginationProps<TData> {
 }
 
 export function DataTablePagination<TData>({
-  table,collapse
+  table, collapse
 }: DataTablePaginationProps<TData>) {
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
   return (
     <div className="flex items-center justify-between px-2 dark:text-white">
       <div className="flex items-center space-x-6 lg:space-x-8">
+        {!isDesktopDevice || collapse === "map" && <p className="text-xs font-medium">Rows per page</p>}
         <div className="flex items-center space-x-1">
-            {collapse === "map" && <p className="text-xs font-medium">Rows per page</p>}
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value))
             }}
           >
-            <SelectTrigger className="h-8 w-[70px] bg-royalBlue text-white dark:bg-royalBlue">
+            <SelectTrigger className="h-8 min-w-[70px] bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
-            <SelectContent side="top">
+            <SelectContent side="top" className="min-w-[70px]">
               {[50, 100, 150, 200, 250].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
@@ -46,19 +48,19 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-       {collapse == "map" &&  <div className="flex w-[60px] items-center justify-center text-xs font-medium">
+        {!isDesktopDevice || collapse == "map" && <div className="flex items-center justify-center text-xs font-medium">
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </div>}
-   <div className="flex items-center space-x-2">
-           {collapse === 'map' && <p className="text-xs font-medium">Go to page</p>}
+        {!isDesktopDevice || collapse === 'map' && <p className="text-xs font-medium">Go to page</p>}
+        <div className="flex items-center space-x-2">
           <Select
-            value={`${table.getState().pagination.pageIndex }`}
+            value={`${table.getState().pagination.pageIndex}`}
             onValueChange={(value) => {
               table.setPageIndex(Number(value))
             }}
           >
-            <SelectTrigger className="h-8 w-[60px]  bg-royalBlue text-white dark:bg-royalBlue">
+            <SelectTrigger className="h-8 min-w-[60px]  bg-royalBlue text-white dark:bg-royalBlue">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top" className="min-w-[60px]">

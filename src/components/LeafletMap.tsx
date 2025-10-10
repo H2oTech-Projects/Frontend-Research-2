@@ -108,9 +108,9 @@ const LeafletMap = ({ zoom, position, collapse, viewBound, configurations = { 'm
     useEffect(() => {
       map.whenReady(() => {
         map.invalidateSize(); // Ensure proper sizing
-        map.setView(center);  // Recenter
+        // map.setView(center);  // Recenter
         if (viewBound) {
-          map.fitBounds(viewBound);
+          viewBound.length > 1  &&  map.fitBounds(viewBound);
         }
         else {
           map.fitBounds(defaultViewBound);

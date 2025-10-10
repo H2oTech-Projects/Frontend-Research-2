@@ -293,10 +293,10 @@ const Parcel = () => {
     const geoJsonStyle = (features: any) => {
       if (features?.properties?.parcel_id.toString() === clickedField?.id?.toString()) {
         return {
-          color: "red", // Border color
-          fillColor: "transparent", // Fill color for the highlighted area
-          fillOpacity: 0.8,
-          weight: 2,
+          color: "black", // Border color
+          fillColor: "red", // Fill color for the highlighted area
+          fillOpacity: 0.4,
+          weight: 0,
         };
       }
       return {

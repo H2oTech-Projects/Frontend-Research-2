@@ -201,13 +201,12 @@ const Subregions = () => {
     const geoJsonStyle = (features: any) => {
 
       if (features?.properties?.id.toString() === clickedGeom?.id?.toString()) {
-
         return {
-          color: "red", // Border color
-          fillColor: "transparent", // Fill color for the highlighted area
-          fillOpacity: 0.7,
-          weight: 2,
-        };
+            color: "black", // Border color
+            fillColor: "red", // Fill color for the highlighted area
+            fillOpacity: 0.4,
+            weight: 0,
+          };
       }
       return {
         color: "#16599A", // Border color
